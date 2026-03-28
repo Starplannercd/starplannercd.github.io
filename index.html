@@ -1481,9 +1481,10 @@ const BOSSES = [
       {
         label: null,
         abilities: [
-          { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
           { name:'Material of Creation 1', time:20,  color:'#c8a838' },
           { name:'Material of Creation 4', time:120, color:'#c84848' },
+          { name:'HP Assign 1',            time:160, color:'#4888c8', hpAssign:true, hpPct:40 },
+          { name:'HP Assign 2',            time:200, color:'#4888c8', hpAssign:true, hpPct:35 },
         ]
       }
     ]
@@ -2321,6 +2322,8 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   label.className = 'ability-label';
   if (ab.encounterStart) {
     label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a8da8;font-style:italic;">${ab.name}</div>`;
+  } else if (ab.hpAssign) {
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign — ${ab.hpPct}%</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   } else {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.name}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
@@ -2985,6 +2988,9 @@ function getBossAbilityKey(boss, rowKey, abName) {
     const keyMap = { darkanimus: 'ANIMUS_ENC_START', raden: 'RADEN_ENC_START', ironqon: 'QON_ENC_START' };
     return keyMap[boss.id] || boss.id.toUpperCase() + '_ENC_START';
   }
+  if (abName && abName.startsWith('HP Assign')) {
+    return 'RADEN_HEALTH';
+  }
   if (boss.id === 'ironqon') {
     if (abName && abName.toLowerCase().includes('fist')) return BOSS_ABILITY_KEYS['ironqon_fist'].key;
     if (abName && abName.toLowerCase().includes('windstorm')) return 'QON_WINDSTORM';
@@ -3023,7 +3029,7 @@ function buildFojiExport() {
         const placements = bossData[rowKey];
         if (!placements || placements.length === 0) return;
 
-        const castNum = getCastNumber(ab.name);
+        const castNum = ab.hpAssign ? ab.hpPct : getCastNumber(ab.name);
         const bossAbKey = getBossAbilityKey(boss, rowKey, ab.name);
 
         const sortedPlacements = [...placements].sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0));
