@@ -1132,6 +1132,7 @@
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Screenshot</button>
+    <button class="btn" id="ghPublishBtn" style="border-color:#48a86844;color:#48a868;">Publish</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
   </div>
@@ -4364,6 +4365,117 @@ initFirebase();
 
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
+// ── GitHub Auto-Publish ──
+const GH_TOKEN_KEY = 'tot_rcd_gh_token';
+const GH_REPO = 'starplannercd/starplannercd.github.io';
+const GH_FILE = 'index.html';
+const GH_BRANCH = 'main';
+
+function getGhToken() { return localStorage.getItem(GH_TOKEN_KEY) || ''; }
+
+async function publishToGitHub() {
+  const token = getGhToken();
+  if (!token) {
+    showGhTokenPrompt();
+    return;
+  }
+
+  const btn = document.getElementById('ghPublishBtn');
+  if (btn) { btn.textContent = 'Publishing…'; btn.disabled = true; }
+
+  try {
+    // Get current file SHA (required for update)
+    const shaRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, {
+      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    const shaData = await shaRes.json();
+    if (!shaRes.ok) throw new Error(shaData.message || 'Failed to get file SHA');
+    const sha = shaData.sha;
+
+    // Get clean HTML (no embedded plan data)
+    const cleanHtml = document.documentElement.outerHTML
+      .replace(/<script id="sharePayload"[^>]*>[\s\S]*?<\/script>/g, '')
+      .replace(/<script>document\.addEventListener\("DOMContentLoaded"[\s\S]*?<\/script>/g, '');
+
+    // Base64 encode
+    const encoded = btoa(unescape(encodeURIComponent(cleanHtml)));
+
+    // Push to GitHub
+    const pushRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'Update RCD Planner',
+        content: encoded,
+        sha,
+        branch: GH_BRANCH,
+      }),
+    });
+
+    const pushData = await pushRes.json();
+    if (!pushRes.ok) throw new Error(pushData.message || 'Push failed');
+
+    if (btn) { btn.textContent = '✓ Published'; btn.disabled = false; }
+    setTimeout(() => { if (btn) btn.textContent = 'Publish'; }, 3000);
+
+  } catch(err) {
+    console.error('GitHub publish error:', err);
+    if (btn) { btn.textContent = '✗ Failed'; btn.disabled = false; }
+    setTimeout(() => { if (btn) btn.textContent = 'Publish'; }, 3000);
+    alert('Publish failed: ' + err.message);
+  }
+}
+
+function showGhTokenPrompt() {
+  const existing = document.getElementById('ghTokenOverlay');
+  if (existing) { existing.remove(); return; }
+  const ov = document.createElement('div');
+  ov.id = 'ghTokenOverlay';
+  ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="modal-box" style="width:480px;">
+    <h3>GitHub Token</h3>
+    <div class="modal-sub" style="font-size:13px;margin-bottom:12px;line-height:1.6;">
+      To auto-publish, you need a GitHub Personal Access Token.<br>
+      <strong style="color:#c8a84b;">How to create one:</strong><br>
+      1. Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#4888c8;">github.com/settings/tokens/new</a><br>
+      2. Give it a name (e.g. "RCD Planner")<br>
+      3. Set expiry as desired<br>
+      4. Under <strong>Scopes</strong> check <strong>repo</strong><br>
+      5. Click <strong>Generate token</strong> and paste it below
+    </div>
+    <input type="password" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 12px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
+    <div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">Stored in your browser's localStorage. Never sent anywhere except GitHub's API.</div>
+    <div class="modal-footer" style="display:flex;gap:8px;">
+      <button id="ghTokenSave" class="btn copy-btn">Save & Publish</button>
+      <button id="ghTokenClose" class="btn">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+
+  const input = ov.querySelector('#ghTokenInput');
+  const existing_token = getGhToken();
+  if (existing_token) input.value = existing_token;
+  input.focus();
+
+  ov.querySelector('#ghTokenSave').addEventListener('click', () => {
+    const token = input.value.trim();
+    if (!token) return;
+    localStorage.setItem(GH_TOKEN_KEY, token);
+    ov.remove();
+    publishToGitHub();
+  });
+  ov.querySelector('#ghTokenClose').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') ov.querySelector('#ghTokenSave').click(); });
+}
+
+document.getElementById('ghPublishBtn')?.addEventListener('click', publishToGitHub);
+
 
 // ── Holy Paladin CD View (Shift+M) ──
 const HPALA_CDS = ['devo1','goak','holyavenger','avwrath','lhammer','divfavor'];
