@@ -2895,37 +2895,13 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     }
     closeOffsetPopup();
   });
-  if (!isCustom) {
-    popup.querySelector('#offsetClear').addEventListener('click', () => {
+  if (!isHpAssign && !isCustom) {
+    popup.querySelector('#offsetClear')?.addEventListener('click', () => {
       setPlacementMeta(bossId, rowKey, p.id, cd.who, null);
       closeOffsetPopup();
     });
   }
-  popup.querySelector('#offsetCancel').addEventListener('click', closeOffsetPopup);
-
-  // Wire offset input — scroll on hover (no click needed), colour coding
-  const offsetInputEl = popup.querySelector('#offsetInput');
-  if (offsetInputEl) {
-    function colorOffsetInput() {
-      const v = parseInt(offsetInputEl.value) || 0;
-      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#d4d6e8';
-    }
-    colorOffsetInput();
-    offsetInputEl.addEventListener('input', colorOffsetInput);
-    // Scroll on hover without requiring focus
-    offsetInputEl.addEventListener('mouseenter', () => offsetInputEl.focus());
-    offsetInputEl.addEventListener('wheel', e => {
-      e.preventDefault();
-      offsetInputEl.value = Math.max(-60, Math.min(300, (parseInt(offsetInputEl.value) || 0) - Math.sign(e.deltaY)));
-      colorOffsetInput();
-    }, { passive: false });
-    offsetInputEl.addEventListener('keydown', ev => {
-      if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
-      if (ev.key === 'Escape') { closeOffsetPopup(); }
-    });
-    offsetInputEl.focus();
-    offsetInputEl.select();
-  }
+  popup.querySelector('#offsetCancel')?.addEventListener('click', closeOffsetPopup);
 
   // Wire HP % input scroll wheel
   const hpInputEl = popup.querySelector('#hpPctInput');
@@ -2941,6 +2917,29 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     });
     hpInputEl.focus();
     hpInputEl.select();
+  }
+
+  // Wire offset input — scroll on hover (no click needed), colour coding
+  const offsetInputEl = popup.querySelector('#offsetInput');
+  if (offsetInputEl) {
+    function colorOffsetInput() {
+      const v = parseInt(offsetInputEl.value) || 0;
+      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#d4d6e8';
+    }
+    colorOffsetInput();
+    offsetInputEl.addEventListener('input', colorOffsetInput);
+    offsetInputEl.addEventListener('mouseenter', () => offsetInputEl.focus());
+    offsetInputEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      offsetInputEl.value = Math.max(-60, Math.min(300, (parseInt(offsetInputEl.value) || 0) - Math.sign(e.deltaY)));
+      colorOffsetInput();
+    }, { passive: false });
+    offsetInputEl.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
+      if (ev.key === 'Escape') { closeOffsetPopup(); }
+    });
+    offsetInputEl.focus();
+    offsetInputEl.select();
   }
   setTimeout(() => {
     document.addEventListener('mousedown', outsidePopupClose);
