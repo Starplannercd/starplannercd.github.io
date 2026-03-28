@@ -4535,13 +4535,18 @@ function showHPalaView() {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
     script.onload = () => {
-      html2canvas(contentEl, { backgroundColor:'#08090d', scale:2, useCORS:true, allowTaint:true }).then(canvas => {
+      // Create a temp full-height clone so html2canvas captures everything
+      const clone = contentEl.cloneNode(true);
+      clone.style.cssText = `position:fixed;top:0;left:0;width:${contentEl.offsetWidth}px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      document.body.appendChild(clone);
+      html2canvas(clone, { backgroundColor:'#08090d', scale:2, useCORS:true, allowTaint:true, width:clone.offsetWidth, height:clone.scrollHeight }).then(canvas => {
+        clone.remove();
         const a = document.createElement('a');
         a.download = 'hpala-cds.png';
         a.href = canvas.toDataURL('image/png');
         a.click();
         btn.textContent = '📷 Screenshot';
-      }).catch(() => { btn.textContent = '📷 Screenshot'; });
+      }).catch(() => { clone.remove(); btn.textContent = '📷 Screenshot'; });
     };
     script.onerror = () => { btn.textContent = '📷 Screenshot'; alert('Screenshot failed to load.'); };
     document.head.appendChild(script);
