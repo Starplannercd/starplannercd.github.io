@@ -3075,7 +3075,7 @@ function buildFojiExport() {
         const castNum = ab.hpAssign ? 1 : getCastNumber(ab.name);
         const bossAbKey = getBossAbilityKey(boss, rowKey, ab.name);
 
-        const sortedPlacements = [...placements].sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0));
+        const sortedPlacements = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.offset ?? 0) - (b.offset ?? 0));
         sortedPlacements.forEach(p => {
           // For HP assign rows, cast number = the placement's health % value
           const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
@@ -3824,7 +3824,7 @@ function renderSheetPreview(el) {
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const castNum = getCastNumber(ab.name);
-      const sorted = [...placements].sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
+      const sorted = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       sorted.forEach(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return;
