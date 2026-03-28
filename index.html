@@ -1483,8 +1483,7 @@ const BOSSES = [
         abilities: [
           { name:'Material of Creation 1', time:20,  color:'#c8a838' },
           { name:'Material of Creation 4', time:120, color:'#c84848' },
-          { name:'HP Assign 1',            time:160, color:'#4888c8', hpAssign:true, hpPct:40 },
-          { name:'HP Assign 2',            time:200, color:'#4888c8', hpAssign:true, hpPct:35 },
+          { name:'HP Assign',              time:160, color:'#4888c8', hpAssign:true, hpPct:40 },
         ]
       }
     ]
@@ -2430,7 +2429,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       const hpPct = p.hpPct != null ? p.hpPct : 40;
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
-      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">hp · delay 1</span>`;
+      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">HP</span>`;
       inner.style.color = cd.textColor;
       el.appendChild(inner);
     } else if (p.offset != null) {
@@ -3832,12 +3831,13 @@ function renderSheetPreview(el) {
         const who = p.cdId === 'custom' ? (p.customWho || 'ALL') : cd.who;
         const playerName = getPlayerName(who);
         const playerColor = getPlayerColor(who);
-        const offset = p.offset != null ? p.offset : 0;
+        const offset = ab.hpAssign ? 1 : (p.offset != null ? p.offset : 0);
         const cdName = p.cdId === 'custom' ? 'Custom Spell Assignment' : cd.name;
         const tts = p.cdId === 'custom' && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
         const displayName = p.cdId === 'custom' && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
         const customIcon = p.cdId === 'personals' ? '134951' : '';
-        rows.push({ ab, castNum, who, playerName, playerColor, offset, cd, cdName, tts, displayName, customIcon });
+        const _rowCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
+        rows.push({ ab, castNum: _rowCastNum, who, playerName, playerColor, offset, cd, cdName, tts, displayName, customIcon });
       });
     });
   });
