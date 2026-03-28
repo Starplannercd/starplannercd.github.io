@@ -2805,7 +2805,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpVal = p.hpPct != null ? p.hpPct : 40;
       popup.innerHTML = '<label style="font-size:12px;color:#c8a84b;">HP Assign — set health %</label>'
         + '<label>Health % trigger</label>'
-        + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="1" max="100" step="1"'
+        + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="8" max="40" step="1"'
         + ' style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
     } else {
@@ -2866,7 +2866,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
-      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : hpPct; isDirty = true; }
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; }
       closeOffsetPopup();
       return;
     }
@@ -2925,6 +2925,22 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     });
     offsetInputEl.focus();
     offsetInputEl.select();
+  }
+
+  // Wire HP % input scroll wheel
+  const hpInputEl = popup.querySelector('#hpPctInput');
+  if (hpInputEl) {
+    hpInputEl.addEventListener('mouseenter', () => hpInputEl.focus());
+    hpInputEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      hpInputEl.value = Math.max(8, Math.min(40, (parseInt(hpInputEl.value) || 40) - Math.sign(e.deltaY)));
+    }, { passive: false });
+    hpInputEl.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
+      if (ev.key === 'Escape') { closeOffsetPopup(); }
+    });
+    hpInputEl.focus();
+    hpInputEl.select();
   }
   setTimeout(() => {
     document.addEventListener('mousedown', outsidePopupClose);
