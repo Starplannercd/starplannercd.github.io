@@ -2323,7 +2323,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   if (ab.encounterStart) {
     label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a8da8;font-style:italic;">${ab.name}</div>`;
   } else if (ab.hpAssign) {
-    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign — ${ab.hpPct}%</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
   } else {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.name}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
@@ -2423,7 +2423,14 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     el.appendChild(iconText);
     // Offset shown inside icon on hover
-    if (p.offset != null) {
+    if (ab && ab.hpAssign) {
+      const hpPct = p.hpPct != null ? p.hpPct : 40;
+      const inner = document.createElement('div');
+      inner.className = 'cd-offset-inner';
+      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">health</span>`;
+      inner.style.color = cd.textColor;
+      el.appendChild(inner);
+    } else if (p.offset != null) {
       const offText = p.offset === 0 ? '0s' : (p.offset > 0 ? '+' : '') + p.offset + 's';
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
@@ -2434,7 +2441,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
       e.stopPropagation();
-      showOffsetPopup(e, boss.id, rowKey, p, cd);
+      showOffsetPopup(e, boss.id, rowKey, p, cd, ab);
     });
     el.addEventListener('mousedown', e => {
       if (e.button === 1) {
@@ -2453,7 +2460,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
-        showOffsetPopup(e, boss.id, rowKey, p, cd);
+        showOffsetPopup(e, boss.id, rowKey, p, cd, ab);
       }
     });
     track.appendChild(el);
@@ -2633,7 +2640,7 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   if (!(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
-  const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random() };
+  const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random(), hpPct: 40 };
   // Preserve custom meta if provided (for moves)
   if (_preserveMeta) { Object.assign(newEntry, _preserveMeta); }
   placedCDs[bossId][rowKey].push(newEntry);
@@ -2780,7 +2787,8 @@ const FOJI_ABILITY_KEYS = {
 };
 
 
-function showOffsetPopup(e, bossId, rowKey, p, cd) {
+function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
+  const isHpAssign = !!(ab && ab.hpAssign);
   closeOffsetPopup();
   const popup = document.createElement('div');
   popup.className = 'offset-popup';
@@ -2790,7 +2798,15 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
     const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
   const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
 
-    popup.innerHTML = isCustom ? `
+    popup.innerHTML = isHpAssign ? `
+    <label style="font-size:12px;color:#c8a84b;">HP Assign — set health %</label>
+    <label>Health % trigger</label>
+    <input type="number" id="hpPctInput" value="${p.hpPct != null ? p.hpPct : 40}" min="1" max="100" step="1"
+      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+    <div class="popup-btns">
+      <button class="confirm" id="offsetConfirm">Save</button>
+      <button id="offsetCancel">Cancel</button>
+    </div>` : isCustom ? `
     <label style="font-size:12px;color:#c8a84b;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Boss Ability</label>
@@ -2842,6 +2858,14 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
   activePopup = popup;
 
   popup.querySelector('#offsetConfirm').addEventListener('click', () => {
+    if (isHpAssign) {
+      const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
+      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
+      const placedItem = placedRow.find(x => x.id === p.id);
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : hpPct; isDirty = true; }
+      closeOffsetPopup();
+      return;
+    }
     const offsetInput = popup.querySelector('#offsetInput');
     const offVal = parseInt(offsetInput.value, 10);
     if (isCustom) {
@@ -3029,11 +3053,14 @@ function buildFojiExport() {
         const placements = bossData[rowKey];
         if (!placements || placements.length === 0) return;
 
-        const castNum = ab.hpAssign ? ab.hpPct : getCastNumber(ab.name);
+        // HP assign rows use the per-placement hpPct as cast number (health %), always count 1 per row
+        const castNum = ab.hpAssign ? 1 : getCastNumber(ab.name);
         const bossAbKey = getBossAbilityKey(boss, rowKey, ab.name);
 
         const sortedPlacements = [...placements].sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0));
         sortedPlacements.forEach(p => {
+          // For HP assign rows, cast number = the placement's health % value
+          const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
           const cd = CDS.find(c => c.id === p.cdId);
           if (!cd) return;
           const _exportCd = CD_POOL.find(c => c.id === p.cdId); const isCustomPlacement = !!(_exportCd && _exportCd.customType);
@@ -3056,7 +3083,7 @@ function buildFojiExport() {
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
-          lines.push(`${_bossAbKey}/${_castNum}/${who}/${offset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          lines.push(`${_bossAbKey}/${_pCastNum}/${who}/${offset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
         });
       });
     });
