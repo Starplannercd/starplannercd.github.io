@@ -2592,21 +2592,21 @@ function onDragUp(e) {
       // Snapshot custom meta before removing so we can restore it
       const _draggedRow = (placedCDs[drag.moveBossId] || {})[drag.moveRowKey] || [];
       const _draggedP = _draggedRow.find(p => p.id === drag.movePlacedId);
-      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility } : null;
+      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, hpPct: _draggedP.hpPct } : null;
       __rawRemove(drag.moveBossId, drag.moveRowKey, drag.movePlacedId);
 
       if (displaced && (drag.moveBossId !== bossId || drag.moveRowKey !== rowKey)) {
         // Move displaced CD to source position (different row swap)
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(drag.moveBossId, drag.moveRowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       } else if (displaced && drag.moveRowKey === rowKey) {
         // Same row swap: remove displaced then move it to source cell
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(bossId, rowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       }
@@ -2644,7 +2644,7 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
   const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random(), hpPct: 40 };
   // Preserve custom meta if provided (for moves)
-  if (_preserveMeta) { Object.assign(newEntry, _preserveMeta); }
+  if (_preserveMeta) { Object.assign(newEntry, _preserveMeta); if (_preserveMeta.hpPct != null) newEntry.hpPct = _preserveMeta.hpPct; }
   placedCDs[bossId][rowKey].push(newEntry);
   isDirty = true;
   renderTimeline();
