@@ -2426,11 +2426,11 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     el.appendChild(iconText);
     // Offset shown inside icon on hover
-    if (_ab && _ab.hpAssign) {
+    if (_ab && _ab.hpAssign) { // Always show HP % on hover
       const hpPct = p.hpPct != null ? p.hpPct : 40;
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
-      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">health</span>`;
+      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">hp · delay 1</span>`;
       inner.style.color = cd.textColor;
       el.appendChild(inner);
     } else if (p.offset != null) {
@@ -2866,7 +2866,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
-      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; }
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
       closeOffsetPopup();
       return;
     }
@@ -3080,6 +3080,7 @@ function buildFojiExport() {
         sortedPlacements.forEach(p => {
           // For HP assign rows, cast number = the placement's health % value
           const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
+          const _exportOffset = ab.hpAssign ? 1 : offset;
           const cd = CDS.find(c => c.id === p.cdId);
           if (!cd) return;
           const _exportCd = CD_POOL.find(c => c.id === p.cdId); const isCustomPlacement = !!(_exportCd && _exportCd.customType);
@@ -3102,7 +3103,7 @@ function buildFojiExport() {
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
-          lines.push(`${_bossAbKey}/${_pCastNum}/${who}/${offset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          lines.push(`${_bossAbKey}/${_pCastNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
         });
       });
     });
