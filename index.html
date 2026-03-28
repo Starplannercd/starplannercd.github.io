@@ -2360,6 +2360,9 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 }
 
 function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
+  // Look up the ability object for this row so we can pass it to popups
+  const [_si, _ai] = rowKey.split('-').map(Number);
+  const _ab = boss.sections[_si]?.abilities[_ai] || null;
   const placed = (bossData[rowKey] || []);
   placed.forEach(p => {
     const cd = CDS.find(c => c.id === p.cdId);
@@ -2423,7 +2426,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     el.appendChild(iconText);
     // Offset shown inside icon on hover
-    if (ab && ab.hpAssign) {
+    if (_ab && _ab.hpAssign) {
       const hpPct = p.hpPct != null ? p.hpPct : 40;
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
@@ -2441,7 +2444,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
       e.stopPropagation();
-      showOffsetPopup(e, boss.id, rowKey, p, cd, ab);
+      showOffsetPopup(e, boss.id, rowKey, p, cd, _ab);
     });
     el.addEventListener('mousedown', e => {
       if (e.button === 1) {
@@ -2460,7 +2463,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
-        showOffsetPopup(e, boss.id, rowKey, p, cd, ab);
+        showOffsetPopup(e, boss.id, rowKey, p, cd, _ab);
       }
     });
     track.appendChild(el);
