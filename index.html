@@ -1475,7 +1475,7 @@ const BOSSES = [
   {
     id:'raden', name:'Ra-den',
     desc:'Heroic 10 · ~6 min fight',
-    duration: 360,
+    duration: 540,
     raden: false,
     sections: [
       {
@@ -2532,7 +2532,10 @@ function moveDragGhost(e) {
       const rowPlacements = (placedCDs[bossId] || {})[rowKey] || [];
       // For moves, exclude the dragged item itself from the check
       const _ghostCd = CD_POOL.find(c => c.id === cdId);
-      const isDuplicate = (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
+      const _ghostAbParts = rowKey.split('-').map(Number);
+      const _ghostBoss = BOSSES.find(b => b.id === bossId);
+      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostAbParts[0]]?.abilities[_ghostAbParts[1]];
+      const isDuplicate = (_ghostAb && _ghostAb.hpAssign) ? false : (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
         ? rowPlacements.some(p => p.cdId === cdId && p.id !== activeDrag.movePlacedId && !(rowKey === activeDrag.moveRowKey))
         : rowPlacements.some(p => p.cdId === cdId));
       if (isDuplicate) {
@@ -2639,7 +2642,11 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
   // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
   const cd = CD_POOL.find(c => c.id === cdId);
-  if (!(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
+  // Also allow multiple placements on HP assign rows
+  const _rowAbParts = rowKey.split('-').map(Number);
+  const _rowBoss = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
+  const _rowAb = _rowBoss && _rowBoss.sections[_rowAbParts[0]]?.abilities[_rowAbParts[1]];
+  if (!(_rowAb && _rowAb.hpAssign) && !(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
   const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random(), hpPct: 40 };
@@ -3255,7 +3262,10 @@ function placeCd(bossId, rowKey, cdId, time) {
   if (!placedCDs[bossId]) placedCDs[bossId] = {};
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
   const _cd3 = CD_POOL.find(c => c.id === cdId);
-  if (!(_cd3 && _cd3.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
+  const _rowAbParts3 = rowKey.split('-').map(Number);
+  const _rowBoss3 = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
+  const _rowAb3 = _rowBoss3 && _rowBoss3.sections[_rowAbParts3[0]]?.abilities[_rowAbParts3[1]];
+  if (!(_rowAb3 && _rowAb3.hpAssign) && !(_cd3 && _cd3.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   placedCDs[bossId][rowKey].push({ cdId, time, offset: 0, id: Date.now() + Math.random() });
   renderTimeline();
 }
