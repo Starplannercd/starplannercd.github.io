@@ -4304,25 +4304,11 @@ document.getElementById('app').setAttribute('data-icon','flat');
 
 // ── Holy Paladin CD View (Shift+M) ──
 const HPALA_CDS = ['devo1','goak','holyavenger','avwrath','lhammer','divfavor'];
-let hpalaViewStyle = localStorage.getItem('tot_rcd_hpala_style') || 'timeline';
+const hpalaViewStyle = 'icon-grid';
 
 // Short name override for this view
 const HPALA_SHORT = { devo1:'Devo', devo2:'Devo', devo3:'Devo' };
 
-const HPALA_VIEW_STYLES = [
-  { id:'timeline',     name:'Timeline',          desc:'Tinted rows, icons + name + time' },
-  { id:'badge-row',    name:'Badge Row',         desc:'Time badge on left, icons right' },
-  { id:'pill-icons',   name:'Pill Icons',        desc:'Icons with pill time labels' },
-  { id:'accent-left',  name:'Accent Left',       desc:'Bold left border, coloured bg' },
-  { id:'two-col',      name:'Two Column',        desc:'Ability | time | icons' },
-  { id:'icon-grid',    name:'Icon Grid',         desc:'Large icons, stacked ability label' },
-  { id:'dark-card',    name:'Dark Cards',        desc:'Raised card per row' },
-  { id:'slash',        name:'Slash Divider',     desc:'Slash separator between time and name' },
-  { id:'bold-ability', name:'Bold Ability',      desc:'Large coloured ability name' },
-  { id:'chip',         name:'Chip',              desc:'Ability name as coloured chip' },
-  { id:'condensed',    name:'Condensed',         desc:'Very tight single-line rows' },
-  { id:'no-border',    name:'No Border',         desc:'Clean, no row separators' },
-];
 
 function getHpalaShort(cd) {
   return HPALA_SHORT[cd.id] || cd.short;
@@ -4514,7 +4500,6 @@ function showHPalaView() {
     <div class="ss-toolbar" style="position:relative;">
       <h3>Holy Paladin CDs</h3>
       <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-      <button id="hpalaStyleBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">Style</button>
       <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
     </div>
     <div class="ss-content" id="hpalaContent" style="background:#08090d;padding:20px 24px;overflow-y:auto;flex:1;"></div>
@@ -4552,30 +4537,7 @@ function showHPalaView() {
     document.head.appendChild(script);
   });
 
-  overlay.querySelector('#hpalaStyleBtn').addEventListener('click', function(ev) {
-    ev.stopPropagation();
-    const existing = document.getElementById('hpalaStylePicker');
-    if (existing) { existing.remove(); return; }
-    const picker = document.createElement('div');
-    picker.id = 'hpalaStylePicker';
-    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:360px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
-    HPALA_VIEW_STYLES.forEach(s => {
-      const btn = document.createElement('button');
-      const isSel = s.id === hpalaViewStyle;
-      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
-      btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
-      btn.addEventListener('click', () => {
-        hpalaViewStyle = s.id;
-        localStorage.setItem('tot_rcd_hpala_style', s.id);
-        contentEl.innerHTML = buildHPalaContent();
-        picker.remove();
-      });
-      picker.appendChild(btn);
-    });
-    overlay.querySelector('.ss-toolbar').appendChild(picker);
-    const closeP = e => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', closeP); } };
-    setTimeout(() => document.addEventListener('click', closeP), 50);
-  });
+
 }
 
 // Shift+M shortcut
