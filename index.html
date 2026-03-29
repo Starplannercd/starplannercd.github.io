@@ -3834,7 +3834,8 @@ function showScreenshotModal() {
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
-        <button id="ssIconInfoBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">Offset Style</button>
+        <button id="ssCaptureBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+        <button id="ssIconInfoBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">Offset Style</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
@@ -3847,6 +3848,33 @@ function showScreenshotModal() {
   attachSsIconErrors(ssContent);
 
   overlay.querySelector('#ssClose').addEventListener('click', () => overlay.remove());
+
+  // Full-page screenshot of the ss content
+  overlay.querySelector('#ssCaptureBtn').addEventListener('click', () => {
+    const btn = overlay.querySelector('#ssCaptureBtn');
+    btn.textContent = 'Capturing…';
+    const loadH2C = (cb) => {
+      if (window.html2canvas) { cb(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = cb;
+      s.onerror = () => { btn.textContent = '📷 Screenshot'; alert('Failed to load screenshot library.'); };
+      document.head.appendChild(s);
+    };
+    loadH2C(() => {
+      const clone = ssContent.cloneNode(true);
+      clone.style.cssText = `position:fixed;top:0;left:0;width:${ssContent.offsetWidth}px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      document.body.appendChild(clone);
+      html2canvas(clone, { backgroundColor:'#08090d', scale:2, useCORS:true, allowTaint:true, width:clone.offsetWidth, height:clone.scrollHeight }).then(canvas => {
+        clone.remove();
+        const a = document.createElement('a');
+        a.download = 'rcd-screenshot.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        btn.textContent = '📷 Screenshot';
+      }).catch(() => { clone.remove(); btn.textContent = '📷 Screenshot'; });
+    });
+  });
 
   overlay.querySelector('#ssIconInfoBtn')?.addEventListener('click', function(ev) {
     ev.stopPropagation();
