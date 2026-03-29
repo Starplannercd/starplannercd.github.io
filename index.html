@@ -3459,7 +3459,7 @@ function buildSsIconEl(cd, p, ab) {
     case 'pill-corner-tr':
       return `<div style="position:relative;display:inline-block;">
         ${imgHtml}
-        <span style="position:absolute;top:-4px;right:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+        <span style="position:absolute;top:-5px;right:-5px;font-size:10px;font-weight:800;color:#fff;background:#000000cc;border:1px solid ${c}99;border-radius:6px;padding:2px 5px;white-space:nowrap;">${info}</span>
       </div>`;
 
     case 'pill-corner-tl':
@@ -3835,6 +3835,7 @@ function showScreenshotModal() {
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
         <button id="ssCaptureBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#4888c8;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">🔗 Share Link</button>
         <button id="ssIconInfoBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">Offset Style</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
@@ -3848,6 +3849,10 @@ function showScreenshotModal() {
   attachSsIconErrors(ssContent);
 
   overlay.querySelector('#ssClose').addEventListener('click', () => overlay.remove());
+
+  overlay.querySelector('#ssShareLinkBtn')?.addEventListener('click', function() {
+    createShareLink(this);
+  });
 
   // Full-page screenshot of the ss content
   overlay.querySelector('#ssCaptureBtn').addEventListener('click', () => {
@@ -4404,6 +4409,7 @@ const firebaseConfig = {
 let _fbApp = null, _fbDb = null, _fbRef = null;
 let _fbListening = false, _fbIgnoreNext = false;
 const FB_PATH = 'tot_rcd/plan';
+const FB_SHARES_PATH = 'tot_rcd/shares';
 
 function fbGetData() {
   return {
@@ -4687,6 +4693,108 @@ initFirebase();
 
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
+
+// ── Share Link / View Mode ──
+function generateShareId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function buildShareData() {
+  return {
+    placedCDs: JSON.parse(JSON.stringify(placedCDs)),
+    bossReady: JSON.parse(JSON.stringify(bossReady)),
+    createdAt: Date.now(),
+  };
+}
+
+async function createShareLink(btn) {
+  if (!_fbDb) { alert('Not connected to Firebase.'); return; }
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+  try {
+    const id = generateShareId();
+    const data = buildShareData();
+    await _fbDb.ref(FB_SHARES_PATH + '/' + id).set(data);
+    const url = window.location.origin + window.location.pathname + '?view=' + id;
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '✓ Copied!';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = '🔗 Share Link'; }, 3000);
+  } catch(e) {
+    console.error(e);
+    btn.textContent = '🔗 Share Link';
+    btn.disabled = false;
+    alert('Failed to generate link: ' + e.message);
+  }
+}
+
+// View mode — runs if ?view=ID in URL
+async function initViewMode(viewId) {
+  // Hide planner, show view page
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'none';
+
+  const viewEl = document.createElement('div');
+  viewEl.id = 'viewPage';
+  viewEl.style.cssText = 'min-height:100vh;background:#08090d;font-family:var(--app-font, Inter, system-ui, sans-serif);';
+
+  // Header
+  viewEl.innerHTML = `
+    <div style="background:#0d0f15;border-bottom:2px solid #c8a84b44;padding:16px 28px;display:flex;align-items:center;gap:14px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+      <div>
+        <div style="font-size:18px;font-weight:900;color:#c8a84b;letter-spacing:0.04em;">&lt;Professional&gt; Raid Cooldowns</div>
+        <div style="font-size:10px;color:#4a4d62;margin-top:2px;letter-spacing:0.06em;text-transform:uppercase;">Throne of Thunder · Heroic 10</div>
+      </div>
+    </div>
+    <div id="viewContent" style="padding:20px 28px;"></div>`;
+
+  document.body.appendChild(viewEl);
+
+  const viewContent = viewEl.querySelector('#viewContent');
+  viewContent.innerHTML = '<div style="color:#4a4d62;font-size:13px;padding:20px 0;">Loading…</div>';
+
+  try {
+    const firebase_app = _fbApp || firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const snap = await db.ref(FB_SHARES_PATH + '/' + viewId).once('value');
+    const data = snap.val();
+    if (!data) { viewContent.innerHTML = '<div style="color:#c84848;padding:20px 0;">Plan not found or expired.</div>'; return; }
+
+    // Apply data into state
+    if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+    if (data.bossReady) Object.assign(bossReady, data.bossReady);
+
+    // Force corner-tr style for view page
+    const _prevStyle = ssIconInfoStyle;
+    ssIconInfoStyle = 'pill-corner-tr';
+
+    // Build content
+    const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
+      '<div style="color:#5a5d78;font-size:13px;padding:20px 0;">No assignments placed.</div>';
+    viewContent.innerHTML = html;
+    attachSsIconErrors(viewContent);
+
+    ssIconInfoStyle = _prevStyle;
+  } catch(e) {
+    viewContent.innerHTML = `<div style="color:#c84848;padding:20px 0;">Error loading plan: ${e.message}</div>`;
+  }
+}
+
+// Check for view mode on load
+const _urlParams = new URLSearchParams(window.location.search);
+const _viewId = _urlParams.get('view');
+if (_viewId) {
+  // Wait for Firebase to init then load view
+  const _waitForFb = setInterval(() => {
+    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+      clearInterval(_waitForFb);
+      initViewMode(_viewId);
+    }
+  }, 100);
+  setTimeout(() => clearInterval(_waitForFb), 10000);
+}
+
 
 
 // ── Holy Paladin CD View (Shift+M) ──
