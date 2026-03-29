@@ -3863,9 +3863,9 @@ function showScreenshotModal() {
     };
     loadH2C(() => {
       const clone = ssContent.cloneNode(true);
-      clone.style.cssText = `position:fixed;top:0;left:0;width:${ssContent.offsetWidth}px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
       document.body.appendChild(clone);
-      html2canvas(clone, { backgroundColor:'#08090d', scale:2, useCORS:true, allowTaint:true, width:clone.offsetWidth, height:clone.scrollHeight }).then(canvas => {
+      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
         clone.remove();
         const a = document.createElement('a');
         a.download = 'rcd-screenshot.png';
@@ -4909,9 +4909,9 @@ function showHPalaView() {
     script.onload = () => {
       // Create a temp full-height clone so html2canvas captures everything
       const clone = contentEl.cloneNode(true);
-      clone.style.cssText = `position:fixed;top:0;left:0;width:${contentEl.offsetWidth}px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
       document.body.appendChild(clone);
-      html2canvas(clone, { backgroundColor:'#08090d', scale:2, useCORS:true, allowTaint:true, width:clone.offsetWidth, height:clone.scrollHeight }).then(canvas => {
+      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
         clone.remove();
         const a = document.createElement('a');
         a.download = 'hpala-cds.png';
