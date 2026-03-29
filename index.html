@@ -4551,6 +4551,8 @@ function _initFirebaseCore() {
 
     // Auth state
     firebase.auth().onAuthStateChanged(user => {
+      // If this is a shared view link, skip auth entirely
+      if (_viewId) return;
       if (!user) { showAuthScreen(true); return; }
       _currentUser = user;
       const email = (user.email || '').toLowerCase();
@@ -4755,7 +4757,6 @@ async function initViewMode(viewId) {
   viewContent.innerHTML = '<div style="color:#4a4d62;font-size:13px;padding:20px 0;">Loading…</div>';
 
   try {
-    const firebase_app = _fbApp || firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const snap = await db.ref(FB_SHARES_PATH + '/' + viewId).once('value');
     const data = snap.val();
@@ -4785,6 +4786,11 @@ async function initViewMode(viewId) {
 const _urlParams = new URLSearchParams(window.location.search);
 const _viewId = _urlParams.get('view');
 if (_viewId) {
+  // Immediately hide auth/app so nothing flashes
+  const _authEl = document.getElementById('authScreen');
+  const _appEl = document.getElementById('app');
+  if (_authEl) _authEl.style.display = 'none';
+  if (_appEl) _appEl.style.display = 'none';
   // Wait for Firebase to init then load view
   const _waitForFb = setInterval(() => {
     if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
