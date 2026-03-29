@@ -3381,6 +3381,7 @@ let ssMode = 'current'; // 'current' | 'all'
 let ssLayout = 'l14';
 const ssIconStyle = 'no-border';
 const ssRowStyle = 'full-color';
+let ssLabelStyle = localStorage.getItem('tot_rcd_ss_label') || 'stacked-prefix';
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
@@ -3426,6 +3427,141 @@ const SS_ROW_STYLES = [
   { id:'two-col',         name:'Two Column',        desc:'Name + time side-by-side' },
   { id:'full-color',      name:'Full Color Row',    desc:'Ability colour tints the row' },
   { id:'compact-inline',  name:'Compact Inline',    desc:'Tight rows, time inline right' },
+];
+
+function getSsTimeLabel(ab) {
+  if (ab.hpAssign) return null; // handled separately
+  return formatTime(ab.time);
+}
+
+function getSsAbilityLabel(ab) {
+  return formatAbilityName(ab.name);
+}
+
+function buildSsLabel(ab) {
+  const c = ab.color;
+  const name = getSsAbilityLabel(ab);
+  const t = formatTime(ab.time);
+
+  // Special: HP assign shows health %
+  if (ab.hpAssign) {
+    switch(ssLabelStyle) {
+      default:
+        return `<div class="ss-label">
+          <div class="ss-label-marker" style="background:${c};"></div>
+          <div class="ss-label-inner">
+            <span class="ss-label-name" style="color:${c};">HP Assign</span>
+          </div>
+        </div>`;
+    }
+  }
+
+  switch(ssLabelStyle) {
+    case 'time-only':
+      return `<div class="ss-label" style="align-items:center;">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time" style="font-size:12px;font-weight:700;color:#fff;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'starts-at':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'about-prefix':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'cast-at':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'time-big':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span style="font-size:16px;font-weight:900;color:#fff;letter-spacing:0.02em;">${t}</span>
+          <span style="font-size:10px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        </div>
+      </div>`;
+
+    case 'inline-separator':
+      return `<div class="ss-label" style="align-items:center;">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div style="padding:0 12px;overflow:hidden;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="color:#2e3040;font-size:12px;">·</span>
+          <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'pill-time-bottom':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#ffffff18;border:1px solid #ffffff33;border-radius:10px;padding:1px 8px;align-self:flex-start;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'badge-left':
+      return `<div class="ss-label" style="padding:0;">
+        <div style="background:#ffffff18;border-right:1px solid #ffffff22;min-width:50px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:12px;font-weight:800;color:#fff;">${t}</span>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 12px;overflow:hidden;">
+          <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        </div>
+      </div>`;
+
+    case 'two-line-bold':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span style="font-size:13px;font-weight:800;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="font-size:11px;font-weight:700;color:#ffffff99;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'stacked-prefix':
+    default:
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
+        </div>
+      </div>`;
+  }
+}
+
+const SS_LABEL_STYLES = [
+  { id:'stacked-prefix',   name:'Starts At',       desc:'Name + "starts at X:XX"' },
+  { id:'about-prefix',     name:'Approx (~)',       desc:'Name + "~X:XX"' },
+  { id:'cast-at',          name:'Cast At',          desc:'Name + "cast at X:XX"' },
+  { id:'time-only',        name:'Time Below',       desc:'Name + bold time' },
+  { id:'time-big',         name:'Time First',       desc:'Large time, name below' },
+  { id:'inline-separator', name:'Inline · Dot',     desc:'Name · X:XX on one line' },
+  { id:'pill-time-bottom', name:'Pill Time',         desc:'Name + time in pill' },
+  { id:'badge-left',       name:'Time Badge Left',  desc:'Time panel on left' },
+  { id:'two-line-bold',    name:'Bold Two Line',    desc:'Bold name + muted time' },
 ];
 
 function buildSsRow(ab, iconsHtml) {
@@ -3487,12 +3623,13 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'full-color':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0a0b0f;min-height:54px;background:${c}0d;">
-        <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:1px solid ${c}22;">
-          <div style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:10px;font-weight:500;color:#ffffff99;letter-spacing:0.04em;">${abTime}</div>
-        </div>
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0a0b0f;min-height:58px;background:${c}0d;">
+        <div style="width:200px;flex-shrink:0;display:flex;align-items:stretch;border-right:1px solid ${c}22;">${buildSsLabel(ab)
+          .replace(/class="ss-label"/g,'style="width:200px;display:flex;align-items:stretch;"')
+          .replace(/class="ss-label-marker"/g,`style="width:3px;align-self:stretch;flex-shrink:0;background:${c}"`)
+          .replace(/class="ss-label-inner"/g,'style="display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0 12px;overflow:hidden;"')
+          .replace(/class="ss-label-name"/g,'style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"')
+          .replace(/class="ss-label-time"/g,'style="font-size:10px;letter-spacing:0.04em;"')}</div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
@@ -3569,6 +3706,7 @@ function showScreenshotModal() {
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
+        <button id="ssLabelBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">Label Style</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
@@ -3581,6 +3719,34 @@ function showScreenshotModal() {
   attachSsIconErrors(ssContent);
 
   overlay.querySelector('#ssClose').addEventListener('click', () => overlay.remove());
+
+  overlay.querySelector('#ssLabelBtn')?.addEventListener('click', function(ev) {
+    ev.stopPropagation();
+    const existing = document.getElementById('ssLabelPicker');
+    if (existing) { existing.remove(); return; }
+    const picker = document.createElement('div');
+    picker.id = 'ssLabelPicker';
+    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:360px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+    SS_LABEL_STYLES.forEach(s => {
+      const btn = document.createElement('button');
+      const isSel = s.id === ssLabelStyle;
+      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
+      btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
+      btn.addEventListener('click', () => {
+        ssLabelStyle = s.id;
+        localStorage.setItem('tot_rcd_ss_label', s.id);
+        ssContent.innerHTML = buildContent();
+        attachSsIconErrors(ssContent);
+        picker.remove();
+      });
+      picker.appendChild(btn);
+    });
+    const toolbar = overlay.querySelector('.ss-toolbar');
+    toolbar.style.position = 'relative';
+    toolbar.appendChild(picker);
+    const closeP = e => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', closeP); } };
+    setTimeout(() => document.addEventListener('click', closeP), 50);
+  });
 
 
 
