@@ -3380,8 +3380,28 @@ const BOSS_PORTRAIT_URLS = {
 let ssMode = 'current'; // 'current' | 'all'
 let ssLayout = 'l14';
 const ssIconStyle = 'no-border';
+let ssIconInfoStyle = localStorage.getItem('tot_rcd_ss_icon_info') || 'pill-below';
+
+const SS_ICON_INFO_STYLES = [
+  { id:'none',           name:'None',              desc:'No offset/HP shown' },
+  { id:'pill-below',     name:'Pill Below',        desc:'Small pill under icon' },
+  { id:'pill-corner-br', name:'Corner BR',         desc:'Badge bottom-right corner' },
+  { id:'pill-corner-tr', name:'Corner TR',         desc:'Badge top-right corner' },
+  { id:'pill-corner-tl', name:'Corner TL',         desc:'Badge top-left corner' },
+  { id:'overlay-center', name:'Centre Overlay',    desc:'Semi-transparent overlay' },
+  { id:'overlay-bottom', name:'Bottom Overlay',    desc:'Dark strip at bottom' },
+  { id:'overlay-top',    name:'Top Overlay',       desc:'Dark strip at top' },
+  { id:'inline-right',   name:'Inline Right',      desc:'Text to right of icon' },
+  { id:'inline-below',   name:'Label Below',       desc:'Name + value below' },
+  { id:'bracket',        name:'Bracket',           desc:'[offset] beside icon' },
+  { id:'slash',          name:'Slash',             desc:'Name/offset format' },
+  { id:'dot-prefix',     name:'Dot Prefix',        desc:'· offset next to icon' },
+  { id:'box-outline',    name:'Box Outline',       desc:'Outlined box badge' },
+  { id:'glow-badge',     name:'Glow Badge',        desc:'Coloured glow badge' },
+  { id:'time-right',     name:'Time Right',        desc:'Clock + time right' },
+];
 const ssRowStyle = 'full-color';
-let ssLabelStyle = localStorage.getItem('tot_rcd_ss_label') || 'stacked-prefix';
+const ssLabelStyle = 'badge-left';
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
@@ -3402,11 +3422,130 @@ function buildSummaryForBoss(boss) {
 
 
 
-function buildSsIconEl(cd) {
+function getSsInfoLabel(cd, p, ab) {
+  if (ab && ab.hpAssign) return `${p.hpPct != null ? p.hpPct : 40}%`;
+  if (p && p.offset != null && p.offset !== 0) return `${p.offset > 0 ? '+' : ''}${p.offset}s`;
+  return null;
+}
+
+function buildSsIconEl(cd, p, ab) {
   const iconUrl = getCdIconUrl(cd.id);
-  const fallbackHtml = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
-  if (!iconUrl) return fallbackHtml;
-  return `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fallbackHtml)}" src="${iconUrl}" style="width:46px;height:46px;border-radius:6px;border:none;" title="${cd.name}" />`;
+  const info = getSsInfoLabel(cd, p, ab);
+  const c = cd.color;
+  const fallbackDiv = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
+  const imgHtml = iconUrl
+    ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fallbackDiv)}" src="${iconUrl}" style="width:46px;height:46px;border-radius:6px;border:none;" title="${cd.name}" />`
+    : fallbackDiv;
+
+  if (!info || ssIconInfoStyle === 'none') {
+    return ssIconInfoStyle === 'inline-right' || ssIconInfoStyle === 'inline-below' || ssIconInfoStyle === 'bracket' || ssIconInfoStyle === 'slash' || ssIconInfoStyle === 'dot-prefix' || ssIconInfoStyle === 'time-right'
+      ? `<div style="display:flex;align-items:center;gap:4px;">${imgHtml}</div>`
+      : imgHtml;
+  }
+
+  switch(ssIconInfoStyle) {
+    case 'pill-below':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:800;color:#fff;background:#00000066;border-radius:8px;padding:1px 5px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-br':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;bottom:-4px;right:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-tr':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;top:-4px;right:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-tl':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;top:-4px;left:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'overlay-center':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:11px;font-weight:900;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'overlay-bottom':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.75);border-radius:0 0 6px 6px;text-align:center;padding:2px 0;">
+          <span style="font-size:9px;font-weight:800;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'overlay-top':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,0.75);border-radius:6px 6px 0 0;text-align:center;padding:2px 0;">
+          <span style="font-size:9px;font-weight:800;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'inline-right':
+      return `<div style="display:flex;align-items:center;gap:4px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'inline-below':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#e8eaf2;">${info}</span>
+      </div>`;
+
+    case 'bracket':
+      return `<div style="display:flex;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#c8a84b;white-space:nowrap;">[${info}]</span>
+      </div>`;
+
+    case 'slash':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        ${imgHtml}
+        <span style="font-size:9px;color:#8a8da8;white-space:nowrap;">${cd.short}/${info}</span>
+      </div>`;
+
+    case 'dot-prefix':
+      return `<div style="display:flex;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:10px;color:#c8a84b;white-space:nowrap;">· ${info}</span>
+      </div>`;
+
+    case 'box-outline':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:700;color:${c};border:1px solid ${c}66;border-radius:3px;padding:1px 5px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'glow-badge':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:800;color:#fff;background:${c}cc;border-radius:6px;padding:1px 6px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'time-right':
+      return `<div style="display:flex;align-items:center;gap:4px;">
+        ${imgHtml}
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
+          <span style="font-size:9px;color:#4a4d62;white-space:nowrap;">${cd.short}</span>
+          <span style="font-size:11px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
+        </div>
+      </div>`;
+
+    default:
+      return imgHtml;
+  }
 }
 
 function attachSsIconErrors(container) {
@@ -3552,17 +3691,6 @@ function buildSsLabel(ab) {
   }
 }
 
-const SS_LABEL_STYLES = [
-  { id:'stacked-prefix',   name:'Starts At',       desc:'Name + "starts at X:XX"' },
-  { id:'about-prefix',     name:'Approx (~)',       desc:'Name + "~X:XX"' },
-  { id:'cast-at',          name:'Cast At',          desc:'Name + "cast at X:XX"' },
-  { id:'time-only',        name:'Time Below',       desc:'Name + bold time' },
-  { id:'time-big',         name:'Time First',       desc:'Large time, name below' },
-  { id:'inline-separator', name:'Inline · Dot',     desc:'Name · X:XX on one line' },
-  { id:'pill-time-bottom', name:'Pill Time',         desc:'Name + time in pill' },
-  { id:'badge-left',       name:'Time Badge Left',  desc:'Time panel on left' },
-  { id:'two-line-bold',    name:'Bold Two Line',    desc:'Bold name + muted time' },
-];
 
 function buildSsRow(ab, iconsHtml) {
   const abTime = formatTime(ab.time);
@@ -3680,7 +3808,7 @@ function renderSsBossBlock(boss) {
     const iconsHtml = sorted.map(p => {
       const cd = CD_POOL.find(c => c.id === p.cdId);
       if (!cd) return '';
-      return buildSsIconEl(cd);
+      return buildSsIconEl(cd, p, ab);
     }).join('');
     return buildSsRow(ab, iconsHtml);
   }).join('');
@@ -3706,7 +3834,7 @@ function showScreenshotModal() {
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
-        <button id="ssLabelBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">Label Style</button>
+        <button id="ssIconInfoBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">Offset Style</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
@@ -3720,21 +3848,21 @@ function showScreenshotModal() {
 
   overlay.querySelector('#ssClose').addEventListener('click', () => overlay.remove());
 
-  overlay.querySelector('#ssLabelBtn')?.addEventListener('click', function(ev) {
+  overlay.querySelector('#ssIconInfoBtn')?.addEventListener('click', function(ev) {
     ev.stopPropagation();
-    const existing = document.getElementById('ssLabelPicker');
+    const existing = document.getElementById('ssIconInfoPicker');
     if (existing) { existing.remove(); return; }
     const picker = document.createElement('div');
-    picker.id = 'ssLabelPicker';
-    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:360px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
-    SS_LABEL_STYLES.forEach(s => {
+    picker.id = 'ssIconInfoPicker';
+    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+    SS_ICON_INFO_STYLES.forEach(s => {
       const btn = document.createElement('button');
-      const isSel = s.id === ssLabelStyle;
+      const isSel = s.id === ssIconInfoStyle;
       btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
       btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
       btn.addEventListener('click', () => {
-        ssLabelStyle = s.id;
-        localStorage.setItem('tot_rcd_ss_label', s.id);
+        ssIconInfoStyle = s.id;
+        localStorage.setItem('tot_rcd_ss_icon_info', s.id);
         ssContent.innerHTML = buildContent();
         attachSsIconErrors(ssContent);
         picker.remove();
@@ -3747,6 +3875,7 @@ function showScreenshotModal() {
     const closeP = e => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', closeP); } };
     setTimeout(() => document.addEventListener('click', closeP), 50);
   });
+
 
 
 
