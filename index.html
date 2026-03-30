@@ -4936,72 +4936,120 @@ function updatePlansBtn() {
 
 function showPlansMenu(ev) {
   ev.stopPropagation();
-  const existing = document.getElementById('plansMenuOverlay');
+  const existing = document.getElementById('plansOverlay');
   if (existing) { existing.remove(); return; }
 
-  const btn = document.getElementById('plansBtn');
-  const rect = btn.getBoundingClientRect();
-
   const ov = document.createElement('div');
-  ov.id = 'plansMenuOverlay';
-  ov.style.cssText = `position:fixed;top:${rect.bottom + 4}px;left:${rect.left}px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:8px;z-index:3000;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,0.8);`;
+  ov.id = 'plansOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding-top:52px;';
 
-  function renderMenu() {
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
+
+  function buildBoxHtml() {
     const plans = getPlans();
     const activePlanId = getActivePlanId();
-    const entries = Object.values(plans).sort((a, b) => a.savedAt - b.savedAt);
+    const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
 
-    ov.innerHTML = '';
+    const allPlans = [{ id: FULL_RAID_ID, name: 'Full Raid', isFullRaid: true }, ...entries];
 
-    // Header
-    const header = document.createElement('div');
-    header.style.cssText = 'font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;padding:4px 8px 8px;border-bottom:1px solid #1e2030;margin-bottom:6px;';
-    header.textContent = 'Saved Plans';
-    ov.appendChild(header);
-
-    // Full Raid entry
-    const fullRow = document.createElement('div');
-    const isActiveFull = activePlanId === FULL_RAID_ID;
-    fullRow.style.cssText = `display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:5px;cursor:pointer;background:${isActiveFull ? '#c8a84b18' : 'transparent'};margin-bottom:2px;`;
-    fullRow.innerHTML = `<span style="font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c8a84b':'#c8d0e8'};flex:1;">Full Raid</span>${isActiveFull ? '<span style="font-size:9px;color:#c8a84b;font-weight:700;letter-spacing:0.06em;">ACTIVE</span>' : ''}`;
-    fullRow.addEventListener('click', () => { switchToPlan(FULL_RAID_ID); ov.remove(); });
-    ov.appendChild(fullRow);
-
-    // Custom plans
-    entries.forEach(plan => {
+    const plansHtml = allPlans.map(plan => {
       const isActive = activePlanId === plan.id;
-      const row = document.createElement('div');
-      row.style.cssText = `display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:5px;cursor:pointer;background:${isActive ? '#c8a84b18' : 'transparent'};margin-bottom:2px;`;
-      row.innerHTML = `<span style="font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
-        ${isActive ? '<span style="font-size:9px;color:#c8a84b;font-weight:700;letter-spacing:0.06em;">ACTIVE</span>' : ''}
-        <button class="plan-delete-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a4d62;font-size:13px;cursor:pointer;padding:0 2px;flex-shrink:0;" title="Delete">✕</button>`;
-      row.addEventListener('click', (e) => {
-        if (e.target.classList.contains('plan-delete-btn')) return;
-        switchToPlan(plan.id);
-        ov.remove();
+      return `<div class="plan-card" data-id="${plan.id}" style="
+        display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
+        border-bottom:1px solid #161820;transition:background 0.1s;
+        background:${isActive ? '#c8a84b0f' : 'transparent'};
+        position:relative;
+      ">
+        <div style="
+          width:3px;height:36px;border-radius:2px;flex-shrink:0;
+          background:${isActive ? '#c8a84b' : '#2e3040'};
+          transition:background 0.15s;
+        "></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s;">${plan.name}</div>
+          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c8a84b99;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#3a3d52;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
+        </div>
+        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c8a84b;flex-shrink:0;box-shadow:0 0 8px #c8a84b88;"></div>' : ''}
+        ${!plan.isFullRaid ? `<button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#2e3040;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;">✕</button>` : ''}
+      </div>`;
+    }).join('');
+
+    return `
+      <div style="padding:16px 18px 12px;border-bottom:1px solid #1e2030;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;">Plans</div>
+        <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
+      <div style="padding:10px 12px;border-top:1px solid #1e2030;display:flex;gap:8px;">
+        <button id="newPlanBtn" style="flex:1;padding:9px;border-radius:6px;border:1px dashed #2e3040;background:transparent;color:#6878a0;font-size:11px;cursor:pointer;transition:border-color 0.15s,color 0.15s;">+ New Plan</button>
+        <button id="importPlanBtnMenu" style="flex:1;padding:9px;border-radius:6px;border:1px dashed #2e3040;background:transparent;color:#6878a0;font-size:11px;cursor:pointer;transition:border-color 0.15s,color 0.15s;">↓ Import Foji</button>
+      </div>`;
+  }
+
+  box.innerHTML = buildBoxHtml();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    box.style.transform = 'translateY(0)';
+    box.style.opacity = '1';
+  });
+
+  function close() {
+    box.style.transform = 'translateY(-8px)';
+    box.style.opacity = '0';
+    setTimeout(() => ov.remove(), 160);
+  }
+
+  function rebuildList() {
+    box.innerHTML = buildBoxHtml();
+    wireBox();
+  }
+
+  function switchPlan(id) {
+    // Animate out active, animate in new
+    const cards = box.querySelectorAll('.plan-card');
+    cards.forEach(c => {
+      if (c.dataset.id === id) {
+        c.style.transition = 'background 0.2s';
+        c.style.background = '#c8a84b18';
+      }
+    });
+    setTimeout(() => {
+      switchToPlan(id);
+      rebuildList();
+    }, 120);
+  }
+
+  function wireBox() {
+    box.querySelector('#plansCloseBtn')?.addEventListener('click', close);
+
+    box.querySelectorAll('.plan-card').forEach(card => {
+      card.addEventListener('mouseenter', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = '#ffffff08'; });
+      card.addEventListener('mouseleave', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = 'transparent'; });
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('plan-del-x') || e.target.closest('.plan-del-x')) return;
+        if (card.dataset.id !== getActivePlanId()) switchPlan(card.dataset.id);
       });
-      row.querySelector('.plan-delete-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (isActive) switchToPlan(FULL_RAID_ID);
-        deletePlan(plan.id);
-        renderMenu();
-      });
-      ov.appendChild(row);
     });
 
-    // Divider
-    const div = document.createElement('div');
-    div.style.cssText = 'border-top:1px solid #1e2030;margin:6px 0;';
-    ov.appendChild(div);
+    box.querySelectorAll('.plan-del-x').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.color = '#c84848'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#2e3040'; });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (getActivePlanId() === btn.dataset.id) switchToPlan(FULL_RAID_ID);
+        deletePlan(btn.dataset.id);
+        rebuildList();
+        updatePlansBtn();
+      });
+    });
 
-    // Save current as new plan
-    const saveBtn = document.createElement('button');
-    saveBtn.style.cssText = 'width:100%;padding:7px 8px;background:transparent;border:1px dashed #2e3040;border-radius:5px;color:#8a8da8;font-size:11px;cursor:pointer;text-align:left;';
-    saveBtn.textContent = '+ Save current as new plan…';
-    saveBtn.addEventListener('click', () => {
+    box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
       const name = prompt('Name this plan:');
       if (!name || !name.trim()) return;
-      // Copy Full Raid as starting point
       const fullRaidSnapshot = getFullRaidSnapshot();
       Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
       Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
@@ -5009,28 +5057,17 @@ function showPlansMenu(ev) {
       setActivePlanId(id);
       renderTimeline();
       updatePlansBtn();
-      renderMenu();
+      rebuildList();
     });
-    ov.appendChild(saveBtn);
 
-    // Import from Foji
-    const importBtn = document.createElement('button');
-    importBtn.style.cssText = 'width:100%;padding:7px 8px;background:transparent;border:1px dashed #2e3040;border-radius:5px;color:#8a8da8;font-size:11px;cursor:pointer;text-align:left;margin-top:4px;';
-    importBtn.textContent = '↓ Import Foji string as new plan…';
-    importBtn.addEventListener('click', () => {
-      ov.remove();
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('click', () => {
+      close();
       showImportFojiAsPlan();
     });
-    ov.appendChild(importBtn);
   }
 
-  renderMenu();
-  document.body.appendChild(ov);
-
-  const closeMenu = (e) => {
-    if (!ov.contains(e.target) && e.target !== btn) { ov.remove(); document.removeEventListener('mousedown', closeMenu); }
-  };
-  setTimeout(() => document.addEventListener('mousedown', closeMenu), 50);
+  wireBox();
+  ov.addEventListener('mousedown', (e) => { if (e.target === ov) close(); });
 }
 
 function showImportFojiAsPlan() {
