@@ -4509,6 +4509,10 @@ document.getElementById('screenshotBtn').addEventListener('click', showScreensho
 
 // ---- localStorage auto-save ----
 const LS_KEY = 'tot_rcd_autosave';
+const PLANS_KEY = 'tot_rcd_plans';
+const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
+const FULL_RAID_ID = '__full_raid__';
+const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
 
 // ── Firebase config ──
 const firebaseConfig = {
@@ -4728,7 +4732,14 @@ function scheduleAutoSave() {
 }
 
 const __rt = renderTimeline;
-window.renderTimeline = function() { __rt(); scheduleAutoSave(); };
+window.renderTimeline = function() {
+  __rt();
+  scheduleAutoSave();
+  // Keep Full Raid snapshot up to date when on Full Raid plan
+  if (getActivePlanId() === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+  }
+};
 
 // ---- Bottom panel drag-to-expand (snap back on release) ----
 (function() {
@@ -4813,9 +4824,7 @@ initFirebase();
 document.getElementById('app').setAttribute('data-icon','flat');
 
 // ── Plan Presets ──
-const PLANS_KEY = 'tot_rcd_plans';
-const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
-const FULL_RAID_ID = '__full_raid__';
+// plan constants moved up
 
 function getPlans() {
   try { return JSON.parse(localStorage.getItem(PLANS_KEY) || '{}'); } catch(e) { return {}; }
@@ -4833,9 +4842,20 @@ function setActivePlanId(id) {
   localStorage.setItem(ACTIVE_PLAN_KEY, id);
 }
 
+
+function saveFullRaidSnapshot() {
+  // Immediately save Full Raid placedCDs to its own key — no debounce
+  try {
+    localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(JSON.parse(JSON.stringify(placedCDs))));
+  } catch(e) {}
+}
+
 function getFullRaidSnapshot() {
-  // Always read Full Raid from the autosave (localStorage), not current placedCDs
-  // which may be a sub plan
+  try {
+    const raw = localStorage.getItem(FULL_RAID_SNAPSHOT_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  // Fallback to autosave
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
@@ -4854,7 +4874,6 @@ function applyTimelineSnapshot(snapshot) {
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
   Object.assign(placedCDs, JSON.parse(JSON.stringify(snapshot || {})));
   renderTimeline();
-  isDirty = true;
 }
 
 function saveCurrentAsPlan(name, subWho, subSpec) {
@@ -4873,7 +4892,11 @@ function saveCurrentAsPlan(name, subWho, subSpec) {
 }
 
 function updatePlanSnapshot(id) {
-  if (id === FULL_RAID_ID) { autoSave(); return; }
+  if (id === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+    autoSave();
+    return;
+  }
   const plans = getPlans();
   if (!plans[id]) return;
   plans[id].placedCDs = captureCurrentTimeline();
@@ -4889,26 +4912,33 @@ function deletePlan(id) {
 }
 
 function switchToPlan(id) {
-  // Save current state back to active plan first
   const currentId = getActivePlanId();
+
+  // Immediately save current state before switching — no debounce
   if (currentId === FULL_RAID_ID) {
-    // Save Full Raid state to autosave so getFullRaidSnapshot always has it
-    try { localStorage.setItem(LS_KEY, JSON.stringify(fbGetData())); } catch(e) {}
+    saveFullRaidSnapshot();
     autoSave();
   } else {
-    updatePlanSnapshot(currentId);
+    const plans = getPlans();
+    if (plans[currentId]) {
+      plans[currentId].placedCDs = captureCurrentTimeline();
+      plans[currentId].savedAt = Date.now();
+      savePlans(plans);
+    }
   }
 
   setActivePlanId(id);
 
   if (id === FULL_RAID_ID) {
-    // Restore from Firebase/localStorage autosave
-    autoLoad();
-    renderTimeline();
+    // Restore Full Raid from its dedicated snapshot
+    const snapshot = getFullRaidSnapshot();
+    applyTimelineSnapshot(snapshot);
   } else {
     const plans = getPlans();
     const plan = plans[id];
-    if (plan) applyTimelineSnapshot(plan.placedCDs);
+    if (plan && plan.placedCDs) {
+      applyTimelineSnapshot(plan.placedCDs);
+    }
   }
   renderBottomPanel();
   updatePlansBtn();
