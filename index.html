@@ -1966,11 +1966,14 @@ function showSubPlanPrompt(playerWho, specName) {
   ov.querySelector('#subPlanStart').addEventListener('click', () => {
     const name = input.value.trim() || ('Sub: ' + short);
     ov.remove();
-    // Apply the fill on the current base timeline
-    applyFill(playerWho, specName);
-    // Save as a named plan
+    // Start from Full Raid snapshot so new plan inherits current placements
+    const fullRaidSnapshot = getFullRaidSnapshot();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    // Save as a named plan (timeline is now a copy of Full Raid)
     const id = saveCurrentAsPlan(name, playerWho, specName);
     setActivePlanId(id);
+    renderTimeline();
     updatePlansBtn();
   });
 
@@ -4830,6 +4833,19 @@ function setActivePlanId(id) {
   localStorage.setItem(ACTIVE_PLAN_KEY, id);
 }
 
+function getFullRaidSnapshot() {
+  // Always read Full Raid from the autosave (localStorage), not current placedCDs
+  // which may be a sub plan
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.placedCDs) return data.placedCDs;
+    }
+  } catch(e) {}
+  return {};
+}
+
 function captureCurrentTimeline() {
   return JSON.parse(JSON.stringify(placedCDs));
 }
@@ -4876,6 +4892,8 @@ function switchToPlan(id) {
   // Save current state back to active plan first
   const currentId = getActivePlanId();
   if (currentId === FULL_RAID_ID) {
+    // Save Full Raid state to autosave so getFullRaidSnapshot always has it
+    try { localStorage.setItem(LS_KEY, JSON.stringify(fbGetData())); } catch(e) {}
     autoSave();
   } else {
     updatePlanSnapshot(currentId);
@@ -4983,8 +5001,13 @@ function showPlansMenu(ev) {
     saveBtn.addEventListener('click', () => {
       const name = prompt('Name this plan:');
       if (!name || !name.trim()) return;
+      // Copy Full Raid as starting point
+      const fullRaidSnapshot = getFullRaidSnapshot();
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
       const id = saveCurrentAsPlan(name.trim());
       setActivePlanId(id);
+      renderTimeline();
       updatePlansBtn();
       renderMenu();
     });
@@ -5037,9 +5060,11 @@ function showImportFojiAsPlan() {
     if (!name) { status.textContent = 'Please enter a plan name.'; return; }
     if (!raw) { status.textContent = 'Please paste a Foji string.'; return; }
 
-    // Save current state, then apply import on top of a clean timeline
+    // Start from Full Raid snapshot, then apply import on top
     const savedPlaced = captureCurrentTimeline();
+    const fullRaidSnapshot = getFullRaidSnapshot();
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
 
     try {
       const count = parseFojiImport(raw);
