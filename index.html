@@ -1128,6 +1128,7 @@
     <button class="btn btn-danger" id="clearBtn">Clear All</button>
     <button class="btn btn-manage" id="manageBtn">Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
+    <button class="btn" id="plansBtn" style="border-color:#c8a84b44;color:#c8a84b99;">Saved Plans</button>
     <button class="btn btn-save" id="saveBtn">Share</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
@@ -4695,6 +4696,262 @@ initFirebase();
 
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
+
+// ── Plan Presets ──
+const PLANS_KEY = 'tot_rcd_plans';
+const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
+const FULL_RAID_ID = '__full_raid__';
+
+function getPlans() {
+  try { return JSON.parse(localStorage.getItem(PLANS_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function savePlans(plans) {
+  localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
+}
+
+function getActivePlanId() {
+  return localStorage.getItem(ACTIVE_PLAN_KEY) || FULL_RAID_ID;
+}
+
+function setActivePlanId(id) {
+  localStorage.setItem(ACTIVE_PLAN_KEY, id);
+}
+
+function captureCurrentTimeline() {
+  return JSON.parse(JSON.stringify(placedCDs));
+}
+
+function applyTimelineSnapshot(snapshot) {
+  Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+  Object.assign(placedCDs, JSON.parse(JSON.stringify(snapshot || {})));
+  renderTimeline();
+  isDirty = true;
+}
+
+function saveCurrentAsPlan(name) {
+  const plans = getPlans();
+  const id = 'plan_' + Date.now();
+  plans[id] = {
+    id,
+    name,
+    placedCDs: captureCurrentTimeline(),
+    savedAt: Date.now(),
+  };
+  savePlans(plans);
+  return id;
+}
+
+function updatePlanSnapshot(id) {
+  if (id === FULL_RAID_ID) { autoSave(); return; }
+  const plans = getPlans();
+  if (!plans[id]) return;
+  plans[id].placedCDs = captureCurrentTimeline();
+  plans[id].savedAt = Date.now();
+  savePlans(plans);
+}
+
+function deletePlan(id) {
+  if (id === FULL_RAID_ID) return;
+  const plans = getPlans();
+  delete plans[id];
+  savePlans(plans);
+}
+
+function switchToPlan(id) {
+  // Save current state back to active plan first
+  const currentId = getActivePlanId();
+  if (currentId === FULL_RAID_ID) {
+    autoSave();
+  } else {
+    updatePlanSnapshot(currentId);
+  }
+
+  setActivePlanId(id);
+
+  if (id === FULL_RAID_ID) {
+    // Restore from Firebase/localStorage autosave
+    autoLoad();
+    renderTimeline();
+  } else {
+    const plans = getPlans();
+    const plan = plans[id];
+    if (plan) applyTimelineSnapshot(plan.placedCDs);
+  }
+  renderBottomPanel();
+  updatePlansBtn();
+}
+
+function updatePlansBtn() {
+  const btn = document.getElementById('plansBtn');
+  if (!btn) return;
+  const id = getActivePlanId();
+  if (id === FULL_RAID_ID) {
+    btn.textContent = 'Saved Plans';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+    btn.style.background = '';
+  } else {
+    const plans = getPlans();
+    const plan = plans[id];
+    const name = plan ? plan.name : 'Unknown';
+    btn.textContent = '★ ' + name;
+    btn.style.color = '#c8a84b';
+    btn.style.borderColor = '#c8a84b';
+    btn.style.background = '#c8a84b18';
+  }
+}
+
+function showPlansMenu(ev) {
+  ev.stopPropagation();
+  const existing = document.getElementById('plansMenuOverlay');
+  if (existing) { existing.remove(); return; }
+
+  const btn = document.getElementById('plansBtn');
+  const rect = btn.getBoundingClientRect();
+
+  const ov = document.createElement('div');
+  ov.id = 'plansMenuOverlay';
+  ov.style.cssText = `position:fixed;top:${rect.bottom + 4}px;left:${rect.left}px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:8px;z-index:3000;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,0.8);`;
+
+  function renderMenu() {
+    const plans = getPlans();
+    const activePlanId = getActivePlanId();
+    const entries = Object.values(plans).sort((a, b) => a.savedAt - b.savedAt);
+
+    ov.innerHTML = '';
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = 'font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;padding:4px 8px 8px;border-bottom:1px solid #1e2030;margin-bottom:6px;';
+    header.textContent = 'Saved Plans';
+    ov.appendChild(header);
+
+    // Full Raid entry
+    const fullRow = document.createElement('div');
+    const isActiveFull = activePlanId === FULL_RAID_ID;
+    fullRow.style.cssText = `display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:5px;cursor:pointer;background:${isActiveFull ? '#c8a84b18' : 'transparent'};margin-bottom:2px;`;
+    fullRow.innerHTML = `<span style="font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c8a84b':'#c8d0e8'};flex:1;">Full Raid</span>${isActiveFull ? '<span style="font-size:9px;color:#c8a84b;font-weight:700;letter-spacing:0.06em;">ACTIVE</span>' : ''}`;
+    fullRow.addEventListener('click', () => { switchToPlan(FULL_RAID_ID); ov.remove(); });
+    ov.appendChild(fullRow);
+
+    // Custom plans
+    entries.forEach(plan => {
+      const isActive = activePlanId === plan.id;
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:5px;cursor:pointer;background:${isActive ? '#c8a84b18' : 'transparent'};margin-bottom:2px;`;
+      row.innerHTML = `<span style="font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
+        ${isActive ? '<span style="font-size:9px;color:#c8a84b;font-weight:700;letter-spacing:0.06em;">ACTIVE</span>' : ''}
+        <button class="plan-delete-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a4d62;font-size:13px;cursor:pointer;padding:0 2px;flex-shrink:0;" title="Delete">✕</button>`;
+      row.addEventListener('click', (e) => {
+        if (e.target.classList.contains('plan-delete-btn')) return;
+        switchToPlan(plan.id);
+        ov.remove();
+      });
+      row.querySelector('.plan-delete-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isActive) switchToPlan(FULL_RAID_ID);
+        deletePlan(plan.id);
+        renderMenu();
+      });
+      ov.appendChild(row);
+    });
+
+    // Divider
+    const div = document.createElement('div');
+    div.style.cssText = 'border-top:1px solid #1e2030;margin:6px 0;';
+    ov.appendChild(div);
+
+    // Save current as new plan
+    const saveBtn = document.createElement('button');
+    saveBtn.style.cssText = 'width:100%;padding:7px 8px;background:transparent;border:1px dashed #2e3040;border-radius:5px;color:#8a8da8;font-size:11px;cursor:pointer;text-align:left;';
+    saveBtn.textContent = '+ Save current as new plan…';
+    saveBtn.addEventListener('click', () => {
+      const name = prompt('Name this plan:');
+      if (!name || !name.trim()) return;
+      const id = saveCurrentAsPlan(name.trim());
+      setActivePlanId(id);
+      updatePlansBtn();
+      renderMenu();
+    });
+    ov.appendChild(saveBtn);
+
+    // Import from Foji
+    const importBtn = document.createElement('button');
+    importBtn.style.cssText = 'width:100%;padding:7px 8px;background:transparent;border:1px dashed #2e3040;border-radius:5px;color:#8a8da8;font-size:11px;cursor:pointer;text-align:left;margin-top:4px;';
+    importBtn.textContent = '↓ Import Foji string as new plan…';
+    importBtn.addEventListener('click', () => {
+      ov.remove();
+      showImportFojiAsPlan();
+    });
+    ov.appendChild(importBtn);
+  }
+
+  renderMenu();
+  document.body.appendChild(ov);
+
+  const closeMenu = (e) => {
+    if (!ov.contains(e.target) && e.target !== btn) { ov.remove(); document.removeEventListener('mousedown', closeMenu); }
+  };
+  setTimeout(() => document.addEventListener('mousedown', closeMenu), 50);
+}
+
+function showImportFojiAsPlan() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<div class="modal-box" style="width:560px;">
+    <h3>Import Foji as New Plan</h3>
+    <div class="modal-sub" style="font-size:13px;margin-bottom:8px;">Give this plan a name, then paste your Foji string.</div>
+    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
+    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
+    <div id="importPlanStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
+    <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
+      <button id="importPlanConfirm" class="btn copy-btn">Import & Save</button>
+      <button id="importPlanClose" class="btn">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#importPlanClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('mousedown', e => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelector('#importPlanName').focus();
+
+  overlay.querySelector('#importPlanConfirm').addEventListener('click', () => {
+    const name = overlay.querySelector('#importPlanName').value.trim();
+    const raw = overlay.querySelector('#importFojiPlanInput').value.trim();
+    const status = overlay.querySelector('#importPlanStatus');
+    if (!name) { status.textContent = 'Please enter a plan name.'; return; }
+    if (!raw) { status.textContent = 'Please paste a Foji string.'; return; }
+
+    // Save current state, then apply import on top of a clean timeline
+    const savedPlaced = captureCurrentTimeline();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+
+    try {
+      const count = parseFojiImport(raw);
+      const id = saveCurrentAsPlan(name);
+      setActivePlanId(id);
+      // Restore original state for Full Raid
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, savedPlaced);
+      // Now switch to the new plan (which has the import)
+      switchToPlan(id);
+      status.style.color = '#48a868';
+      status.textContent = `Imported ${count} assignments into "${name}".`;
+      setTimeout(() => overlay.remove(), 900);
+    } catch(e) {
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, savedPlaced);
+      renderTimeline();
+      status.style.color = '#c84848';
+      status.textContent = 'Import failed: ' + e.message;
+    }
+  });
+}
+
+// Init plans btn
+document.addEventListener('DOMContentLoaded', () => { updatePlansBtn(); });
+
 
 // ── Share Link / View Mode ──
 function generateShareId() {
