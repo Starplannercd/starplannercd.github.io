@@ -1128,7 +1128,6 @@
     <button class="btn btn-danger" id="clearBtn">Clear All</button>
     <button class="btn btn-manage" id="manageBtn">Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
-    <button class="btn btn-save" id="saveBtn">Share</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Screenshot</button>
@@ -3949,9 +3948,7 @@ function showScreenshotModal() {
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
-        <button id="ssCaptureBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#4888c8;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">🔗 Share Link</button>
-        <button id="ssIconInfoBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#c8a84b;font-size:11px;cursor:pointer;margin-left:8px;letter-spacing:0.04em;">Offset Style</button>
+        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#4888c8;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
@@ -4375,7 +4372,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 
 document.getElementById('manageBtn').addEventListener('click', showManageModal);
 document.getElementById('rosterBtn').addEventListener('click', showPlansMenu);
-document.getElementById('saveBtn').addEventListener('click', saveToFile);
+document.getElementById('saveBtn')?.addEventListener('click', saveToFile);
 document.getElementById('exportBtn').addEventListener('click', showExportModal);
 document.getElementById('importFojiBtn').addEventListener('click', showImportFojiModal);
 
@@ -4874,6 +4871,16 @@ function applyTimelineSnapshot(snapshot) {
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
   Object.assign(placedCDs, JSON.parse(JSON.stringify(snapshot || {})));
   renderTimeline();
+  // Flash the timeline to signal a plan swap
+  const timeline = document.querySelector('.timeline-area') || document.querySelector('.main');
+  if (timeline) {
+    timeline.style.transition = 'opacity 0.1s ease';
+    timeline.style.opacity = '0.3';
+    setTimeout(() => {
+      timeline.style.opacity = '1';
+      setTimeout(() => { timeline.style.transition = ''; }, 200);
+    }, 120);
+  }
 }
 
 function saveCurrentAsPlan(name, subWho, subSpec) {
@@ -5011,9 +5018,9 @@ function showPlansMenu(ev) {
         <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
-      <div style="padding:10px 12px;border-top:1px solid #1e2030;display:flex;gap:8px;">
-        <button id="newPlanBtn" style="flex:1;padding:9px;border-radius:6px;border:1px dashed #2e3040;background:transparent;color:#6878a0;font-size:11px;cursor:pointer;transition:border-color 0.15s,color 0.15s;">+ New Plan</button>
-        <button id="importPlanBtnMenu" style="flex:1;padding:9px;border-radius:6px;border:1px dashed #2e3040;background:transparent;color:#6878a0;font-size:11px;cursor:pointer;transition:border-color 0.15s,color 0.15s;">↓ Import Foji</button>
+      <div style="padding:12px;border-top:1px solid #1e2030;display:flex;gap:8px;">
+        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
+        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
       </div>`;
   }
 
@@ -5077,6 +5084,10 @@ function showPlansMenu(ev) {
       });
     });
 
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#2e3040'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#1e2030'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2e3040'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#1e2030'; });
     box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
       const name = prompt('Name this plan:');
       if (!name || !name.trim()) return;
