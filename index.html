@@ -1128,7 +1128,6 @@
     <button class="btn btn-danger" id="clearBtn">Clear All</button>
     <button class="btn btn-manage" id="manageBtn">Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
-    <button class="btn" id="plansBtn" style="border-color:#c8a84b44;color:#c8a84b99;">Saved Plans</button>
     <button class="btn btn-save" id="saveBtn">Share</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
@@ -1915,6 +1914,71 @@ function revertFill(playerWho) {
   refreshActiveSetFromFills();
 }
 
+function showSubPlanPrompt(playerWho, specName) {
+  const col = SPEC_CLASS_COLORS[specName] || '#c8a84b';
+  const short = SPEC_SHORT_NAMES[specName] || specName;
+
+  // Check for existing plans with this sub combo
+  const plans = getPlans();
+  const existing = Object.values(plans).filter(p => p.subWho === playerWho && p.subSpec === specName);
+
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+
+  let existingHtml = '';
+  if (existing.length) {
+    existingHtml = `<div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col}44;background:${col}0d;color:${col};font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
+      <div style="font-size:10px;color:#2e3040;text-align:center;margin:8px 0;">— or —</div>
+    </div>`;
+  }
+
+  ov.innerHTML = `<div style="background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+    <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:4px;">Sub: ${short} for ${playerWho}</div>
+    <div style="font-size:11px;color:#6878a0;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
+    ${existingHtml}
+    <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <input id="subPlanName" type="text" placeholder='Plan name (e.g. "Sub: Ret")' value="Sub: ${short}"
+      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+    <div style="display:flex;gap:8px;">
+      <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(ov);
+
+  const input = ov.querySelector('#subPlanName');
+  input.focus(); input.select();
+
+  // Load existing plan
+  ov.querySelectorAll('.load-sub-plan-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ov.remove();
+      switchToPlan(btn.dataset.id);
+      applyFill(playerWho, specName);
+      updatePlansBtn();
+    });
+  });
+
+  // Start new plan
+  ov.querySelector('#subPlanStart').addEventListener('click', () => {
+    const name = input.value.trim() || ('Sub: ' + short);
+    ov.remove();
+    // Apply the fill on the current base timeline
+    applyFill(playerWho, specName);
+    // Save as a named plan
+    const id = saveCurrentAsPlan(name, playerWho, specName);
+    setActivePlanId(id);
+    updatePlansBtn();
+  });
+
+  ov.querySelector('#subPlanCancel').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') ov.querySelector('#subPlanStart').click(); });
+}
+
 function showRosterModal() {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -2000,9 +2064,43 @@ function showRosterModal() {
   }
 
   function renderModal() {
+    function buildPlansSection() {
+      const plans = getPlans();
+      const activePlanId = getActivePlanId();
+      const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
+      let html = `<div style="margin-bottom:14px;border:1px solid #2e3040;border-radius:6px;overflow:hidden;">
+        <div style="padding:8px 12px;background:#0e0f13;border-bottom:1px solid #2e3040;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;">Saved Plans</span>
+          <div style="display:flex;gap:6px;">
+            <button id="planImportBtn" style="font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid #2e3040;background:transparent;color:#4a4d62;cursor:pointer;letter-spacing:0.04em;">↓ Import Foji</button>
+          </div>
+        </div>
+        <div style="padding:6px;">`;
+
+      // Full Raid
+      const isActiveFull = activePlanId === FULL_RAID_ID;
+      html += `<div class="plan-row" data-plan-id="${FULL_RAID_ID}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActiveFull?'#c8a84b18':'transparent'};">
+        <span style="flex:1;font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c8a84b':'#c8d0e8'};">Full Raid</span>
+        ${isActiveFull ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;">ACTIVE</span>' : ''}
+      </div>`;
+
+      entries.forEach(plan => {
+        const isActive = activePlanId === plan.id;
+        html += `<div class="plan-row" data-plan-id="${plan.id}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActive?'#c8a84b18':'transparent'};">
+          <span style="flex:1;font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
+          ${isActive ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;margin-right:6px;">ACTIVE</span>' : ''}
+          <button class="plan-del-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#3a3d52;font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;">✕</button>
+        </div>`;
+      });
+
+      html += '</div></div>';
+      return html;
+    }
+
     overlay.innerHTML = `
       <div class="modal-box" style="width:560px;max-height:82vh;overflow-y:auto;">
-        <h3>Current Roster</h3>
+        <h3>Sub</h3>
+        <div id="plansSection">${buildPlansSection()}</div>
         <div class="modal-sub" style="margin-bottom:10px;font-size:13px;">Click "Set Sub" to replace a player with a substitute. Their CDs will be automatically swapped across every boss.</div>
         <div id="rosterList">${buildRosterHtml()}</div>
         <div class="modal-footer" style="margin-top:12px;">
@@ -2015,7 +2113,34 @@ function showRosterModal() {
     wireRosterButtons();
   }
 
+  function wirePlanRows() {
+    overlay.querySelectorAll('.plan-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.dataset.planId;
+        switchToPlan(id);
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection().replace('<div id="plansSection">', '').replace('</div>', '');
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
+        wirePlanRows();
+        updatePlansBtn();
+      });
+    });
+    overlay.querySelectorAll('.plan-del-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (getActivePlanId() === id) switchToPlan(FULL_RAID_ID);
+        deletePlan(id);
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
+        wirePlanRows();
+        updatePlansBtn();
+      });
+    });
+    const importBtn = overlay.querySelector('#planImportBtn');
+    if (importBtn) importBtn.addEventListener('click', () => { overlay.remove(); showImportFojiAsPlan(); });
+  }
+
   function wireRosterButtons() {
+    wirePlanRows();
     overlay.querySelectorAll('.set-fill-btn').forEach(btn => {
       btn.addEventListener('click', () => showFillPicker(btn.dataset.who));
     });
@@ -2085,23 +2210,9 @@ function showRosterModal() {
     picker.querySelector('#confirmFill').addEventListener('click', () => {
       const specName = picker.querySelector('#fillSpecSelect').value;
       picker.remove();
-      overlay.remove(); // close the roster modal so saved fill menu is unobstructed
-      checkForSavedFill(playerWho, specName,
-        (saved) => {
-          // Restore base state first so applyFill snapshots the correct original
-          const baseState = saved.basePlacedCDs || {};
-          Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-          Object.assign(placedCDs, JSON.parse(JSON.stringify(baseState)));
-          applyFill(playerWho, specName);
-          // Now overwrite placedCDs with the saved fill work
-          Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-          Object.assign(placedCDs, JSON.parse(JSON.stringify(saved.placedCDs)));
-          renderTimeline();
-        },
-        () => {
-          applyFill(playerWho, specName);
-        }
-      );
+      overlay.remove(); // close the roster modal
+      // Ask user to name this plan (or load existing)
+      showSubPlanPrompt(playerWho, specName);
     });
 
     picker.querySelector('#cancelFill').addEventListener('click', () => picker.remove());
@@ -4683,6 +4794,7 @@ window.renderTimeline = function() { __rt(); scheduleAutoSave(); };
 
 buildPalette();
 buildBossSelect();
+updatePlansBtn();
 const _didRestore = autoLoad();
 refreshBossSelectLabels();
 renderTimeline();
@@ -4729,12 +4841,14 @@ function applyTimelineSnapshot(snapshot) {
   isDirty = true;
 }
 
-function saveCurrentAsPlan(name) {
+function saveCurrentAsPlan(name, subWho, subSpec) {
   const plans = getPlans();
   const id = 'plan_' + Date.now();
   plans[id] = {
     id,
     name,
+    subWho: subWho || null,
+    subSpec: subSpec || null,
     placedCDs: captureCurrentTimeline(),
     savedAt: Date.now(),
   };
