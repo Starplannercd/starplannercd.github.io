@@ -1125,7 +1125,7 @@
     <span class="topbar-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
-    <button class="btn btn-danger" id="clearBtn">Clear All</button>
+    <button class="btn btn-danger" id="clearBtn">Clear Boss</button>
     <button class="btn btn-manage" id="manageBtn">Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
@@ -2524,15 +2524,15 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
     const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
-      let shortLabel = '';
-      if (p.customAbility) {
-        shortLabel = CUSTOM_ABILITY_SHORTS[p.customAbility] || p.customAbility.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 4);
-      } else {
-        const who = p.customWho || 'CUS';
-        const rosterMatch = typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === who);
-        shortLabel = rosterMatch ? rosterMatch.name.slice(0, 4).toUpperCase() : who.replace(/[0-9]/g, '').slice(0, 4);
+      // Always show CUST, colored by WHO
+      iconText.textContent = 'CUST';
+      const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
+      const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
+      if (_whoPlayer) {
+        el.style.color = _whoPlayer.color;
+        el.style.background = _whoPlayer.color + '22';
+        el.style.borderColor = _whoPlayer.color;
       }
-      iconText.textContent = shortLabel;
       el.style.fontSize = '9px';
     } else {
       iconText.textContent = cd.short;
@@ -3200,30 +3200,29 @@ function buildFojiExport() {
         sortedPlacements.forEach(p => {
           // For HP assign rows, cast number = the placement's health % value
           const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
-          const _exportOffset = ab.hpAssign ? 1 : offset;
           const cd = CDS.find(c => c.id === p.cdId);
           if (!cd) return;
-          const _exportCd = CD_POOL.find(c => c.id === p.cdId); const isCustomPlacement = !!(_exportCd && _exportCd.customType);
-          // Allow custom placements to override which boss ability row they export under
+          const _exportCd = CD_POOL.find(c => c.id === p.cdId);
+          const isCustomPlacement = !!(_exportCd && _exportCd.customType);
           let _bossAbKey = bossAbKey;
-          let _castNum = castNum;
+          let _castNum = _pCastNum;
           if (isCustomPlacement && p.customBossAbility && FOJI_ABILITY_KEYS[p.customBossAbility]) {
             _bossAbKey = FOJI_ABILITY_KEYS[p.customBossAbility];
             _castNum = getCastNumber(p.customBossAbility);
           }
           const isPersonals = p.cdId === 'personals';
           const isDem = p.cdId === 'dem';
-          const isGoak = p.cdId === 'goak';
-        const spellId = isCustomPlacement
-          ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
-          : (CD_SPELL_IDS[p.cdId] || 'nil');
-        const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
-          const who = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const offset = p.offset != null ? p.offset : 0;
+          const _exportOffset = ab.hpAssign ? 1 : offset;
+          const spellId = isCustomPlacement
+            ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
+            : (CD_SPELL_IDS[p.cdId] || 'nil');
+          const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
+          const who = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
-          lines.push(`${_bossAbKey}/${_pCastNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
         });
       });
     });
@@ -4841,9 +4840,9 @@ function setActivePlanId(id) {
 
 
 function saveFullRaidSnapshot() {
-  // Immediately save Full Raid placedCDs to its own key — no debounce
   try {
-    localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(JSON.parse(JSON.stringify(placedCDs))));
+    const snapshot = captureCurrentTimeline();
+    localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(snapshot));
   } catch(e) {}
 }
 
@@ -4864,12 +4863,27 @@ function getFullRaidSnapshot() {
 }
 
 function captureCurrentTimeline() {
-  return JSON.parse(JSON.stringify(placedCDs));
+  return {
+    placedCDs: JSON.parse(JSON.stringify(placedCDs)),
+    activeSetIds: [...activeSetIds],
+    paletteOrder: paletteOrder ? [...paletteOrder] : null,
+    cdWho: Object.fromEntries(CD_POOL.map(c => [c.id, c.who])),
+  };
 }
 
 function applyTimelineSnapshot(snapshot) {
+  if (!snapshot) return;
+  // Restore placedCDs
+  const pCDs = snapshot.placedCDs || snapshot; // backwards compat
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-  Object.assign(placedCDs, JSON.parse(JSON.stringify(snapshot || {})));
+  Object.assign(placedCDs, JSON.parse(JSON.stringify(pCDs)));
+  // Restore activeSetIds
+  if (snapshot.activeSetIds) activeSetIds = new Set(snapshot.activeSetIds);
+  // Restore cdWho
+  if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
+  // Restore paletteOrder
+  if (snapshot.paletteOrder !== undefined) paletteOrder = snapshot.paletteOrder;
+  buildPalette();
   renderTimeline();
   // Flash the timeline to signal a plan swap
   const timeline = document.querySelector('.timeline-area') || document.querySelector('.main');
@@ -4886,12 +4900,16 @@ function applyTimelineSnapshot(snapshot) {
 function saveCurrentAsPlan(name, subWho, subSpec) {
   const plans = getPlans();
   const id = 'plan_' + Date.now();
+  const snapshot = captureCurrentTimeline();
   plans[id] = {
     id,
     name,
     subWho: subWho || null,
     subSpec: subSpec || null,
-    placedCDs: captureCurrentTimeline(),
+    placedCDs: snapshot.placedCDs,
+    activeSetIds: snapshot.activeSetIds,
+    paletteOrder: snapshot.paletteOrder,
+    cdWho: snapshot.cdWho,
     savedAt: Date.now(),
   };
   savePlans(plans);
@@ -4906,7 +4924,11 @@ function updatePlanSnapshot(id) {
   }
   const plans = getPlans();
   if (!plans[id]) return;
-  plans[id].placedCDs = captureCurrentTimeline();
+  const snapshot = captureCurrentTimeline();
+  plans[id].placedCDs = snapshot.placedCDs;
+  plans[id].activeSetIds = snapshot.activeSetIds;
+  plans[id].paletteOrder = snapshot.paletteOrder;
+  plans[id].cdWho = snapshot.cdWho;
   plans[id].savedAt = Date.now();
   savePlans(plans);
 }
