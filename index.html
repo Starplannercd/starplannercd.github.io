@@ -1130,7 +1130,7 @@
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
-    <button class="btn btn-screenshot" id="screenshotBtn">Screenshot</button>
+    <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
   </div>
@@ -1429,6 +1429,37 @@ const BOSSES = [
           { name:'Fist Smash 1', time:338, color:'#4888c8' },
           { name:'Fist Smash 2', time:364, color:'#4888c8' },
           { name:'Fist Smash 3', time:392, color:'#4888c8' },
+        ]
+      }
+    ]
+  },
+  {
+        id:'twins', name:'Twin Consorts',
+    desc:"Heroic 10 · Lu'an & Suen",
+    duration: 450,
+    sections: [
+      {
+        label: "P1 — Lu'an",
+        abilities: [
+          { name:'Cosmic Barrage 2', time:46,  color:'#6888ff' },
+          { name:'Cosmic Barrage 3', time:72,  color:'#6888ff' },
+          { name:'Cosmic Barrage 5', time:116, color:'#6888ff' },
+          { name:'Cosmic Barrage 7', time:163, color:'#6888ff' },
+        ]
+      },
+      {
+        label: 'P2 — Suen',
+        abilities: [
+          { name:'Nuclear Inferno 1', time:235, color:'#ff9848' },
+          { name:'Nuclear Inferno 2', time:289, color:'#ff9848' },
+          { name:'Nuclear Inferno 3', time:339, color:'#ff9848' },
+          { name:'Nuclear Inferno 4', time:394, color:'#ff9848' },
+        ]
+      },
+      {
+        label: 'P3 — Both',
+        abilities: [
+          { name:'Tidal Force', time:407, color:'#48d8ff' },
         ]
       }
     ]
@@ -2524,15 +2555,11 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
     const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
-      // Always show CUST, colored by WHO
+      // Show CUST with WHO class color for text only, keep original icon colors
       iconText.textContent = 'CUST';
       const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
       const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
-      if (_whoPlayer) {
-        el.style.color = _whoPlayer.color;
-        el.style.background = _whoPlayer.color + '22';
-        el.style.borderColor = _whoPlayer.color;
-      }
+      if (_whoPlayer) { iconText.style.color = _whoPlayer.color; }
       el.style.fontSize = '9px';
     } else {
       iconText.textContent = cd.short;
@@ -2906,6 +2933,7 @@ const FOJI_ABILITY_KEYS = {
   // Durumu
   'Encounter Start (DUR)':'DURUMU_ENC_START','Health % (DUR)':'DURUMU_HEALTH','Light Spectrum':'DURUMU_LIGHT_SPECTRUM','Disintegration Beam':'DURUMU_DISINTEGRATION_BEAM','Lingering Gaze':'DURUMU_LINGERING_GAZE','Force of Will':'DURUMU_FORCE_OF_WILL','Hard Stare':'DURUMU_HARD_STARE','Dark Parasite':'DURUMU_DARK_PARASITE','Life Drain':'DURUMU_LIFE_DRAIN','Walls of Ice':'DURUMU_WALLS_OF_ICE',
   // Ra-den
+  'Cosmic Barrage (2)':'TWINS_COSMIC_BARRAGE_2','Cosmic Barrage (3)':'TWINS_COSMIC_BARRAGE_3','Cosmic Barrage (5)':'TWINS_COSMIC_BARRAGE_5','Cosmic Barrage (7)':'TWINS_COSMIC_BARRAGE_7','Nuclear Inferno (1)':'TWINS_NUCLEAR_INFERNO_1','Nuclear Inferno (2)':'TWINS_NUCLEAR_INFERNO_2','Nuclear Inferno (3)':'TWINS_NUCLEAR_INFERNO_3','Nuclear Inferno (4)':'TWINS_NUCLEAR_INFERNO_4','Tidal Force':'TWINS_TIDAL_FORCE',
   'Encounter Start (RAD)':'RADEN_ENC_START','Health % (RAD)':'RADEN_HEALTH','Phase 2 (RAD)':'RADEN_PHASE_2','Fatal Strike':'RADEN_FATAL_STRIKE','Murderous Strike':'RADEN_MURDEROUS_STRIKE','Sanguine Horror':'RADEN_SANGUINE_HORROR','Crackling Stalker':'RADEN_CRACKLING_STALKER','Creation':'RADEN_CREATION','Call Essence':'RADEN_CALL_ESSENCE','Anima Phase':'RADEN_ANIMA_PHASE','Vita Phase':'RADEN_VITA_PHASE','Unstable Vita':'RADEN_UNSTABLE_VITA','Ruin':'RADEN_RUIN',
 };
 
@@ -3116,6 +3144,7 @@ const BOSS_ABILITY_KEYS = {
   'leishen_p2': { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
   'leishen_p3': { key: 'LEISHEN_BALL_LIGHTNING_P3',     castLabel: 'Ball Lightning P3' },
   'leishen':    { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
+  'twins':      { key: 'TWINS_COSMIC_BARRAGE_2', castLabel: 'Cosmic Barrage' },
   'raden':      { key: 'RADEN_CREATION',                castLabel: 'Material of Creation' },
 };
 
@@ -4500,7 +4529,7 @@ function parseFojiImport(raw) {
 
   return count;
 }
-document.getElementById('screenshotBtn').addEventListener('click', showScreenshotModal);
+document.getElementById('screenshotBtn').addEventListener('click', () => createShareLink(document.getElementById('screenshotBtn')));
 
 
 // ---- localStorage auto-save ----
@@ -4819,6 +4848,58 @@ initFirebase();
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
 
+
+// ── Plan Switch Animation ──
+const PLAN_ANIM_KEY = 'tot_rcd_plan_anim';
+let planAnimStyle = localStorage.getItem(PLAN_ANIM_KEY) || 'fade';
+
+const PLAN_ANIM_STYLES = [
+  { id:'fade',       name:'Fade',         fn: (el) => { el.style.transition='opacity 0.12s'; el.style.opacity='0.15'; setTimeout(()=>{ el.style.opacity='1'; setTimeout(()=>el.style.transition='',180); },130); } },
+  { id:'flash',      name:'Flash',        fn: (el) => { el.style.transition='none'; el.style.filter='brightness(3)'; setTimeout(()=>{ el.style.transition='filter 0.25s'; el.style.filter='brightness(1)'; setTimeout(()=>el.style.transition='',300); },60); } },
+  { id:'slide-down', name:'Slide Down',   fn: (el) => { el.style.transition='none'; el.style.transform='translateY(-12px)'; el.style.opacity='0'; setTimeout(()=>{ el.style.transition='transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='translateY(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },250); },60); } },
+  { id:'slide-up',   name:'Slide Up',     fn: (el) => { el.style.transition='none'; el.style.transform='translateY(12px)'; el.style.opacity='0'; setTimeout(()=>{ el.style.transition='transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='translateY(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },250); },60); } },
+  { id:'scale',      name:'Scale',        fn: (el) => { el.style.transition='none'; el.style.transform='scale(0.97)'; el.style.opacity='0.3'; setTimeout(()=>{ el.style.transition='transform 0.2s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='scale(1)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },280); },60); } },
+  { id:'blur',       name:'Blur',         fn: (el) => { el.style.transition='none'; el.style.filter='blur(4px)'; el.style.opacity='0.4'; setTimeout(()=>{ el.style.transition='filter 0.2s,opacity 0.15s'; el.style.filter='blur(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.filter=''; },280); },80); } },
+  { id:'none',       name:'None',         fn: () => {} },
+];
+
+function playPlanSwitchAnim() {
+  const el = document.querySelector('.main') || document.querySelector('#app');
+  if (!el) return;
+  const style = PLAN_ANIM_STYLES.find(s => s.id === planAnimStyle) || PLAN_ANIM_STYLES[0];
+  style.fn(el);
+}
+
+function showPlanAnimPicker() {
+  const existing = document.getElementById('planAnimPickerOv');
+  if (existing) { existing.remove(); return; }
+  const ov = document.createElement('div');
+  ov.id = 'planAnimPickerOv';
+  ov.className = 'modal-overlay';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
+  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#c8a84b;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;">×</button></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="animGrid"></div>';
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  const grid = box.querySelector('#animGrid');
+  PLAN_ANIM_STYLES.forEach(s => {
+    const isSel = s.id === planAnimStyle;
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};cursor:pointer;font-size:12px;font-weight:600;`;
+    btn.textContent = s.name;
+    btn.addEventListener('click', () => {
+      planAnimStyle = s.id;
+      localStorage.setItem(PLAN_ANIM_KEY, s.id);
+      playPlanSwitchAnim();
+      ov.remove();
+    });
+    grid.appendChild(btn);
+  });
+  box.querySelector('#animClose').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
 // ── Plan Presets ──
 // plan constants moved up
 
@@ -4885,16 +4966,8 @@ function applyTimelineSnapshot(snapshot) {
   if (snapshot.paletteOrder !== undefined) paletteOrder = snapshot.paletteOrder;
   buildPalette();
   renderTimeline();
-  // Flash the timeline to signal a plan swap
-  const timeline = document.querySelector('.timeline-area') || document.querySelector('.main');
-  if (timeline) {
-    timeline.style.transition = 'opacity 0.1s ease';
-    timeline.style.opacity = '0.3';
-    setTimeout(() => {
-      timeline.style.opacity = '1';
-      setTimeout(() => { timeline.style.transition = ''; }, 200);
-    }, 120);
-  }
+  // Animate plan switch
+  playPlanSwitchAnim();
 }
 
 function saveCurrentAsPlan(name, subWho, subSpec) {
@@ -5084,6 +5157,7 @@ function showPlansMenu(ev) {
 
   function wireBox() {
     box.querySelector('#plansCloseBtn')?.addEventListener('click', close);
+    box.querySelector('#planAnimBtn')?.addEventListener('click', () => { close(); showPlanAnimPicker(); });
 
     box.querySelectorAll('.plan-card').forEach(card => {
       card.addEventListener('mouseenter', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = '#ffffff08'; });
