@@ -5108,8 +5108,9 @@ function showPlansMenu(ev) {
     }).join('');
 
     return `
-      <div style="padding:16px 18px 12px;border-bottom:1px solid #1e2030;display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;">Plans</div>
+      <div style="padding:14px 18px 10px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:8px;">
+        <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
+        <button id="planAnimBtn" style="background:transparent;border:1px solid #2e3040;border-radius:4px;color:#4a4d62;font-size:9px;cursor:pointer;padding:3px 7px;letter-spacing:0.06em;">Anim</button>
         <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
