@@ -5207,15 +5207,23 @@ function showNewPlanPicker() {
   ov.style.alignItems = 'center';
 
   const box = document.createElement('div');
-  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:480px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
 
-  const selectedOut = new Set(); // who values subbed out
+  const selectedOut = new Set();       // who values subbed out
+  const subIns = {};                    // who -> specName (sub-in spec)
+  let step = 1;
 
-  function render() {
+  const SPEC_GROUPS = {
+    'Healers':  ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
+    'Tanks':    ['Brewmaster','Protection Pal','Protection War','Blood DK','Guardian Dru'],
+    'Ranged':   ['Shadow Priest','Elemental','Enhancement','Balance Dru','Frost Mage','Fire Mage','Arcane Mage','Destruction','Affliction','Demonology','Survival Hunt','Marksmanship','Beast Mastery'],
+    'Melee':    ['Arms Warrior','Fury Warrior','Assassination','Combat Rogue','Subtlety','Unholy DK','Frost DK','Windwalker','Feral Dru','Retribution','None / Absent'],
+  };
+
+  function renderStep1() {
     const roles = ['tank','healer','ranged','melee'];
     const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged', melee:'Melee' };
-
-    let playersHtml = roles.map(role => {
+    const playersHtml = roles.map(role => {
       const players = DEFAULT_ROSTER.filter(p => p.role === role);
       if (!players.length) return '';
       return `<div style="margin-bottom:12px;">
@@ -5224,14 +5232,9 @@ function showNewPlanPicker() {
           ${players.map(p => {
             const isSel = selectedOut.has(p.who);
             const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
-            return `<button class="sub-player-btn" data-who="${p.who}" style="
-              padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;
-              border:${isSel ? '2px solid ' + p.color : '1px solid #2e3040'};
-              background:${isSel ? p.color + '22' : '#12141a'};
-              min-width:120px;transition:all 0.1s;
-            ">
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
               <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
-              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames ? ' · ' + cdNames : ''}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
             </button>`;
           }).join('')}
         </div>
@@ -5242,76 +5245,154 @@ function showNewPlanPicker() {
     const selectedNames = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)?.name || who).join(', ');
 
     box.innerHTML = `
-      <div style="display:flex;align-items:center;margin-bottom:18px;">
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#c8a84b;margin-bottom:3px;">New Plan</div>
-          <div style="font-size:11px;color:#4a4d62;">Select players who are subbed out. Their CDs will be removed from the palette.</div>
-        </div>
-        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;margin-left:12px;">×</button>
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
       </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Select players who are <strong style="color:#c8d0e8;">subbing out</strong>.</div>
       <div id="npPlayers">${playersHtml}</div>
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
-        <div style="font-size:10px;color:#4a4d62;margin-bottom:8px;">${anySelected ? 'Subbing out: <span style="color:#c8d0e8;">' + selectedNames + '</span>' : 'No players subbed out — plan will be a copy of Full Raid'}</div>
-        <input id="npName" type="text" placeholder="Plan name…" value="${anySelected ? 'Sub: ' + selectedNames : ''}"
-          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">${anySelected?'Subbing out: <span style="color:#c8d0e8;">'+selectedNames+'</span>':'Select at least one player to sub out, or proceed with a Full Raid copy.'}</div>
         <div style="display:flex;gap:8px;">
-          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:none;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #c8a84b66;">Create Plan</button>
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">${anySelected?'Next →':'Create Copy of Full Raid'}</button>
           <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
         </div>
       </div>`;
 
-    // Wire player buttons
     box.querySelectorAll('.sub-player-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const who = btn.dataset.who;
-        if (selectedOut.has(who)) selectedOut.delete(who);
+        if (selectedOut.has(who)) { selectedOut.delete(who); delete subIns[who]; }
         else selectedOut.add(who);
-        render();
-        // Update name field
-        const names = [...selectedOut].map(w => DEFAULT_ROSTER.find(r => r.who === w)?.name || w);
-        const nameInput = box.querySelector('#npName');
-        if (nameInput && names.length > 0) nameInput.value = 'Sub: ' + names.join(', ');
-        else if (nameInput) nameInput.value = '';
+        renderStep1();
       });
     });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npNext')?.addEventListener('click', () => {
+      if (selectedOut.size === 0) { createPlan('Copy of Full Raid', [], {}); return; }
+      step = 2; renderStep2();
+    });
+  }
 
+  function renderStep2() {
+    const subbedPlayers = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)).filter(Boolean);
+
+    const specOptsHtml = Object.entries(SPEC_GROUPS).map(([group, specs]) =>
+      `<optgroup label="${group}">${specs.filter(s => SPEC_CD_MAP[s]).map(s => `<option value="${s}">${s}</option>`).join('')}</optgroup>`
+    ).join('');
+
+    const playersHtml = subbedPlayers.map(p => {
+      const currentSub = subIns[p.who] || '';
+      const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
+      const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+        <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+            <option value="">— No sub-in —</option>
+            ${specOptsHtml}
+          </select>
+        </div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames || '<span style="color:#2e3040;">no CDs</span>'}</div>
+      </div>`;
+    }).join('');
+
+    const selectedNames = subbedPlayers.map(p => p.name).join(', ');
+    const subInEntries = Object.entries(subIns).filter(([,v]) => v);
+    const subInSummary = subInEntries.map(([who, spec]) => {
+      const p = DEFAULT_ROSTER.find(r => r.who === who);
+      return `${p?.name||who} → ${spec}`;
+    }).join(', ');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Choose who's <strong style="color:#c8d0e8;">subbing in</strong> for each player. Their CDs will be added to the palette.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <input id="npName" type="text" placeholder="Plan name…" value="Sub: ${selectedNames}"
+          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="display:flex;gap:8px;">
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Create Plan</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    // Wire selects
+    box.querySelectorAll('.sub-in-select').forEach(sel => {
+      if (subIns[sel.dataset.who]) sel.value = subIns[sel.dataset.who];
+      sel.addEventListener('change', () => {
+        subIns[sel.dataset.who] = sel.value;
+        renderStep2();
+      });
+    });
+    box.querySelector('#npBack')?.addEventListener('click', () => { step = 1; renderStep1(); });
     box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npCreate')?.addEventListener('click', () => {
       const name = (box.querySelector('#npName')?.value || '').trim() || 'New Plan';
-
-      // Get full raid as base
-      const fullSnap = getFullRaidSnapshot();
-      const newPlacedCDs = JSON.parse(JSON.stringify(fullSnap.placedCDs || fullSnap || {}));
-      let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
-      let newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
-
-      // Remove CDs belonging to subbed-out players
-      const subbedWhos = [...selectedOut];
-      subbedWhos.forEach(who => {
-        const player = DEFAULT_ROSTER.find(r => r.who === who);
-        if (!player) return;
-        player.cds.forEach(cdId => {
-          newActiveSetIds = newActiveSetIds.filter(id => id !== cdId);
-        });
-      });
-
-      // Apply
-      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-      Object.assign(placedCDs, newPlacedCDs);
-      activeSetIds = new Set(newActiveSetIds);
-      if (newCdWho) CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
-
-      const id = saveCurrentAsPlan(name, null, null, subbedWhos);
-      setActivePlanId(id);
-      buildPalette();
-      renderTimeline();
-      updatePlansBtn();
-      ov.remove();
+      createPlan(name, [...selectedOut], subIns);
     });
   }
 
-  render();
+  function createPlan(name, subbedWhos, subInMap) {
+    const fullSnap = getFullRaidSnapshot();
+    const newPlacedCDs = JSON.parse(JSON.stringify(fullSnap.placedCDs || fullSnap || {}));
+    let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
+    const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+
+    // Remove subbed-out CDs
+    const removedCdIds = new Set();
+    subbedWhos.forEach(who => {
+      const player = DEFAULT_ROSTER.find(r => r.who === who);
+      if (!player) return;
+      player.cds.forEach(cdId => {
+        newActiveSetIds = newActiveSetIds.filter(id => id !== cdId);
+        removedCdIds.add(cdId);
+      });
+    });
+
+    // Add sub-in CDs
+    Object.entries(subInMap).forEach(([who, specName]) => {
+      if (!specName) return;
+      const spec = SPEC_CD_MAP[specName];
+      if (!spec || !spec.cds.length) return;
+      spec.cds.forEach(cdId => {
+        if (!newActiveSetIds.includes(cdId)) newActiveSetIds.push(cdId);
+        // Update WHO label for this CD to the sub-in's WHO
+        newCdWho[cdId] = spec.who;
+      });
+    });
+
+    // Strip removed CDs from placements
+    Object.keys(newPlacedCDs).forEach(bossId => {
+      const bossData = newPlacedCDs[bossId];
+      if (!bossData) return;
+      Object.keys(bossData).forEach(rowKey => {
+        bossData[rowKey] = (bossData[rowKey] || []).filter(p => !removedCdIds.has(p.cdId));
+      });
+    });
+
+    // Apply
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, newPlacedCDs);
+    activeSetIds = new Set(newActiveSetIds);
+    CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+
+    const id = saveCurrentAsPlan(name, null, null, subbedWhos);
+    setActivePlanId(id);
+    buildPalette();
+    renderTimeline();
+    updatePlansBtn();
+    ov.remove();
+  }
+
+  renderStep1();
   ov.appendChild(box);
   document.body.appendChild(ov);
   ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
@@ -5458,7 +5539,8 @@ async function initViewMode(viewId) {
     const data = snap.val();
     if (!data) { viewContent.innerHTML = '<div style="color:#c84848;padding:20px 0;">Plan not found or expired.</div>'; return; }
 
-    // Apply data into state
+    // Apply data into state — clear first to avoid stale data bleeding in
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
     if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
     if (data.bossReady) Object.assign(bossReady, data.bossReady);
 
