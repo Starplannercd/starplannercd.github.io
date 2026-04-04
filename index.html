@@ -4946,7 +4946,9 @@ function applyTimelineSnapshot(snapshot) {
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
   Object.assign(placedCDs, JSON.parse(JSON.stringify(pCDs)));
   // Restore activeSetIds
-  if (snapshot.activeSetIds) activeSetIds = new Set(snapshot.activeSetIds);
+  if (snapshot.activeSetIds) {
+    activeSetIds = new Set(snapshot.activeSetIds);
+  }
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
   // Restore paletteOrder
@@ -4957,7 +4959,7 @@ function applyTimelineSnapshot(snapshot) {
   playPlanSwitchAnim();
 }
 
-function saveCurrentAsPlan(name, subWho, subSpec) {
+function saveCurrentAsPlan(name, subWho, subSpec, subbedOut) {
   const plans = getPlans();
   const id = 'plan_' + Date.now();
   const snapshot = captureCurrentTimeline();
@@ -4966,6 +4968,7 @@ function saveCurrentAsPlan(name, subWho, subSpec) {
     name,
     subWho: subWho || null,
     subSpec: subSpec || null,
+    subbedOut: subbedOut || [],
     placedCDs: snapshot.placedCDs,
     activeSetIds: snapshot.activeSetIds,
     paletteOrder: snapshot.paletteOrder,
@@ -5033,25 +5036,7 @@ function switchToPlan(id) {
   updatePlansBtn();
 }
 
-function updatePlansBtn() {
-  const btn = document.getElementById('plansBtn');
-  if (!btn) return;
-  const id = getActivePlanId();
-  if (id === FULL_RAID_ID) {
-    btn.textContent = 'Saved Plans';
-    btn.style.color = '';
-    btn.style.borderColor = '';
-    btn.style.background = '';
-  } else {
-    const plans = getPlans();
-    const plan = plans[id];
-    const name = plan ? plan.name : 'Unknown';
-    btn.textContent = '★ ' + name;
-    btn.style.color = '#c8a84b';
-    btn.style.borderColor = '#c8a84b';
-    btn.style.background = '#c8a84b18';
-  }
-}
+
 
 function showPlansMenu(ev) {
   ev.stopPropagation();
@@ -5173,16 +5158,8 @@ function showPlansMenu(ev) {
     box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2e3040'; });
     box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#1e2030'; });
     box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
-      const name = prompt('Name this plan:');
-      if (!name || !name.trim()) return;
-      const fullRaidSnapshot = getFullRaidSnapshot();
-      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-      Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
-      const id = saveCurrentAsPlan(name.trim());
-      setActivePlanId(id);
-      renderTimeline();
-      updatePlansBtn();
-      rebuildList();
+      close();
+      showNewPlanPicker();
     });
 
     box.querySelector('#importPlanBtnMenu')?.addEventListener('click', () => {
@@ -5193,6 +5170,123 @@ function showPlansMenu(ev) {
 
   wireBox();
   ov.addEventListener('mousedown', (e) => { if (e.target === ov) close(); });
+}
+
+
+function showNewPlanPicker() {
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:480px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+
+  const selectedOut = new Set(); // who values subbed out
+
+  function render() {
+    const roles = ['tank','healer','ranged','melee'];
+    const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged', melee:'Melee' };
+
+    let playersHtml = roles.map(role => {
+      const players = DEFAULT_ROSTER.filter(p => p.role === role);
+      if (!players.length) return '';
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${players.map(p => {
+            const isSel = selectedOut.has(p.who);
+            const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
+            return `<button class="sub-player-btn" data-who="${p.who}" style="
+              padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;
+              border:${isSel ? '2px solid ' + p.color : '1px solid #2e3040'};
+              background:${isSel ? p.color + '22' : '#12141a'};
+              min-width:120px;transition:all 0.1s;
+            ">
+              <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames ? ' · ' + cdNames : ''}</div>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    const anySelected = selectedOut.size > 0;
+    const selectedNames = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)?.name || who).join(', ');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:18px;">
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:#c8a84b;margin-bottom:3px;">New Plan</div>
+          <div style="font-size:11px;color:#4a4d62;">Select players who are subbed out. Their CDs will be removed from the palette.</div>
+        </div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;margin-left:12px;">×</button>
+      </div>
+      <div id="npPlayers">${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <div style="font-size:10px;color:#4a4d62;margin-bottom:8px;">${anySelected ? 'Subbing out: <span style="color:#c8d0e8;">' + selectedNames + '</span>' : 'No players subbed out — plan will be a copy of Full Raid'}</div>
+        <input id="npName" type="text" placeholder="Plan name…" value="${anySelected ? 'Sub: ' + selectedNames : ''}"
+          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="display:flex;gap:8px;">
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:none;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #c8a84b66;">Create Plan</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    // Wire player buttons
+    box.querySelectorAll('.sub-player-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const who = btn.dataset.who;
+        if (selectedOut.has(who)) selectedOut.delete(who);
+        else selectedOut.add(who);
+        render();
+        // Update name field
+        const names = [...selectedOut].map(w => DEFAULT_ROSTER.find(r => r.who === w)?.name || w);
+        const nameInput = box.querySelector('#npName');
+        if (nameInput && names.length > 0) nameInput.value = 'Sub: ' + names.join(', ');
+        else if (nameInput) nameInput.value = '';
+      });
+    });
+
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCreate')?.addEventListener('click', () => {
+      const name = (box.querySelector('#npName')?.value || '').trim() || 'New Plan';
+
+      // Get full raid as base
+      const fullSnap = getFullRaidSnapshot();
+      const newPlacedCDs = JSON.parse(JSON.stringify(fullSnap.placedCDs || fullSnap || {}));
+      let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
+      let newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+
+      // Remove CDs belonging to subbed-out players
+      const subbedWhos = [...selectedOut];
+      subbedWhos.forEach(who => {
+        const player = DEFAULT_ROSTER.find(r => r.who === who);
+        if (!player) return;
+        player.cds.forEach(cdId => {
+          newActiveSetIds = newActiveSetIds.filter(id => id !== cdId);
+        });
+      });
+
+      // Apply
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, newPlacedCDs);
+      activeSetIds = new Set(newActiveSetIds);
+      if (newCdWho) CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+
+      const id = saveCurrentAsPlan(name, null, null, subbedWhos);
+      setActivePlanId(id);
+      buildPalette();
+      renderTimeline();
+      updatePlansBtn();
+      ov.remove();
+    });
+  }
+
+  render();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
 }
 
 function showImportFojiAsPlan() {
