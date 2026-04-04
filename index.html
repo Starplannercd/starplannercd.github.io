@@ -5038,6 +5038,34 @@ function switchToPlan(id) {
 
 
 
+function updatePlansBtn() {
+  const btn = document.getElementById('rosterBtn');
+  if (!btn) return;
+  const id = getActivePlanId();
+  if (id === FULL_RAID_ID) {
+    btn.textContent = '⬤ Full Raid';
+    btn.style.color = '#48a868';
+    btn.style.background = '#48a86818';
+    btn.style.borderColor = '#48a86866';
+    btn.style.fontWeight = '600';
+    btn.style.letterSpacing = '0.02em';
+  } else {
+    const plans = getPlans();
+    const plan = plans[id];
+    const name = plan ? plan.name : 'Plan';
+    const subbedOut = plan && plan.subbedOut ? plan.subbedOut : [];
+    const firstColor = subbedOut.length > 0
+      ? (DEFAULT_ROSTER.find(r => subbedOut.includes(r.who))?.color || '#c84848')
+      : '#c84848';
+    btn.textContent = '⬤ ' + name;
+    btn.style.color = firstColor;
+    btn.style.background = firstColor + '22';
+    btn.style.borderColor = firstColor + '88';
+    btn.style.fontWeight = '700';
+    btn.style.letterSpacing = '0.02em';
+  }
+}
+
 function showPlansMenu(ev) {
   ev.stopPropagation();
   const existing = document.getElementById('plansOverlay');
