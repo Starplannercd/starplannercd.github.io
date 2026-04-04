@@ -2510,10 +2510,10 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     el.className = 'placed-cd';
     el.dataset.placedId = p.id;
     el.dataset.rowKey = rowKey;
-    // Get effective colour (custom ability overrides cd colour)
+    // Get effective colour (custom ability overrides cd colour for text only, not background)
     let ec = cd.color, et = cd.textColor;
     if (cd.customType && p.customAbility && CUSTOM_ABILITY_COLORS[p.customAbility]) {
-      ec = CUSTOM_ABILITY_COLORS[p.customAbility].color;
+      // Keep ec as default custom color for background/border — only text changes per WHO
       et = CUSTOM_ABILITY_COLORS[p.customAbility].textColor;
     }
     // Compute bg/border/text per icon style
