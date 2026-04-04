@@ -1122,7 +1122,7 @@
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
 <div id="app" style="display:none;">
   <div class="topbar">
-    <span class="topbar-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
+    <span class="topbar-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
     <button class="btn btn-danger" id="clearBtn">Clear Boss</button>
@@ -2462,7 +2462,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  track.style.width = totalW + 'px';
+  track.style.width = (totalW + 400) + 'px'; // extra space for late placements
 
   // Grid lines every 30s
   for (let t = 30; t < boss.duration; t += 30) {
@@ -2504,7 +2504,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     // cellIndex = floor(p.time / 30), cell center = cellIndex * CELL_W + CELL_W/2
     const cellIndex = Math.floor(p.time / 30);
     const cellCenterX = cellIndex * CELL_W + CELL_W / 2;
-    const left = Math.max(0, Math.min(cellCenterX - ICON_W / 2, totalW - ICON_W));
+    const left = Math.max(0, cellCenterX - ICON_W / 2);
 
     const el = document.createElement('div');
     el.className = 'placed-cd';
@@ -4353,7 +4353,7 @@ function buildBossSelect() {
   BOSSES.forEach(b => {
     const opt = document.createElement('option');
     opt.value = b.id;
-    opt.textContent = (bossReady[b.id] ? '✓ ' : '') + b.name;
+    opt.textContent = (bossReady[b.id] ? '★ ' : '') + b.name;
     sel.appendChild(opt);
   });
   sel.value = currentBossId;
@@ -4370,7 +4370,7 @@ function refreshBossSelectLabels() {
   if (!sel) return;
   Array.from(sel.options).forEach(opt => {
     const boss = BOSSES.find(b => b.id === opt.value);
-    if (boss) opt.textContent = (bossReady[boss.id] ? '✓ ' : '') + boss.name;
+    if (boss) opt.textContent = (bossReady[boss.id] ? '★ ' : '') + boss.name;
   });
 }
 
@@ -5110,7 +5110,6 @@ function showPlansMenu(ev) {
     return `
       <div style="padding:14px 18px 10px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:8px;">
         <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
-        <button id="planAnimBtn" style="background:transparent;border:1px solid #2e3040;border-radius:4px;color:#4a4d62;font-size:9px;cursor:pointer;padding:3px 7px;letter-spacing:0.06em;">Anim</button>
         <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
@@ -5158,7 +5157,6 @@ function showPlansMenu(ev) {
 
   function wireBox() {
     box.querySelector('#plansCloseBtn')?.addEventListener('click', close);
-    box.querySelector('#planAnimBtn')?.addEventListener('click', () => { close(); showPlanAnimPicker(); });
 
     box.querySelectorAll('.plan-card').forEach(card => {
       card.addEventListener('mouseenter', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = '#ffffff08'; });
@@ -5166,6 +5164,16 @@ function showPlansMenu(ev) {
       card.addEventListener('click', (e) => {
         if (e.target.classList.contains('plan-del-x') || e.target.closest('.plan-del-x')) return;
         if (card.dataset.id !== getActivePlanId()) switchPlan(card.dataset.id);
+      });
+    });
+
+    box.querySelectorAll('.plan-edit-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.color = '#c8a84b'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#4a4d62'; });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        close();
+        showEditPlanPicker(btn.dataset.id);
       });
     });
 
@@ -5398,7 +5406,196 @@ function showNewPlanPicker() {
   ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
 }
 
-function showImportFojiAsPlan() {
+function showEditPlanPicker(planId) {
+  const plans = getPlans();
+  const plan = plans[planId];
+  if (!plan) return;
+
+  // Pre-populate from saved plan
+  const preSelectedOut = new Set(plan.subbedOut || []);
+  const preSubIns = {};
+  // Try to infer sub-ins from saved cdWho vs full raid cdWho
+  const fullSnap = getFullRaidSnapshot();
+  const fullCdWho = fullSnap.cdWho || {};
+  const planCdWho = plan.cdWho || {};
+  Object.entries(planCdWho).forEach(([cdId, who]) => {
+    if (fullCdWho[cdId] && fullCdWho[cdId] !== who) {
+      // Find which spec maps to this WHO
+      const spec = Object.entries(SPEC_CD_MAP).find(([, v]) => v.who === who);
+      if (spec) {
+        // Find which original player owns this cd slot
+        preSelectedOut.forEach(outWho => {
+          preSubIns[outWho] = preSubIns[outWho] || spec[0];
+        });
+      }
+    }
+  });
+
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+
+  const selectedOut = new Set(preSelectedOut);
+  const subIns = Object.assign({}, preSubIns);
+  let step = 1;
+
+  const SPEC_GROUPS = {
+    'Healers':  ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
+    'Tanks':    ['Brewmaster','Protection Pal','Protection War','Blood DK','Guardian Dru'],
+    'Ranged':   ['Shadow Priest','Elemental','Enhancement','Balance Dru','Frost Mage','Fire Mage','Arcane Mage','Destruction','Affliction','Demonology','Survival Hunt','Marksmanship','Beast Mastery'],
+    'Melee':    ['Arms Warrior','Fury Warrior','Assassination','Combat Rogue','Subtlety','Unholy DK','Frost DK','Windwalker','Feral Dru','Retribution','None / Absent'],
+  };
+
+  function renderStep1() {
+    const roles = ['tank','healer','ranged','melee'];
+    const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged', melee:'Melee' };
+    const playersHtml = roles.map(role => {
+      const players = DEFAULT_ROSTER.filter(p => p.role === role);
+      if (!players.length) return '';
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${players.map(p => {
+            const isSel = selectedOut.has(p.who);
+            const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
+              <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust who's subbing out.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <div style="display:flex;gap:8px;">
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Next →</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelectorAll('.sub-player-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const who = btn.dataset.who;
+        if (selectedOut.has(who)) { selectedOut.delete(who); delete subIns[who]; }
+        else selectedOut.add(who);
+        renderStep1();
+      });
+    });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npNext')?.addEventListener('click', () => { step = 2; renderStep2(); });
+  }
+
+  function renderStep2() {
+    const subbedPlayers = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)).filter(Boolean);
+    const specOptsHtml = Object.entries(SPEC_GROUPS).map(([group, specs]) =>
+      `<optgroup label="${group}">${specs.filter(s => SPEC_CD_MAP[s]).map(s => `<option value="${s}">${s}</option>`).join('')}</optgroup>`
+    ).join('');
+
+    const playersHtml = subbedPlayers.map(p => {
+      const currentSub = subIns[p.who] || '';
+      const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
+      const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+        <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+            <option value="">— No sub-in —</option>${specOptsHtml}
+          </select>
+        </div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames||'<span style="color:#2e3040;">no CDs</span>'}</div>
+      </div>`;
+    }).join('');
+
+    const selectedNames = subbedPlayers.map(p => p.name).join(', ');
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust sub-ins and rename if needed.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <input id="npName" type="text" placeholder="Plan name…" value="${plan.name}"
+          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="display:flex;gap:8px;">
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Save Changes</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelectorAll('.sub-in-select').forEach(sel => {
+      if (subIns[sel.dataset.who]) sel.value = subIns[sel.dataset.who];
+      sel.addEventListener('change', () => { subIns[sel.dataset.who] = sel.value; renderStep2(); });
+    });
+    box.querySelector('#npBack')?.addEventListener('click', () => { step = 1; renderStep1(); });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCreate')?.addEventListener('click', () => {
+      const name = (box.querySelector('#npName')?.value || '').trim() || plan.name;
+      const subbedWhos = [...selectedOut];
+      const fullSnap = getFullRaidSnapshot();
+      const newPlacedCDs = JSON.parse(JSON.stringify(plan.placedCDs || {}));
+      let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
+      const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+      const removedCdIds = new Set();
+      subbedWhos.forEach(who => {
+        const player = DEFAULT_ROSTER.find(r => r.who === who);
+        if (!player) return;
+        player.cds.forEach(cdId => { newActiveSetIds = newActiveSetIds.filter(id => id !== cdId); removedCdIds.add(cdId); });
+      });
+      Object.entries(subIns).forEach(([who, specName]) => {
+        if (!specName) return;
+        const spec = SPEC_CD_MAP[specName];
+        if (!spec || !spec.cds.length) return;
+        spec.cds.forEach(cdId => { if (!newActiveSetIds.includes(cdId)) newActiveSetIds.push(cdId); newCdWho[cdId] = spec.who; });
+      });
+      Object.keys(newPlacedCDs).forEach(bossId => {
+        const bd = newPlacedCDs[bossId]; if (!bd) return;
+        Object.keys(bd).forEach(rk => { bd[rk] = (bd[rk]||[]).filter(p => !removedCdIds.has(p.cdId)); });
+      });
+      // Update plan in place
+      const allPlans = getPlans();
+      allPlans[planId].name = name;
+      allPlans[planId].subbedOut = subbedWhos;
+      allPlans[planId].placedCDs = newPlacedCDs;
+      allPlans[planId].activeSetIds = newActiveSetIds;
+      allPlans[planId].cdWho = newCdWho;
+      allPlans[planId].savedAt = Date.now();
+      savePlans(allPlans);
+      // If this is the active plan, apply changes
+      if (getActivePlanId() === planId) {
+        Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+        Object.assign(placedCDs, newPlacedCDs);
+        activeSetIds = new Set(newActiveSetIds);
+        CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+        buildPalette(); renderTimeline();
+      }
+      updatePlansBtn();
+      ov.remove();
+    });
+  }
+
+  renderStep1();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
+
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = `<div class="modal-box" style="width:560px;">
