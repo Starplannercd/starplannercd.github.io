@@ -2403,7 +2403,7 @@ function renderTimeline() {
 
   const PX_PER_SEC = 2.8;
   const LABEL_W = 160;
-  const totalW = boss.duration * PX_PER_SEC;
+  const totalW = Math.max(boss.duration * PX_PER_SEC, 1600);
 
   // Ruler — tick marks only, no time labels
   const ruler = document.createElement('div');
@@ -2462,7 +2462,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  track.style.width = (totalW + 400) + 'px'; // extra space for late placements
+  track.style.width = Math.max(totalW + 400, 1600) + 'px'; // minimum 1600px for ample cells
 
   // Grid lines every 30s
   for (let t = 30; t < boss.duration; t += 30) {
@@ -5103,7 +5103,7 @@ function showPlansMenu(ev) {
           ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c8a84b99;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#3a3d52;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
         </div>
         ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c8a84b;flex-shrink:0;box-shadow:0 0 8px #c8a84b88;"></div>' : ''}
-        ${!plan.isFullRaid ? `<button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#2e3040;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;">✕</button>` : ''}
+        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a4d62;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#2e3040;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
       </div>`;
     }).join('');
 
