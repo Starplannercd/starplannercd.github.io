@@ -4894,7 +4894,8 @@ async function wclQuery(gql, variables) {
   return data.data;
 }
 
-const WCL_SoO_ENCOUNTERS = {
+const WCL_TOT_ZONE_ID = 1046;
+let WCL_SoO_ENCOUNTERS = {
   "Jin'rokh the Breaker": 555,
   'Horridon': 556,
   'Council of Elders': 557,
@@ -4909,6 +4910,21 @@ const WCL_SoO_ENCOUNTERS = {
   'Lei Shen': 566,
   'Ra-den': 567,
 };
+
+async function wclLoadEncounters() {
+  // Try to get real IDs from the API; fall back to hardcoded if it fails
+  try {
+    const q = `{worldData{zone(id:${WCL_TOT_ZONE_ID}){encounters{id name}}}}`;
+    const data = await wclQuery(q, {});
+    const encs = data?.worldData?.zone?.encounters || [];
+    if (encs.length) {
+      WCL_SoO_ENCOUNTERS = {};
+      encs.forEach(e => { WCL_SoO_ENCOUNTERS[e.name] = e.id; });
+    }
+  } catch(e) {
+    console.warn('Using fallback encounter IDs', e);
+  }
+}
 
 const WCL_SPELLS = {
   62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
