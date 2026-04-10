@@ -4928,87 +4928,106 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, castsBySpellPerLog, logCount) {
+function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName) {
   var keys = Object.keys(castsBySpellPerLog);
   if (!keys.length) {
-    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found. Check console for WCL spell IDs found in these logs.</div>';
+    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found in these logs. Check console for spell IDs seen.</div>';
     return;
   }
 
-  // Collect all raw times and find maxTime
-  var allTimes = {};
-  var maxTime = 60000;
+  // Build summary stats per spell: median cast times, cast frequency
+  var spellSummaries = [];
   keys.forEach(function(sid) {
-    var all = [];
-    castsBySpellPerLog[sid].forEach(function(l){l.forEach(function(t){all.push(t);});});
-    if (all.length) {
-      allTimes[sid] = all;
-      maxTime = Math.max(maxTime, Math.max.apply(null, all));
-    }
-  });
-
-  maxTime = Math.ceil((maxTime + 30000) / 30000) * 30000;
-  var W = 600;
-  var PPS = W / (maxTime / 1000);
-  var BUCKET_MS = 4000; // 4s buckets — tighter = sharper peaks
-  var numBuckets = Math.ceil(maxTime / BUCKET_MS);
-  var BAR_H = 48; // taller bars = more visible
-  var RULER_H = 22;
-
-  // Build shared ruler
-  var tickHtml = '';
-  for (var ti=0; ti<=maxTime/30000; ti++) {
-    var tx = Math.round(ti*30*PPS);
-    var tlabel = Math.floor(ti*30/60) + ':' + (ti*30%60<10?'0':'') + (ti*30%60);
-    tickHtml += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:'+RULER_H+'px;border-left:1px solid #1a1c28;pointer-events:none;"></div>';
-    tickHtml += '<span style="position:absolute;left:'+tx+'px;bottom:3px;font-size:11px;font-weight:700;color:#8892b0;transform:translateX(-50%);white-space:nowrap;letter-spacing:0.02em;">'+tlabel+'</span>';
-  }
-
-  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:16px;">Based on <strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs. Brighter = more commonly used at that time.</div>';
-
-  // Sort by average first cast time
-  var sortedSids = keys.filter(function(sid){return allTimes[sid]&&allTimes[sid].length;}).sort(function(a,b){
-    var at = castsBySpellPerLog[a], bt2 = castsBySpellPerLog[b];
-    var af = at.map(function(l){return l[0]||Infinity;});
-    var bf = bt2.map(function(l){return l[0]||Infinity;});
-    return wclMedian(af) - wclMedian(bf);
-  });
-
-  sortedSids.forEach(function(sid) {
     var spell = WCL_SPELLS[sid]; if (!spell) return;
-    var rawTimes = allTimes[sid];
-
-    // Build buckets
-    var buckets = new Array(numBuckets).fill(0);
-    rawTimes.forEach(function(t){var b=Math.floor(t/BUCKET_MS); if(b<numBuckets) buckets[b]++;});
-    var maxB = Math.max.apply(null, buckets.concat([1]));
-    var cellW = W / numBuckets;
-
-    // Render bars with sharp contrast — use sqrt scaling so smaller peaks still show
-    var heatHtml = '';
-    for (var bi=0; bi<numBuckets; bi++) {
-      if (buckets[bi] > 0) {
-        var intensity = Math.sqrt(buckets[bi] / maxB); // sqrt makes lower values more visible
-        // Map to opacity range 0.12 -> 1.0
-        var opacity = (intensity * 0.88 + 0.12).toFixed(2);
-        heatHtml += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:'+BAR_H+'px;background:'+spell.color+';opacity:'+opacity+';"></div>';
+    var logsArr = castsBySpellPerLog[sid];
+    var maxC = Math.max.apply(null, logsArr.map(function(l){return l.length;}));
+    var castInfo = [];
+    for (var i=0; i<maxC; i++) {
+      var vals = logsArr.map(function(l){return l[i];}).filter(function(v){return v!=null;});
+      if (vals.length >= Math.ceil(logsArr.length * 0.2)) {
+        var med = Math.round(wclMedian(vals));
+        var pct = Math.round(vals.length / logCount * 100);
+        castInfo.push({time: med, pct: pct});
       }
     }
-
-    html += '<div style="margin-bottom:18px;">'
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
-      + '<span style="font-size:12px;font-weight:700;color:'+spell.color+';">'+spell.short+'</span>'
-      + '<span style="font-size:9px;color:#3a3d52;">'+rawTimes.length+' casts across '+logCount+' logs</span>'
-      + '</div>'
-      + '<div style="position:relative;width:'+W+'px;height:'+(BAR_H+RULER_H)+'px;background:#080910;border-radius:4px;overflow:hidden;">'
-      + heatHtml
-      + '<div style="position:absolute;inset:0;pointer-events:none;">'+tickHtml+'</div>'
-      + '</div>'
-      + '</div>';
+    if (castInfo.length) {
+      spellSummaries.push({sid:sid, name:spell.name, short:spell.short, color:spell.color, casts:castInfo});
+    }
   });
 
-  container.innerHTML = html;
+  if (!spellSummaries.length) {
+    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">Could not compute cast patterns from this data.</div>';
+    return;
+  }
+
+  // Format data summary for Claude
+  var dataSummary = 'Boss: ' + bossName + ' (Heroic 10-man, MoP Classic Throne of Thunder)\n';
+  dataSummary += 'Data from top ' + logCount + ' execution-ranked logs with similar comp.\n';
+  dataSummary += 'Comp: Prot Paladin, Brewmaster, Holy Paladin, Disc Priest, Shadow Priest, Elemental Shaman, Mage, Warlock, Warrior, Rogue\n\n';
+  dataSummary += 'CD usage patterns (median cast time, % of logs that used it for each cast):\n';
+  spellSummaries.forEach(function(s) {
+    dataSummary += '\n' + s.name + ' (' + s.short + '):\n';
+    s.casts.forEach(function(c, i) {
+      var min = Math.floor(c.time/60000), sec = Math.round((c.time%60000)/1000);
+      dataSummary += '  Cast ' + (i+1) + ': ' + min + ':' + (sec<10?'0':'') + sec + ' (' + c.pct + '% of logs)\n';
+    });
+  });
+
+  var prompt = 'You are a WoW raid leader planning raid cooldowns for ' + bossName + ' heroic 10-man in Mists of Pandaria Classic.\n\n'
+    + dataSummary
+    + '\nBased on this data, write a concise recommended CD assignment plan. For each major damage event or phase on this boss, list which CDs to use and roughly when. Be specific with times. Format it clearly with damage events as headers and the CDs to assign under each. Note any CDs that are commonly double-used or saved for specific moments. Keep it practical and readable — this is for a raid leader to brief their team.';
+
+  // Show loading state
+  container.innerHTML = '<div style="color:#4a4d62;font-size:12px;margin-bottom:12px;">Analysing ' + logCount + ' logs with Claude...</div>'
+    + '<div id="wclAiOut" style="font-size:12px;color:#c8d0e8;line-height:1.7;white-space:pre-wrap;"></div>';
+
+  var outEl = container.querySelector('#wclAiOut');
+
+  // Stream from Anthropic API
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      stream: true,
+      messages: [{role:'user', content: prompt}]
+    })
+  }).then(function(res) {
+    if (!res.ok) throw new Error('API error ' + res.status);
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    function read() {
+      reader.read().then(function(result) {
+        if (result.done) {
+          container.querySelector('div').remove(); // remove "Analysing..." header
+          return;
+        }
+        buffer += decoder.decode(result.value, {stream:true});
+        var lines = buffer.split('\n');
+        buffer = lines.pop();
+        lines.forEach(function(line) {
+          if (line.startsWith('data: ')) {
+            var data = line.slice(6);
+            if (data === '[DONE]') return;
+            try {
+              var parsed = JSON.parse(data);
+              if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+                outEl.textContent += parsed.delta.text;
+              }
+            } catch(e) {}
+          }
+        });
+        read();
+      });
+    }
+    read();
+  }).catch(function(e) {
+    container.innerHTML = '<div style="color:#c84848;font-size:12px;">Claude API error: ' + e.message + '</div>';
+  });
 }
+
 
 function showWclModal() {
   var existing = document.getElementById('wclOverlay');
@@ -5032,7 +5051,7 @@ function showWclModal() {
       + '<div style="width:130px;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">50</span></label><input type="range" id="wclLim" min="10" max="100" value="50" style="width:100%;margin-top:6px;accent-color:#ff8c00;"></div>'
       + '</div>'
       + '<div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp filter: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div>'
-      + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch CD Heatmap</button>'
+      + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Get CD Recommendation</button>'
       + '<div id="wclResults"></div>'
       + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div>'
       + '</div>';
@@ -5108,9 +5127,9 @@ function showWclModal() {
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
         } catch(le){console.warn('WCL log error:',le);}
       }
-      renderWclDisplay(results, castsBySpellPerLog, processed);
+      renderWclDisplay(results, castsBySpellPerLog, processed, bossEl.options[bossEl.selectedIndex].text);
     } catch(e){results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>';}
-    btn.textContent='Fetch CD Heatmap'; btn.disabled=false;
+    btn.textContent='Get CD Recommendation'; btn.disabled=false;
   });
 }
 
