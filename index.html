@@ -4938,7 +4938,7 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
   }
 
   var CLASS_GROUPS = [
-    { key:'all',     label:'All',        color:'#c8a84b', spells:[62618,31821,97462,114203,108280,108281,115213,15286,76577,86150,105809,31884] },
+    { key:'all',     label:'All CDs',    color:'#c8a84b', spells:[62618,31821,97462,114203,108280,108281,115213,15286,76577,86150,105809,31884] },
     { key:'disc',    label:'Disc',       color:'#ffffff', spells:[62618] },
     { key:'hpala',   label:'Holy Pal',   color:'#f58cba', spells:[31821,86150,105809,31884] },
     { key:'warrior', label:'Warrior',    color:'#c79c6e', spells:[97462,114203] },
@@ -4948,6 +4948,7 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
     { key:'rogue',   label:'Rogue',      color:'#fff569', spells:[76577] },
   ];
 
+  // Build median cast times per spell
   var spellData = {};
   keys.forEach(function(sid) {
     var spell = WCL_SPELLS[sid]; if (!spell) return;
@@ -4966,28 +4967,26 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
   var fightMs = avgDuration || 300000;
   var W = 560;
   var PPS = W / (fightMs / 1000);
-  var ROW_H = 46;
-  var LABEL_W = 68;
-  var RULER_H = 22;
+  var ROW_H = 44;
+  var LABEL_W = 72;
+  var tickEvery = fightMs <= 180000 ? 15 : fightMs <= 360000 ? 30 : 60;
 
   function fmtT(ms) {
     var s = Math.round(ms/1000);
-    return Math.floor(s/60) + ':' + (s%60<10?'0':'') + (s%60);
+    return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
   }
 
   function buildRuler() {
-    var html = '<div style="display:flex;align-items:flex-start;margin-bottom:4px;">';
+    var html = '<div style="display:flex;align-items:flex-start;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
-    html += '<div style="position:relative;width:'+W+'px;height:'+RULER_H+'px;">';
-    var tickEvery = fightMs <= 180000 ? 15 : fightMs <= 360000 ? 30 : 60;
-    var numTicks = Math.floor(fightMs/1000/tickEvery);
-    for (var ti=0; ti<=numTicks; ti++) {
+    html += '<div style="position:relative;width:'+W+'px;height:20px;">';
+    for (var ti=0; ti*tickEvery*1000<=fightMs; ti++) {
       var tx = Math.round(ti*tickEvery*PPS);
       var tlabel = Math.floor(ti*tickEvery/60)+':'+(ti*tickEvery%60<10?'0':'')+(ti*tickEvery%60);
-      html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #2e3040;"></div>';
-      html += '<span style="position:absolute;left:'+tx+'px;top:4px;font-size:11px;font-weight:700;color:#8892b0;transform:translateX(-50%);white-space:nowrap;">'+tlabel+'</span>';
+      html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #2a2d3d;"></div>';
+      html += '<span style="position:absolute;left:'+tx+'px;top:3px;font-size:11px;font-weight:700;color:#8892b0;transform:translateX(-50%);white-space:nowrap;">'+tlabel+'</span>';
     }
-    html += '<div style="position:absolute;right:0;top:0;bottom:0;border-right:2px solid #c8484866;"></div>';
+    html += '<div style="position:absolute;right:0;top:0;bottom:0;border-right:2px solid #c8484855;"></div>';
     html += '</div></div>';
     return html;
   }
@@ -4995,28 +4994,23 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
   function buildRow(sid) {
     var spell = WCL_SPELLS[sid]; if (!spell) return '';
     var casts = spellData[sid]; if (!casts||!casts.length) return '';
-    var html = '<div style="display:flex;align-items:center;margin-bottom:5px;">';
+    var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:10px;font-weight:700;color:'+spell.color+';text-align:right;padding-right:8px;white-space:nowrap;">'+spell.short+'</div>';
-    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#080910;border-radius:3px;overflow:visible;">';
-    // Subtle gridlines
-    var tickEvery = fightMs <= 180000 ? 15 : fightMs <= 360000 ? 30 : 60;
-    var numTicks = Math.floor(fightMs/1000/tickEvery);
-    for (var ti=1; ti<=numTicks; ti++) {
-      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*PPS)+'px;top:0;bottom:0;border-left:1px solid #12141a;pointer-events:none;"></div>';
+    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#07080e;border-radius:3px;overflow:visible;">';
+    // Gridlines
+    for (var ti=1; ti*tickEvery*1000<=fightMs; ti++) {
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*PPS)+'px;top:0;bottom:0;border-left:1px solid #10121a;pointer-events:none;"></div>';
     }
     casts.forEach(function(c) {
-      var x = Math.min(Math.round((c.time/1000)*PPS), W-2);
-      var op = c.pct >= 70 ? 1.0 : c.pct >= 45 ? 0.72 : c.pct >= 25 ? 0.44 : 0.22;
-      // Vertical bar
+      var x = Math.min(Math.round((c.time/1000)*PPS), W-1);
+      var op = c.pct>=70?1.0:c.pct>=45?0.72:c.pct>=25?0.44:0.22;
       html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:3px;background:'+spell.color+';border-radius:2px;opacity:'+op+';transform:translateX(-50%);"></div>';
-      // Time above
-      html += '<div style="position:absolute;left:'+x+'px;top:2px;transform:translateX(-50%);white-space:nowrap;pointer-events:none;opacity:'+op+';">'
-        + '<span style="font-size:11px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 4px #000;">'+fmtT(c.time)+'</span>'
-        + '</div>';
-      // % below
-      html += '<div style="position:absolute;left:'+x+'px;bottom:2px;transform:translateX(-50%);white-space:nowrap;pointer-events:none;opacity:'+op+';">'
-        + '<span style="font-size:9px;color:#8892b0;">'+c.pct+'%</span>'
-        + '</div>';
+      html += '<div style="position:absolute;left:'+x+'px;top:2px;transform:translateX(-50%);text-align:center;pointer-events:none;opacity:'+op+';">'
+        +'<span style="font-size:11px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 4px #000;white-space:nowrap;">'+fmtT(c.time)+'</span>'
+        +'</div>';
+      html += '<div style="position:absolute;left:'+x+'px;bottom:2px;transform:translateX(-50%);pointer-events:none;opacity:'+op+';">'
+        +'<span style="font-size:9px;color:#8892b0;white-space:nowrap;">'+c.pct+'%</span>'
+        +'</div>';
     });
     html += '</div></div>';
     return html;
@@ -5027,10 +5021,10 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
   function buildUI() {
     var tabsHtml = CLASS_GROUPS.map(function(g) {
       var hasData = g.spells.some(function(sid){return spellData[sid];});
-      var isActive = g.key === activeTab;
-      return '<button class="wcl-tab" data-key="'+g.key+'" style="padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:0.04em;border:1px solid '
+      var isActive = g.key===activeTab;
+      return '<button class="wcl-tab" data-key="'+g.key+'" style="padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:0.03em;border:1px solid '
         +(isActive?g.color:'#2e3040')+';background:'+(isActive?g.color+'22':'transparent')+';color:'
-        +(isActive?g.color:hasData?'#5a5d78':'#2e3040')+';">'+g.label+'</button>';
+        +(isActive?g.color:hasData?'#5a5d78':'#252835')+';">'+g.label+'</button>';
     }).join('');
 
     var group = CLASS_GROUPS.find(function(g){return g.key===activeTab;});
@@ -5039,14 +5033,18 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
     var avgSec = Math.round(fightMs/1000);
     var timeStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var rowsHtml = activeSpells.length
-      ? (buildRuler() + activeSpells.map(buildRow).join(''))
-      : '<div style="color:#3a3d52;font-size:11px;padding:16px 0;">No data for these abilities on this boss.</div>';
+    var rowsHtml;
+    if (!activeSpells.length) {
+      rowsHtml = '<div style="color:#3a3d52;font-size:11px;padding:12px 0;">No data for these abilities on this boss.</div>';
+    } else {
+      rowsHtml = buildRuler() + activeSpells.map(buildRow).join('');
+    }
 
-    container.innerHTML = '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'
-      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs (ranks 26–50 execution) &middot; '
-      +bossName+' &middot; avg kill: <strong style="color:#c8d0e8;">'+timeStr+'</strong>'
-      +' &middot; opacity = % of logs casting it'
+    container.innerHTML =
+      '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'
+      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs matching your comp &middot; '
+      +bossName+' &middot; avg kill <strong style="color:#c8d0e8;">'+timeStr+'</strong>'
+      +' &middot; bar opacity = % of logs'
       +'</div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">'+tabsHtml+'</div>'
       +'<div>'+rowsHtml+'</div>';
@@ -5058,7 +5056,6 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
 
   buildUI();
 }
-
 function showWclModal() {
   var existing = document.getElementById('wclOverlay');
   if (existing) { existing.remove(); return; }
@@ -5107,60 +5104,87 @@ function showWclModal() {
     btn.textContent = 'Fetching...'; btn.disabled = true;
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
-      // Use execution metric, ranks 26-50 (page 2) — top 25 are outliers, these are more representative
-      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
-      var rd = await wclQuery(rankQ, {id:encId});
-      var allRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
-      if (!allRankings.length) {
-        results.innerHTML = '<div style="color:#c84848;font-size:12px;">No 10-man heroic logs found.</div>';
-        btn.textContent='Fetch CD Heatmap'; btn.disabled=false; return;
+      // Comp proxy detection spell IDs — if a log has casts from each group, it matches our comp
+      // Must have: a paladin healer CD (Devo=31821 or GoAK=86150 or HAvenger=105809 or Wings=31884)
+      //            a shaman CD (HTT=108280 or AG=108281)
+      //            a warrior CD (Rally=97462 or Demo=114203)
+      //            a disc CD (PW:B=62618)
+      var COMP_CHECKS = {
+        hpala:   [31821, 86150, 105809, 31884],
+        shaman:  [108280, 108281],
+        warrior: [97462, 114203],
+        disc:    [62618]
+      };
+      function matchesComp(logSpellIds) {
+        return Object.keys(COMP_CHECKS).every(function(role) {
+          return COMP_CHECKS[role].some(function(sid){ return logSpellIds[sid]; });
+        });
       }
-      var limit = Math.min(allRankings.length, parseInt(limSlider.value));
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Found '+allRankings.length+' logs. Fetching cast data...</div>';
+
+      var TARGET = 50; // want 50 matching logs
       var castsBySpellPerLog = {};
-      var processed = 0;
       var fightDurations = [];
-      for (var ri=0; ri<limit; ri++) {
-        var r = allRankings[ri];
-        var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
-        if (!code||!fid) continue;
-        try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
-          var d = await wclQuery(q, {c:code,fid:fid});
-          var rep = d&&d.reportData&&d.reportData.report;
-          var evts = (rep&&rep.events&&rep.events.data)||[];
-          var fight = rep&&rep.fights&&rep.fights[0];
-          if (!fight) continue;
-          var fStart = fight.startTime;
-          var fDur = fight.endTime - fight.startTime;
-          fightDurations.push(fDur);
-          if (processed===0) {
-            var uids=[];
-            evts.forEach(function(ev){if(ev.type==='cast'){var s=ev.abilityGameID;if(uids.indexOf(s)<0)uids.push(s);}});
-            console.log('WCL events:',evts.length,'duration:',Math.round(fDur/1000)+'s');
-            console.log('WCL unique cast spell IDs:',uids.sort(function(a,b){return a-b;}));
-          }
-          var logCasts = {};
-          evts.forEach(function(ev){
-            if (ev.type!=='cast') return;
-            var sid = ev.abilityGameID;
-            if (!WCL_SPELLS[sid]) return;
-            var rel = ev.timestamp - fStart;
-            if (rel<0||rel>900000) return;
-            if (!logCasts[sid]) logCasts[sid]=[];
-            logCasts[sid].push(rel);
-          });
-          Object.keys(logCasts).forEach(function(sid){
-            if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid]=[];
-            castsBySpellPerLog[sid].push(logCasts[sid].sort(function(a,b){return a-b;}));
-          });
-          processed++;
-          results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
-        } catch(le){console.warn('WCL log error:',le);}
+      var processed = 0;
+      var page = 2; // start at page 2 (ranks 26+), skip the outlier top 25
+      var maxPages = 8; // don't go forever
+
+      while (processed < TARGET && page <= maxPages) {
+        results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching page '+(page-1)+' of rankings... ('+processed+'/'+TARGET+' matching logs)</div>';
+        var rankQ = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
+        var rd = await wclQuery(rankQ, {id:encId, pg:page});
+        var pageRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
+        if (!pageRankings.length) break; // no more pages
+
+        for (var ri=0; ri<pageRankings.length && processed<TARGET; ri++) {
+          var r = pageRankings[ri];
+          var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
+          if (!code||!fid) continue;
+          try {
+            var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
+            var d = await wclQuery(q, {c:code, fid:fid});
+            var rep = d&&d.reportData&&d.reportData.report;
+            var evts = (rep&&rep.events&&rep.events.data)||[];
+            var fight = rep&&rep.fights&&rep.fights[0];
+            if (!fight) continue;
+            var fStart = fight.startTime;
+
+            // Check comp via proxy
+            var logSpellIds = {};
+            evts.forEach(function(ev){ if(ev.type==='cast') logSpellIds[ev.abilityGameID]=true; });
+            if (!matchesComp(logSpellIds)) continue; // skip non-matching comp
+
+            var fDur = fight.endTime - fight.startTime;
+            fightDurations.push(fDur);
+
+            var logCasts = {};
+            evts.forEach(function(ev){
+              if (ev.type!=='cast') return;
+              var sid = ev.abilityGameID;
+              if (!WCL_SPELLS[sid]) return;
+              var rel = ev.timestamp - fStart;
+              if (rel<0||rel>900000) return;
+              if (!logCasts[sid]) logCasts[sid]=[];
+              logCasts[sid].push(rel);
+            });
+            Object.keys(logCasts).forEach(function(sid){
+              if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid]=[];
+              castsBySpellPerLog[sid].push(logCasts[sid].sort(function(a,b){return a-b;}));
+            });
+            processed++;
+            results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Found '+processed+' matching logs so far...</div>';
+          } catch(le){ console.warn('WCL log error:', le); }
+        }
+        page++;
       }
+
+      if (!processed) {
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found matching your comp on this boss.</div>';
+        btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
+      }
+
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
       renderWclDisplay(results, castsBySpellPerLog, processed, bossEl.options[bossEl.selectedIndex].text, avgDuration);
-    } catch(e){results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>';}
+    } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent='Fetch CD Timing Data'; btn.disabled=false;
   });
 }
