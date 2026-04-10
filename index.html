@@ -5110,19 +5110,32 @@ function showWclModal() {
           const cQ = `query($c:String!,$f:[Int]!){reportData{report(code:$c){events(fightIDs:$f,dataType:Casts,startTime:0,endTime:9999999){data}}}}`;
           const cd = await wclQuery(cQ, {c:code,f:[fid]});
           const evts = cd?.reportData?.report?.events?.data || [];
-          const fStart = r.startTime || 0;
+
+          // Debug: log first report's first few events to console
+          if (processed === 0 && evts.length > 0) {
+            console.log('WCL sample events:', evts.slice(0,5));
+            console.log('r.startTime:', r.startTime, 'fightID:', fid, 'code:', code);
+            console.log('Tracked spell IDs:', Object.keys(WCL_SPELLS));
+          }
+
+          // fStart: the fight start time in ms (absolute). Events timestamps are also absolute.
+          // r.startTime may be ms epoch or may be 0 — check first event to calibrate
+          const fStart = r.startTime || (evts[0]?.timestamp || 0);
+
           evts.forEach(ev => {
             if (ev.type !== 'cast') return;
             const sid = ev.abilityGameID;
             if (!WCL_SPELLS[sid]) return;
             const rel = ev.timestamp - fStart;
-            if (rel < 0) return;
+            if (rel < 0 || rel > 900000) return; // max 15 min fight
             if (!castsBySpell[sid]) castsBySpell[sid] = [];
             castsBySpell[sid].push(rel);
           });
           processed++;
           results.innerHTML = `<div style="color:#4a4d62;font-size:12px;">Processing ${processed}/${limit} logs…</div>`;
-        } catch(e) { /* skip */ }
+        } catch(e) {
+          console.warn('WCL log error:', e);
+        }
       }
 
       renderWclHeatmap(results, castsBySpell, processed);
