@@ -5042,6 +5042,16 @@ function showWclModal() {
   const limVal = box.querySelector('#wclLimV');
   limSlider?.addEventListener('input', () => { limVal.textContent = limSlider.value; });
 
+  // Populate boss dropdown immediately
+  const _bossSelEl = box.querySelector('#wclBoss');
+  wclLoadEncounters().then(() => {
+    if (!_bossSelEl) return;
+    _bossSelEl.innerHTML = '<option value="">— Choose boss —</option>' +
+      Object.entries(WCL_SoO_ENCOUNTERS).map(([n,id]) => `<option value="${id}">${n}</option>`).join('');
+  }).catch(() => {
+    if (_bossSelEl) _bossSelEl.innerHTML = '<option value="">Error loading — re-connect WCL</option>';
+  });
+
   box.querySelector('#wclLogout')?.addEventListener('click', () => {
     localStorage.removeItem(WCL_TOKEN_KEY); localStorage.removeItem(WCL_TOKEN_EXP_KEY);
     ov.remove(); showWclModal();
