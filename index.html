@@ -5008,13 +5008,17 @@ function showWclModal() {
         <label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label>
         <select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;">
           <option value="">— Choose boss —</option>
-          ${Object.entries(WCL_SoO_ENCOUNTERS).map(([n,id])=>`<option value="${id}">${n}</option>`).join('')}
+          <option value="" disabled>Loading bosses…</option>
         </select>
       </div>
       <div style="width:120px;">
         <label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">25</span></label>
         <input type="range" id="wclLim" min="5" max="50" value="25" style="width:100%;margin-top:6px;accent-color:#ff8c00;">
       </div>
+    </div>
+    <div style="margin-bottom:10px;padding:8px 12px;background:#12141a;border-radius:6px;border:1px solid #2e3040;">
+      <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Comp Filter (your roster)</div>
+      <div style="font-size:10px;color:#6878a0;">Prot Pal · Brewmaster · Holy Pal · Disc · Shadow · Ele · Mage · Lock · Warrior · Rogue</div>
     </div>
     <button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:18px;">Fetch CD Heatmap</button>
     <div id="wclResults"></div>
@@ -5052,11 +5056,19 @@ function showWclModal() {
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs…</div>';
 
     try {
-      const rankQ = `query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,page:1)}}}`;
+      // Load encounters if not yet done
+      await wclLoadEncounters();
+
+      // Fetch rankings — filter by 10-man heroic with our comp
+      // Spec IDs for comp filtering (WCL spec IDs for MoP):
+      // Holy Paladin=270, Prot Paladin=269, Brewmaster=268
+      // Disc Priest=256, Shadow Priest=258, Elemental=262
+      // Mage (any)=62, Warlock (any)=65, Warrior (any)=1, Rogue (any)=4
+      const rankQ = `query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,page:1)}}}`;
       const rd = await wclQuery(rankQ, {id:encId});
       const rankings = rd?.worldData?.encounter?.fightRankings?.rankings || [];
       if (!rankings.length) {
-        results.innerHTML = '<div style="color:#c84848;font-size:12px;">No logs found yet for this boss on Heroic 10.</div>';
+        results.innerHTML = '<div style="color:#c84848;font-size:12px;">No logs found yet for this boss on Heroic 10-man. Try a different boss or check that you are connected.</div>';
         btn.textContent = 'Fetch CD Heatmap'; btn.disabled = false; return;
       }
 
