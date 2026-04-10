@@ -5107,27 +5107,36 @@ function showWclModal() {
         const code = r.report?.code, fid = r.report?.fightID;
         if (!code || !fid) continue;
         try {
-          const cQ = `query($c:String!,$f:[Int]!){reportData{report(code:$c){events(fightIDs:$f,dataType:Casts,startTime:0,endTime:9999999){data}}}}`;
-          const cd = await wclQuery(cQ, {c:code,f:[fid]});
-          const evts = cd?.reportData?.report?.events?.data || [];
+          // Fetch fight details to get startTime/endTime, plus cast events in one query
+          const cQ = `query($c:String!,$f:Int!){
+            reportData{
+              report(code:$c){
+                fights(fightIDs:[$f]){ startTime endTime }
+                events(fightIDs:[$f],dataType:Casts,startTime:0,endTime:9999999){ data }
+              }
+            }
+          }`;
+          const cd = await wclQuery(cQ, {c:code,f:fid});
+          const report = cd?.reportData?.report;
+          const evts = report?.events?.data || [];
+          const fight = report?.fights?.[0];
+          const fStart = fight?.startTime || 0;
 
-          // Debug: log first report's first few events to console
-          if (processed === 0 && evts.length > 0) {
-            console.log('WCL sample events:', evts.slice(0,5));
-            console.log('r.startTime:', r.startTime, 'fightID:', fid, 'code:', code);
-            console.log('Tracked spell IDs:', Object.keys(WCL_SPELLS));
+          // Debug first report
+          if (processed === 0) {
+            console.log('WCL fight:', fight);
+            console.log('WCL events count:', evts.length);
+            console.log('WCL sample events:', evts.slice(0,3));
+            const uniqueSpells = [...new Set(evts.filter(e=>e.type==='cast').map(e=>e.abilityGameID))];
+            console.log('WCL unique cast spell IDs:', uniqueSpells.slice(0,20));
           }
-
-          // fStart: the fight start time in ms (absolute). Events timestamps are also absolute.
-          // r.startTime may be ms epoch or may be 0 — check first event to calibrate
-          const fStart = r.startTime || (evts[0]?.timestamp || 0);
 
           evts.forEach(ev => {
             if (ev.type !== 'cast') return;
             const sid = ev.abilityGameID;
             if (!WCL_SPELLS[sid]) return;
             const rel = ev.timestamp - fStart;
-            if (rel < 0 || rel > 900000) return; // max 15 min fight
+            if (rel < 0 || rel > 900000) return;
             if (!castsBySpell[sid]) castsBySpell[sid] = [];
             castsBySpell[sid].push(rel);
           });
