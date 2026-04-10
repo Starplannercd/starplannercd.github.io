@@ -5044,7 +5044,7 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
       : '<div style="color:#3a3d52;font-size:11px;padding:16px 0;">No data for these abilities on this boss.</div>';
 
     container.innerHTML = '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'
-      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs &middot; '
+      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs (ranks 26–50 execution) &middot; '
       +bossName+' &middot; avg kill: <strong style="color:#c8d0e8;">'+timeStr+'</strong>'
       +' &middot; opacity = % of logs casting it'
       +'</div>'
@@ -5107,10 +5107,8 @@ function showWclModal() {
     btn.textContent = 'Fetching...'; btn.disabled = true;
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
-      // Use execution metric, top 50, size 10 heroic
-      // Comp filter: spec IDs for Holy Pal(65), Disc(256), Ele(262), Brewmaster(268), Prot Pal(66)
-      // Shadow(258), plus any Mage/Lock/Warrior/Rogue
-      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:1)}}}';
+      // Use execution metric, ranks 26-50 (page 2) — top 25 are outliers, these are more representative
+      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
       var rd = await wclQuery(rankQ, {id:encId});
       var allRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
       if (!allRankings.length) {
