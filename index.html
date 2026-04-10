@@ -4914,8 +4914,7 @@ var WCL_SPELLS = {
   115213:{name:'Avert Harm',short:'Avert',color:'#00ff96'},
   15286:{name:'Vampiric Embrace',short:'VE',color:'#888888'},
   76577:{name:'Smoke Bomb',short:'Smoke',color:'#fff569'},
-  86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
-  51052:{name:'Anti-Magic Zone',short:'AMZ',color:'#c41f3b'}
+  86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'}
 };
 
 function wclFmtMs(ms) {
@@ -4936,88 +4935,74 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount) {
     return;
   }
 
-  // Build avg cast times (median per cast index)
-  var avgCasts = {}, maxTime = 60000;
-  keys.forEach(function(sid) {
-    var logsArr = castsBySpellPerLog[sid];
-    var maxC = Math.max.apply(null, logsArr.map(function(l){return l.length;}));
-    var medians = [];
-    for (var i=0; i<maxC; i++) {
-      var vals = logsArr.map(function(l){return l[i];}).filter(function(v){return v!=null;});
-      if (vals.length >= Math.ceil(logsArr.length*0.25)) medians.push(Math.round(wclMedian(vals)));
-    }
-    if (medians.length) { avgCasts[sid] = medians; maxTime = Math.max(maxTime, medians[medians.length-1]); }
-  });
-
-  // Also build heatmap buckets
-  var allTimes2 = {};
+  // Collect all raw times and find maxTime
+  var allTimes = {};
+  var maxTime = 60000;
   keys.forEach(function(sid) {
     var all = [];
     castsBySpellPerLog[sid].forEach(function(l){l.forEach(function(t){all.push(t);});});
-    if (all.length) allTimes2[sid] = all;
-    maxTime = Math.max(maxTime, all.length ? Math.max.apply(null,all) : 0);
+    if (all.length) {
+      allTimes[sid] = all;
+      maxTime = Math.max(maxTime, Math.max.apply(null, all));
+    }
   });
 
   maxTime = Math.ceil((maxTime + 30000) / 30000) * 30000;
-  var W = 580, PPS = W / (maxTime/1000), IS = 36;
-  var BUCKET_MS = 5000;
+  var W = 600;
+  var PPS = W / (maxTime / 1000);
+  var BUCKET_MS = 4000; // 4s buckets — tighter = sharper peaks
   var numBuckets = Math.ceil(maxTime / BUCKET_MS);
+  var BAR_H = 48; // taller bars = more visible
+  var RULER_H = 22;
 
-  // Time ruler ticks
+  // Build shared ruler
   var tickHtml = '';
   for (var ti=0; ti<=maxTime/30000; ti++) {
-    var tx = ti*30*PPS;
+    var tx = Math.round(ti*30*PPS);
     var tlabel = Math.floor(ti*30/60) + ':' + (ti*30%60<10?'0':'') + (ti*30%60);
-    tickHtml += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #1e2030;pointer-events:none;"></div>';
-    tickHtml += '<span style="position:absolute;left:'+tx+'px;bottom:2px;font-size:9px;font-weight:600;color:#6878a0;transform:translateX(-50%);white-space:nowrap;">'+tlabel+'</span>';
+    tickHtml += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:'+RULER_H+'px;border-left:1px solid #1a1c28;pointer-events:none;"></div>';
+    tickHtml += '<span style="position:absolute;left:'+tx+'px;bottom:3px;font-size:11px;font-weight:700;color:#8892b0;transform:translateX(-50%);white-space:nowrap;letter-spacing:0.02em;">'+tlabel+'</span>';
   }
 
-  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:16px;">Based on <strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs with similar comp. Icon = median cast time. Heat = cast density.</div>';
+  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:16px;">Based on <strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs. Brighter = more commonly used at that time.</div>';
 
-  var sortedSids = Object.keys(avgCasts).sort(function(a,b){return (avgCasts[a][0]||0)-(avgCasts[b][0]||0);});
+  // Sort by average first cast time
+  var sortedSids = keys.filter(function(sid){return allTimes[sid]&&allTimes[sid].length;}).sort(function(a,b){
+    var at = castsBySpellPerLog[a], bt2 = castsBySpellPerLog[b];
+    var af = at.map(function(l){return l[0]||Infinity;});
+    var bf = bt2.map(function(l){return l[0]||Infinity;});
+    return wclMedian(af) - wclMedian(bf);
+  });
+
   sortedSids.forEach(function(sid) {
     var spell = WCL_SPELLS[sid]; if (!spell) return;
-    var times = avgCasts[sid];
-    var rawTimes = allTimes2[sid] || [];
-    var cdId = Object.keys(CD_SPELL_IDS).find(function(k){return String(CD_SPELL_IDS[k])===String(sid);});
-    var iconUrl = cdId ? getCdIconUrl(cdId) : null;
+    var rawTimes = allTimes[sid];
 
-    // Build heatmap
+    // Build buckets
     var buckets = new Array(numBuckets).fill(0);
     rawTimes.forEach(function(t){var b=Math.floor(t/BUCKET_MS); if(b<numBuckets) buckets[b]++;});
     var maxB = Math.max.apply(null, buckets.concat([1]));
-    var heatHtml = '';
     var cellW = W / numBuckets;
+
+    // Render bars with sharp contrast — use sqrt scaling so smaller peaks still show
+    var heatHtml = '';
     for (var bi=0; bi<numBuckets; bi++) {
       if (buckets[bi] > 0) {
-        var intensity = buckets[bi] / maxB;
-        var alpha = (intensity*0.7+0.1).toFixed(2);
-        heatHtml += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+cellW.toFixed(1)+'px;height:100%;background:'+spell.color+';opacity:'+alpha+';pointer-events:none;border-radius:2px;"></div>';
+        var intensity = Math.sqrt(buckets[bi] / maxB); // sqrt makes lower values more visible
+        // Map to opacity range 0.12 -> 1.0
+        var opacity = (intensity * 0.88 + 0.12).toFixed(2);
+        heatHtml += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:'+BAR_H+'px;background:'+spell.color+';opacity:'+opacity+';"></div>';
       }
     }
 
-    // Median cast icons
-    var iconsHtml = times.map(function(t,i) {
-      var x = Math.round((t/1000)*PPS - IS/2);
-      var timeStr = wclFmtMs(t);
-      var icon = iconUrl
-        ? '<img src="'+iconUrl+'" style="width:'+IS+'px;height:'+IS+'px;border-radius:6px;border:2px solid '+spell.color+'55;box-shadow:0 2px 6px rgba(0,0,0,0.6);" onerror="this.style.display=\'none\'">'
-        : '<div style="width:'+IS+'px;height:'+IS+'px;border-radius:6px;background:#0e0f13;border:2px solid '+spell.color+';display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:'+spell.color+';">'+spell.short+'</div>';
-      return '<div title="'+spell.name+' cast '+(i+1)+' — avg '+timeStr+'" style="position:absolute;left:'+x+'px;top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;">'
-        + icon
-        + '<span style="font-size:9px;font-weight:700;color:#e8eaf0;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;background:rgba(8,9,13,0.75);padding:0 3px;border-radius:2px;">'+timeStr+'</span>'
-        + '</div>';
-    }).join('');
-
-    html += '<div style="margin-bottom:20px;">'
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">'
+    html += '<div style="margin-bottom:18px;">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
       + '<span style="font-size:12px;font-weight:700;color:'+spell.color+';">'+spell.short+'</span>'
-      + '<span style="font-size:9px;color:#3a3d52;">'+(rawTimes.length)+' total casts / '+logCount+' logs</span>'
+      + '<span style="font-size:9px;color:#3a3d52;">'+rawTimes.length+' casts across '+logCount+' logs</span>'
       + '</div>'
-      + '<div style="position:relative;height:'+(IS+26)+'px;width:'+W+'px;background:#0a0b0f;border-radius:4px;overflow:hidden;">'
+      + '<div style="position:relative;width:'+W+'px;height:'+(BAR_H+RULER_H)+'px;background:#080910;border-radius:4px;overflow:hidden;">'
       + heatHtml
       + '<div style="position:absolute;inset:0;pointer-events:none;">'+tickHtml+'</div>'
-      + iconsHtml
       + '</div>'
       + '</div>';
   });
