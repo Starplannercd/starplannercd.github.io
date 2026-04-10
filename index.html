@@ -1122,17 +1122,16 @@
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
 <div id="app" style="display:none;">
   <div class="topbar">
-    <span class="topbar-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
+    <span class="topbar-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
-    <button class="btn btn-danger" id="clearBtn">Clear All</button>
+    <button class="btn btn-danger" id="clearBtn">Clear Boss</button>
     <button class="btn btn-manage" id="manageBtn">Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
-    <button class="btn btn-save" id="saveBtn">Share</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
     <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
-    <button class="btn btn-screenshot" id="screenshotBtn">Screenshot</button>
+    <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
   </div>
@@ -1294,16 +1293,16 @@ const BOSSES = [
   {
     id:'horridon', name:'Horridon',
     desc:'Heroic 10 · ~8 min fight',
-    duration: 480,
+    duration: 310,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
-          { name:'Bestial Cry 1', time:370, color:'#c87838' },
-          { name:'Bestial Cry 2', time:382, color:'#c87838' },
-          { name:'Bestial Cry 3', time:393, color:'#c87838' },
-          { name:'Bestial Cry 4', time:403, color:'#c87838' },
+          { name:'Bestial Cry 1', time:257, color:'#c87838' },
+          { name:'Bestial Cry 2', time:268, color:'#c87838' },
+          { name:'Bestial Cry 3', time:279, color:'#c87838' },
+          { name:'Bestial Cry 4', time:291, color:'#c87838' },
         ]
       }
     ]
@@ -1311,17 +1310,16 @@ const BOSSES = [
   {
     id:'council', name:'Council of Elders',
     desc:'Heroic 10 · ~6 min fight',
-    duration: 360,
+    duration: 200,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
-          { name:'Discharge 1', time:117, color:'#8868c8' },
-          { name:'Discharge 2', time:143, color:'#8868c8' },
-          { name:'Discharge 3', time:258, color:'#8868c8' },
-          { name:'Discharge 4', time:284, color:'#8868c8' },
-          { name:'Discharge 5', time:325, color:'#8868c8' },
+          { name:'Discharge 1', time:53, color:'#8868c8' },
+          { name:'Discharge 2', time:79, color:'#8868c8' },
+          { name:'Discharge 3', time:148, color:'#8868c8' },
+          { name:'Discharge 4', time:174, color:'#8868c8' },
         ]
       }
     ]
@@ -1329,16 +1327,15 @@ const BOSSES = [
   {
     id:'tortos', name:'Tortos',
     desc:'Heroic 10 · ~5 min fight',
-    duration: 310,
+    duration: 155,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
-          { name:'Quake Stomp 1', time:29,  color:'#a86838' },
-          { name:'Quake Stomp 2', time:78,  color:'#a86838' },
-          { name:'Quake Stomp 3', time:126, color:'#a86838' },
-          { name:'Quake Stomp 4', time:175, color:'#a86838' },
+          { name:'Quake Stomp 1', time:31, color:'#a86838' },
+          { name:'Quake Stomp 2', time:79, color:'#a86838' },
+          { name:'Quake Stomp 3', time:129,  color:'#a86838' },
         ]
       }
     ]
@@ -1346,18 +1343,17 @@ const BOSSES = [
   {
     id:'megaera', name:'Megaera',
     desc:'Heroic 10 · ~7 min fight',
-    duration: 420,
+    duration: 290,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
-          { name:'Rampage 1', time:33,  color:'#c84848' },
-          { name:'Rampage 2', time:84,  color:'#c84848' },
-          { name:'Rampage 3', time:139, color:'#c84848' },
-          { name:'Rampage 4', time:188, color:'#c84848' },
-          { name:'Rampage 5', time:238, color:'#c84848' },
-          { name:'Rampage 6', time:296, color:'#c84848' },
+          { name:'Rampage 1', time:31,  color:'#c84848' },
+          { name:'Rampage 2', time:110,  color:'#c84848' },
+          { name:'Rampage 3', time:152,  color:'#c84848' },
+          { name:'Rampage 4', time:198,  color:'#c84848' },
+          { name:'Rampage 5', time:268,  color:'#c84848' },
         ]
       }
     ]
@@ -1379,18 +1375,16 @@ const BOSSES = [
   },
   {
     id:'darkanimus', name:'Dark Animus',
-    desc:'Heroic 10 · ~5 min fight',
-    duration: 320,
+    desc:'Heroic 10 · ~4 min fight',
+    duration: 240,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
           { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-          { name:'Interrupting Jolt 1', time:168, color:'#c84888' },
-          { name:'Interrupting Jolt 2', time:191, color:'#c84888' },
-          { name:'Interrupting Jolt 3', time:213, color:'#c84888' },
-          { name:'Interrupting Jolt 4', time:236, color:'#c84888' },
+          { name:'Interrupting Jolt 1', time:189,  color:'#c84888' },
+          { name:'Interrupting Jolt 2', time:212, color:'#c84888' },
         ]
       }
     ]
@@ -1436,9 +1430,40 @@ const BOSSES = [
     ]
   },
   {
+        id:'twins', name:'Twin Consorts',
+    desc:"Heroic 10 · Lu'an & Suen",
+    duration: 450,
+    sections: [
+      {
+        label: "P1 — Lu'an",
+        abilities: [
+          { name:'Cosmic Barrage 2', time:46,  color:'#6888ff' },
+          { name:'Cosmic Barrage 3', time:72,  color:'#6888ff' },
+          { name:'Cosmic Barrage 5', time:116, color:'#6888ff' },
+          { name:'Cosmic Barrage 7', time:163, color:'#6888ff' },
+        ]
+      },
+      {
+        label: 'P2 — Suen',
+        abilities: [
+          { name:'Nuclear Inferno 1', time:235, color:'#ff9848' },
+          { name:'Nuclear Inferno 2', time:289, color:'#ff9848' },
+          { name:'Nuclear Inferno 3', time:339, color:'#ff9848' },
+          { name:'Nuclear Inferno 4', time:394, color:'#ff9848' },
+        ]
+      },
+      {
+        label: 'P3 — Both',
+        abilities: [
+          { name:'Tidal Force', time:407, color:'#48d8ff' },
+        ]
+      }
+    ]
+  },
+  {
     id:'leishen', name:'Lei Shen',
-    desc:'Heroic 10 · ~10 min fight',
-    duration: 600,
+    desc:'Heroic 10 · ~8 min fight',
+    duration: 500,
     raden: false,
     sections: [
       {
@@ -1450,41 +1475,33 @@ const BOSSES = [
       {
         label: 'Phase 2',
         abilities: [
-          { name:'Ball Lightning-P2 (1)', time:198, color:'#4888c8' },
-          { name:'Ball Lightning-P2 (2)', time:244, color:'#4888c8' },
-          { name:'Ball Lightning-P2 (3)', time:289, color:'#4888c8' },
-          { name:'Ball Lightning-P2 (4)', time:334, color:'#4888c8' },
+          { name:'Ball Lightning-P2 (1)', time:169, color:'#4888c8' },
+          { name:'Ball Lightning-P2 (2)', time:215, color:'#4888c8' },
+          { name:'Ball Lightning-P2 (3)', time:260, color:'#4888c8' },
         ]
       },
       {
         label: 'Phase 3',
         phaseStart: 420,
         abilities: [
-          { name:'Ball Lightning-P3 (1)', time:449, color:'#c84888' },
-          { name:'Ball Lightning-P3 (2)', time:480, color:'#c84888' },
-          { name:'Ball Lightning-P3 (3)', time:511, color:'#c84888' },
-          { name:'Thunderstruck-P3 (1)', time:447, color:'#c8a838' },
-          { name:'Thunderstruck-P3 (2)', time:477, color:'#c8a838' },
-          { name:'Thunderstruck-P3 (3)', time:508, color:'#c8a838' },
-          { name:'Diffusion Chain-P3 (1)', time:460, color:'#38c8b8' },
-          { name:'Diffusion Chain-P3 (2)', time:510, color:'#38c8b8' },
-          { name:'Diffusion Chain-P3 (3)', time:555, color:'#38c8b8' },
+          { name:'Thunderstruck-P3 (1)', time:384, color:'#c8a838' },
+          { name:'Thunderstruck-P3 (2)', time:415, color:'#c8a838' },
         ]
       }
     ]
   },
   {
     id:'raden', name:'Ra-den',
-    desc:'Heroic 10 · ~6 min fight',
-    duration: 360,
+    desc:'Heroic 10 · ~4:25 fight',
+    duration: 265,
     raden: false,
     sections: [
       {
         label: null,
         abilities: [
-          { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
           { name:'Material of Creation 1', time:20,  color:'#c8a838' },
           { name:'Material of Creation 4', time:120, color:'#c84848' },
+          { name:'HP Assign',              time:160, color:'#4888c8', hpAssign:true, hpPct:40 },
         ]
       }
     ]
@@ -1915,6 +1932,74 @@ function revertFill(playerWho) {
   refreshActiveSetFromFills();
 }
 
+function showSubPlanPrompt(playerWho, specName) {
+  const col = SPEC_CLASS_COLORS[specName] || '#c8a84b';
+  const short = SPEC_SHORT_NAMES[specName] || specName;
+
+  // Check for existing plans with this sub combo
+  const plans = getPlans();
+  const existing = Object.values(plans).filter(p => p.subWho === playerWho && p.subSpec === specName);
+
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+
+  let existingHtml = '';
+  if (existing.length) {
+    existingHtml = `<div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col}44;background:${col}0d;color:${col};font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
+      <div style="font-size:10px;color:#2e3040;text-align:center;margin:8px 0;">— or —</div>
+    </div>`;
+  }
+
+  ov.innerHTML = `<div style="background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+    <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:4px;">Sub: ${short} for ${playerWho}</div>
+    <div style="font-size:11px;color:#6878a0;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
+    ${existingHtml}
+    <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <input id="subPlanName" type="text" placeholder='Plan name (e.g. "Sub: Ret")' value="Sub: ${short}"
+      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+    <div style="display:flex;gap:8px;">
+      <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(ov);
+
+  const input = ov.querySelector('#subPlanName');
+  input.focus(); input.select();
+
+  // Load existing plan
+  ov.querySelectorAll('.load-sub-plan-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ov.remove();
+      switchToPlan(btn.dataset.id);
+      applyFill(playerWho, specName);
+      updatePlansBtn();
+    });
+  });
+
+  // Start new plan
+  ov.querySelector('#subPlanStart').addEventListener('click', () => {
+    const name = input.value.trim() || ('Sub: ' + short);
+    ov.remove();
+    // Start from Full Raid snapshot so new plan inherits current placements
+    const fullRaidSnapshot = getFullRaidSnapshot();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    // Save as a named plan (timeline is now a copy of Full Raid)
+    const id = saveCurrentAsPlan(name, playerWho, specName);
+    setActivePlanId(id);
+    renderTimeline();
+    updatePlansBtn();
+  });
+
+  ov.querySelector('#subPlanCancel').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') ov.querySelector('#subPlanStart').click(); });
+}
+
 function showRosterModal() {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -2000,9 +2085,43 @@ function showRosterModal() {
   }
 
   function renderModal() {
+    function buildPlansSection() {
+      const plans = getPlans();
+      const activePlanId = getActivePlanId();
+      const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
+      let html = `<div style="margin-bottom:14px;border:1px solid #2e3040;border-radius:6px;overflow:hidden;">
+        <div style="padding:8px 12px;background:#0e0f13;border-bottom:1px solid #2e3040;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;">Saved Plans</span>
+          <div style="display:flex;gap:6px;">
+            <button id="planImportBtn" style="font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid #2e3040;background:transparent;color:#4a4d62;cursor:pointer;letter-spacing:0.04em;">↓ Import Foji</button>
+          </div>
+        </div>
+        <div style="padding:6px;">`;
+
+      // Full Raid
+      const isActiveFull = activePlanId === FULL_RAID_ID;
+      html += `<div class="plan-row" data-plan-id="${FULL_RAID_ID}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActiveFull?'#c8a84b18':'transparent'};">
+        <span style="flex:1;font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c8a84b':'#c8d0e8'};">Full Raid</span>
+        ${isActiveFull ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;">ACTIVE</span>' : ''}
+      </div>`;
+
+      entries.forEach(plan => {
+        const isActive = activePlanId === plan.id;
+        html += `<div class="plan-row" data-plan-id="${plan.id}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActive?'#c8a84b18':'transparent'};">
+          <span style="flex:1;font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
+          ${isActive ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;margin-right:6px;">ACTIVE</span>' : ''}
+          <button class="plan-del-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#3a3d52;font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;">✕</button>
+        </div>`;
+      });
+
+      html += '</div></div>';
+      return html;
+    }
+
     overlay.innerHTML = `
       <div class="modal-box" style="width:560px;max-height:82vh;overflow-y:auto;">
-        <h3>Current Roster</h3>
+        <h3>Sub</h3>
+        <div id="plansSection">${buildPlansSection()}</div>
         <div class="modal-sub" style="margin-bottom:10px;font-size:13px;">Click "Set Sub" to replace a player with a substitute. Their CDs will be automatically swapped across every boss.</div>
         <div id="rosterList">${buildRosterHtml()}</div>
         <div class="modal-footer" style="margin-top:12px;">
@@ -2015,7 +2134,34 @@ function showRosterModal() {
     wireRosterButtons();
   }
 
+  function wirePlanRows() {
+    overlay.querySelectorAll('.plan-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.dataset.planId;
+        switchToPlan(id);
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection().replace('<div id="plansSection">', '').replace('</div>', '');
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
+        wirePlanRows();
+        updatePlansBtn();
+      });
+    });
+    overlay.querySelectorAll('.plan-del-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (getActivePlanId() === id) switchToPlan(FULL_RAID_ID);
+        deletePlan(id);
+        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
+        wirePlanRows();
+        updatePlansBtn();
+      });
+    });
+    const importBtn = overlay.querySelector('#planImportBtn');
+    if (importBtn) importBtn.addEventListener('click', () => { overlay.remove(); showImportFojiAsPlan(); });
+  }
+
   function wireRosterButtons() {
+    wirePlanRows();
     overlay.querySelectorAll('.set-fill-btn').forEach(btn => {
       btn.addEventListener('click', () => showFillPicker(btn.dataset.who));
     });
@@ -2085,23 +2231,9 @@ function showRosterModal() {
     picker.querySelector('#confirmFill').addEventListener('click', () => {
       const specName = picker.querySelector('#fillSpecSelect').value;
       picker.remove();
-      overlay.remove(); // close the roster modal so saved fill menu is unobstructed
-      checkForSavedFill(playerWho, specName,
-        (saved) => {
-          // Restore base state first so applyFill snapshots the correct original
-          const baseState = saved.basePlacedCDs || {};
-          Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-          Object.assign(placedCDs, JSON.parse(JSON.stringify(baseState)));
-          applyFill(playerWho, specName);
-          // Now overwrite placedCDs with the saved fill work
-          Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-          Object.assign(placedCDs, JSON.parse(JSON.stringify(saved.placedCDs)));
-          renderTimeline();
-        },
-        () => {
-          applyFill(playerWho, specName);
-        }
-      );
+      overlay.remove(); // close the roster modal
+      // Ask user to name this plan (or load existing)
+      showSubPlanPrompt(playerWho, specName);
     });
 
     picker.querySelector('#cancelFill').addEventListener('click', () => picker.remove());
@@ -2114,20 +2246,25 @@ function showRosterModal() {
 
 // ---- CD Icon URLs ----
 const CD_ICON_URLS = {
-  'rc':       'https://wow.zamimg.com/images/wow/icons/large/ability_toughness.jpg',
-  'dem':      'https://wow.zamimg.com/images/wow/icons/large/demoralizing_banner.jpg',
-  'pwb':      'https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordbarrier.jpg',
-  'htt':      'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_healingtide.jpg',
-  'ag':       'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_ancestralguidance.jpg',
-  'devo1':    'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
-  'devo2':    'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
-  'devo3':    'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
-  'ah':       'https://wow.zamimg.com/images/wow/icons/large/monk_ability_avertharm.jpg',
-  've':       'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unsummonbuilding.jpg',
-  'smoke':    'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_smoke.jpg',
-  'amz':      'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_antimagiczone.jpg',
-  'dh':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
-  'personals':'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
+  'rc':          'https://wow.zamimg.com/images/wow/icons/large/ability_toughness.jpg',
+  'dem':         'https://wow.zamimg.com/images/wow/icons/large/demoralizing_banner.jpg',
+  'pwb':         'https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordbarrier.jpg',
+  'htt':         'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_healingtide.jpg',
+  'ag':          'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_ancestralguidance.jpg',
+  'devo1':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
+  'devo2':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
+  'devo3':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
+  'ah':          'https://wow.zamimg.com/images/wow/icons/large/monk_ability_avertharm.jpg',
+  've':          'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unsummonbuilding.jpg',
+  'smoke':       'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_smoke.jpg',
+  'amz':         'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_antimagiczone.jpg',
+  'dh':          'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
+  'personals':   'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
+  'lhammer':     'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
+  'lhammer2':    'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
+  'avwrath':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_avenginewrath.jpg',
+  'goak':        'https://wow.zamimg.com/images/wow/icons/large/spell_holy_heroism.jpg',
+  'holyavenger': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_holyavenger.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -2267,7 +2404,7 @@ function renderTimeline() {
 
   const PX_PER_SEC = 2.8;
   const LABEL_W = 160;
-  const totalW = boss.duration * PX_PER_SEC;
+  const totalW = Math.max(boss.duration * PX_PER_SEC, 1600);
 
   // Ruler — tick marks only, no time labels
   const ruler = document.createElement('div');
@@ -2317,6 +2454,8 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   label.className = 'ability-label';
   if (ab.encounterStart) {
     label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a8da8;font-style:italic;">${ab.name}</div>`;
+  } else if (ab.hpAssign) {
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
   } else {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.name}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
@@ -2324,7 +2463,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  track.style.width = totalW + 'px';
+  track.style.width = Math.max(totalW + 400, 1600) + 'px'; // minimum 1600px for ample cells
 
   // Grid lines every 30s
   for (let t = 30; t < boss.duration; t += 30) {
@@ -2353,6 +2492,9 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 }
 
 function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
+  // Look up the ability object for this row so we can pass it to popups
+  const [_si, _ai] = rowKey.split('-').map(Number);
+  const _ab = boss.sections[_si]?.abilities[_ai] || null;
   const placed = (bossData[rowKey] || []);
   placed.forEach(p => {
     const cd = CDS.find(c => c.id === p.cdId);
@@ -2363,16 +2505,16 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     // cellIndex = floor(p.time / 30), cell center = cellIndex * CELL_W + CELL_W/2
     const cellIndex = Math.floor(p.time / 30);
     const cellCenterX = cellIndex * CELL_W + CELL_W / 2;
-    const left = Math.max(0, Math.min(cellCenterX - ICON_W / 2, totalW - ICON_W));
+    const left = Math.max(0, cellCenterX - ICON_W / 2);
 
     const el = document.createElement('div');
     el.className = 'placed-cd';
     el.dataset.placedId = p.id;
     el.dataset.rowKey = rowKey;
-    // Get effective colour (custom ability overrides cd colour)
+    // Get effective colour (custom ability overrides cd colour for text only, not background)
     let ec = cd.color, et = cd.textColor;
     if (cd.customType && p.customAbility && CUSTOM_ABILITY_COLORS[p.customAbility]) {
-      ec = CUSTOM_ABILITY_COLORS[p.customAbility].color;
+      // Keep ec as default custom color for background/border — only text changes per WHO
       et = CUSTOM_ABILITY_COLORS[p.customAbility].textColor;
     }
     // Compute bg/border/text per icon style
@@ -2401,22 +2543,25 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
     const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
-      let shortLabel = '';
-      if (p.customAbility) {
-        shortLabel = CUSTOM_ABILITY_SHORTS[p.customAbility] || p.customAbility.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 4);
-      } else {
-        const who = p.customWho || 'CUS';
-        const rosterMatch = typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === who);
-        shortLabel = rosterMatch ? rosterMatch.name.slice(0, 4).toUpperCase() : who.replace(/[0-9]/g, '').slice(0, 4);
-      }
-      iconText.textContent = shortLabel;
+      // Show CUST with WHO class color for text only, keep original icon colors
+      iconText.textContent = 'CUST';
+      const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
+      const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
+      if (_whoPlayer) { iconText.style.color = _whoPlayer.color; }
       el.style.fontSize = '9px';
     } else {
       iconText.textContent = cd.short;
     }
     el.appendChild(iconText);
     // Offset shown inside icon on hover
-    if (p.offset != null) {
+    if (_ab && _ab.hpAssign) { // Always show HP % on hover
+      const hpPct = p.hpPct != null ? p.hpPct : 40;
+      const inner = document.createElement('div');
+      inner.className = 'cd-offset-inner';
+      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">HP</span>`;
+      inner.style.color = cd.textColor;
+      el.appendChild(inner);
+    } else if (p.offset != null) {
       const offText = p.offset === 0 ? '0s' : (p.offset > 0 ? '+' : '') + p.offset + 's';
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
@@ -2427,7 +2572,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
       e.stopPropagation();
-      showOffsetPopup(e, boss.id, rowKey, p, cd);
+      showOffsetPopup(e, boss.id, rowKey, p, cd, _ab);
     });
     el.addEventListener('mousedown', e => {
       if (e.button === 1) {
@@ -2446,7 +2591,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
-        showOffsetPopup(e, boss.id, rowKey, p, cd);
+        showOffsetPopup(e, boss.id, rowKey, p, cd, _ab);
       }
     });
     track.appendChild(el);
@@ -2516,7 +2661,10 @@ function moveDragGhost(e) {
       const rowPlacements = (placedCDs[bossId] || {})[rowKey] || [];
       // For moves, exclude the dragged item itself from the check
       const _ghostCd = CD_POOL.find(c => c.id === cdId);
-      const isDuplicate = (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
+      const _ghostAbParts = rowKey.split('-').map(Number);
+      const _ghostBoss = BOSSES.find(b => b.id === bossId);
+      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostAbParts[0]]?.abilities[_ghostAbParts[1]];
+      const isDuplicate = (_ghostAb && _ghostAb.hpAssign) ? false : (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
         ? rowPlacements.some(p => p.cdId === cdId && p.id !== activeDrag.movePlacedId && !(rowKey === activeDrag.moveRowKey))
         : rowPlacements.some(p => p.cdId === cdId));
       if (isDuplicate) {
@@ -2576,21 +2724,21 @@ function onDragUp(e) {
       // Snapshot custom meta before removing so we can restore it
       const _draggedRow = (placedCDs[drag.moveBossId] || {})[drag.moveRowKey] || [];
       const _draggedP = _draggedRow.find(p => p.id === drag.movePlacedId);
-      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility } : null;
+      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, hpPct: _draggedP.hpPct } : null;
       __rawRemove(drag.moveBossId, drag.moveRowKey, drag.movePlacedId);
 
       if (displaced && (drag.moveBossId !== bossId || drag.moveRowKey !== rowKey)) {
         // Move displaced CD to source position (different row swap)
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(drag.moveBossId, drag.moveRowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       } else if (displaced && drag.moveRowKey === rowKey) {
         // Same row swap: remove displaced then move it to source cell
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(bossId, rowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       }
@@ -2623,12 +2771,16 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
   // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
   const cd = CD_POOL.find(c => c.id === cdId);
-  if (!(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
+  // Also allow multiple placements on HP assign rows
+  const _rowAbParts = rowKey.split('-').map(Number);
+  const _rowBoss = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
+  const _rowAb = _rowBoss && _rowBoss.sections[_rowAbParts[0]]?.abilities[_rowAbParts[1]];
+  if (!(_rowAb && _rowAb.hpAssign) && !(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
-  const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random() };
+  const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random(), hpPct: 40 };
   // Preserve custom meta if provided (for moves)
-  if (_preserveMeta) { Object.assign(newEntry, _preserveMeta); }
+  if (_preserveMeta) { Object.assign(newEntry, _preserveMeta); if (_preserveMeta.hpPct != null) newEntry.hpPct = _preserveMeta.hpPct; }
   placedCDs[bossId][rowKey].push(newEntry);
   isDirty = true;
   renderTimeline();
@@ -2769,11 +2921,13 @@ const FOJI_ABILITY_KEYS = {
   // Durumu
   'Encounter Start (DUR)':'DURUMU_ENC_START','Health % (DUR)':'DURUMU_HEALTH','Light Spectrum':'DURUMU_LIGHT_SPECTRUM','Disintegration Beam':'DURUMU_DISINTEGRATION_BEAM','Lingering Gaze':'DURUMU_LINGERING_GAZE','Force of Will':'DURUMU_FORCE_OF_WILL','Hard Stare':'DURUMU_HARD_STARE','Dark Parasite':'DURUMU_DARK_PARASITE','Life Drain':'DURUMU_LIFE_DRAIN','Walls of Ice':'DURUMU_WALLS_OF_ICE',
   // Ra-den
+  'Cosmic Barrage (2)':'TWINS_COSMIC_BARRAGE_2','Cosmic Barrage (3)':'TWINS_COSMIC_BARRAGE_3','Cosmic Barrage (5)':'TWINS_COSMIC_BARRAGE_5','Cosmic Barrage (7)':'TWINS_COSMIC_BARRAGE_7','Nuclear Inferno (1)':'TWINS_NUCLEAR_INFERNO_1','Nuclear Inferno (2)':'TWINS_NUCLEAR_INFERNO_2','Nuclear Inferno (3)':'TWINS_NUCLEAR_INFERNO_3','Nuclear Inferno (4)':'TWINS_NUCLEAR_INFERNO_4','Tidal Force':'TWINS_TIDAL_FORCE',
   'Encounter Start (RAD)':'RADEN_ENC_START','Health % (RAD)':'RADEN_HEALTH','Phase 2 (RAD)':'RADEN_PHASE_2','Fatal Strike':'RADEN_FATAL_STRIKE','Murderous Strike':'RADEN_MURDEROUS_STRIKE','Sanguine Horror':'RADEN_SANGUINE_HORROR','Crackling Stalker':'RADEN_CRACKLING_STALKER','Creation':'RADEN_CREATION','Call Essence':'RADEN_CALL_ESSENCE','Anima Phase':'RADEN_ANIMA_PHASE','Vita Phase':'RADEN_VITA_PHASE','Unstable Vita':'RADEN_UNSTABLE_VITA','Ruin':'RADEN_RUIN',
 };
 
 
-function showOffsetPopup(e, bossId, rowKey, p, cd) {
+function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
+  const isHpAssign = !!(ab && ab.hpAssign);
   closeOffsetPopup();
   const popup = document.createElement('div');
   popup.className = 'offset-popup';
@@ -2783,6 +2937,14 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
     const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
   const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
 
+    if (isHpAssign) {
+      const hpVal = p.hpPct != null ? p.hpPct : 40;
+      popup.innerHTML = '<label style="font-size:12px;color:#c8a84b;">HP Assign — set health %</label>'
+        + '<label>Health % trigger</label>'
+        + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="8" max="40" step="1"'
+        + ' style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
+        + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
+    } else {
     popup.innerHTML = isCustom ? `
     <label style="font-size:12px;color:#c8a84b;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
@@ -2828,6 +2990,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
       <button id="offsetClear">Clear</button>
       <button id="offsetCancel">Cancel</button>
     </div>`;
+    } // end else (non-hp-assign)
 
   popup.style.left = Math.min(e.clientX, window.innerWidth - 220) + 'px';
   popup.style.top = (e.clientY + 8) + 'px';
@@ -2835,6 +2998,14 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
   activePopup = popup;
 
   popup.querySelector('#offsetConfirm').addEventListener('click', () => {
+    if (isHpAssign) {
+      const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
+      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
+      const placedItem = placedRow.find(x => x.id === p.id);
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
+      closeOffsetPopup();
+      return;
+    }
     const offsetInput = popup.querySelector('#offsetInput');
     const offVal = parseInt(offsetInput.value, 10);
     if (isCustom) {
@@ -2860,13 +3031,29 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
     }
     closeOffsetPopup();
   });
-  if (!isCustom) {
-    popup.querySelector('#offsetClear').addEventListener('click', () => {
+  if (!isHpAssign && !isCustom) {
+    popup.querySelector('#offsetClear')?.addEventListener('click', () => {
       setPlacementMeta(bossId, rowKey, p.id, cd.who, null);
       closeOffsetPopup();
     });
   }
-  popup.querySelector('#offsetCancel').addEventListener('click', closeOffsetPopup);
+  popup.querySelector('#offsetCancel')?.addEventListener('click', closeOffsetPopup);
+
+  // Wire HP % input scroll wheel
+  const hpInputEl = popup.querySelector('#hpPctInput');
+  if (hpInputEl) {
+    hpInputEl.addEventListener('mouseenter', () => hpInputEl.focus());
+    hpInputEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      hpInputEl.value = Math.max(8, Math.min(40, (parseInt(hpInputEl.value) || 40) - Math.sign(e.deltaY)));
+    }, { passive: false });
+    hpInputEl.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
+      if (ev.key === 'Escape') { closeOffsetPopup(); }
+    });
+    hpInputEl.focus();
+    hpInputEl.select();
+  }
 
   // Wire offset input — scroll on hover (no click needed), colour coding
   const offsetInputEl = popup.querySelector('#offsetInput');
@@ -2877,7 +3064,6 @@ function showOffsetPopup(e, bossId, rowKey, p, cd) {
     }
     colorOffsetInput();
     offsetInputEl.addEventListener('input', colorOffsetInput);
-    // Scroll on hover without requiring focus
     offsetInputEl.addEventListener('mouseenter', () => offsetInputEl.focus());
     offsetInputEl.addEventListener('wheel', e => {
       e.preventDefault();
@@ -2946,6 +3132,7 @@ const BOSS_ABILITY_KEYS = {
   'leishen_p2': { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
   'leishen_p3': { key: 'LEISHEN_BALL_LIGHTNING_P3',     castLabel: 'Ball Lightning P3' },
   'leishen':    { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
+  'twins':      { key: 'TWINS_COSMIC_BARRAGE_2', castLabel: 'Cosmic Barrage' },
   'raden':      { key: 'RADEN_CREATION',                castLabel: 'Material of Creation' },
 };
 
@@ -2980,6 +3167,9 @@ function getBossAbilityKey(boss, rowKey, abName) {
   if (abName === 'Encounter Start') {
     const keyMap = { darkanimus: 'ANIMUS_ENC_START', raden: 'RADEN_ENC_START', ironqon: 'QON_ENC_START' };
     return keyMap[boss.id] || boss.id.toUpperCase() + '_ENC_START';
+  }
+  if (abName && abName.startsWith('HP Assign')) {
+    return 'RADEN_HEALTH';
   }
   if (boss.id === 'ironqon') {
     if (abName && abName.toLowerCase().includes('fist')) return BOSS_ABILITY_KEYS['ironqon_fist'].key;
@@ -3019,34 +3209,37 @@ function buildFojiExport() {
         const placements = bossData[rowKey];
         if (!placements || placements.length === 0) return;
 
-        const castNum = getCastNumber(ab.name);
+        // HP assign rows use the per-placement hpPct as cast number (health %), always count 1 per row
+        const castNum = ab.hpAssign ? 1 : getCastNumber(ab.name);
         const bossAbKey = getBossAbilityKey(boss, rowKey, ab.name);
 
-        const sortedPlacements = [...placements].sort((a, b) => (a.offset ?? 0) - (b.offset ?? 0));
+        const sortedPlacements = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.offset ?? 0) - (b.offset ?? 0));
         sortedPlacements.forEach(p => {
+          // For HP assign rows, cast number = the placement's health % value
+          const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
           const cd = CDS.find(c => c.id === p.cdId);
           if (!cd) return;
-          const _exportCd = CD_POOL.find(c => c.id === p.cdId); const isCustomPlacement = !!(_exportCd && _exportCd.customType);
-          // Allow custom placements to override which boss ability row they export under
+          const _exportCd = CD_POOL.find(c => c.id === p.cdId);
+          const isCustomPlacement = !!(_exportCd && _exportCd.customType);
           let _bossAbKey = bossAbKey;
-          let _castNum = castNum;
+          let _castNum = _pCastNum;
           if (isCustomPlacement && p.customBossAbility && FOJI_ABILITY_KEYS[p.customBossAbility]) {
             _bossAbKey = FOJI_ABILITY_KEYS[p.customBossAbility];
             _castNum = getCastNumber(p.customBossAbility);
           }
           const isPersonals = p.cdId === 'personals';
           const isDem = p.cdId === 'dem';
-          const isGoak = p.cdId === 'goak';
-        const spellId = isCustomPlacement
-          ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
-          : (CD_SPELL_IDS[p.cdId] || 'nil');
-        const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
-          const who = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const offset = p.offset != null ? p.offset : 0;
+          const _exportOffset = ab.hpAssign ? 1 : offset;
+          const spellId = isCustomPlacement
+            ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
+            : (CD_SPELL_IDS[p.cdId] || 'nil');
+          const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
+          const who = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
-          lines.push(`${_bossAbKey}/${_castNum}/${who}/${offset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
         });
       });
     });
@@ -3199,7 +3392,10 @@ function placeCd(bossId, rowKey, cdId, time) {
   if (!placedCDs[bossId]) placedCDs[bossId] = {};
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
   const _cd3 = CD_POOL.find(c => c.id === cdId);
-  if (!(_cd3 && _cd3.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
+  const _rowAbParts3 = rowKey.split('-').map(Number);
+  const _rowBoss3 = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
+  const _rowAb3 = _rowBoss3 && _rowBoss3.sections[_rowAbParts3[0]]?.abilities[_rowAbParts3[1]];
+  if (!(_rowAb3 && _rowAb3.hpAssign) && !(_cd3 && _cd3.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   placedCDs[bossId][rowKey].push({ cdId, time, offset: 0, id: Date.now() + Math.random() });
   renderTimeline();
 }
@@ -3314,7 +3510,28 @@ const BOSS_PORTRAIT_URLS = {
 let ssMode = 'current'; // 'current' | 'all'
 let ssLayout = 'l14';
 const ssIconStyle = 'no-border';
+let ssIconInfoStyle = localStorage.getItem('tot_rcd_ss_icon_info') || 'pill-below';
+
+const SS_ICON_INFO_STYLES = [
+  { id:'none',           name:'None',              desc:'No offset/HP shown' },
+  { id:'pill-below',     name:'Pill Below',        desc:'Small pill under icon' },
+  { id:'pill-corner-br', name:'Corner BR',         desc:'Badge bottom-right corner' },
+  { id:'pill-corner-tr', name:'Corner TR',         desc:'Badge top-right corner' },
+  { id:'pill-corner-tl', name:'Corner TL',         desc:'Badge top-left corner' },
+  { id:'overlay-center', name:'Centre Overlay',    desc:'Semi-transparent overlay' },
+  { id:'overlay-bottom', name:'Bottom Overlay',    desc:'Dark strip at bottom' },
+  { id:'overlay-top',    name:'Top Overlay',       desc:'Dark strip at top' },
+  { id:'inline-right',   name:'Inline Right',      desc:'Text to right of icon' },
+  { id:'inline-below',   name:'Label Below',       desc:'Name + value below' },
+  { id:'bracket',        name:'Bracket',           desc:'[offset] beside icon' },
+  { id:'slash',          name:'Slash',             desc:'Name/offset format' },
+  { id:'dot-prefix',     name:'Dot Prefix',        desc:'· offset next to icon' },
+  { id:'box-outline',    name:'Box Outline',       desc:'Outlined box badge' },
+  { id:'glow-badge',     name:'Glow Badge',        desc:'Coloured glow badge' },
+  { id:'time-right',     name:'Time Right',        desc:'Clock + time right' },
+];
 const ssRowStyle = 'full-color';
+const ssLabelStyle = 'badge-left';
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
@@ -3335,11 +3552,130 @@ function buildSummaryForBoss(boss) {
 
 
 
-function buildSsIconEl(cd) {
+function getSsInfoLabel(cd, p, ab) {
+  if (ab && ab.hpAssign) return `${p.hpPct != null ? p.hpPct : 40}%`;
+  if (p && p.offset != null && p.offset !== 0) return `${p.offset > 0 ? '+' : ''}${p.offset}s`;
+  return null;
+}
+
+function buildSsIconEl(cd, p, ab) {
   const iconUrl = getCdIconUrl(cd.id);
-  const fallbackHtml = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
-  if (!iconUrl) return fallbackHtml;
-  return `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fallbackHtml)}" src="${iconUrl}" style="width:46px;height:46px;border-radius:6px;border:none;" title="${cd.name}" />`;
+  const info = getSsInfoLabel(cd, p, ab);
+  const c = cd.color;
+  const fallbackDiv = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
+  const imgHtml = iconUrl
+    ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fallbackDiv)}" src="${iconUrl}" style="width:46px;height:46px;border-radius:6px;border:none;" title="${cd.name}" />`
+    : fallbackDiv;
+
+  if (!info || ssIconInfoStyle === 'none') {
+    return ssIconInfoStyle === 'inline-right' || ssIconInfoStyle === 'inline-below' || ssIconInfoStyle === 'bracket' || ssIconInfoStyle === 'slash' || ssIconInfoStyle === 'dot-prefix' || ssIconInfoStyle === 'time-right'
+      ? `<div style="display:flex;align-items:center;gap:4px;">${imgHtml}</div>`
+      : imgHtml;
+  }
+
+  switch(ssIconInfoStyle) {
+    case 'pill-below':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:800;color:#fff;background:#00000066;border-radius:8px;padding:1px 5px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-br':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;bottom:-4px;right:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-tr':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;top:-5px;right:-5px;font-size:10px;font-weight:800;color:#fff;background:#000000cc;border:1px solid ${c}99;border-radius:6px;padding:2px 5px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'pill-corner-tl':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <span style="position:absolute;top:-4px;left:-4px;font-size:8px;font-weight:800;color:#fff;background:#000000bb;border:1px solid ${c}88;border-radius:6px;padding:1px 4px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'overlay-center':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:11px;font-weight:900;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'overlay-bottom':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.75);border-radius:0 0 6px 6px;text-align:center;padding:2px 0;">
+          <span style="font-size:9px;font-weight:800;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'overlay-top':
+      return `<div style="position:relative;display:inline-block;">
+        ${imgHtml}
+        <div style="position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,0.75);border-radius:6px 6px 0 0;text-align:center;padding:2px 0;">
+          <span style="font-size:9px;font-weight:800;color:#fff;">${info}</span>
+        </div>
+      </div>`;
+
+    case 'inline-right':
+      return `<div style="display:flex;align-items:center;gap:4px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'inline-below':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#e8eaf2;">${info}</span>
+      </div>`;
+
+    case 'bracket':
+      return `<div style="display:flex;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:10px;font-weight:700;color:#c8a84b;white-space:nowrap;">[${info}]</span>
+      </div>`;
+
+    case 'slash':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        ${imgHtml}
+        <span style="font-size:9px;color:#8a8da8;white-space:nowrap;">${cd.short}/${info}</span>
+      </div>`;
+
+    case 'dot-prefix':
+      return `<div style="display:flex;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:10px;color:#c8a84b;white-space:nowrap;">· ${info}</span>
+      </div>`;
+
+    case 'box-outline':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:700;color:${c};border:1px solid ${c}66;border-radius:3px;padding:1px 5px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'glow-badge':
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        ${imgHtml}
+        <span style="font-size:9px;font-weight:800;color:#fff;background:${c}cc;border-radius:6px;padding:1px 6px;white-space:nowrap;">${info}</span>
+      </div>`;
+
+    case 'time-right':
+      return `<div style="display:flex;align-items:center;gap:4px;">
+        ${imgHtml}
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
+          <span style="font-size:9px;color:#4a4d62;white-space:nowrap;">${cd.short}</span>
+          <span style="font-size:11px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
+        </div>
+      </div>`;
+
+    default:
+      return imgHtml;
+  }
 }
 
 function attachSsIconErrors(container) {
@@ -3361,6 +3697,130 @@ const SS_ROW_STYLES = [
   { id:'full-color',      name:'Full Color Row',    desc:'Ability colour tints the row' },
   { id:'compact-inline',  name:'Compact Inline',    desc:'Tight rows, time inline right' },
 ];
+
+function getSsTimeLabel(ab) {
+  if (ab.hpAssign) return null; // handled separately
+  return formatTime(ab.time);
+}
+
+function getSsAbilityLabel(ab) {
+  return formatAbilityName(ab.name);
+}
+
+function buildSsLabel(ab) {
+  const c = ab.color;
+  const name = getSsAbilityLabel(ab);
+  const t = formatTime(ab.time);
+
+  // Special: HP assign shows health %
+  if (ab.hpAssign) {
+    switch(ssLabelStyle) {
+      default:
+        return `<div class="ss-label">
+          <div class="ss-label-marker" style="background:${c};"></div>
+          <div class="ss-label-inner">
+            <span class="ss-label-name" style="color:${c};">HP Assign</span>
+          </div>
+        </div>`;
+    }
+  }
+
+  switch(ssLabelStyle) {
+    case 'time-only':
+      return `<div class="ss-label" style="align-items:center;">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time" style="font-size:12px;font-weight:700;color:#fff;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'starts-at':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'about-prefix':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'cast-at':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+        </div>
+      </div>`;
+
+    case 'time-big':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span style="font-size:16px;font-weight:900;color:#fff;letter-spacing:0.02em;">${t}</span>
+          <span style="font-size:10px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        </div>
+      </div>`;
+
+    case 'inline-separator':
+      return `<div class="ss-label" style="align-items:center;">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div style="padding:0 12px;overflow:hidden;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="color:#2e3040;font-size:12px;">·</span>
+          <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'pill-time-bottom':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span style="display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#ffffff18;border:1px solid #ffffff33;border-radius:10px;padding:1px 8px;align-self:flex-start;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'badge-left':
+      return `<div class="ss-label" style="padding:0;">
+        <div style="background:#ffffff18;border-right:1px solid #ffffff22;min-width:50px;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:12px;font-weight:800;color:#fff;">${t}</span>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 12px;overflow:hidden;">
+          <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        </div>
+      </div>`;
+
+    case 'two-line-bold':
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span style="font-size:13px;font-weight:800;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="font-size:11px;font-weight:700;color:#ffffff99;">${t}</span>
+        </div>
+      </div>`;
+
+    case 'stacked-prefix':
+    default:
+      return `<div class="ss-label">
+        <div class="ss-label-marker" style="background:${c};"></div>
+        <div class="ss-label-inner">
+          <span class="ss-label-name" style="color:${c};">${name}</span>
+          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
+        </div>
+      </div>`;
+  }
+}
+
 
 function buildSsRow(ab, iconsHtml) {
   const abTime = formatTime(ab.time);
@@ -3421,12 +3881,13 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'full-color':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0a0b0f;min-height:54px;background:${c}0d;">
-        <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:1px solid ${c}22;">
-          <div style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:10px;font-weight:500;color:#ffffff99;letter-spacing:0.04em;">${abTime}</div>
-        </div>
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0a0b0f;min-height:58px;background:${c}0d;">
+        <div style="width:200px;flex-shrink:0;display:flex;align-items:stretch;border-right:1px solid ${c}22;">${buildSsLabel(ab)
+          .replace(/class="ss-label"/g,'style="width:200px;display:flex;align-items:stretch;"')
+          .replace(/class="ss-label-marker"/g,`style="width:3px;align-self:stretch;flex-shrink:0;background:${c}"`)
+          .replace(/class="ss-label-inner"/g,'style="display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0 12px;overflow:hidden;"')
+          .replace(/class="ss-label-name"/g,'style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"')
+          .replace(/class="ss-label-time"/g,'style="font-size:10px;letter-spacing:0.04em;"')}</div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
@@ -3477,7 +3938,7 @@ function renderSsBossBlock(boss) {
     const iconsHtml = sorted.map(p => {
       const cd = CD_POOL.find(c => c.id === p.cdId);
       if (!cd) return '';
-      return buildSsIconEl(cd);
+      return buildSsIconEl(cd, p, ab);
     }).join('');
     return buildSsRow(ab, iconsHtml);
   }).join('');
@@ -3503,6 +3964,7 @@ function showScreenshotModal() {
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
+        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#4888c8;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
         <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
@@ -3515,6 +3977,66 @@ function showScreenshotModal() {
   attachSsIconErrors(ssContent);
 
   overlay.querySelector('#ssClose').addEventListener('click', () => overlay.remove());
+
+  overlay.querySelector('#ssShareLinkBtn')?.addEventListener('click', function() {
+    createShareLink(this);
+  });
+
+  // Full-page screenshot of the ss content
+  overlay.querySelector('#ssCaptureBtn').addEventListener('click', () => {
+    const btn = overlay.querySelector('#ssCaptureBtn');
+    btn.textContent = 'Capturing…';
+    const loadH2C = (cb) => {
+      if (window.html2canvas) { cb(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = cb;
+      s.onerror = () => { btn.textContent = '📷 Screenshot'; alert('Failed to load screenshot library.'); };
+      document.head.appendChild(s);
+    };
+    loadH2C(() => {
+      const clone = ssContent.cloneNode(true);
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      document.body.appendChild(clone);
+      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+        clone.remove();
+        const a = document.createElement('a');
+        a.download = 'rcd-screenshot.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        btn.textContent = '📷 Screenshot';
+      }).catch(() => { clone.remove(); btn.textContent = '📷 Screenshot'; });
+    });
+  });
+
+  overlay.querySelector('#ssIconInfoBtn')?.addEventListener('click', function(ev) {
+    ev.stopPropagation();
+    const existing = document.getElementById('ssIconInfoPicker');
+    if (existing) { existing.remove(); return; }
+    const picker = document.createElement('div');
+    picker.id = 'ssIconInfoPicker';
+    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+    SS_ICON_INFO_STYLES.forEach(s => {
+      const btn = document.createElement('button');
+      const isSel = s.id === ssIconInfoStyle;
+      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
+      btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
+      btn.addEventListener('click', () => {
+        ssIconInfoStyle = s.id;
+        localStorage.setItem('tot_rcd_ss_icon_info', s.id);
+        ssContent.innerHTML = buildContent();
+        attachSsIconErrors(ssContent);
+        picker.remove();
+      });
+      picker.appendChild(btn);
+    });
+    const toolbar = overlay.querySelector('.ss-toolbar');
+    toolbar.style.position = 'relative';
+    toolbar.appendChild(picker);
+    const closeP = e => { if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', closeP); } };
+    setTimeout(() => document.addEventListener('click', closeP), 50);
+  });
+
 
 
 
@@ -3768,19 +4290,20 @@ function renderSheetPreview(el) {
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const castNum = getCastNumber(ab.name);
-      const sorted = [...placements].sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
+      const sorted = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       sorted.forEach(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return;
         const who = p.cdId === 'custom' ? (p.customWho || 'ALL') : cd.who;
         const playerName = getPlayerName(who);
         const playerColor = getPlayerColor(who);
-        const offset = p.offset != null ? p.offset : 0;
+        const offset = ab.hpAssign ? 1 : (p.offset != null ? p.offset : 0);
         const cdName = p.cdId === 'custom' ? 'Custom Spell Assignment' : cd.name;
         const tts = p.cdId === 'custom' && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
         const displayName = p.cdId === 'custom' && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
         const customIcon = p.cdId === 'personals' ? '134951' : '';
-        rows.push({ ab, castNum, who, playerName, playerColor, offset, cd, cdName, tts, displayName, customIcon });
+        const _rowCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
+        rows.push({ ab, castNum: _rowCastNum, who, playerName, playerColor, offset, cd, cdName, tts, displayName, customIcon });
       });
     });
   });
@@ -3831,7 +4354,7 @@ function buildBossSelect() {
   BOSSES.forEach(b => {
     const opt = document.createElement('option');
     opt.value = b.id;
-    opt.textContent = (bossReady[b.id] ? '✓ ' : '') + b.name;
+    opt.textContent = (bossReady[b.id] ? '★ ' : '') + b.name;
     sel.appendChild(opt);
   });
   sel.value = currentBossId;
@@ -3848,7 +4371,7 @@ function refreshBossSelectLabels() {
   if (!sel) return;
   Array.from(sel.options).forEach(opt => {
     const boss = BOSSES.find(b => b.id === opt.value);
-    if (boss) opt.textContent = (bossReady[boss.id] ? '✓ ' : '') + boss.name;
+    if (boss) opt.textContent = (bossReady[boss.id] ? '★ ' : '') + boss.name;
   });
 }
 
@@ -3864,8 +4387,8 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 });
 
 document.getElementById('manageBtn').addEventListener('click', showManageModal);
-document.getElementById('rosterBtn').addEventListener('click', showRosterModal);
-document.getElementById('saveBtn').addEventListener('click', saveToFile);
+document.getElementById('rosterBtn').addEventListener('click', showPlansMenu);
+document.getElementById('saveBtn')?.addEventListener('click', saveToFile);
 document.getElementById('exportBtn').addEventListener('click', showExportModal);
 document.getElementById('importFojiBtn').addEventListener('click', showImportFojiModal);
 
@@ -3994,11 +4517,15 @@ function parseFojiImport(raw) {
 
   return count;
 }
-document.getElementById('screenshotBtn').addEventListener('click', showScreenshotModal);
+document.getElementById('screenshotBtn').addEventListener('click', () => createShareLink(document.getElementById('screenshotBtn')));
 
 
 // ---- localStorage auto-save ----
 const LS_KEY = 'tot_rcd_autosave';
+const PLANS_KEY = 'tot_rcd_plans';
+const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
+const FULL_RAID_ID = '__full_raid__';
+const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
 
 // ── Firebase config ──
 const firebaseConfig = {
@@ -4014,6 +4541,7 @@ const firebaseConfig = {
 let _fbApp = null, _fbDb = null, _fbRef = null;
 let _fbListening = false, _fbIgnoreNext = false;
 const FB_PATH = 'tot_rcd/plan';
+const FB_SHARES_PATH = 'tot_rcd/shares';
 
 function fbGetData() {
   return {
@@ -4155,6 +4683,8 @@ function _initFirebaseCore() {
 
     // Auth state
     firebase.auth().onAuthStateChanged(user => {
+      // If this is a shared view link, skip auth entirely
+      if (_viewId) return;
       if (!user) { showAuthScreen(true); return; }
       _currentUser = user;
       const email = (user.email || '').toLowerCase();
@@ -4215,7 +4745,14 @@ function scheduleAutoSave() {
 }
 
 const __rt = renderTimeline;
-window.renderTimeline = function() { __rt(); scheduleAutoSave(); };
+window.renderTimeline = function() {
+  __rt();
+  scheduleAutoSave();
+  // Keep Full Raid snapshot up to date when on Full Raid plan
+  if (getActivePlanId() === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+  }
+};
 
 // ---- Bottom panel drag-to-expand (snap back on release) ----
 (function() {
@@ -4284,6 +4821,7 @@ window.renderTimeline = function() { __rt(); scheduleAutoSave(); };
 
 buildPalette();
 buildBossSelect();
+updatePlansBtn();
 const _didRestore = autoLoad();
 refreshBossSelectLabels();
 renderTimeline();
@@ -4354,16 +4892,14 @@ async function wclQuery(gql, variables) {
 
 const WCL_TOT_ZONE_ID = 1046;
 let WCL_ENCOUNTERS = {};
-
 async function wclLoadEncounters() {
   if (Object.keys(WCL_ENCOUNTERS).length) return;
   try {
     const d = await wclQuery('{worldData{zone(id:' + WCL_TOT_ZONE_ID + '){encounters{id name}}}}', {});
-    const encs = d && d.worldData && d.worldData.zone && d.worldData.zone.encounters || [];
-    if (encs.length) encs.forEach(function(e) { WCL_ENCOUNTERS[e.name] = e.id; });
+    const encs = (d && d.worldData && d.worldData.zone && d.worldData.zone.encounters) || [];
+    if (encs.length) { WCL_ENCOUNTERS = {}; encs.forEach(e => { WCL_ENCOUNTERS[e.name] = e.id; }); }
     else throw new Error('empty');
   } catch(e) {
-    // Fallback hardcoded IDs
     WCL_ENCOUNTERS = { "Jin'rokh the Breaker":1140,"Horridon":1141,"Council of Elders":1142,"Tortos":1143,"Megaera":1144,"Ji-Kun":1145,"Durumu the Forgotten":1146,"Primordius":1147,"Dark Animus":1148,"Iron Qon":1149,"Twin Consorts":1150,"Lei Shen":1151,"Ra-den":1152 };
   }
 }
@@ -4384,189 +4920,1331 @@ const WCL_SPELLS = {
   740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'},
 };
 
-function wclFmtMs(ms) { var s=Math.round(ms/1000); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); }
-
+function wclFmtMs(ms) { const s = Math.round(ms/1000); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
 function wclMedian(arr) {
   if (!arr.length) return 0;
-  var s = arr.slice().sort(function(a,b){return a-b;});
-  var m = Math.floor(s.length/2);
+  const s = [...arr].sort((a,b) => a-b);
+  const m = Math.floor(s.length/2);
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
 function renderWclTimeline(container, castsBySpellPerLog, logCount) {
-  var keys = Object.keys(castsBySpellPerLog);
+  const keys = Object.keys(castsBySpellPerLog);
   if (!keys.length) {
-    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found in these logs.<br><span style="font-size:10px;color:#3a3d52;">Open console (F12) to see which spell IDs were found.</span></div>';
+    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found.<br><span style="font-size:10px;color:#3a3d52;">Check console (F12) — look for 'WCL unique cast spell IDs'.</span></div>';
     return;
   }
-  var avgCasts = {};
-  var maxTime = 60000;
-  keys.forEach(function(sid) {
-    var logsArr = castsBySpellPerLog[sid];
-    var maxC = Math.max.apply(null, logsArr.map(function(l){return l.length;}));
-    var medians = [];
-    for (var i=0; i<maxC; i++) {
-      var vals = logsArr.map(function(l){return l[i];}).filter(function(v){return v!=null;});
-      if (vals.length >= Math.ceil(logsArr.length*0.25)) {
-        medians.push(Math.round(wclMedian(vals)));
-      }
+  const avgCasts = {};
+  let maxTime = 60000;
+  keys.forEach(sid => {
+    const logsArr = castsBySpellPerLog[sid];
+    const maxC = Math.max(...logsArr.map(l => l.length));
+    const medians = [];
+    for (let i=0; i<maxC; i++) {
+      const vals = logsArr.map(l => l[i]).filter(v => v != null);
+      if (vals.length >= Math.ceil(logsArr.length * 0.25)) medians.push(Math.round(wclMedian(vals)));
     }
-    if (medians.length) { avgCasts[sid] = medians; maxTime = Math.max(maxTime, medians[medians.length-1]); }
+    if (medians.length) { avgCasts[sid] = medians; maxTime = Math.max(maxTime, ...medians); }
   });
-  maxTime = Math.ceil((maxTime+30000)/30000)*30000;
-  var W = 560, PPS = W/(maxTime/1000);
-  var tickHtml = '';
-  for (var ti=0; ti<=maxTime/30000; ti++) {
-    var tx = (ti*30)*PPS;
-    var ts = Math.floor(ti*30/60)+':'+(ti*30%60<10?'0':'')+(ti*30%60);
-    tickHtml += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:16px;border-left:1px solid #1e2030;pointer-events:none;"></div>';
-    if (ti%2===0) tickHtml += '<span style="position:absolute;left:'+tx+'px;bottom:0;font-size:8px;color:#3a3d52;transform:translateX(-50%);">'+ts+'</span>';
+  maxTime = Math.ceil((maxTime + 30000) / 30000) * 30000;
+  const W = 560, PPS = W / (maxTime / 1000), IS = 36;
+  let tickHtml = '';
+  for (let ti=0; ti <= maxTime/30000; ti++) {
+    const tx = ti * 30 * PPS;
+    const ts = Math.floor(ti*30/60) + ':' + String(ti*30%60).padStart(2,'0');
+    tickHtml += `<div style="position:absolute;left:${tx}px;top:0;bottom:16px;border-left:1px solid #1e2030;pointer-events:none;"></div>`;
+    if (ti%2===0) tickHtml += `<span style="position:absolute;left:${tx}px;bottom:0;font-size:8px;color:#3a3d52;transform:translateX(-50%);">${ts}</span>`;
   }
-  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:14px;">Average CD timing from <strong style="color:#c8d0e8;">'+logCount+'</strong> heroic 10-man logs. Icon = median cast time.</div>';
-  var IS = 36;
-  var sortedSids = Object.keys(avgCasts).sort(function(a,b){return (avgCasts[a][0]||0)-(avgCasts[b][0]||0);});
-  sortedSids.forEach(function(sid) {
-    var spell = WCL_SPELLS[sid]; if (!spell) return;
-    var times = avgCasts[sid];
-    var cdId = Object.keys(CD_SPELL_IDS).find(function(k){return String(CD_SPELL_IDS[k])===String(sid);});
-    var iconUrl = cdId ? getCdIconUrl(cdId) : null;
-    var iconsHtml = times.map(function(t,i) {
-      var x = Math.round((t/1000)*PPS - IS/2);
-      var timeStr = wclFmtMs(t);
-      var icon = iconUrl
-        ? '<img src="'+iconUrl+'" style="width:'+IS+'px;height:'+IS+'px;border-radius:5px;border:none;" onerror="this.style.display='none'">'
-        : '<div style="width:'+IS+'px;height:'+IS+'px;border-radius:5px;background:'+spell.color+'22;border:1px solid '+spell.color+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:'+spell.color+';">'+spell.short+'</div>';
-      return '<div title="'+spell.name+' #'+(i+1)+' avg '+timeStr+'" style="position:absolute;left:'+x+'px;top:0;display:flex;flex-direction:column;align-items:center;gap:2px;">'+icon+'<span style="font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;">'+timeStr+'</span></div>';
+  let html = `<div style="font-size:10px;color:#4a4d62;margin-bottom:14px;">Average CD timing from <strong style="color:#c8d0e8;">${logCount}</strong> heroic 10-man logs. Icon = median cast time.</div>`;
+  Object.entries(avgCasts).sort((a,b) => (a[1][0]||0)-(b[1][0]||0)).forEach(([sid, times]) => {
+    const spell = WCL_SPELLS[sid]; if (!spell) return;
+    const cdId = Object.keys(CD_SPELL_IDS).find(k => String(CD_SPELL_IDS[k]) === String(sid));
+    const iconUrl = cdId ? getCdIconUrl(cdId) : null;
+    const iconsHtml = times.map((t, i) => {
+      const x = Math.round((t/1000)*PPS - IS/2);
+      const timeStr = wclFmtMs(t);
+      const icon = iconUrl
+        ? `<img src="${iconUrl}" style="width:${IS}px;height:${IS}px;border-radius:5px;border:none;" onerror="this.style.display='none'">`
+        : `<div style="width:${IS}px;height:${IS}px;border-radius:5px;background:${spell.color}22;border:1px solid ${spell.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${spell.color};">${spell.short}</div>`;
+      return `<div title="${spell.name} #${i+1} avg ${timeStr}" style="position:absolute;left:${x}px;top:0;display:flex;flex-direction:column;align-items:center;gap:2px;">${icon}<span style="font-size:8px;font-weight:700;color:${spell.color};white-space:nowrap;">${timeStr}</span></div>`;
     }).join('');
-    html += '<div style="margin-bottom:18px;">'
-      + '<div style="font-size:11px;font-weight:700;color:'+spell.color+';margin-bottom:5px;">'+spell.short+' <span style="font-size:9px;color:#3a3d52;font-weight:400;">('+times.length+' cast'+(times.length>1?'s':'')+')</span></div>'
-      + '<div style="position:relative;height:'+(IS+16)+'px;width:'+W+'px;border-bottom:1px solid #0f1018;">'
-      + '<div style="position:absolute;inset:0;pointer-events:none;">'+tickHtml+'</div>'
-      + iconsHtml
-      + '</div></div>';
+    html += `<div style="margin-bottom:18px;"><div style="font-size:11px;font-weight:700;color:${spell.color};margin-bottom:5px;">${spell.short} <span style="font-size:9px;color:#3a3d52;font-weight:400;">(${times.length} cast${times.length>1?'s':''})</span></div><div style="position:relative;height:${IS+16}px;width:${W}px;border-bottom:1px solid #0f1018;"><div style="position:absolute;inset:0;pointer-events:none;">${tickHtml}</div>${iconsHtml}</div></div>`;
   });
   container.innerHTML = html;
 }
 
 function showWclModal() {
-  var existing = document.getElementById('wclOverlay');
+  const existing = document.getElementById('wclOverlay');
   if (existing) { existing.remove(); return; }
-  var authed = wclIsAuthed();
-  var ov = document.createElement('div');
+  const authed = wclIsAuthed();
+  const ov = document.createElement('div');
   ov.id = 'wclOverlay';
   ov.className = 'modal-overlay';
-  ov.style.alignItems = 'flex-start';
-  ov.style.padding = '20px';
-  var box = document.createElement('div');
+  ov.style.cssText = 'align-items:flex-start;padding:20px;';
+  const box = document.createElement('div');
   box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:660px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
-  box.innerHTML = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;">'
-    + '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Throne of Thunder &middot; Heroic 10 &middot; Average CD Timing</div></div>'
-    + (authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;letter-spacing:0.08em;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;">CONNECTED</span>' : '')
-    + '<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button>'
-    + '</div>'
-    + '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
-    + (!authed ? '<div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You'll be redirected to WarcraftLogs to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs &rarr;</button></div>'
-    : '<div style="display:flex;gap:12px;margin-bottom:10px;">'
-    + '<div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses&hellip;</option></select></div>'
-    + '<div style="width:120px;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">20</span></label><input type="range" id="wclLim" min="5" max="50" value="20" style="width:100%;margin-top:6px;accent-color:#ff8c00;"></div>'
-    + '</div>'
-    + '<div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Your comp: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div>'
-    + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch Average CD Timing</button>'
-    + '<div id="wclResults"></div>'
-    + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div>')
-    + '</div>';
+  box.innerHTML = `<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Throne of Thunder &middot; Heroic 10 &middot; Average CD Timing</div></div>${authed?'<span style="font-size:9px;font-weight:700;color:#48a868;letter-spacing:0.08em;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;">CONNECTED</span>':''}<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div><div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">${!authed?`<div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You'll be redirected to WarcraftLogs to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs &rarr;</button></div>`:`<div style="display:flex;gap:12px;margin-bottom:10px;"><div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses…</option></select></div><div style="width:120px;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">20</span></label><input type="range" id="wclLim" min="5" max="50" value="20" style="width:100%;margin-top:6px;accent-color:#ff8c00;"></div></div><div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div><button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch Average CD Timing</button><div id="wclResults"></div><div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div>`}</div>`;
   ov.appendChild(box);
   document.body.appendChild(ov);
-  box.querySelector('#wclClose').addEventListener('click', function(){ ov.remove(); });
-  ov.addEventListener('mousedown', function(e){ if(e.target===ov) ov.remove(); });
-  if (!authed) {
-    box.querySelector('#wclLoginBtn').addEventListener('click', wclLogin);
-    return;
-  }
-  var limSlider = box.querySelector('#wclLim');
-  var limVal = box.querySelector('#wclLimV');
-  limSlider.addEventListener('input', function(){ limVal.textContent = limSlider.value; });
-  box.querySelector('#wclLogout').addEventListener('click', function(){
-    localStorage.removeItem(WCL_TOKEN_KEY); localStorage.removeItem(WCL_TOKEN_EXP_KEY);
-    ov.remove(); showWclModal();
-  });
-  var bossEl = box.querySelector('#wclBoss');
-  wclLoadEncounters().then(function(){
-    bossEl.innerHTML = '<option value="">— Choose boss —</option>' +
-      Object.keys(WCL_ENCOUNTERS).map(function(n){ return '<option value="'+WCL_ENCOUNTERS[n]+'">'+n+'</option>'; }).join('');
-  });
-  box.querySelector('#wclFetch').addEventListener('click', async function(){
-    var encId = parseInt(bossEl.value);
+  box.querySelector('#wclClose').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  if (!authed) { box.querySelector('#wclLoginBtn').addEventListener('click', wclLogin); return; }
+  const limSlider = box.querySelector('#wclLim');
+  const limVal = box.querySelector('#wclLimV');
+  limSlider.addEventListener('input', () => { limVal.textContent = limSlider.value; });
+  box.querySelector('#wclLogout').addEventListener('click', () => { localStorage.removeItem(WCL_TOKEN_KEY); localStorage.removeItem(WCL_TOKEN_EXP_KEY); ov.remove(); showWclModal(); });
+  const bossEl = box.querySelector('#wclBoss');
+  wclLoadEncounters().then(() => { bossEl.innerHTML = '<option value="">— Choose boss —</option>' + Object.entries(WCL_ENCOUNTERS).map(([n,id]) => `<option value="${id}">${n}</option>`).join(''); });
+  box.querySelector('#wclFetch').addEventListener('click', async () => {
+    const encId = parseInt(bossEl.value);
     if (!encId) { alert('Please select a boss.'); return; }
-    var btn = box.querySelector('#wclFetch');
-    var results = box.querySelector('#wclResults');
-    btn.textContent = 'Fetching rankings…'; btn.disabled = true;
+    const btn = box.querySelector('#wclFetch'), results = box.querySelector('#wclResults');
+    btn.textContent = 'Fetching…'; btn.disabled = true;
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs…</div>';
     try {
-      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,page:1)}}}';
-      var rd = await wclQuery(rankQ, {id:encId});
-      var rankings = rd && rd.worldData && rd.worldData.encounter && rd.worldData.encounter.fightRankings && rd.worldData.encounter.fightRankings.rankings || [];
-      if (!rankings.length) {
-        results.innerHTML = '<div style="color:#c84848;font-size:12px;">No 10-man heroic logs found for this boss.</div>';
-        btn.textContent = 'Fetch Average CD Timing'; btn.disabled = false; return;
-      }
-      var limit = Math.min(rankings.length, parseInt(limSlider.value));
-      var castsBySpellPerLog = {};
-      var processed = 0;
-      for (var ri=0; ri<limit; ri++) {
-        var r = rankings[ri];
-        var code = r.report && r.report.code, fid = r.report && r.report.fightID;
+      const rd = await wclQuery('query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,page:1)}}}', {id:encId});
+      const rankings = (rd && rd.worldData && rd.worldData.encounter && rd.worldData.encounter.fightRankings && rd.worldData.encounter.fightRankings.rankings) || [];
+      if (!rankings.length) { results.innerHTML = '<div style="color:#c84848;font-size:12px;">No 10-man heroic logs found.</div>'; btn.textContent = 'Fetch Average CD Timing'; btn.disabled = false; return; }
+      const limit = Math.min(rankings.length, parseInt(limSlider.value));
+      const castsBySpellPerLog = {};
+      let processed = 0;
+      for (let ri = 0; ri < limit; ri++) {
+        const r = rankings[ri];
+        const code = r.report && r.report.code, fid = r.report && r.report.fightID;
         if (!code || !fid) continue;
         try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
-          var d = await wclQuery(q, {c:code,fid:fid});
-          var rep = d && d.reportData && d.reportData.report;
-          var evts = rep && rep.events && rep.events.data || [];
-          var fights = rep && rep.fights || [];
-          var fight = fights[0];
+          const d = await wclQuery('query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}', {c:code,fid});
+          const rep = d && d.reportData && d.reportData.report;
+          const evts = (rep && rep.events && rep.events.data) || [];
+          const fight = rep && rep.fights && rep.fights[0];
           if (!fight) continue;
-          var fStart = fight.startTime;
-          if (processed===0) {
-            var uids = [];
-            evts.forEach(function(ev){ if(ev.type==='cast' && uids.indexOf(ev.abilityGameID)<0) uids.push(ev.abilityGameID); });
-            console.log('WCL events:', evts.length, 'fight duration:', Math.round((fight.endTime-fight.startTime)/1000)+'s');
-            console.log('WCL unique cast spell IDs:', uids.sort(function(a,b){return a-b;}));
+          const fStart = fight.startTime;
+          if (processed === 0) {
+            const uids = [...new Set(evts.filter(e => e.type==='cast').map(e => e.abilityGameID))].sort((a,b)=>a-b);
+            console.log('WCL events:', evts.length, 'duration:', Math.round((fight.endTime-fight.startTime)/1000)+'s');
+            console.log('WCL unique cast spell IDs:', uids);
           }
-          var logCasts = {};
-          evts.forEach(function(ev){
-            if (ev.type!=='cast') return;
-            var sid = ev.abilityGameID;
+          const logCasts = {};
+          evts.forEach(ev => {
+            if (ev.type !== 'cast') return;
+            const sid = ev.abilityGameID;
             if (!WCL_SPELLS[sid]) return;
-            var rel = ev.timestamp - fStart;
-            if (rel<0 || rel>900000) return;
+            const rel = ev.timestamp - fStart;
+            if (rel < 0 || rel > 900000) return;
             if (!logCasts[sid]) logCasts[sid] = [];
             logCasts[sid].push(rel);
           });
-          Object.keys(logCasts).forEach(function(sid){
+          Object.entries(logCasts).forEach(([sid, times]) => {
             if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid] = [];
-            castsBySpellPerLog[sid].push(logCasts[sid].sort(function(a,b){return a-b;}));
+            castsBySpellPerLog[sid].push(times.sort((a,b) => a-b));
           });
           processed++;
-          results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs…</div>';
+          results.innerHTML = `<div style="color:#4a4d62;font-size:12px;">Processing ${processed}/${limit} logs…</div>`;
         } catch(le) { console.warn('WCL log error:', le); }
       }
       renderWclTimeline(results, castsBySpellPerLog, processed);
-    } catch(e) {
-      results.innerHTML = '<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>';
-    }
+    } catch(e) { results.innerHTML = `<div style="color:#c84848;font-size:12px;">Error: ${e.message}</div>`; }
     btn.textContent = 'Fetch Average CD Timing'; btn.disabled = false;
   });
 }
 
-(async function(){
-  var p = new URLSearchParams(window.location.search);
+(async function() {
+  const p = new URLSearchParams(window.location.search);
   if (p.get('code') && p.get('state') && sessionStorage.getItem('wcl_s')) {
-    var ok = await wclHandleCallback();
+    const ok = await wclHandleCallback();
     if (ok) setTimeout(showWclModal, 600);
   }
 })();
 
 document.getElementById('wclBtn')?.addEventListener('click', showWclModal);
+
+
+
+// ── Plan Switch Animation ──
+const PLAN_ANIM_KEY = 'tot_rcd_plan_anim';
+let planAnimStyle = localStorage.getItem(PLAN_ANIM_KEY) || 'fade';
+
+const PLAN_ANIM_STYLES = [
+  { id:'fade',       name:'Fade',         fn: (el) => { el.style.transition='opacity 0.12s'; el.style.opacity='0.15'; setTimeout(()=>{ el.style.opacity='1'; setTimeout(()=>el.style.transition='',180); },130); } },
+  { id:'flash',      name:'Flash',        fn: (el) => { el.style.transition='none'; el.style.filter='brightness(3)'; setTimeout(()=>{ el.style.transition='filter 0.25s'; el.style.filter='brightness(1)'; setTimeout(()=>el.style.transition='',300); },60); } },
+  { id:'slide-down', name:'Slide Down',   fn: (el) => { el.style.transition='none'; el.style.transform='translateY(-12px)'; el.style.opacity='0'; setTimeout(()=>{ el.style.transition='transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='translateY(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },250); },60); } },
+  { id:'slide-up',   name:'Slide Up',     fn: (el) => { el.style.transition='none'; el.style.transform='translateY(12px)'; el.style.opacity='0'; setTimeout(()=>{ el.style.transition='transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='translateY(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },250); },60); } },
+  { id:'scale',      name:'Scale',        fn: (el) => { el.style.transition='none'; el.style.transform='scale(0.97)'; el.style.opacity='0.3'; setTimeout(()=>{ el.style.transition='transform 0.2s cubic-bezier(.22,1,.36,1),opacity 0.15s'; el.style.transform='scale(1)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.transform=''; },280); },60); } },
+  { id:'blur',       name:'Blur',         fn: (el) => { el.style.transition='none'; el.style.filter='blur(4px)'; el.style.opacity='0.4'; setTimeout(()=>{ el.style.transition='filter 0.2s,opacity 0.15s'; el.style.filter='blur(0)'; el.style.opacity='1'; setTimeout(()=>{ el.style.transition=''; el.style.filter=''; },280); },80); } },
+  { id:'none',       name:'None',         fn: () => {} },
+];
+
+function playPlanSwitchAnim() {
+  const el = document.querySelector('.main') || document.querySelector('#app');
+  if (!el) return;
+  const style = PLAN_ANIM_STYLES.find(s => s.id === planAnimStyle) || PLAN_ANIM_STYLES[0];
+  style.fn(el);
+}
+
+function showPlanAnimPicker() {
+  const existing = document.getElementById('planAnimPickerOv');
+  if (existing) { existing.remove(); return; }
+  const ov = document.createElement('div');
+  ov.id = 'planAnimPickerOv';
+  ov.className = 'modal-overlay';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
+  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#c8a84b;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;">×</button></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="animGrid"></div>';
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  const grid = box.querySelector('#animGrid');
+  PLAN_ANIM_STYLES.forEach(s => {
+    const isSel = s.id === planAnimStyle;
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};cursor:pointer;font-size:12px;font-weight:600;`;
+    btn.textContent = s.name;
+    btn.addEventListener('click', () => {
+      planAnimStyle = s.id;
+      localStorage.setItem(PLAN_ANIM_KEY, s.id);
+      playPlanSwitchAnim();
+      ov.remove();
+    });
+    grid.appendChild(btn);
+  });
+  box.querySelector('#animClose').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
+// ── Plan Presets ──
+// plan constants moved up
+
+function getPlans() {
+  try { return JSON.parse(localStorage.getItem(PLANS_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function savePlans(plans) {
+  localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
+}
+
+function getActivePlanId() {
+  return localStorage.getItem(ACTIVE_PLAN_KEY) || FULL_RAID_ID;
+}
+
+function setActivePlanId(id) {
+  localStorage.setItem(ACTIVE_PLAN_KEY, id);
+}
+
+
+function saveFullRaidSnapshot() {
+  try {
+    const snapshot = captureCurrentTimeline();
+    localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(snapshot));
+  } catch(e) {}
+}
+
+function getFullRaidSnapshot() {
+  try {
+    const raw = localStorage.getItem(FULL_RAID_SNAPSHOT_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  // Fallback to autosave
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.placedCDs) return data.placedCDs;
+    }
+  } catch(e) {}
+  return {};
+}
+
+function captureCurrentTimeline() {
+  return {
+    placedCDs: JSON.parse(JSON.stringify(placedCDs)),
+    activeSetIds: [...activeSetIds],
+    paletteOrder: paletteOrder ? [...paletteOrder] : null,
+    cdWho: Object.fromEntries(CD_POOL.map(c => [c.id, c.who])),
+  };
+}
+
+function applyTimelineSnapshot(snapshot) {
+  if (!snapshot) return;
+  // Restore placedCDs
+  const pCDs = snapshot.placedCDs || snapshot; // backwards compat
+  Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+  Object.assign(placedCDs, JSON.parse(JSON.stringify(pCDs)));
+  // Restore activeSetIds
+  if (snapshot.activeSetIds) {
+    activeSetIds = new Set(snapshot.activeSetIds);
+  }
+  // Restore cdWho
+  if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
+  // Restore paletteOrder
+  if (snapshot.paletteOrder !== undefined) paletteOrder = snapshot.paletteOrder;
+  buildPalette();
+  renderTimeline();
+  // Animate plan switch
+  playPlanSwitchAnim();
+}
+
+function saveCurrentAsPlan(name, subWho, subSpec, subbedOut) {
+  const plans = getPlans();
+  const id = 'plan_' + Date.now();
+  const snapshot = captureCurrentTimeline();
+  plans[id] = {
+    id,
+    name,
+    subWho: subWho || null,
+    subSpec: subSpec || null,
+    subbedOut: subbedOut || [],
+    placedCDs: snapshot.placedCDs,
+    activeSetIds: snapshot.activeSetIds,
+    paletteOrder: snapshot.paletteOrder,
+    cdWho: snapshot.cdWho,
+    savedAt: Date.now(),
+  };
+  savePlans(plans);
+  return id;
+}
+
+function updatePlanSnapshot(id) {
+  if (id === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+    autoSave();
+    return;
+  }
+  const plans = getPlans();
+  if (!plans[id]) return;
+  const snapshot = captureCurrentTimeline();
+  plans[id].placedCDs = snapshot.placedCDs;
+  plans[id].activeSetIds = snapshot.activeSetIds;
+  plans[id].paletteOrder = snapshot.paletteOrder;
+  plans[id].cdWho = snapshot.cdWho;
+  plans[id].savedAt = Date.now();
+  savePlans(plans);
+}
+
+function deletePlan(id) {
+  if (id === FULL_RAID_ID) return;
+  const plans = getPlans();
+  delete plans[id];
+  savePlans(plans);
+}
+
+function switchToPlan(id) {
+  const currentId = getActivePlanId();
+
+  // Immediately save current state before switching — no debounce
+  if (currentId === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+    autoSave();
+  } else {
+    const plans = getPlans();
+    if (plans[currentId]) {
+      plans[currentId].placedCDs = captureCurrentTimeline();
+      plans[currentId].savedAt = Date.now();
+      savePlans(plans);
+    }
+  }
+
+  setActivePlanId(id);
+
+  if (id === FULL_RAID_ID) {
+    // Restore Full Raid from its dedicated snapshot
+    const snapshot = getFullRaidSnapshot();
+    applyTimelineSnapshot(snapshot);
+  } else {
+    const plans = getPlans();
+    const plan = plans[id];
+    if (plan && plan.placedCDs) {
+      applyTimelineSnapshot(plan.placedCDs);
+    }
+  }
+  renderBottomPanel();
+  updatePlansBtn();
+}
+
+
+
+function updatePlansBtn() {
+  const btn = document.getElementById('rosterBtn');
+  if (!btn) return;
+  const id = getActivePlanId();
+  if (id === FULL_RAID_ID) {
+    btn.textContent = '⬤ Full Raid';
+    btn.style.color = '#48a868';
+    btn.style.background = '#48a86818';
+    btn.style.borderColor = '#48a86866';
+    btn.style.fontWeight = '600';
+    btn.style.letterSpacing = '0.02em';
+  } else {
+    const plans = getPlans();
+    const plan = plans[id];
+    const name = plan ? plan.name : 'Plan';
+    const subbedOut = plan && plan.subbedOut ? plan.subbedOut : [];
+    const firstColor = subbedOut.length > 0
+      ? (DEFAULT_ROSTER.find(r => subbedOut.includes(r.who))?.color || '#c84848')
+      : '#c84848';
+    btn.textContent = '⬤ ' + name;
+    btn.style.color = firstColor;
+    btn.style.background = firstColor + '22';
+    btn.style.borderColor = firstColor + '88';
+    btn.style.fontWeight = '700';
+    btn.style.letterSpacing = '0.02em';
+  }
+}
+
+function showPlansMenu(ev) {
+  ev.stopPropagation();
+  const existing = document.getElementById('plansOverlay');
+  if (existing) { existing.remove(); return; }
+
+  const ov = document.createElement('div');
+  ov.id = 'plansOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding-top:52px;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
+
+  function buildBoxHtml() {
+    const plans = getPlans();
+    const activePlanId = getActivePlanId();
+    const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
+
+    const allPlans = [{ id: FULL_RAID_ID, name: 'Full Raid', isFullRaid: true }, ...entries];
+
+    const plansHtml = allPlans.map(plan => {
+      const isActive = activePlanId === plan.id;
+      return `<div class="plan-card" data-id="${plan.id}" style="
+        display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
+        border-bottom:1px solid #161820;transition:background 0.1s;
+        background:${isActive ? '#c8a84b0f' : 'transparent'};
+        position:relative;
+      ">
+        <div style="
+          width:3px;height:36px;border-radius:2px;flex-shrink:0;
+          background:${isActive ? '#c8a84b' : '#2e3040'};
+          transition:background 0.15s;
+        "></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s;">${plan.name}</div>
+          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c8a84b99;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#3a3d52;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
+        </div>
+        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c8a84b;flex-shrink:0;box-shadow:0 0 8px #c8a84b88;"></div>' : ''}
+        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a4d62;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#2e3040;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
+      </div>`;
+    }).join('');
+
+    return `
+      <div style="padding:14px 18px 10px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:8px;">
+        <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
+        <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
+      <div style="padding:12px;border-top:1px solid #1e2030;display:flex;gap:8px;">
+        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
+        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
+      </div>`;
+  }
+
+  box.innerHTML = buildBoxHtml();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    box.style.transform = 'translateY(0)';
+    box.style.opacity = '1';
+  });
+
+  function close() {
+    box.style.transform = 'translateY(-8px)';
+    box.style.opacity = '0';
+    setTimeout(() => ov.remove(), 160);
+  }
+
+  function rebuildList() {
+    box.innerHTML = buildBoxHtml();
+    wireBox();
+  }
+
+  function switchPlan(id) {
+    // Animate out active, animate in new
+    const cards = box.querySelectorAll('.plan-card');
+    cards.forEach(c => {
+      if (c.dataset.id === id) {
+        c.style.transition = 'background 0.2s';
+        c.style.background = '#c8a84b18';
+      }
+    });
+    setTimeout(() => {
+      switchToPlan(id);
+      rebuildList();
+    }, 120);
+  }
+
+  function wireBox() {
+    box.querySelector('#plansCloseBtn')?.addEventListener('click', close);
+
+    box.querySelectorAll('.plan-card').forEach(card => {
+      card.addEventListener('mouseenter', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = '#ffffff08'; });
+      card.addEventListener('mouseleave', () => { if (getActivePlanId() !== card.dataset.id) card.style.background = 'transparent'; });
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('plan-del-x') || e.target.closest('.plan-del-x')) return;
+        if (card.dataset.id !== getActivePlanId()) switchPlan(card.dataset.id);
+      });
+    });
+
+    box.querySelectorAll('.plan-edit-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.color = '#c8a84b'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#4a4d62'; });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        close();
+        showEditPlanPicker(btn.dataset.id);
+      });
+    });
+
+    box.querySelectorAll('.plan-del-x').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.color = '#c84848'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#2e3040'; });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (getActivePlanId() === btn.dataset.id) switchToPlan(FULL_RAID_ID);
+        deletePlan(btn.dataset.id);
+        rebuildList();
+        updatePlansBtn();
+      });
+    });
+
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#2e3040'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#1e2030'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2e3040'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#1e2030'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
+      close();
+      showNewPlanPicker();
+    });
+
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('click', () => {
+      close();
+      showImportFojiAsPlan();
+    });
+  }
+
+  wireBox();
+  ov.addEventListener('mousedown', (e) => { if (e.target === ov) close(); });
+}
+
+
+function showNewPlanPicker() {
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+
+  const selectedOut = new Set();       // who values subbed out
+  const subIns = {};                    // who -> specName (sub-in spec)
+  let step = 1;
+
+  const SPEC_GROUPS = {
+    'Healers':  ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
+    'Tanks':    ['Brewmaster','Protection Pal','Protection War','Blood DK','Guardian Dru'],
+    'Ranged':   ['Shadow Priest','Elemental','Enhancement','Balance Dru','Frost Mage','Fire Mage','Arcane Mage','Destruction','Affliction','Demonology','Survival Hunt','Marksmanship','Beast Mastery'],
+    'Melee':    ['Arms Warrior','Fury Warrior','Assassination','Combat Rogue','Subtlety','Unholy DK','Frost DK','Windwalker','Feral Dru','Retribution','None / Absent'],
+  };
+
+  function renderStep1() {
+    const roles = ['tank','healer','ranged','melee'];
+    const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged', melee:'Melee' };
+    const playersHtml = roles.map(role => {
+      const players = DEFAULT_ROSTER.filter(p => p.role === role);
+      if (!players.length) return '';
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${players.map(p => {
+            const isSel = selectedOut.has(p.who);
+            const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
+              <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    const anySelected = selectedOut.size > 0;
+    const selectedNames = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)?.name || who).join(', ');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Select players who are <strong style="color:#c8d0e8;">subbing out</strong>.</div>
+      <div id="npPlayers">${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">${anySelected?'Subbing out: <span style="color:#c8d0e8;">'+selectedNames+'</span>':'Select at least one player to sub out, or proceed with a Full Raid copy.'}</div>
+        <div style="display:flex;gap:8px;">
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">${anySelected?'Next →':'Create Copy of Full Raid'}</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelectorAll('.sub-player-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const who = btn.dataset.who;
+        if (selectedOut.has(who)) { selectedOut.delete(who); delete subIns[who]; }
+        else selectedOut.add(who);
+        renderStep1();
+      });
+    });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npNext')?.addEventListener('click', () => {
+      if (selectedOut.size === 0) { createPlan('Copy of Full Raid', [], {}); return; }
+      step = 2; renderStep2();
+    });
+  }
+
+  function renderStep2() {
+    const subbedPlayers = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)).filter(Boolean);
+
+    const specOptsHtml = Object.entries(SPEC_GROUPS).map(([group, specs]) =>
+      `<optgroup label="${group}">${specs.filter(s => SPEC_CD_MAP[s]).map(s => `<option value="${s}">${s}</option>`).join('')}</optgroup>`
+    ).join('');
+
+    const playersHtml = subbedPlayers.map(p => {
+      const currentSub = subIns[p.who] || '';
+      const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
+      const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+        <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+            <option value="">— No sub-in —</option>
+            ${specOptsHtml}
+          </select>
+        </div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames || '<span style="color:#2e3040;">no CDs</span>'}</div>
+      </div>`;
+    }).join('');
+
+    const selectedNames = subbedPlayers.map(p => p.name).join(', ');
+    const subInEntries = Object.entries(subIns).filter(([,v]) => v);
+    const subInSummary = subInEntries.map(([who, spec]) => {
+      const p = DEFAULT_ROSTER.find(r => r.who === who);
+      return `${p?.name||who} → ${spec}`;
+    }).join(', ');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Choose who's <strong style="color:#c8d0e8;">subbing in</strong> for each player. Their CDs will be added to the palette.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <input id="npName" type="text" placeholder="Plan name…" value="Sub: ${selectedNames}"
+          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="display:flex;gap:8px;">
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Create Plan</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    // Wire selects
+    box.querySelectorAll('.sub-in-select').forEach(sel => {
+      if (subIns[sel.dataset.who]) sel.value = subIns[sel.dataset.who];
+      sel.addEventListener('change', () => {
+        subIns[sel.dataset.who] = sel.value;
+        renderStep2();
+      });
+    });
+    box.querySelector('#npBack')?.addEventListener('click', () => { step = 1; renderStep1(); });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCreate')?.addEventListener('click', () => {
+      const name = (box.querySelector('#npName')?.value || '').trim() || 'New Plan';
+      createPlan(name, [...selectedOut], subIns);
+    });
+  }
+
+  function createPlan(name, subbedWhos, subInMap) {
+    const fullSnap = getFullRaidSnapshot();
+    const newPlacedCDs = JSON.parse(JSON.stringify(fullSnap.placedCDs || fullSnap || {}));
+    let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
+    const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+
+    // Remove subbed-out CDs
+    const removedCdIds = new Set();
+    subbedWhos.forEach(who => {
+      const player = DEFAULT_ROSTER.find(r => r.who === who);
+      if (!player) return;
+      player.cds.forEach(cdId => {
+        newActiveSetIds = newActiveSetIds.filter(id => id !== cdId);
+        removedCdIds.add(cdId);
+      });
+    });
+
+    // Add sub-in CDs
+    Object.entries(subInMap).forEach(([who, specName]) => {
+      if (!specName) return;
+      const spec = SPEC_CD_MAP[specName];
+      if (!spec || !spec.cds.length) return;
+      spec.cds.forEach(cdId => {
+        if (!newActiveSetIds.includes(cdId)) newActiveSetIds.push(cdId);
+        // Update WHO label for this CD to the sub-in's WHO
+        newCdWho[cdId] = spec.who;
+      });
+    });
+
+    // Strip removed CDs from placements
+    Object.keys(newPlacedCDs).forEach(bossId => {
+      const bossData = newPlacedCDs[bossId];
+      if (!bossData) return;
+      Object.keys(bossData).forEach(rowKey => {
+        bossData[rowKey] = (bossData[rowKey] || []).filter(p => !removedCdIds.has(p.cdId));
+      });
+    });
+
+    // Apply
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, newPlacedCDs);
+    activeSetIds = new Set(newActiveSetIds);
+    CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+
+    const id = saveCurrentAsPlan(name, null, null, subbedWhos);
+    setActivePlanId(id);
+    buildPalette();
+    renderTimeline();
+    updatePlansBtn();
+    ov.remove();
+  }
+
+  renderStep1();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
+function showEditPlanPicker(planId) {
+  const plans = getPlans();
+  const plan = plans[planId];
+  if (!plan) return;
+
+  // Pre-populate from saved plan
+  const preSelectedOut = new Set(plan.subbedOut || []);
+  const preSubIns = {};
+  // Try to infer sub-ins from saved cdWho vs full raid cdWho
+  const fullSnap = getFullRaidSnapshot();
+  const fullCdWho = fullSnap.cdWho || {};
+  const planCdWho = plan.cdWho || {};
+  Object.entries(planCdWho).forEach(([cdId, who]) => {
+    if (fullCdWho[cdId] && fullCdWho[cdId] !== who) {
+      // Find which spec maps to this WHO
+      const spec = Object.entries(SPEC_CD_MAP).find(([, v]) => v.who === who);
+      if (spec) {
+        // Find which original player owns this cd slot
+        preSelectedOut.forEach(outWho => {
+          preSubIns[outWho] = preSubIns[outWho] || spec[0];
+        });
+      }
+    }
+  });
+
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+
+  const selectedOut = new Set(preSelectedOut);
+  const subIns = Object.assign({}, preSubIns);
+  let step = 1;
+
+  const SPEC_GROUPS = {
+    'Healers':  ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
+    'Tanks':    ['Brewmaster','Protection Pal','Protection War','Blood DK','Guardian Dru'],
+    'Ranged':   ['Shadow Priest','Elemental','Enhancement','Balance Dru','Frost Mage','Fire Mage','Arcane Mage','Destruction','Affliction','Demonology','Survival Hunt','Marksmanship','Beast Mastery'],
+    'Melee':    ['Arms Warrior','Fury Warrior','Assassination','Combat Rogue','Subtlety','Unholy DK','Frost DK','Windwalker','Feral Dru','Retribution','None / Absent'],
+  };
+
+  function renderStep1() {
+    const roles = ['tank','healer','ranged','melee'];
+    const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged', melee:'Melee' };
+    const playersHtml = roles.map(role => {
+      const players = DEFAULT_ROSTER.filter(p => p.role === role);
+      if (!players.length) return '';
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${players.map(p => {
+            const isSel = selectedOut.has(p.who);
+            const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
+              <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust who's subbing out.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <div style="display:flex;gap:8px;">
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Next →</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelectorAll('.sub-player-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const who = btn.dataset.who;
+        if (selectedOut.has(who)) { selectedOut.delete(who); delete subIns[who]; }
+        else selectedOut.add(who);
+        renderStep1();
+      });
+    });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npNext')?.addEventListener('click', () => { step = 2; renderStep2(); });
+  }
+
+  function renderStep2() {
+    const subbedPlayers = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)).filter(Boolean);
+    const specOptsHtml = Object.entries(SPEC_GROUPS).map(([group, specs]) =>
+      `<optgroup label="${group}">${specs.filter(s => SPEC_CD_MAP[s]).map(s => `<option value="${s}">${s}</option>`).join('')}</optgroup>`
+    ).join('');
+
+    const playersHtml = subbedPlayers.map(p => {
+      const currentSub = subIns[p.who] || '';
+      const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
+      const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+        <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+            <option value="">— No sub-in —</option>${specOptsHtml}
+          </select>
+        </div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames||'<span style="color:#2e3040;">no CDs</span>'}</div>
+      </div>`;
+    }).join('');
+
+    const selectedNames = subbedPlayers.map(p => p.name).join(', ');
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;margin-bottom:4px;">
+        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+      </div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust sub-ins and rename if needed.</div>
+      <div>${playersHtml}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+        <input id="npName" type="text" placeholder="Plan name…" value="${plan.name}"
+          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+        <div style="display:flex;gap:8px;">
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Save Changes</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelectorAll('.sub-in-select').forEach(sel => {
+      if (subIns[sel.dataset.who]) sel.value = subIns[sel.dataset.who];
+      sel.addEventListener('change', () => { subIns[sel.dataset.who] = sel.value; renderStep2(); });
+    });
+    box.querySelector('#npBack')?.addEventListener('click', () => { step = 1; renderStep1(); });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCreate')?.addEventListener('click', () => {
+      const name = (box.querySelector('#npName')?.value || '').trim() || plan.name;
+      const subbedWhos = [...selectedOut];
+      const fullSnap = getFullRaidSnapshot();
+      const newPlacedCDs = JSON.parse(JSON.stringify(plan.placedCDs || {}));
+      let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
+      const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+      const removedCdIds = new Set();
+      subbedWhos.forEach(who => {
+        const player = DEFAULT_ROSTER.find(r => r.who === who);
+        if (!player) return;
+        player.cds.forEach(cdId => { newActiveSetIds = newActiveSetIds.filter(id => id !== cdId); removedCdIds.add(cdId); });
+      });
+      Object.entries(subIns).forEach(([who, specName]) => {
+        if (!specName) return;
+        const spec = SPEC_CD_MAP[specName];
+        if (!spec || !spec.cds.length) return;
+        spec.cds.forEach(cdId => { if (!newActiveSetIds.includes(cdId)) newActiveSetIds.push(cdId); newCdWho[cdId] = spec.who; });
+      });
+      Object.keys(newPlacedCDs).forEach(bossId => {
+        const bd = newPlacedCDs[bossId]; if (!bd) return;
+        Object.keys(bd).forEach(rk => { bd[rk] = (bd[rk]||[]).filter(p => !removedCdIds.has(p.cdId)); });
+      });
+      // Update plan in place
+      const allPlans = getPlans();
+      allPlans[planId].name = name;
+      allPlans[planId].subbedOut = subbedWhos;
+      allPlans[planId].placedCDs = newPlacedCDs;
+      allPlans[planId].activeSetIds = newActiveSetIds;
+      allPlans[planId].cdWho = newCdWho;
+      allPlans[planId].savedAt = Date.now();
+      savePlans(allPlans);
+      // If this is the active plan, apply changes
+      if (getActivePlanId() === planId) {
+        Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+        Object.assign(placedCDs, newPlacedCDs);
+        activeSetIds = new Set(newActiveSetIds);
+        CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+        buildPalette(); renderTimeline();
+      }
+      updatePlansBtn();
+      ov.remove();
+    });
+  }
+
+  renderStep1();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
+
+function showImportFojiAsPlan() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<div class="modal-box" style="width:560px;">
+    <h3>Import Foji as New Plan</h3>
+    <div class="modal-sub" style="font-size:13px;margin-bottom:8px;">Give this plan a name, then paste your Foji string.</div>
+    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
+    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
+    <div id="importPlanStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
+    <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
+      <button id="importPlanConfirm" class="btn copy-btn">Import & Save</button>
+      <button id="importPlanClose" class="btn">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#importPlanClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('mousedown', e => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelector('#importPlanName').focus();
+
+  overlay.querySelector('#importPlanConfirm').addEventListener('click', () => {
+    const name = overlay.querySelector('#importPlanName').value.trim();
+    const raw = overlay.querySelector('#importFojiPlanInput').value.trim();
+    const status = overlay.querySelector('#importPlanStatus');
+    if (!name) { status.textContent = 'Please enter a plan name.'; return; }
+    if (!raw) { status.textContent = 'Please paste a Foji string.'; return; }
+
+    // Start from Full Raid snapshot, then apply import on top
+    const savedPlaced = captureCurrentTimeline();
+    const fullRaidSnapshot = getFullRaidSnapshot();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+
+    try {
+      const count = parseFojiImport(raw);
+      const id = saveCurrentAsPlan(name);
+      setActivePlanId(id);
+      // Restore original state for Full Raid
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, savedPlaced);
+      // Now switch to the new plan (which has the import)
+      switchToPlan(id);
+      status.style.color = '#48a868';
+      status.textContent = `Imported ${count} assignments into "${name}".`;
+      setTimeout(() => overlay.remove(), 900);
+    } catch(e) {
+      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+      Object.assign(placedCDs, savedPlaced);
+      renderTimeline();
+      status.style.color = '#c84848';
+      status.textContent = 'Import failed: ' + e.message;
+    }
+  });
+}
+
+// Init plans btn
+document.addEventListener('DOMContentLoaded', () => { updatePlansBtn(); });
+
+
+// ── Share Link / View Mode ──
+function generateShareId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function buildShareData() {
+  return {
+    placedCDs: JSON.parse(JSON.stringify(placedCDs)),
+    bossReady: JSON.parse(JSON.stringify(bossReady)),
+    createdAt: Date.now(),
+  };
+}
+
+async function createShareLink(btn) {
+  if (!_fbDb) { alert('Not connected to Firebase.'); return; }
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+
+  // Save current plan state first so share reflects latest changes
+  const currentId = getActivePlanId();
+  if (currentId === FULL_RAID_ID) {
+    saveFullRaidSnapshot();
+  } else {
+    const plans = getPlans();
+    if (plans[currentId]) {
+      const snapshot = captureCurrentTimeline();
+      plans[currentId].placedCDs = snapshot.placedCDs;
+      plans[currentId].activeSetIds = snapshot.activeSetIds;
+      plans[currentId].savedAt = Date.now();
+      savePlans(plans);
+    }
+  }
+  try {
+    const id = generateShareId();
+    const data = buildShareData();
+    await _fbDb.ref(FB_SHARES_PATH + '/' + id).set(data);
+    const url = window.location.origin + window.location.pathname + '?view=' + id;
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '✓ Copied!';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = btn.id === 'screenshotBtn' ? 'Share Link' : '🔗 Share Link'; }, 3000);
+  } catch(e) {
+    console.error(e);
+    btn.textContent = btn.id === 'screenshotBtn' ? 'Share Link' : '🔗 Share Link';
+    btn.disabled = false;
+    alert('Failed to generate link: ' + e.message);
+  }
+}
+
+// View mode — runs if ?view=ID in URL
+async function initViewMode(viewId) {
+  // Hide planner, show view page
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'none';
+
+  const viewEl = document.createElement('div');
+  viewEl.id = 'viewPage';
+  viewEl.style.cssText = 'min-height:100vh;background:#08090d;font-family:var(--app-font, Inter, system-ui, sans-serif);';
+
+  // Header
+  viewEl.innerHTML = `
+    <div style="background:#0d0f15;border-bottom:2px solid #c8a84b44;padding:14px 28px;display:flex;align-items:center;gap:16px;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:3px;">
+        <div style="font-size:18px;font-weight:900;color:#c8a84b;letter-spacing:0.04em;line-height:1;">&lt;Professional&gt; Raid Cooldowns</div>
+        <div style="font-size:10px;color:#4a4d62;letter-spacing:0.06em;text-transform:uppercase;line-height:1;">Throne of Thunder · Heroic 10</div>
+      </div>
+      <div style="margin-left:32px;font-size:10px;color:#4a4d62;letter-spacing:0.03em;text-align:right;line-height:1.5;">Icon numbers:<br><span style="color:#ff8888;">− before cast</span> · <span style="color:#88ff88;">+ after cast</span></div>
+    </div>
+    <div id="viewContent" style="padding:20px 28px;"></div>`;
+
+  document.body.appendChild(viewEl);
+
+  const viewContent = viewEl.querySelector('#viewContent');
+  viewContent.innerHTML = '<div style="color:#4a4d62;font-size:13px;padding:20px 0;">Loading…</div>';
+
+  try {
+    const db = firebase.database();
+    const snap = await db.ref(FB_SHARES_PATH + '/' + viewId).once('value');
+    const data = snap.val();
+    if (!data) { viewContent.innerHTML = '<div style="color:#c84848;padding:20px 0;">Plan not found or expired.</div>'; return; }
+
+    // Apply data into state — clear first to avoid stale data bleeding in
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+    if (data.bossReady) Object.assign(bossReady, data.bossReady);
+
+    // Force corner-tr style for view page
+    const _prevStyle = ssIconInfoStyle;
+    ssIconInfoStyle = 'pill-corner-tr';
+
+    // Build content
+    const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
+      '<div style="color:#5a5d78;font-size:13px;padding:20px 0;">No assignments placed.</div>';
+    viewContent.innerHTML = html;
+    attachSsIconErrors(viewContent);
+
+    ssIconInfoStyle = _prevStyle;
+  } catch(e) {
+    viewContent.innerHTML = `<div style="color:#c84848;padding:20px 0;">Error loading plan: ${e.message}</div>`;
+  }
+}
+
+// Check for view mode on load
+const _urlParams = new URLSearchParams(window.location.search);
+const _viewId = _urlParams.get('view');
+if (_viewId) {
+  // Immediately hide auth/app so nothing flashes
+  const _authEl = document.getElementById('authScreen');
+  const _appEl = document.getElementById('app');
+  if (_authEl) _authEl.style.display = 'none';
+  if (_appEl) _appEl.style.display = 'none';
+  // Wait for Firebase to init then load view
+  const _waitForFb = setInterval(() => {
+    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+      clearInterval(_waitForFb);
+      initViewMode(_viewId);
+    }
+  }, 100);
+  setTimeout(() => clearInterval(_waitForFb), 10000);
+}
+
+
+
+// ── Holy Paladin CD View (Shift+M) ──
+const HPALA_CDS = ['devo1','goak','holyavenger','avwrath','lhammer','divfavor'];
+const hpalaViewStyle = 'icon-grid';
+
+// Short name override for this view
+const HPALA_SHORT = { devo1:'Devo', devo2:'Devo', devo3:'Devo' };
+
+
+function getHpalaShort(cd) {
+  return HPALA_SHORT[cd.id] || cd.short;
+}
+
+function buildHPalaIconEl(cd, size) {
+  const sz = size || '40px';
+  const url = getCdIconUrl(cd.id);
+  if (url) return `<img src="${url}" onerror="this.outerHTML='<div style=\'width:${sz};height:${sz};border-radius:4px;border:1px solid ${cd.color};background:${cd.color}22;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${cd.textColor};\'>${getHpalaShort(cd)}</div>'" style="width:${sz};height:${sz};border-radius:4px;border:none;">`;
+  return `<div style="width:${sz};height:${sz};border-radius:4px;border:1px solid ${cd.color};background:${cd.color}22;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${cd.textColor};">${getHpalaShort(cd)}</div>`;
+}
+
+function buildHPalaRow(ab, sorted, style) {
+  const abTime = formatTime(ab.time);
+  const name = formatAbilityName(ab.name);
+  const c = ab.color;
+
+  switch(style) {
+    case 'badge-row':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:56px;">
+        <div style="background:${c}22;border-right:1px solid ${c}44;min-width:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:11px;font-weight:700;color:${c};">${abTime}</span>
+        </div>
+        <div style="width:150px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;border-right:1px solid #1e2030;">
+          <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
+      </div>`;
+
+    case 'pill-icons':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:60px;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #1e2030;">
+          <span style="font-size:12px;font-weight:600;color:${c};">${name}</span>
+          <span style="display:inline-block;margin-top:4px;font-size:9px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;border-radius:10px;padding:1px 8px;align-self:flex-start;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:8px 14px;flex-wrap:wrap;">
+          ${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);if(!cd)return'';return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">${buildHPalaIconEl(cd,'38px')}<span style="font-size:8px;font-weight:700;color:${cd.color};">${getHpalaShort(cd)}</span></div>`;}).join('')}
+        </div>
+      </div>`;
+
+    case 'accent-left':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:56px;background:${c}0a;">
+        <div style="width:4px;background:${c};flex-shrink:0;"></div>
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
+          <span style="font-size:12px;font-weight:700;color:#d0d8ec;">${name}</span>
+          <span style="font-size:10px;font-weight:500;color:#fff;opacity:0.7;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
+      </div>`;
+
+    case 'two-col':
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #161820;min-height:48px;">
+        <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
+        <div style="width:130px;flex-shrink:0;padding:0 12px;font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+        <div style="width:48px;flex-shrink:0;padding:0 10px;font-size:11px;font-weight:600;color:#e8eaf2;border-right:1px solid #1e2030;">${abTime}</div>
+        <div style="display:flex;gap:5px;align-items:center;padding:6px 12px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'36px'):''}).join('')}</div>
+      </div>`;
+
+    case 'icon-grid':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:72px;background:${c}08;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="width:155px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
+          <span style="font-size:13px;font-weight:700;color:${c};">${name}</span>
+          <span style="font-size:10px;color:#e8eaf2;margin-top:3px;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:10px 16px;flex-wrap:wrap;">
+          ${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);if(!cd)return'';return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">${buildHPalaIconEl(cd,'46px')}<span style="font-size:9px;font-weight:700;color:${cd.color};">${getHpalaShort(cd)}</span></div>`;}).join('')}
+        </div>
+      </div>`;
+
+    case 'dark-card':
+      return `<div style="margin:4px 0;border-radius:6px;background:#12141a;border:1px solid #1e2030;overflow:hidden;display:flex;align-items:stretch;">
+        <div style="width:4px;background:${c};flex-shrink:0;border-radius:6px 0 0 6px;"></div>
+        <div style="width:155px;flex-shrink:0;padding:10px 14px;border-right:1px solid #1e2030;">
+          <div style="font-size:12px;font-weight:700;color:${c};">${name}</div>
+          <div style="font-size:10px;color:#6878a0;margin-top:3px;">${abTime}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
+      </div>`;
+
+    case 'slash':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:54px;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="display:flex;align-items:center;gap:0;padding:0 14px;width:200px;flex-shrink:0;border-right:1px solid #1e2030;overflow:hidden;">
+          <span style="font-size:11px;font-weight:600;color:#e8eaf2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="font-size:14px;color:#2e3040;margin:0 8px;flex-shrink:0;">/</span>
+          <span style="font-size:11px;font-weight:700;color:${c};flex-shrink:0;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'38px'):''}).join('')}</div>
+      </div>`;
+
+    case 'bold-ability':
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:60px;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid #1e2030;">
+          <span style="font-size:15px;font-weight:900;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;">${name}</span>
+          <span style="font-size:10px;color:#e8eaf2;margin-top:2px;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
+      </div>`;
+
+    case 'chip':
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #161820;min-height:54px;padding:8px 14px;gap:12px;">
+        <div style="display:flex;flex-direction:column;gap:5px;width:180px;flex-shrink:0;">
+          <span style="display:inline-block;font-size:10px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;padding:3px 10px;border-radius:4px;align-self:flex-start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${name}</span>
+          <span style="font-size:10px;font-weight:600;color:#e8eaf2;padding-left:2px;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'38px'):''}).join('')}</div>
+      </div>`;
+
+    case 'condensed':
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #0f1018;min-height:40px;padding:0 14px;gap:10px;">
+        <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;margin-right:2px;"></div>
+        <span style="font-size:11px;font-weight:600;color:${c};width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+        <span style="font-size:10px;font-weight:600;color:#e8eaf2;width:38px;flex-shrink:0;">${abTime}</span>
+        <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'30px'):''}).join('')}</div>
+      </div>`;
+
+    case 'no-border':
+      return `<div style="display:flex;align-items:stretch;min-height:56px;background:${c}06;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;">
+          <span style="font-size:12px;font-weight:600;color:${c};">${name}</span>
+          <span style="font-size:10px;color:#e8eaf2;margin-top:2px;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
+      </div>`;
+
+    case 'timeline':
+    default:
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:58px;background:${c}08;">
+        <div style="width:3px;background:${c};flex-shrink:0;"></div>
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid ${c}22;">
+          <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          <span style="font-size:10px;font-weight:500;color:#e8eaf2;">${abTime}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">
+          ${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);if(!cd)return'';return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">${buildHPalaIconEl(cd,'40px')}<span style="font-size:8px;font-weight:700;color:${cd.color};">${getHpalaShort(cd)}</span></div>`;}).join('')}
+        </div>
+      </div>`;
+  }
+}
+
+function buildHPalaContent() {
+  let html = '';
+  BOSSES.forEach(boss => {
+    const bossData = placedCDs[boss.id] || {};
+    const rows = [];
+    boss.sections.forEach((sec, si) => {
+      sec.abilities.forEach((ab, ai) => {
+        const rowKey = `${si}-${ai}`;
+        const placements = (bossData[rowKey] || []).filter(p => HPALA_CDS.includes(p.cdId));
+        if (!placements.length) return;
+        const sorted = [...placements].sort((a,b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
+        rows.push({ ab, sorted });
+      });
+    });
+    if (!rows.length) return;
+
+    const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #2e3040;">` : '';
+
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#0d0f15;border-bottom:1px solid #2e3040;">
+      ${pImg}
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0a0c12;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c8a84b66;margin-bottom:3px;">Cooldowns</div>
+        <div style="font-size:16px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${boss.name}</div>
+      </div>
+    </div>`;
+
+    const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
+    html += `<div style="border:1px solid #1e2030;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+  });
+  return html || '<div style="color:#5a5d78;font-size:13px;padding:20px;">No holy paladin CDs placed yet.</div>';
+}
+
+function showHPalaView() {
+  const existing = document.getElementById('hpalaViewOverlay');
+  if (existing) { existing.remove(); return; }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'hpalaViewOverlay';
+  overlay.className = 'modal-overlay';
+  overlay.style.alignItems = 'flex-start';
+  overlay.style.padding = '20px';
+
+  overlay.innerHTML = `<div class="ss-modal">
+    <div class="ss-toolbar" style="position:relative;">
+      <h3>Holy Paladin CDs</h3>
+      <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+    </div>
+    <div class="ss-content" id="hpalaContent" style="background:#08090d;padding:20px 24px;overflow-y:auto;flex:1;"></div>
+  </div>`;
+
+  document.body.appendChild(overlay);
+
+  const contentEl = overlay.querySelector('#hpalaContent');
+  contentEl.innerHTML = buildHPalaContent();
+
+  overlay.querySelector('#hpalaClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('mousedown', e => { if (e.target === overlay) overlay.remove(); });
+
+  // Screenshot button — use html2canvas via CDN
+  overlay.querySelector('#hpalaSsBtn').addEventListener('click', () => {
+    const btn = overlay.querySelector('#hpalaSsBtn');
+    btn.textContent = 'Capturing…';
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = () => {
+      // Create a temp full-height clone so html2canvas captures everything
+      const clone = contentEl.cloneNode(true);
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      document.body.appendChild(clone);
+      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+        clone.remove();
+        const a = document.createElement('a');
+        a.download = 'hpala-cds.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        btn.textContent = '📷 Screenshot';
+      }).catch(() => { clone.remove(); btn.textContent = '📷 Screenshot'; });
+    };
+    script.onerror = () => { btn.textContent = '📷 Screenshot'; alert('Screenshot failed to load.'); };
+    document.head.appendChild(script);
+  });
+
+
+}
+
+// Shift+M shortcut
+document.addEventListener('keydown', e => {
+  if (e.shiftKey && e.key === 'M') showHPalaView();
+});
 
 
 
