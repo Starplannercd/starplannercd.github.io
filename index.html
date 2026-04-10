@@ -5050,7 +5050,7 @@ function renderWclDisplay(container, castsBySpellPerLog, logCount, bossName, avg
 
     container.innerHTML =
       '<div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">'
-      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs matching your comp &middot; '
+      +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs (ranks 26\u201345) &middot; '
       +bossName+' &middot; avg kill <strong style="color:#c8d0e8;">'+fmtAvgFight()+'</strong>'
       +'</div>'
       +'<div style="margin-bottom:4px;font-size:9px;color:#3a3d52;">'
@@ -5087,7 +5087,7 @@ function showWclModal() {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
       + '<div style="display:flex;gap:12px;margin-bottom:10px;">'
       + '<div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses...</option></select></div>'
-      + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Searching up to <strong style="color:#c8d0e8;">15</strong> matching logs</div>'
+      + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Ranks 26\u201345 execution &middot; up to <strong style="color:#c8d0e8;">20</strong> logs</div>'
       + '</div>'
       + '<div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp filter: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div>'
       + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch CD Timing Data</button>'
@@ -5114,81 +5114,78 @@ function showWclModal() {
     btn.textContent = 'Fetching...'; btn.disabled = true;
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
-      // Comp proxy detection spell IDs — if a log has casts from each group, it matches our comp
-      // Must have: a paladin healer CD (Devo=31821 or GoAK=86150 or HAvenger=105809 or Wings=31884)
-      //            a shaman CD (HTT=108280 or AG=108281)
-      //            a warrior CD (Rally=97462 or Demo=114203)
-      //            a disc CD (PW:B=62618)
-      var COMP_CHECKS = {
-        hpala:   [31821, 86150, 105809, 31884],
-        shaman:  [108280, 108281],
-        warrior: [97462, 114203],
-        disc:    [62618]
-      };
-      function matchesComp(logSpellIds) {
-        return Object.keys(COMP_CHECKS).every(function(role) {
-          return COMP_CHECKS[role].some(function(sid){ return logSpellIds[sid]; });
-        });
+      // Ranks 26-45: page 2 of execution rankings, 20 logs max
+      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 26-45...</div>';
+      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
+      var rd = await wclQuery(rankQ, {id:encId});
+      var pageRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
+
+      if (!pageRankings.length) {
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
+        btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
-      var TARGET = 10; // want 50 matching logs
       var castsBySpellPerLog = {};
       var fightDurations = [];
       var processed = 0;
-      var page = 2; // start at page 2 (ranks 26+), skip the outlier top 25
-      var maxPages = 8; // don't go forever
+      var limit = Math.min(pageRankings.length, 20);
 
-      while (processed < TARGET && page <= maxPages) {
-        results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching page '+(page-1)+' of rankings... ('+processed+'/'+TARGET+' matching logs)</div>';
-        var rankQ = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
-        var rd = await wclQuery(rankQ, {id:encId, pg:page});
-        var pageRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
-        if (!pageRankings.length) break; // no more pages
+      for (var ri=0; ri<limit; ri++) {
+        var r = pageRankings[ri];
+        var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
+        if (!code||!fid) continue;
+        try {
+          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
+          var d = await wclQuery(q, {c:code, fid:fid});
+          var rep = d&&d.reportData&&d.reportData.report;
+          var evts = (rep&&rep.events&&rep.events.data)||[];
+          var fight = rep&&rep.fights&&rep.fights[0];
+          if (!fight) continue;
+          var fStart = fight.startTime;
+          var fDur = fight.endTime - fight.startTime;
+          fightDurations.push(fDur);
 
-        for (var ri=0; ri<pageRankings.length && processed<TARGET; ri++) {
-          var r = pageRankings[ri];
-          var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
-          if (!code||!fid) continue;
-          try {
-            var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
-            var d = await wclQuery(q, {c:code, fid:fid});
-            var rep = d&&d.reportData&&d.reportData.report;
-            var evts = (rep&&rep.events&&rep.events.data)||[];
-            var fight = rep&&rep.fights&&rep.fights[0];
-            if (!fight) continue;
-            var fStart = fight.startTime;
+          // Group casts by spell+source to avoid double-counting two players of same class
+          var castsBySrc = {};
+          evts.forEach(function(ev){
+            if (ev.type!=='cast') return;
+            var sid = ev.abilityGameID;
+            if (!WCL_SPELLS[sid]) return;
+            var rel = ev.timestamp - fStart;
+            if (rel<0||rel>900000) return;
+            var key = sid+'_'+(ev.sourceID||'0');
+            if (!castsBySrc[key]) castsBySrc[key]=[];
+            castsBySrc[key].push(rel);
+          });
 
-            // Check comp via proxy
-            var logSpellIds = {};
-            evts.forEach(function(ev){ if(ev.type==='cast') logSpellIds[ev.abilityGameID]=true; });
-            if (!matchesComp(logSpellIds)) continue; // skip non-matching comp
+          // Per spell, pick the single caster who used it most
+          var spellSources = {};
+          Object.keys(castsBySrc).forEach(function(key){
+            var sid = key.split('_')[0];
+            if (!spellSources[sid]) spellSources[sid]={};
+            spellSources[sid][key] = castsBySrc[key];
+          });
+          var logCasts = {};
+          Object.keys(spellSources).forEach(function(sid){
+            var sources = spellSources[sid];
+            var best = Object.keys(sources).sort(function(a,b){
+              var diff = sources[b].length - sources[a].length;
+              return diff!==0 ? diff : (sources[a][0]||0)-(sources[b][0]||0);
+            })[0];
+            logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
+          });
 
-            var fDur = fight.endTime - fight.startTime;
-            fightDurations.push(fDur);
-
-            var logCasts = {};
-            evts.forEach(function(ev){
-              if (ev.type!=='cast') return;
-              var sid = ev.abilityGameID;
-              if (!WCL_SPELLS[sid]) return;
-              var rel = ev.timestamp - fStart;
-              if (rel<0||rel>900000) return;
-              if (!logCasts[sid]) logCasts[sid]=[];
-              logCasts[sid].push(rel);
-            });
-            Object.keys(logCasts).forEach(function(sid){
-              if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid]=[];
-              castsBySpellPerLog[sid].push(logCasts[sid].sort(function(a,b){return a-b;}));
-            });
-            processed++;
-            results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Found '+processed+' matching logs so far...</div>';
-          } catch(le){ console.warn('WCL log error:', le); }
-        }
-        page++;
+          Object.keys(logCasts).forEach(function(sid){
+            if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid]=[];
+            castsBySpellPerLog[sid].push(logCasts[sid]);
+          });
+          processed++;
+          results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
+        } catch(le){ console.warn('WCL log error:', le); }
       }
 
       if (!processed) {
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found matching your comp on this boss.</div>';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs could be processed.</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
