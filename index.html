@@ -4836,8 +4836,269 @@ initFirebase();
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
 const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
-function showWclModal() { alert('WCL coming soon'); }
-document.getElementById('wclBtn')?.addEventListener('click', showWclModal);
+const WCL_REDIRECT = 'https://starplannercd.github.io';
+const WCL_AUTH_URL = 'https://www.warcraftlogs.com/oauth/authorize';
+const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
+const WCL_GQL_URL = 'https://www.warcraftlogs.com/api/v2/user';
+const WCL_TOKEN_KEY = 'tot_rcd_wcl_token';
+const WCL_TOKEN_EXP_KEY = 'tot_rcd_wcl_exp';
+
+async function wclGenVerifier() {
+  const arr = new Uint8Array(32);
+  crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode(...arr)).replace(/[+/=]/g, function(c) { return {'+':'-','/':'_','=':''}[c]; });
+}
+async function wclGenChallenge(v) {
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/[+/=]/g, function(c) { return {'+':'-','/':'_','=':''}[c]; });
+}
+function wclGetToken() { return localStorage.getItem(WCL_TOKEN_KEY); }
+function wclIsAuthed() {
+  const exp = localStorage.getItem(WCL_TOKEN_EXP_KEY);
+  return !!wclGetToken() && !!exp && Date.now() < parseInt(exp);
+}
+async function wclLogin() {
+  const v = await wclGenVerifier();
+  const ch = await wclGenChallenge(v);
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('wcl_v', v);
+  sessionStorage.setItem('wcl_s', state);
+  const p = new URLSearchParams({
+    client_id: WCL_CLIENT_ID,
+    redirect_uri: WCL_REDIRECT,
+    response_type: 'code',
+    code_challenge: ch,
+    code_challenge_method: 'S256',
+    state: state,
+    scope: 'view-user-profile'
+  });
+  window.location.href = WCL_AUTH_URL + '?' + p.toString();
+}
+async function wclHandleCallback() {
+  const p = new URLSearchParams(window.location.search);
+  const code = p.get('code');
+  const state = p.get('state');
+  if (!code || state !== sessionStorage.getItem('wcl_s')) return false;
+  const v = sessionStorage.getItem('wcl_v');
+  const body = new URLSearchParams({
+    grant_type: 'authorization_code',
+    client_id: WCL_CLIENT_ID,
+    redirect_uri: WCL_REDIRECT,
+    code: code,
+    code_verifier: v
+  });
+  try {
+    const res = await fetch(WCL_TOKEN_URL, { method: 'POST', body: body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    const data = await res.json();
+    if (data.access_token) {
+      localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
+      localStorage.setItem(WCL_TOKEN_EXP_KEY, String(Date.now() + (data.expires_in || 3600) * 1000));
+      sessionStorage.removeItem('wcl_v');
+      sessionStorage.removeItem('wcl_s');
+      window.history.replaceState({}, '', window.location.pathname);
+      return true;
+    }
+  } catch(e) { console.error('WCL token error', e); }
+  return false;
+}
+async function wclQuery(gql, variables) {
+  const res = await fetch(WCL_GQL_URL, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + wclGetToken(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: gql, variables: variables })
+  });
+  const data = await res.json();
+  if (data.errors) throw new Error(data.errors[0].message);
+  return data.data;
+}
+
+const WCL_TOT_ZONE_ID = 1046;
+let WCL_ENCOUNTERS = {};
+async function wclLoadEncounters() {
+  if (Object.keys(WCL_ENCOUNTERS).length) return;
+  try {
+    const d = await wclQuery('{worldData{zone(id:' + WCL_TOT_ZONE_ID + '){encounters{id name}}}}', {});
+    const encs = (d && d.worldData && d.worldData.zone && d.worldData.zone.encounters) || [];
+    if (encs.length) {
+      WCL_ENCOUNTERS = {};
+      encs.forEach(function(e) { WCL_ENCOUNTERS[e.name] = e.id; });
+    } else { throw new Error('empty'); }
+  } catch(e) {
+    WCL_ENCOUNTERS = { "Jin'rokh the Breaker":1140,"Horridon":1141,"Council of Elders":1142,"Tortos":1143,"Megaera":1144,"Ji-Kun":1145,"Durumu the Forgotten":1146,"Primordius":1147,"Dark Animus":1148,"Iron Qon":1149,"Twin Consorts":1150,"Lei Shen":1151,"Ra-den":1152 };
+  }
+}
+
+const WCL_SPELLS = {
+  62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
+  31821:{name:'Devotion Aura',short:'Devo',color:'#f58cba'},
+  97462:{name:'Rally',short:'Rally',color:'#c79c6e'},
+  114203:{name:'Demo Banner',short:'Demo',color:'#c79c6e'},
+  108280:{name:'Healing Tide Totem',short:'HTT',color:'#0070de'},
+  108281:{name:'Ancestral Guidance',short:'AG',color:'#0070de'},
+  115213:{name:'Avert Harm',short:'Avert',color:'#00ff96'},
+  15286:{name:'Vampiric Embrace',short:'VE',color:'#888888'},
+  76577:{name:'Smoke Bomb',short:'Smoke',color:'#fff569'},
+  64843:{name:'Divine Hymn',short:'Hymn',color:'#aaaaaa'},
+  86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
+  51052:{name:'Anti-Magic Zone',short:'AMZ',color:'#c41f3b'},
+  740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'}
+};
+
+function wclFmtMs(ms) {
+  var s = Math.round(ms / 1000);
+  return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+}
+function wclMedian(arr) {
+  if (!arr.length) return 0;
+  var s = arr.slice().sort(function(a,b){return a-b;});
+  var m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m-1] + s[m]) / 2;
+}
+
+function renderWclTimeline(container, castsBySpellPerLog, logCount) {
+  var keys = Object.keys(castsBySpellPerLog);
+  if (!keys.length) {
+    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found. Check console for WCL unique cast spell IDs.</div>';
+    return;
+  }
+  var avgCasts = {}, maxTime = 60000;
+  keys.forEach(function(sid) {
+    var logsArr = castsBySpellPerLog[sid];
+    var maxC = Math.max.apply(null, logsArr.map(function(l){return l.length;}));
+    var medians = [];
+    for (var i=0; i<maxC; i++) {
+      var vals = logsArr.map(function(l){return l[i];}).filter(function(v){return v!=null;});
+      if (vals.length >= Math.ceil(logsArr.length * 0.25)) medians.push(Math.round(wclMedian(vals)));
+    }
+    if (medians.length) { avgCasts[sid] = medians; maxTime = Math.max(maxTime, medians[medians.length-1]); }
+  });
+  maxTime = Math.ceil((maxTime + 30000) / 30000) * 30000;
+  var W = 560, PPS = W / (maxTime / 1000), IS = 36;
+  var tickHtml = '';
+  for (var ti=0; ti <= maxTime/30000; ti++) {
+    var tx = ti * 30 * PPS;
+    var tm = Math.floor(ti*30/60), ts = ti*30%60;
+    var label = tm + ':' + (ts < 10 ? '0' : '') + ts;
+    tickHtml += '<div style="position:absolute;left:' + tx + 'px;top:0;bottom:16px;border-left:1px solid #1e2030;pointer-events:none;"></div>';
+    if (ti%2===0) tickHtml += '<span style="position:absolute;left:' + tx + 'px;bottom:0;font-size:8px;color:#3a3d52;transform:translateX(-50%);">' + label + '</span>';
+  }
+  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:14px;">Average CD timing from <strong style="color:#c8d0e8;">' + logCount + '</strong> heroic 10-man logs.</div>';
+  var sortedSids = Object.keys(avgCasts).sort(function(a,b){return (avgCasts[a][0]||0)-(avgCasts[b][0]||0);});
+  sortedSids.forEach(function(sid) {
+    var spell = WCL_SPELLS[sid]; if (!spell) return;
+    var times = avgCasts[sid];
+    var cdId = Object.keys(CD_SPELL_IDS).find(function(k){return String(CD_SPELL_IDS[k])===String(sid);});
+    var iconUrl = cdId ? getCdIconUrl(cdId) : null;
+    var iconsHtml = times.map(function(t, i) {
+      var x = Math.round((t/1000)*PPS - IS/2);
+      var timeStr = wclFmtMs(t);
+      var icon = iconUrl
+        ? '<img src="' + iconUrl + '" style="width:' + IS + 'px;height:' + IS + 'px;border-radius:5px;border:none;" onerror="this.style.display=\'none\'">'
+        : '<div style="width:' + IS + 'px;height:' + IS + 'px;border-radius:5px;background:' + spell.color + '22;border:1px solid ' + spell.color + ';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:' + spell.color + ';">' + spell.short + '</div>';
+      return '<div title="' + spell.name + ' #' + (i+1) + ' avg ' + timeStr + '" style="position:absolute;left:' + x + 'px;top:0;display:flex;flex-direction:column;align-items:center;gap:2px;">' + icon + '<span style="font-size:8px;font-weight:700;color:' + spell.color + ';white-space:nowrap;">' + timeStr + '</span></div>';
+    }).join('');
+    html += '<div style="margin-bottom:18px;"><div style="font-size:11px;font-weight:700;color:' + spell.color + ';margin-bottom:5px;">' + spell.short + ' <span style="font-size:9px;color:#3a3d52;font-weight:400;">(' + times.length + ' cast' + (times.length>1?'s':'') + ')</span></div><div style="position:relative;height:' + (IS+16) + 'px;width:' + W + 'px;border-bottom:1px solid #0f1018;"><div style="position:absolute;inset:0;pointer-events:none;">' + tickHtml + '</div>' + iconsHtml + '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function showWclModal() {
+  var existing = document.getElementById('wclOverlay');
+  if (existing) { existing.remove(); return; }
+  var authed = wclIsAuthed();
+  var ov = document.createElement('div');
+  ov.id = 'wclOverlay';
+  ov.className = 'modal-overlay';
+  ov.style.cssText = 'align-items:flex-start;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:660px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Throne of Thunder &middot; Heroic 10 &middot; Average CD Timing</div></div>' + (authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;">CONNECTED</span>' : '') + '<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var bodyHtml;
+  if (!authed) {
+    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
+  } else {
+    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="display:flex;gap:12px;margin-bottom:10px;"><div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses...</option></select></div><div style="width:120px;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">20</span></label><input type="range" id="wclLim" min="5" max="50" value="20" style="width:100%;margin-top:6px;accent-color:#ff8c00;"></div></div><div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div><button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch Average CD Timing</button><div id="wclResults"></div><div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div></div>';
+  }
+  box.innerHTML = headerHtml + bodyHtml;
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  box.querySelector('#wclClose').addEventListener('click', function(){ ov.remove(); });
+  ov.addEventListener('mousedown', function(e){ if(e.target===ov) ov.remove(); });
+  if (!authed) {
+    box.querySelector('#wclLoginBtn').addEventListener('click', wclLogin);
+    return;
+  }
+  var limSlider = box.querySelector('#wclLim');
+  var limVal = box.querySelector('#wclLimV');
+  limSlider.addEventListener('input', function(){ limVal.textContent = limSlider.value; });
+  box.querySelector('#wclLogout').addEventListener('click', function(){ localStorage.removeItem(WCL_TOKEN_KEY); localStorage.removeItem(WCL_TOKEN_EXP_KEY); ov.remove(); showWclModal(); });
+  var bossEl = box.querySelector('#wclBoss');
+  wclLoadEncounters().then(function(){
+    bossEl.innerHTML = '<option value="">-- Choose boss --</option>' + Object.keys(WCL_ENCOUNTERS).map(function(n){ return '<option value="' + WCL_ENCOUNTERS[n] + '">' + n + '</option>'; }).join('');
+  });
+  box.querySelector('#wclFetch').addEventListener('click', async function(){
+    var encId = parseInt(bossEl.value);
+    if (!encId) { alert('Please select a boss.'); return; }
+    var btn = box.querySelector('#wclFetch'), results = box.querySelector('#wclResults');
+    btn.textContent = 'Fetching...'; btn.disabled = true;
+    results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
+    try {
+      var rd = await wclQuery('query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,page:1)}}}', {id:encId});
+      var rankings = (rd && rd.worldData && rd.worldData.encounter && rd.worldData.encounter.fightRankings && rd.worldData.encounter.fightRankings.rankings) || [];
+      if (!rankings.length) { results.innerHTML = '<div style="color:#c84848;font-size:12px;">No 10-man heroic logs found.</div>'; btn.textContent = 'Fetch Average CD Timing'; btn.disabled = false; return; }
+      var limit = Math.min(rankings.length, parseInt(limSlider.value));
+      var castsBySpellPerLog = {};
+      var processed = 0;
+      for (var ri=0; ri<limit; ri++) {
+        var r = rankings[ri];
+        var code = r.report && r.report.code, fid = r.report && r.report.fightID;
+        if (!code || !fid) continue;
+        try {
+          var d = await wclQuery('query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}', {c:code,fid:fid});
+          var rep = d && d.reportData && d.reportData.report;
+          var evts = (rep && rep.events && rep.events.data) || [];
+          var fight = rep && rep.fights && rep.fights[0];
+          if (!fight) continue;
+          var fStart = fight.startTime;
+          if (processed===0) {
+            var uids = [];
+            evts.forEach(function(ev){ if(ev.type==='cast'){ var s=ev.abilityGameID; if(uids.indexOf(s)<0) uids.push(s); }});
+            console.log('WCL events:', evts.length, 'duration:', Math.round((fight.endTime-fight.startTime)/1000)+'s');
+            console.log('WCL unique cast spell IDs:', uids.sort(function(a,b){return a-b;}));
+          }
+          var logCasts = {};
+          evts.forEach(function(ev){
+            if (ev.type !== 'cast') return;
+            var sid = ev.abilityGameID;
+            if (!WCL_SPELLS[sid]) return;
+            var rel = ev.timestamp - fStart;
+            if (rel < 0 || rel > 900000) return;
+            if (!logCasts[sid]) logCasts[sid] = [];
+            logCasts[sid].push(rel);
+          });
+          Object.keys(logCasts).forEach(function(sid){
+            if (!castsBySpellPerLog[sid]) castsBySpellPerLog[sid] = [];
+            castsBySpellPerLog[sid].push(logCasts[sid].sort(function(a,b){return a-b;}));
+          });
+          processed++;
+          results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Processing ' + processed + '/' + limit + ' logs...</div>';
+        } catch(le) { console.warn('WCL log error:', le); }
+      }
+      renderWclTimeline(results, castsBySpellPerLog, processed);
+    } catch(e) { results.innerHTML = '<div style="color:#c84848;font-size:12px;">Error: ' + e.message + '</div>'; }
+    btn.textContent = 'Fetch Average CD Timing'; btn.disabled = false;
+  });
+}
+
+(async function(){
+  var p = new URLSearchParams(window.location.search);
+  if (p.get('code') && p.get('state') && sessionStorage.getItem('wcl_s')) {
+    var ok = await wclHandleCallback();
+    if (ok) setTimeout(showWclModal, 600);
+  }
+})();
+
+document.getElementById('wclBtn').addEventListener('click', showWclModal);
 
 
 
