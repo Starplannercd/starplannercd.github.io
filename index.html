@@ -1130,6 +1130,7 @@
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
+    <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -4834,6 +4835,278 @@ initFirebase();
 
 // Icon style: flat (baked in)
 document.getElementById('app').setAttribute('data-icon','flat');
+
+// ── Warcraft Logs Integration ──
+const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
+const WCL_REDIRECT = 'https://starplannercd.github.io';
+const WCL_AUTH_URL = 'https://www.warcraftlogs.com/oauth/authorize';
+const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
+const WCL_GQL_URL = 'https://www.warcraftlogs.com/api/v2/user';
+const WCL_TOKEN_KEY = 'tot_rcd_wcl_token';
+const WCL_TOKEN_EXP_KEY = 'tot_rcd_wcl_exp';
+
+async function wclGenVerifier() {
+  const arr = new Uint8Array(32); crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode(...arr)).replace(/[+/=]/g, c=>({'+':'-','/':'_','=':''}[c]));
+}
+async function wclGenChallenge(v) {
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/[+/=]/g, c=>({'+':'-','/':'_','=':''}[c]));
+}
+function wclGetToken() { return localStorage.getItem(WCL_TOKEN_KEY); }
+function wclIsAuthed() {
+  const exp = localStorage.getItem(WCL_TOKEN_EXP_KEY);
+  return !!wclGetToken() && !!exp && Date.now() < parseInt(exp);
+}
+async function wclLogin() {
+  const v = await wclGenVerifier();
+  const ch = await wclGenChallenge(v);
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('wcl_v', v);
+  sessionStorage.setItem('wcl_s', state);
+  const p = new URLSearchParams({ client_id: WCL_CLIENT_ID, redirect_uri: WCL_REDIRECT, response_type:'code', code_challenge:ch, code_challenge_method:'S256', state, scope:'view-user-profile' });
+  window.location.href = WCL_AUTH_URL + '?' + p.toString();
+}
+async function wclHandleCallback() {
+  const p = new URLSearchParams(window.location.search);
+  const code = p.get('code'), state = p.get('state');
+  if (!code) return false;
+  if (state !== sessionStorage.getItem('wcl_s')) return false;
+  const v = sessionStorage.getItem('wcl_v');
+  const body = new URLSearchParams({ grant_type:'authorization_code', client_id:WCL_CLIENT_ID, redirect_uri:WCL_REDIRECT, code, code_verifier:v });
+  try {
+    const res = await fetch(WCL_TOKEN_URL, { method:'POST', body, headers:{'Content-Type':'application/x-www-form-urlencoded'} });
+    const data = await res.json();
+    if (data.access_token) {
+      localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
+      localStorage.setItem(WCL_TOKEN_EXP_KEY, String(Date.now() + (data.expires_in||3600)*1000));
+      sessionStorage.removeItem('wcl_v'); sessionStorage.removeItem('wcl_s');
+      window.history.replaceState({}, '', window.location.pathname);
+      return true;
+    }
+  } catch(e) { console.error('WCL token error', e); }
+  return false;
+}
+async function wclQuery(gql, variables) {
+  const res = await fetch(WCL_GQL_URL, { method:'POST', headers:{'Authorization':'Bearer '+wclGetToken(),'Content-Type':'application/json'}, body:JSON.stringify({query:gql,variables}) });
+  const data = await res.json();
+  if (data.errors) throw new Error(data.errors[0].message);
+  return data.data;
+}
+
+const WCL_SoO_ENCOUNTERS = {
+  "Jin'rokh the Breaker": 555,
+  'Horridon': 556,
+  'Council of Elders': 557,
+  'Tortos': 558,
+  'Megaera': 559,
+  'Ji-Kun': 560,
+  'Durumu the Forgotten': 561,
+  'Primordius': 562,
+  'Dark Animus': 563,
+  'Iron Qon': 564,
+  'Twin Consorts': 565,
+  'Lei Shen': 566,
+  'Ra-den': 567,
+};
+
+const WCL_SPELLS = {
+  62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
+  31821:{name:'Devotion Aura',short:'Devo',color:'#f58cba'},
+  97462:{name:'Rally',short:'Rally',color:'#c79c6e'},
+  114203:{name:'Demo Banner',short:'Demo',color:'#c79c6e'},
+  108280:{name:'Healing Tide Totem',short:'HTT',color:'#0070de'},
+  108281:{name:'Ancestral Guidance',short:'AG',color:'#0070de'},
+  115213:{name:'Avert Harm',short:'Avert',color:'#00ff96'},
+  15286:{name:'Vampiric Embrace',short:'VE',color:'#888888'},
+  76577:{name:'Smoke Bomb',short:'Smoke',color:'#fff569'},
+  64843:{name:'Divine Hymn',short:'Hymn',color:'#aaaaaa'},
+  86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
+  51052:{name:'Anti-Magic Zone',short:'AMZ',color:'#c41f3b'},
+  740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'},
+};
+
+function fmtMs(ms){const s=Math.round(ms/1000);return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
+
+function renderWclHeatmap(container, castsBySpell, logCount) {
+  if (!Object.keys(castsBySpell).length) {
+    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No tracked CD casts found in these logs.</div>';
+    return;
+  }
+  const allTimes = Object.values(castsBySpell).flat();
+  const maxMs = Math.max(...allTimes, 60000);
+  const bucketMs = 5000;
+  const numBuckets = Math.ceil(maxMs / bucketMs);
+  const cellW = Math.max(2, Math.floor(560 / numBuckets));
+
+  let html = `<div style="font-size:10px;color:#4a4d62;margin-bottom:14px;">Based on <strong style="color:#c8d0e8;">${logCount}</strong> heroic 10-man logs &middot; Each column = 5 seconds &middot; Brighter = more commonly used</div>`;
+
+  const sorted = Object.entries(castsBySpell).sort((a,b)=>b[1].length-a[1].length);
+
+  sorted.forEach(([spellId, times]) => {
+    const spell = WCL_SPELLS[spellId]; if (!spell) return;
+    const buckets = new Array(numBuckets).fill(0);
+    times.forEach(t => { const b=Math.floor(t/bucketMs); if(b<numBuckets) buckets[b]++; });
+    const maxB = Math.max(...buckets, 1);
+
+    const bars = buckets.map((count, i) => {
+      if (!count) return `<div style="display:inline-block;width:${cellW}px;height:32px;background:#0a0b0f;"></div>`;
+      const alpha = (count/maxB*0.85+0.15).toFixed(2);
+      return `<div title="${fmtMs(i*bucketMs)}: ${count} casts" style="display:inline-block;width:${cellW}px;height:32px;background:${spell.color};opacity:${alpha};cursor:default;border-right:1px solid #08090d;"></div>`;
+    }).join('');
+
+    // Minute markers
+    const markers = Array.from({length:Math.ceil(maxMs/60000)},(_,i)=>{
+      const x = (i*60000/bucketMs)*cellW;
+      return `<div style="position:absolute;left:${x}px;top:0;bottom:0;border-left:1px solid #2e304866;pointer-events:none;"></div><div style="position:absolute;left:${x+2}px;bottom:-13px;font-size:8px;color:#3a3d52;white-space:nowrap;">${i}:00</div>`;
+    }).join('');
+
+    html += `<div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+        <span style="font-size:11px;font-weight:700;color:${spell.color};min-width:52px;">${spell.short}</span>
+        <span style="font-size:9px;color:#3a3d52;">${times.length} casts across ${logCount} logs</span>
+      </div>
+      <div style="position:relative;padding-bottom:16px;">
+        <div style="white-space:nowrap;line-height:0;border-radius:3px;overflow:hidden;">${bars}</div>
+        <div style="position:absolute;inset:0;pointer-events:none;">${markers}</div>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function showWclModal() {
+  const existing = document.getElementById('wclOverlay');
+  if (existing) { existing.remove(); return; }
+  const ov = document.createElement('div');
+  ov.id = 'wclOverlay';
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'flex-start';
+  ov.style.padding = '20px';
+
+  const authed = wclIsAuthed();
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:660px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+
+  box.innerHTML = `<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;">
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div>
+      <div style="font-size:10px;color:#4a4d62;margin-top:1px;">Throne of Thunder &middot; Heroic 10 &middot; CD Usage</div>
+    </div>
+    ${authed?'<span style="font-size:9px;font-weight:700;color:#48a868;letter-spacing:0.08em;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;">CONNECTED</span>':''}
+    <button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">×</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">
+    ${!authed ? `<div style="text-align:center;padding:40px 20px;">
+      <div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div>
+      <div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You'll be redirected to WarcraftLogs to authorize, then brought back here automatically.</div>
+      <button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs →</button>
+    </div>` : `
+    <div style="display:flex;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;">
+        <label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label>
+        <select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;">
+          <option value="">— Choose boss —</option>
+          ${Object.entries(WCL_SoO_ENCOUNTERS).map(([n,id])=>`<option value="${id}">${n}</option>`).join('')}
+        </select>
+      </div>
+      <div style="width:120px;">
+        <label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Max logs: <span id="wclLimV">25</span></label>
+        <input type="range" id="wclLim" min="5" max="50" value="25" style="width:100%;margin-top:6px;accent-color:#ff8c00;">
+      </div>
+    </div>
+    <button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:18px;">Fetch CD Heatmap</button>
+    <div id="wclResults"></div>
+    <div style="margin-top:16px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;">
+      <button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button>
+    </div>`}
+  </div>`;
+
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+
+  box.querySelector('#wclClose')?.addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+
+  if (!authed) {
+    box.querySelector('#wclLoginBtn')?.addEventListener('click', wclLogin);
+    return;
+  }
+
+  const limSlider = box.querySelector('#wclLim');
+  const limVal = box.querySelector('#wclLimV');
+  limSlider?.addEventListener('input', () => { limVal.textContent = limSlider.value; });
+
+  box.querySelector('#wclLogout')?.addEventListener('click', () => {
+    localStorage.removeItem(WCL_TOKEN_KEY); localStorage.removeItem(WCL_TOKEN_EXP_KEY);
+    ov.remove(); showWclModal();
+  });
+
+  box.querySelector('#wclFetch')?.addEventListener('click', async () => {
+    const encId = parseInt(box.querySelector('#wclBoss').value);
+    if (!encId) { alert('Please select a boss.'); return; }
+    const btn = box.querySelector('#wclFetch');
+    const results = box.querySelector('#wclResults');
+    btn.textContent = 'Fetching rankings…'; btn.disabled = true;
+    results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs…</div>';
+
+    try {
+      const rankQ = `query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,page:1)}}}`;
+      const rd = await wclQuery(rankQ, {id:encId});
+      const rankings = rd?.worldData?.encounter?.fightRankings?.rankings || [];
+      if (!rankings.length) {
+        results.innerHTML = '<div style="color:#c84848;font-size:12px;">No logs found yet for this boss on Heroic 10.</div>';
+        btn.textContent = 'Fetch CD Heatmap'; btn.disabled = false; return;
+      }
+
+      const limit = Math.min(rankings.length, parseInt(limSlider.value));
+      results.innerHTML = `<div style="color:#4a4d62;font-size:12px;">Fetching casts from ${limit} logs…</div>`;
+
+      const castsBySpell = {};
+      let processed = 0;
+
+      for (const r of rankings.slice(0, limit)) {
+        const code = r.report?.code, fid = r.report?.fightID;
+        if (!code || !fid) continue;
+        try {
+          const cQ = `query($c:String!,$f:[Int]!){reportData{report(code:$c){events(fightIDs:$f,dataType:Casts,startTime:0,endTime:9999999){data}}}}`;
+          const cd = await wclQuery(cQ, {c:code,f:[fid]});
+          const evts = cd?.reportData?.report?.events?.data || [];
+          const fStart = r.startTime || 0;
+          evts.forEach(ev => {
+            if (ev.type !== 'cast') return;
+            const sid = ev.abilityGameID;
+            if (!WCL_SPELLS[sid]) return;
+            const rel = ev.timestamp - fStart;
+            if (rel < 0) return;
+            if (!castsBySpell[sid]) castsBySpell[sid] = [];
+            castsBySpell[sid].push(rel);
+          });
+          processed++;
+          results.innerHTML = `<div style="color:#4a4d62;font-size:12px;">Processing ${processed}/${limit} logs…</div>`;
+        } catch(e) { /* skip */ }
+      }
+
+      renderWclHeatmap(results, castsBySpell, processed);
+    } catch(e) {
+      results.innerHTML = `<div style="color:#c84848;font-size:12px;">Error: ${e.message}</div>`;
+    }
+    btn.textContent = 'Fetch CD Heatmap'; btn.disabled = false;
+  });
+}
+
+// Handle WCL OAuth callback
+(async function() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('code') && p.get('state') && sessionStorage.getItem('wcl_s')) {
+    const ok = await wclHandleCallback();
+    if (ok) setTimeout(() => showWclModal(), 600);
+  }
+})();
+
+document.getElementById('wclBtn')?.addEventListener('click', showWclModal);
+
 
 
 // ── Plan Switch Animation ──
