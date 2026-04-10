@@ -1131,6 +1131,7 @@
     <button class="btn btn-save" id="saveBtn">Share</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
+    <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Screenshot</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -4565,7 +4566,7 @@ function showWclModal() {
   }
 })();
 
-document.getElementById('wclBtn').addEventListener('click', showWclModal);
+document.getElementById('wclBtn')?.addEventListener('click', showWclModal);
 
 
 
