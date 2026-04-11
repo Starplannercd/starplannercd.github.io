@@ -4919,6 +4919,42 @@ var WCL_SPELLS = {
   31884:{name:'Avenging Wrath',short:'Wings',color:'#f0e080'}
 };
 
+// Boss ability spell IDs for fetching from WCL events
+var WCL_BOSS_SPELLS = {
+  'jinrokh':  [{id:137358, name:'Lightning Storm', color:'#4888c8'}],
+  'horridon': [{id:136817, name:'Bestial Cry', color:'#c87838'}],
+  'council':  [{id:136990, name:'Discharge', color:'#8868c8'}],
+  'tortos':   [{id:134920, name:'Quake Stomp', color:'#a86838'}],
+  'megaera':  [{id:139579, name:'Rampage', color:'#c84848'}],
+  'jikun':    [{id:134380, name:'Quills', color:'#48c888'}],
+  'darkanimus':[{id:138782, name:'Int. Jolt', color:'#c84888'}],
+  'ironqon':  [],
+  'twins':    [{id:136752, name:'Cosmic Barrage', color:'#6888ff'},{id:137341, name:'Nuc. Inferno', color:'#ff9848'}],
+  'leishen':  [{id:135556, name:'Ball Lightning', color:'#c8c848'},{id:136743, name:'Thunderstruck', color:'#c8c848'}],
+  'raden':    [],
+};
+
+// Map WCL encounter names to boss spell keys
+function getBossSpellsForName(bossName) {
+  var map = {
+    "Jin'rokh the Breaker": 'jinrokh',
+    'Horridon': 'horridon',
+    'Council of Elders': 'council',
+    'Tortos': 'tortos',
+    'Megaera': 'megaera',
+    'Ji-Kun': 'jikun',
+    'Durumu the Forgotten': null,
+    'Primordius': null,
+    'Dark Animus': 'darkanimus',
+    'Iron Qon': 'ironqon',
+    'Twin Consorts': 'twins',
+    'Lei Shen': 'leishen',
+    'Ra-den': 'raden',
+  };
+  var key = map[bossName];
+  return key ? (WCL_BOSS_SPELLS[key] || []) : [];
+}
+
 function wclFmtMs(ms) {
   var s = Math.round(ms/1000);
   return Math.floor(s/60) + ':' + (s%60<10?'0':'') + (s%60);
@@ -4930,12 +4966,20 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, logsData, logCount, bossName, avgDuration) {
+function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells) {
   if (!logsData || !logsData.length) {
     container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No data found.</div>';
     return;
   }
 
+  // Get boss abilities from BOSSES data
+  var bossAbilities = [];
+  var bossMatch = BOSSES.find(function(b){ return b.name === bossName; });
+  if (bossMatch && bossMatch.sections) {
+    bossMatch.sections.forEach(function(sec){
+      (sec.abilities||[]).forEach(function(ab){ bossAbilities.push(ab); });
+    });
+  }
   // All spell IDs that appear across any log
   var allSids = [];
   logsData.forEach(function(log) {
@@ -5029,7 +5073,36 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration) 
     html += '<span style="font-size:10px;color:#3a3d52;">Kill: '+durStr+'</span>';
     html += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#4a4d62;text-decoration:none;margin-left:auto;">View log \u2197</a>';
     html += '</div>';
-    if (li===0) html += buildRuler(pps);
+    html += buildRuler(pps);
+
+    // Boss ability row — live from WCL events if available, else hardcoded planner times
+    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length;
+    if (hasBossEvts || bossAbilities.length) {
+      var abHtml = '<div style="display:flex;align-items:center;margin-bottom:6px;">';
+      abHtml += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#4a4d62;text-align:right;padding-right:7px;text-transform:uppercase;letter-spacing:0.05em;">Boss</div>';
+      abHtml += '<div style="position:relative;width:'+W+'px;height:22px;background:#06070c;border-radius:2px;overflow:hidden;">';
+      if (hasBossEvts) {
+        bossSpells.forEach(function(spell) {
+          var times = log.bossEvts[spell.id] || [];
+          times.forEach(function(t) {
+            var x = Math.min(Math.round((t/1000)*pps), W-2);
+            abHtml += '<div title="'+spell.name+' — '+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';opacity:0.9;transform:translateX(-50%);"></div>';
+            abHtml += '<span style="position:absolute;left:'+(x+3)+'px;top:3px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 3px #000;">'+spell.name+'</span>';
+          });
+        });
+      } else {
+        bossAbilities.forEach(function(ab) {
+          if (ab.time * 1000 > log.duration + 15000) return;
+          var x = Math.min(Math.round(ab.time * pps), W-2);
+          var shortName = ab.name.replace(/\s+\d+$/, '');
+          abHtml += '<div title="'+ab.name+' — '+fmtS(ab.time)+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
+          abHtml += '<span style="position:absolute;left:'+(x+3)+'px;top:3px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 3px #000;opacity:0.7;">'+shortName+'</span>';
+        });
+      }
+      abHtml += '</div></div>';
+      abHtml += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;flex-shrink:0;"></div><div style="width:'+W+'px;border-top:1px solid #161820;"></div></div>';
+      html += abHtml;
+    }
     html += logHtml;
     html += '</div>';
   });
@@ -5083,6 +5156,10 @@ function showWclModal() {
     results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
       // Ranks 26-45: page 2 of execution rankings, 20 logs max
+      var bossName = bossEl.options[bossEl.selectedIndex].text;
+      var bossSpells = getBossSpellsForName(bossName);
+      var bossSpellIds = bossSpells.map(function(s){return s.id;});
+
       results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 51-75...</div>';
       var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:3)}}}';
       var rd = await wclQuery(rankQ, {id:encId});
@@ -5113,6 +5190,26 @@ function showWclModal() {
           var fDur = fight.endTime - fight.startTime;
           fightDurations.push(fDur);
 
+          // Fetch boss ability events separately if we have spell IDs for this boss
+          var bossEvtTimes = {}; // spellId -> [relTime, ...]
+          if (bossSpellIds.length) {
+            try {
+              var bq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
+              var bd = await wclQuery(bq, {c:code, fid:fid});
+              var bevts = (bd&&bd.reportData&&bd.reportData.report&&bd.reportData.report.events&&bd.reportData.report.events.data)||[];
+              bevts.forEach(function(ev){
+                var sid = ev.abilityGameID;
+                if (bossSpellIds.indexOf(sid) < 0) return;
+                var rel = ev.timestamp - fStart;
+                if (rel<0||rel>900000) return;
+                if (!bossEvtTimes[sid]) bossEvtTimes[sid]=[];
+                // Dedupe — only record once per 2s window
+                var times = bossEvtTimes[sid];
+                if (!times.length || rel - times[times.length-1] > 2000) times.push(rel);
+              });
+            } catch(be) { console.warn('Boss events fetch error:', be); }
+          }
+
           // Group by spell+source, pick best caster per spell
           var castsBySrc = {};
           evts.forEach(function(ev){
@@ -5141,7 +5238,7 @@ function showWclModal() {
             logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
           });
 
-          logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 51+ri });
+          logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 51+ri, bossEvts: bossEvtTimes });
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
         } catch(le){ console.warn('WCL log error:', le); }
@@ -5154,7 +5251,7 @@ function showWclModal() {
 
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
       var bossName = bossEl.options[bossEl.selectedIndex].text;
-      renderWclDisplay(results, logsData, processed, bossName, avgDuration);
+      renderWclDisplay(results, logsData, processed, bossName, avgDuration, bossSpells);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent='Fetch CD Timing Data'; btn.disabled=false;
   });
