@@ -4920,18 +4920,20 @@ var WCL_SPELLS = {
 };
 
 // Boss ability spell IDs for fetching from WCL events
+// Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
+// dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
-  'jinrokh':  [{id:137358, name:'Lightning Storm', color:'#4888c8'}],
-  'horridon': [{id:136817, name:'Bestial Cry', color:'#c87838'}],
-  'council':  [{id:136990, name:'Discharge', color:'#8868c8'}],
-  'tortos':   [{id:134920, name:'Quake Stomp', color:'#a86838'}],
-  'megaera':  [{id:139579, name:'Rampage', color:'#c84848'}],
-  'jikun':    [{id:134380, name:'Quills', color:'#48c888'}],
-  'darkanimus':[{id:138782, name:'Int. Jolt', color:'#c84888'}],
-  'ironqon':  [],
-  'twins':    [{id:136752, name:'Cosmic Barrage', color:'#6888ff'},{id:137341, name:'Nuc. Inferno', color:'#ff9848'}],
-  'leishen':  [{id:135556, name:'Ball Lightning', color:'#c8c848'},{id:136743, name:'Thunderstruck', color:'#c8c848'}],
-  'raden':    [],
+  'jinrokh':   [{ids:[137358], name:'Lightning Storm', color:'#4888c8', dataType:'DamageTaken'}],
+  'horridon':  [{ids:[136817], name:'Bestial Cry', color:'#c87838', dataType:'DamageTaken'}],
+  'council':   [{ids:[136986,137492], name:'Discharge', color:'#8868c8', dataType:'DamageTaken'}],
+  'tortos':    [{ids:[134920], name:'Quake Stomp', color:'#a86838', dataType:'DamageTaken'}],
+  'megaera':   [{ids:[139548,139549,139551,139552], name:'Rampage', color:'#c84848', dataType:'DamageTaken'}],
+  'jikun':     [{ids:[134380], name:'Quills', color:'#48c888', dataType:'DamageTaken'}],
+  'darkanimus':[{ids:[138782], name:'Int. Jolt', color:'#c84888', dataType:'DamageTaken'}],
+  'ironqon':   [],
+  'twins':     [{ids:[136752], name:'Cosmic Barrage', color:'#6888ff', dataType:'DamageTaken'},{ids:[137341], name:'Nuc. Inferno', color:'#ff9848', dataType:'DamageTaken'}],
+  'leishen':   [{ids:[135556], name:'Ball Lightning', color:'#c8c848', dataType:'DamageTaken'},{ids:[136743], name:'Thunderstruck', color:'#c8c848', dataType:'DamageTaken'}],
+  'raden':     [],
 };
 
 // Map WCL encounter names to boss spell keys
@@ -5076,14 +5078,14 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     html += buildRuler(pps);
 
     // Boss ability row — live from WCL events if available, else hardcoded planner times
-    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length;
+    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length > 0;
     if (hasBossEvts || bossAbilities.length) {
       var abHtml = '<div style="display:flex;align-items:center;margin-bottom:6px;">';
       abHtml += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#4a4d62;text-align:right;padding-right:7px;text-transform:uppercase;letter-spacing:0.05em;">Boss</div>';
       abHtml += '<div style="position:relative;width:'+W+'px;height:22px;background:#06070c;border-radius:2px;overflow:hidden;">';
       if (hasBossEvts) {
-        bossSpells.forEach(function(spell) {
-          var times = log.bossEvts[spell.id] || [];
+        bossSpells.forEach(function(spell, gi) {
+          var times = log.bossEvts[gi] || [];
           times.forEach(function(t) {
             var x = Math.min(Math.round((t/1000)*pps), W-2);
             abHtml += '<div title="'+spell.name+' — '+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';opacity:0.9;transform:translateX(-50%);"></div>';
@@ -5158,7 +5160,7 @@ function showWclModal() {
       // Ranks 26-45: page 2 of execution rankings, 20 logs max
       var bossName = bossEl.options[bossEl.selectedIndex].text;
       var bossSpells = getBossSpellsForName(bossName);
-      var bossSpellIds = bossSpells.map(function(s){return s.id;});
+      var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
       results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 51-75...</div>';
       var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:3)}}}';
@@ -5191,29 +5193,28 @@ function showWclModal() {
           fightDurations.push(fDur);
 
           // Fetch boss ability events separately if we have spell IDs for this boss
-          var bossEvtTimes = {}; // spellId -> [relTime, ...]
-          if (bossSpellIds.length) {
+          // Fetch boss ability times from DamageTaken events
+          var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 3s window)
+          if (bossSpells.length) {
             try {
-              var bq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
+              var bq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
               var bd = await wclQuery(bq, {c:code, fid:fid});
               var bevts = (bd&&bd.reportData&&bd.reportData.report&&bd.reportData.report.events&&bd.reportData.report.events.data)||[];
-              // Debug: log all unique spell IDs from enemy cast events in first log
-              if (processed === 0) {
-                var dmgIds = {};
-                bevts.forEach(function(ev){ dmgIds[ev.abilityGameID] = (dmgIds[ev.abilityGameID]||0)+1; });
-                var sorted = Object.keys(dmgIds).sort(function(a,b){return dmgIds[b]-dmgIds[a];}).slice(0,20);
-                console.log('WCL Enemy Casts top spell IDs:', sorted.map(function(id){return id+'(x'+dmgIds[id]+')';}));
-                console.log('WCL looking for boss spell IDs:', bossSpellIds);
-              }
+              // Build a lookup: spellId -> groupIndex
+              var idToGroup = {};
+              bossSpells.forEach(function(spell, gi) {
+                spell.ids.forEach(function(id){ idToGroup[id] = gi; });
+              });
               bevts.forEach(function(ev){
                 var sid = ev.abilityGameID;
-                if (bossSpellIds.indexOf(sid) < 0) return;
+                var gi = idToGroup[sid];
+                if (gi === undefined) return;
                 var rel = ev.timestamp - fStart;
                 if (rel<0||rel>900000) return;
-                if (!bossEvtTimes[sid]) bossEvtTimes[sid]=[];
-                // Dedupe — only record once per 2s window
-                var times = bossEvtTimes[sid];
-                if (!times.length || rel - times[times.length-1] > 2000) times.push(rel);
+                if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
+                // Dedupe — only record first hit per 3s window (Rampage ticks every 1s)
+                var times = bossEvtTimes[gi];
+                if (!times.length || rel - times[times.length-1] > 3000) times.push(rel);
               });
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
