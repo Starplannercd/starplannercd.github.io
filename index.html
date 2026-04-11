@@ -4995,7 +4995,9 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   var ROW_H = 34;
   var LABEL_W = 62;
   var W = 560;
-  var tickEvery = avgDuration <= 180000 ? 15 : avgDuration <= 360000 ? 30 : 60;
+  var maxDuration = Math.max.apply(null, logsData.map(function(l){return l.duration;}));
+  var sharedPps = W / (maxDuration / 1000); // all logs use same scale
+  var tickEvery = maxDuration <= 180000 ? 15 : maxDuration <= 360000 ? 30 : 60;
 
   function fmtT(ms) {
     var s = Math.round(ms/1000);
@@ -5009,7 +5011,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var html = '<div style="display:flex;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
     html += '<div style="position:relative;width:'+W+'px;height:16px;">';
-    for (var ti=0; ti*tickEvery*1000<=avgDuration+tickEvery*1000; ti++) {
+    for (var ti=0; ti*tickEvery*1000<=maxDuration+tickEvery*1000; ti++) {
       var tx = Math.min(Math.round(ti*tickEvery*pps), W);
       html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
       html += '<span style="position:absolute;left:'+tx+'px;top:1px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*tickEvery)+'</span>';
@@ -5081,7 +5083,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
 
     // Gridlines
-    for (var ti=1; ti*tickEvery*1000<=avgDuration; ti++) {
+    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
       html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*pps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
     }
 
@@ -5110,7 +5112,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     +'</div>';
 
   logsData.forEach(function(log, li) {
-    var pps = W / (log.duration / 1000);
+    var pps = sharedPps;
 
     html += '<div style="margin-bottom:14px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
 
