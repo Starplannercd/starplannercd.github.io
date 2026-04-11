@@ -4974,32 +4974,11 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     return;
   }
 
-  // CD durations (seconds) for duration bar
   var CD_DURATIONS = {
     62618:10, 31821:8, 86150:8, 105809:20, 31884:20,
     108280:10, 108281:10, 115213:3, 15286:30,
     76577:5, 97462:10, 114203:10
   };
-
-  // Icon URLs — reuse from planner's getCdIconUrl where possible
-  function getIconForSid(sid) {
-    var iconMap = {
-      62618: 'spell_holy_powerwordbarrier',
-      31821: 'spell_holy_devotionaura',
-      86150: 'spell_holy_heroism',
-      105809: 'ability_paladin_holyavenger',
-      31884: 'spell_holy_avenginewrath',
-      108280: 'spell_shaman_healingtide',
-      108281: 'spell_shaman_astralshift',
-      115213: 'ability_monk_avertharm',
-      15286: 'spell_shadow_unsummonbuilding',
-      76577: 'ability_rogue_smoke',
-      97462: 'ability_warrior_rallyingcry',
-      114203: 'ability_warrior_demobannerrage',
-    };
-    var name = iconMap[sid];
-    return name ? 'https://render.worldofwarcraft.com/us/icons/36/'+name+'.jpg' : null;
-  }
 
   var allSids = [];
   logsData.forEach(function(log) {
@@ -5013,9 +4992,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     if(ai<0)ai=99; if(bi<0)bi=99; return ai-bi;
   });
 
-  var ICON = 28;
-  var ROW_H = ICON + 12;
-  var LABEL_W = 60;
+  var ROW_H = 34;
+  var LABEL_W = 62;
   var W = 560;
   var tickEvery = avgDuration <= 180000 ? 15 : avgDuration <= 360000 ? 30 : 60;
 
@@ -5023,15 +5001,18 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var s = Math.round(ms/1000);
     return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
   }
+  function fmtS(s) {
+    return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+  }
 
   function buildRuler(pps) {
-    var html = '<div style="display:flex;align-items:flex-start;margin-bottom:2px;">';
+    var html = '<div style="display:flex;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
     html += '<div style="position:relative;width:'+W+'px;height:16px;">';
     for (var ti=0; ti*tickEvery*1000<=avgDuration+tickEvery*1000; ti++) {
       var tx = Math.min(Math.round(ti*tickEvery*pps), W);
-      html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #252838;"></div>';
-      html += '<span style="position:absolute;left:'+tx+'px;top:1px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+Math.floor(ti*tickEvery/60)+':'+(ti*tickEvery%60<10?'0':'')+(ti*tickEvery%60)+'</span>';
+      html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
+      html += '<span style="position:absolute;left:'+tx+'px;top:1px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*tickEvery)+'</span>';
     }
     html += '</div></div>';
     return html;
@@ -5046,91 +5027,77 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         (sec.abilities||[]).forEach(function(ab){bossAbilities.push(ab);});
       });
     }
-    var hasData = hasBossEvts || bossAbilities.length;
-    if (!hasData) return '';
+    if (!hasBossEvts && !bossAbilities.length) return '';
 
     var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#3a3d52;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.08em;">Boss</div>';
-    html += '<div style="position:relative;width:'+W+'px;height:18px;background:#07080d;border-radius:2px;overflow:hidden;">';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#3a4060;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.07em;">Boss</div>';
+    html += '<div style="position:relative;width:'+W+'px;height:22px;background:#05060a;border-radius:2px;overflow:hidden;">';
 
     if (hasBossEvts) {
+      // Group events by spell, then dedupe times, label once per unique window
       bossSpells.forEach(function(spell, gi) {
         var times = log.bossEvts[gi] || [];
-        // Only show first occurrence of each ability (deduplicated) — label only first
-        var lastX = -999;
-        times.forEach(function(t, ti) {
+        if (!times.length) return;
+        // times are already deduplicated to one per 3s window by fetch
+        // Just draw a single clean marker per time with label
+        times.forEach(function(t) {
           var x = Math.round((t/1000)*pps);
-          if (x - lastX < 8) return; // skip if too close to previous
-          lastX = x;
-          html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';opacity:0.85;transform:translateX(-50%);"></div>';
-          // Only label if enough space since last label
-          if (ti===0 || times[ti-1] === undefined || (t - times[ti-1]) > 8000) {
-            html += '<span style="position:absolute;left:'+(x+3)+'px;top:2px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;">'+spell.name+'</span>';
-          }
+          html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';transform:translateX(-50%);"></div>';
+          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;">'+spell.name+' '+fmtT(t)+'</span>';
         });
       });
     } else {
+      // Dedupe hardcoded by name (strip number), show label + time once per phase
+      var seen = {};
       bossAbilities.forEach(function(ab) {
         if (ab.time*1000 > log.duration+15000) return;
-        var x = Math.round(ab.time*pps);
-        if (x > W) return;
+        var x = Math.min(Math.round(ab.time*pps), W-1);
         var shortName = ab.name.replace(/\s+\d+$/,'');
         html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
-        html += '<span style="position:absolute;left:'+(x+3)+'px;top:2px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.8;">'+shortName+'</span>';
+        // Label only if not shown recently
+        if (!seen[shortName] || x - seen[shortName] > 50) {
+          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
+          seen[shortName] = x;
+        }
       });
     }
 
     html += '</div></div>';
-    // Divider
-    html += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;flex-shrink:0;"></div><div style="width:'+W+'px;border-top:1px solid #12141e;"></div></div>';
+    html += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #111320;"></div></div>';
     return html;
   }
 
   function buildCdRow(sid, log, pps, spell) {
-    var times = log.casts[sid] || [];
+    var times = log.casts[+sid] || [];
     var active = times.length > 0;
-    var iconUrl = getIconForSid(+sid);
-    var cdDur = (CD_DURATIONS[+sid] || 10) * 1000; // ms
+    var color = spell ? spell.color : '#8892b0';
+    var label = spell ? spell.short : String(sid);
+    var cdDurPx = ((CD_DURATIONS[+sid] || 10) * pps);
 
     var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
     // Label
-    var nameColor = active ? (spell ? spell.color : '#8892b0') : '#252835';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;text-align:right;padding-right:6px;">';
-    if (iconUrl) {
-      html += '<img src="'+iconUrl+'" style="width:14px;height:14px;border-radius:2px;vertical-align:middle;opacity:'+(active?'1':'0.2')+';" onerror="this.style.display=\'none\'">';
-    }
-    html += '<span style="font-size:9px;font-weight:700;color:'+nameColor+';margin-left:3px;vertical-align:middle;">'+(spell?spell.short:sid)+'</span>';
-    html += '</div>';
-
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#1e2030')+';text-align:right;padding-right:7px;white-space:nowrap;">'+label+'</div>';
     // Track
-    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#06070b;border-radius:2px;overflow:visible;">';
+    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
 
     // Gridlines
     for (var ti=1; ti*tickEvery*1000<=avgDuration; ti++) {
-      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*pps)+'px;top:0;bottom:0;border-left:1px solid #0d0e18;pointer-events:none;"></div>';
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*pps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
     }
 
-    // Cast markers: icon + duration bar
+    // Cast: vertical opaque duration bar + block marker + time label
     times.forEach(function(t) {
       var x = Math.round((t/1000)*pps);
-      var barW = Math.round((cdDur/1000)*pps);
-      var color = spell ? spell.color : '#8892b0';
+      var barW = Math.round(cdDurPx);
 
-      // Duration bar (behind icon)
-      html += '<div style="position:absolute;left:'+x+'px;top:'+(ICON+2)+'px;width:'+barW+'px;height:3px;background:'+color+';opacity:0.35;border-radius:0 2px 2px 0;"></div>';
+      // Duration bar — vertical, full height, semi-transparent
+      html += '<div style="position:absolute;left:'+x+'px;top:0;width:'+barW+'px;height:100%;background:'+color+';opacity:0.12;"></div>';
 
-      // Icon or colored square
-      var iconHtml = iconUrl
-        ? '<img src="'+iconUrl+'" style="width:'+ICON+'px;height:'+ICON+'px;border-radius:4px;border:1.5px solid '+color+'66;display:block;" onerror="this.parentNode.querySelector(\'div\').style.display=\'flex\';this.style.display=\'none\'">'
-        : '';
-      var fallbackHtml = '<div style="width:'+ICON+'px;height:'+ICON+'px;border-radius:4px;background:'+color+'22;border:1.5px solid '+color+';display:'+(iconUrl?'none':'flex')+';align-items:center;justify-content:center;font-size:7px;font-weight:700;color:'+color+';">'+(spell?spell.short.slice(0,3):'')+' </div>';
-
-      html += '<div style="position:absolute;left:'+x+'px;top:0;transform:translateX(-50%);">'
-        + iconHtml + fallbackHtml
-        + '</div>';
+      // Cast block (solid left edge)
+      html += '<div style="position:absolute;left:'+x+'px;top:3px;bottom:3px;width:6px;background:'+color+';border-radius:2px;"></div>';
 
       // Time label
-      html += '<div style="position:absolute;left:'+x+'px;top:'+(ICON+2)+'px;font-size:9px;font-weight:700;color:'+color+';transform:translateX(-50%);white-space:nowrap;text-shadow:0 1px 2px #000;line-height:1.2;">'+fmtT(t)+'</div>';
+      html += '<div style="position:absolute;left:'+(x+9)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:'+color+';white-space:nowrap;text-shadow:0 1px 3px #000;">'+fmtT(t)+'</div>';
     });
 
     html += '</div></div>';
@@ -5144,27 +5111,20 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   logsData.forEach(function(log, li) {
     var pps = W / (log.duration / 1000);
-    var durStr = fmtT(log.duration);
 
-    html += '<div style="margin-bottom:16px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
+    html += '<div style="margin-bottom:14px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
 
     // Header
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">';
     html += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+log.rank+'</span>';
-    html += '<span style="font-size:10px;color:#3a4060;">&middot; Kill '+durStr+'</span>';
-    html += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#4a5080;text-decoration:none;margin-left:auto;border:1px solid #252838;padding:2px 8px;border-radius:3px;">View log \u2197</a>';
+    html += '<span style="font-size:10px;color:#2e3050;">&middot; '+fmtT(log.duration)+'</span>';
+    html += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#3a4060;text-decoration:none;margin-left:auto;border:1px solid #1e2232;padding:2px 8px;border-radius:3px;">View \u2197</a>';
     html += '</div>';
 
-    // Ruler (only first log)
     if (li === 0) html += buildRuler(pps);
-
-    // Boss row
     html += buildBossRow(log, pps);
-
-    // CD rows — only spells that appear in at least one log
     allSids.forEach(function(sid) {
-      var spell = WCL_SPELLS[sid];
-      html += buildCdRow(sid, log, pps, spell);
+      html += buildCdRow(sid, log, pps, WCL_SPELLS[+sid]);
     });
 
     html += '</div>';
