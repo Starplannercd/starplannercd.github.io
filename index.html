@@ -5226,6 +5226,8 @@ function showWclModal() {
               bossSpells.forEach(function(spell, gi) {
                 spell.ids.forEach(function(id){ idToGroup[id] = gi; });
               });
+              // Sort by timestamp so simultaneous multi-ID events (e.g. 4x Rampage variants) dedup correctly
+              bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
               bevts.forEach(function(ev){
                 var sid = ev.abilityGameID;
                 var gi = idToGroup[sid];
@@ -5233,7 +5235,7 @@ function showWclModal() {
                 var rel = ev.timestamp - fStart;
                 if (rel<0||rel>900000) return;
                 if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-                // Dedupe — only record first hit per 20s window (covers full Rampage duration)
+                // 20s dedup window — collapses all 4 Rampage variants at same timestamp into one entry
                 var times = bossEvtTimes[gi];
                 if (!times.length || rel - times[times.length-1] > 20000) times.push(rel);
               });
