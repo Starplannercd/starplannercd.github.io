@@ -4957,6 +4957,49 @@ function getBossSpellsForName(bossName) {
   return key ? (WCL_BOSS_SPELLS[key] || []) : [];
 }
 
+
+// Personal defensive spell IDs by class/spec
+var WCL_PERSONAL_SPELLS = {
+  // Disc / Holy Paladin healer
+  33206: {name:'Pain Suppression', short:'PainSupp', color:'#ffffff', cls:'Disc'},
+  47585: {name:'Dispersion',       short:'Dispers',  color:'#ffffff', cls:'Disc'},
+  498:   {name:'Divine Protection',short:'DivProt',  color:'#f58cba', cls:'HPala'},
+  86659: {name:'Guardian (Prot)',  short:'GoAK',     color:'#f58cba', cls:'HPala'},
+  // Shadow Priest
+  // 47585 Dispersion shared, 15286 VE already tracked
+  // Elemental Shaman
+  108271:{name:'Astral Shift',    short:'AstShift', color:'#0070de', cls:'Ele'},
+  30823: {name:'Sham. Rage',      short:'ShamRage', color:'#0070de', cls:'Ele'},
+  // Mage
+  45438: {name:'Ice Block',       short:'IceBlock', color:'#69ccf0', cls:'Mage'},
+  198158:{name:'Temporal Shield', short:'TempShld', color:'#69ccf0', cls:'Mage'},
+  // Warlock
+  104773:{name:'Unending Resolve',short:'UnendRes', color:'#9482c9', cls:'Lock'},
+  // Warrior
+  118038:{name:'Die by Sword',    short:'DbySwrd',  color:'#c79c6e', cls:'Warr'},
+  871:   {name:'Shield Wall',     short:'ShldWall', color:'#c79c6e', cls:'Warr'},
+  // Rogue
+  5277:  {name:'Evasion',         short:'Evasion',  color:'#fff569', cls:'Rogue'},
+  31224: {name:'Cloak of Shadows',short:'Cloak',    color:'#fff569', cls:'Rogue'},
+};
+
+// Our comp classes for filtering — must have these class signatures in the log
+// Check by looking for CDs from our specific specs
+var OUR_COMP_SPELL_IDS = [
+  62618,  // PW:B — Disc
+  31821,  // Devo — Holy Pal
+  108280, // HTT — Elemental
+  97462,  // Rally — Warrior
+  76577,  // Smoke Bomb — Rogue
+  15286,  // VE — Shadow Priest
+];
+// At least 4 of our comp signals must be present
+function logMatchesOurComp(allCastSids) {
+  var matches = 0;
+  OUR_COMP_SPELL_IDS.forEach(function(sid){ if (allCastSids[sid]) matches++; });
+  return matches >= 3;
+}
+
 function wclFmtMs(ms) {
   var s = Math.round(ms/1000);
   return Math.floor(s/60) + ':' + (s%60<10?'0':'') + (s%60);
@@ -4968,7 +5011,9 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells) {
+function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode) {
+  if (!spellMap) spellMap = WCL_SPELLS;
+  if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
     container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No data found.</div>';
     return;
@@ -4986,7 +5031,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       if (allSids.indexOf(+sid) < 0) allSids.push(+sid);
     });
   });
-  var SPELL_ORDER = [62618,31821,86150,105809,31884,108280,108281,115213,15286,76577,97462,114203];
+  var SPELL_ORDER = [62618,31821,86150,105809,31884,108280,108281,115213,15286,76577,97462,114203,
+    33206,47585,498,108271,30823,45438,198158,104773,118038,871,5277,31224];
   allSids.sort(function(a,b) {
     var ai=SPELL_ORDER.indexOf(a), bi=SPELL_ORDER.indexOf(b);
     if(ai<0)ai=99; if(bi<0)bi=99; return ai-bi;
@@ -5108,7 +5154,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">'
     +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '
-    +bossName+' &middot; ranks 26\u201335 execution'
+    +bossName+' &middot; ranks 26\u201335 &middot; '+(mode==='personal'?'Personal Defensives':'Raid CDs')
     +'</div>';
 
   logsData.forEach(function(log, li) {
@@ -5126,7 +5172,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     if (li === 0) html += buildRuler(pps);
     html += buildBossRow(log, pps);
     allSids.forEach(function(sid) {
-      html += buildCdRow(sid, log, pps, WCL_SPELLS[+sid]);
+      html += buildCdRow(sid, log, pps, spellMap[+sid]);
     });
 
     html += '</div>';
@@ -5156,7 +5202,11 @@ function showWclModal() {
       + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Ranks 26\u201345 execution &middot; up to <strong style="color:#c8d0e8;">20</strong> logs</div>'
       + '</div>'
       + '<div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp filter: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div>'
-      + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch CD Timing Data</button>'
+      + '<div style="display:flex;gap:6px;margin-bottom:10px;">'
+      + '<button id="wclModeRaid" style="flex:1;padding:7px;border-radius:5px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:11px;font-weight:700;cursor:pointer;">Raid CDs</button>'
+      + '<button id="wclModePersonal" style="flex:1;padding:7px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#5a6080;font-size:11px;font-weight:700;cursor:pointer;">Personal Defensives</button>'
+      + '</div>'
+      + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch Raid CDs</button>'
       + '<div id="wclResults"></div>'
       + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div>'
       + '</div>';
@@ -5169,6 +5219,26 @@ function showWclModal() {
   if (!authed) { box.querySelector('#wclLoginBtn').addEventListener('click', wclLogin); return; }
 
   box.querySelector('#wclLogout').addEventListener('click', function(){localStorage.removeItem(WCL_TOKEN_KEY);localStorage.removeItem(WCL_TOKEN_EXP_KEY);ov.remove();showWclModal();});
+
+  // Mode toggle
+  var wclMode = 'raid'; // 'raid' or 'personal'
+  var modeRaidBtn = box.querySelector('#wclModeRaid');
+  var modePersonalBtn = box.querySelector('#wclModePersonal');
+  var fetchBtn2 = box.querySelector('#wclFetch');
+  function setWclMode(mode) {
+    wclMode = mode;
+    if (mode === 'raid') {
+      modeRaidBtn.style.borderColor='#ff8c0066'; modeRaidBtn.style.background='#ff8c0018'; modeRaidBtn.style.color='#ff8c00';
+      modePersonalBtn.style.borderColor='#2e3040'; modePersonalBtn.style.background='transparent'; modePersonalBtn.style.color='#5a6080';
+      fetchBtn2.textContent = 'Fetch Raid CDs';
+    } else {
+      modePersonalBtn.style.borderColor='#ff8c0066'; modePersonalBtn.style.background='#ff8c0018'; modePersonalBtn.style.color='#ff8c00';
+      modeRaidBtn.style.borderColor='#2e3040'; modeRaidBtn.style.background='transparent'; modeRaidBtn.style.color='#5a6080';
+      fetchBtn2.textContent = 'Fetch Personal Defensives';
+    }
+  }
+  modeRaidBtn.addEventListener('click', function(){ setWclMode('raid'); });
+  modePersonalBtn.addEventListener('click', function(){ setWclMode('personal'); });
   var bossEl = box.querySelector('#wclBoss');
   wclLoadEncounters().then(function(){
     bossEl.innerHTML = '<option value="">-- Choose boss --</option>' + Object.keys(WCL_ENCOUNTERS).map(function(n){return '<option value="'+WCL_ENCOUNTERS[n]+'">'+n+'</option>';}).join('');
@@ -5247,35 +5317,64 @@ function showWclModal() {
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
 
-          // Group by spell+source, pick best caster per spell
-          var castsBySrc = {};
-          evts.forEach(function(ev){
-            if (ev.type!=='cast') return;
-            var sid = ev.abilityGameID;
-            if (!WCL_SPELLS[sid]) return;
-            var rel = ev.timestamp - fStart;
-            if (rel<0||rel>900000) return;
-            var key = sid+'_'+(ev.sourceID||'0');
-            if (!castsBySrc[key]) castsBySrc[key]=[];
-            castsBySrc[key].push(rel);
-          });
-          var spellSources = {};
-          Object.keys(castsBySrc).forEach(function(key){
-            var sid = key.split('_')[0];
-            if (!spellSources[sid]) spellSources[sid]={};
-            spellSources[sid][key] = castsBySrc[key];
-          });
-          var logCasts = {};
-          Object.keys(spellSources).forEach(function(sid){
-            var sources = spellSources[sid];
-            var best = Object.keys(sources).sort(function(a,b){
-              var diff = sources[b].length - sources[a].length;
-              return diff!==0 ? diff : (sources[a][0]||0)-(sources[b][0]||0);
-            })[0];
-            logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
-          });
+          // Build lookup of all spell IDs cast in this log
+          var allCastSids = {};
+          evts.forEach(function(ev){ if(ev.type==='cast') allCastSids[ev.abilityGameID]=true; });
 
-          logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
+          if (wclMode === 'personal') {
+            // Comp filter — must have at least 3 of our class signatures
+            if (!logMatchesOurComp(allCastSids)) { continue; }
+
+            // Collect personal defensive casts per spell per source
+            var logCasts = {};
+            Object.keys(WCL_PERSONAL_SPELLS).forEach(function(sid) {
+              var sid2 = parseInt(sid);
+              var castsBySrc2 = {};
+              evts.forEach(function(ev){
+                if (ev.type!=='cast' || ev.abilityGameID!==sid2) return;
+                var rel = ev.timestamp - fStart;
+                if (rel<0||rel>900000) return;
+                var key = ev.sourceID||'0';
+                if (!castsBySrc2[key]) castsBySrc2[key]=[];
+                castsBySrc2[key].push(rel);
+              });
+              // Pick the source with most casts
+              var srcKeys = Object.keys(castsBySrc2);
+              if (!srcKeys.length) return;
+              srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
+              logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
+            });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
+          } else {
+            // Raid CDs mode
+            var castsBySrc = {};
+            evts.forEach(function(ev){
+              if (ev.type!=='cast') return;
+              var sid = ev.abilityGameID;
+              if (!WCL_SPELLS[sid]) return;
+              var rel = ev.timestamp - fStart;
+              if (rel<0||rel>900000) return;
+              var key = sid+'_'+(ev.sourceID||'0');
+              if (!castsBySrc[key]) castsBySrc[key]=[];
+              castsBySrc[key].push(rel);
+            });
+            var spellSources = {};
+            Object.keys(castsBySrc).forEach(function(key){
+              var sid = key.split('_')[0];
+              if (!spellSources[sid]) spellSources[sid]={};
+              spellSources[sid][key] = castsBySrc[key];
+            });
+            var logCasts = {};
+            Object.keys(spellSources).forEach(function(sid){
+              var sources = spellSources[sid];
+              var best = Object.keys(sources).sort(function(a,b){
+                var diff = sources[b].length - sources[a].length;
+                return diff!==0 ? diff : (sources[a][0]||0)-(sources[b][0]||0);
+              })[0];
+              logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
+            });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
+          }
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
         } catch(le){ console.warn('WCL log error:', le); }
@@ -5287,10 +5386,11 @@ function showWclModal() {
       }
 
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
-      var bossName = bossEl.options[bossEl.selectedIndex].text;
-      renderWclDisplay(results, logsData, processed, bossName, avgDuration, bossSpells);
+      var bossName2 = bossEl.options[bossEl.selectedIndex].text;
+      var spellMap = wclMode === 'personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
+      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
-    btn.textContent='Fetch CD Timing Data'; btn.disabled=false;
+    btn.textContent = wclMode==='personal' ? 'Fetch Personal Defensives' : 'Fetch Raid CDs'; btn.disabled=false;
   });
 }
 
