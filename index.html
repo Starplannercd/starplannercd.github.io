@@ -5106,7 +5106,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">'
     +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '
-    +bossName+' &middot; ranks 51\u201360 execution'
+    +bossName+' &middot; ranks 26\u201335 execution'
     +'</div>';
 
   logsData.forEach(function(log, li) {
@@ -5183,8 +5183,8 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 51-75...</div>';
-      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:3)}}}';
+      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 26-50...</div>';
+      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
       var rd = await wclQuery(rankQ, {id:encId});
       var pageRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
 
@@ -5273,7 +5273,7 @@ function showWclModal() {
             logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
           });
 
-          logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 51+ri, bossEvts: bossEvtTimes });
+          logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
         } catch(le){ console.warn('WCL log error:', le); }
