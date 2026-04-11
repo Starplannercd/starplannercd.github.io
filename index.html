@@ -5257,21 +5257,6 @@ function showWclModal() {
             if (!castsBySrc[key]) castsBySrc[key]=[];
             castsBySrc[key].push(rel);
           });
-
-          // Skip 3-healer groups: count distinct sources casting healer-only CDs
-          // Healer CDs: PW:B=62618, Devo=31821, HTT=108280, Tranq=740, GoAK=86150, HAvenger=105809, Wings=31884
-          var HEALER_SPELLS = [62618, 31821, 108280, 740, 86150, 105809, 31884];
-          var healerSources = {};
-          Object.keys(castsBySrc).forEach(function(key){
-            var sid = parseInt(key.split('_')[0]);
-            var srcId = key.split('_')[1];
-            if (HEALER_SPELLS.indexOf(sid) >= 0) healerSources[srcId] = true;
-          });
-          if (Object.keys(healerSources).length > 2) {
-            console.log('Skipping 3-healer log:', code);
-            continue;
-          }
-
           var spellSources = {};
           Object.keys(castsBySrc).forEach(function(key){
             var sid = key.split('_')[0];
