@@ -5197,6 +5197,14 @@ function showWclModal() {
               var bq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
               var bd = await wclQuery(bq, {c:code, fid:fid});
               var bevts = (bd&&bd.reportData&&bd.reportData.report&&bd.reportData.report.events&&bd.reportData.report.events.data)||[];
+              // Debug: log all unique spell IDs from damage taken events in first log
+              if (processed === 0) {
+                var dmgIds = {};
+                bevts.forEach(function(ev){ dmgIds[ev.abilityGameID] = (dmgIds[ev.abilityGameID]||0)+1; });
+                var sorted = Object.keys(dmgIds).sort(function(a,b){return dmgIds[b]-dmgIds[a];}).slice(0,20);
+                console.log('WCL DamageTaken top spell IDs:', sorted.map(function(id){return id+'(x'+dmgIds[id]+')';}));
+                console.log('WCL looking for boss spell IDs:', bossSpellIds);
+              }
               bevts.forEach(function(ev){
                 var sid = ev.abilityGameID;
                 if (bossSpellIds.indexOf(sid) < 0) return;
