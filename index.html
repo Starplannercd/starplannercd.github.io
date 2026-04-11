@@ -5239,6 +5239,9 @@ function showWclModal() {
                 var times = bossEvtTimes[gi];
                 if (!times.length || rel - times[times.length-1] > 20000) times.push(rel);
               });
+              if (processed===0) {
+                console.log('Boss evt results:', JSON.stringify(bossEvtTimes));
+              }
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
 
