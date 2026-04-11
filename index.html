@@ -5235,9 +5235,9 @@ function showWclModal() {
                 var rel = ev.timestamp - fStart;
                 if (rel<0||rel>900000) return;
                 if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-                // 20s dedup window — collapses all 4 Rampage variants at same timestamp into one entry
+                // 25s dedup — Rampage lasts 20s, phases are 40-45s apart, so 25s safely catches all ticks
                 var times = bossEvtTimes[gi];
-                if (!times.length || rel - times[times.length-1] > 20000) times.push(rel);
+                if (!times.length || rel - times[times.length-1] > 25000) times.push(rel);
               });
               if (processed===0) {
                 console.log('Boss evt results:', JSON.stringify(bossEvtTimes));
