@@ -5233,9 +5233,9 @@ function showWclModal() {
                 var rel = ev.timestamp - fStart;
                 if (rel<0||rel>900000) return;
                 if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-                // Dedupe — only record first hit per 3s window (Rampage ticks every 1s)
+                // Dedupe — only record first hit per 20s window (covers full Rampage duration)
                 var times = bossEvtTimes[gi];
-                if (!times.length || rel - times[times.length-1] > 3000) times.push(rel);
+                if (!times.length || rel - times[times.length-1] > 20000) times.push(rel);
               });
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
