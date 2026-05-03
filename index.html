@@ -1383,8 +1383,6 @@ const BOSSES = [
         label: null,
         abilities: [
           { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-          { name:'Interrupting Jolt 1', time:189,  color:'#c84888' },
-          { name:'Interrupting Jolt 2', time:212, color:'#c84888' },
         ]
       }
     ]
@@ -1409,13 +1407,6 @@ const BOSSES = [
           { name:'Unleashed Flames 5', time:49,  color:'#c86028' },
           { name:'Unleashed Flames 6', time:57,  color:'#c86028' },
           { name:'Unleashed Flames 7', time:65,  color:'#c86028' },
-        ]
-      },
-      {
-        label: 'Windstorm',
-        phaseStart: 340,
-        abilities: [
-          { name:'Windstorm 1', time:130, color:'#48a8c8' },
         ]
       },
       {
@@ -2463,10 +2454,12 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  track.style.width = Math.max(totalW + 400, 1600) + 'px'; // minimum 1600px for ample cells
+  const isEncStart = !!(ab && ab.encounterStart);
+  track.style.width = (isEncStart ? Math.max(totalW + 400, 3200) : Math.max(totalW + 400, 1600)) + 'px';
 
-  // Grid lines every 30s
-  for (let t = 30; t < boss.duration; t += 30) {
+  // Grid lines every 30s — extend to cover full track width
+  const gridEnd = isEncStart ? Math.max(boss.duration, 3200 / PX_PER_SEC) : boss.duration;
+  for (let t = 30; t < gridEnd; t += 30) {
     const gl = document.createElement('div');
     gl.className = 'track-gridline';
     gl.style.left = (t * pps) + 'px';
@@ -4354,7 +4347,7 @@ function buildBossSelect() {
   BOSSES.forEach(b => {
     const opt = document.createElement('option');
     opt.value = b.id;
-    opt.textContent = (bossReady[b.id] ? '★ ' : '') + b.name;
+    opt.textContent = (bossReady[b.id] ? '✓ ' : '') + b.name;
     sel.appendChild(opt);
   });
   sel.value = currentBossId;
@@ -4371,7 +4364,7 @@ function refreshBossSelectLabels() {
   if (!sel) return;
   Array.from(sel.options).forEach(opt => {
     const boss = BOSSES.find(b => b.id === opt.value);
-    if (boss) opt.textContent = (bossReady[boss.id] ? '★ ' : '') + boss.name;
+    if (boss) opt.textContent = (bossReady[boss.id] ? '✓ ' : '') + boss.name;
   });
 }
 
