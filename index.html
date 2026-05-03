@@ -2914,7 +2914,7 @@ const FOJI_ABILITY_KEYS = {
   // Durumu
   'Encounter Start (DUR)':'DURUMU_ENC_START','Health % (DUR)':'DURUMU_HEALTH','Light Spectrum':'DURUMU_LIGHT_SPECTRUM','Disintegration Beam':'DURUMU_DISINTEGRATION_BEAM','Lingering Gaze':'DURUMU_LINGERING_GAZE','Force of Will':'DURUMU_FORCE_OF_WILL','Hard Stare':'DURUMU_HARD_STARE','Dark Parasite':'DURUMU_DARK_PARASITE','Life Drain':'DURUMU_LIFE_DRAIN','Walls of Ice':'DURUMU_WALLS_OF_ICE',
   // Ra-den
-  'Cosmic Barrage (2)':'TWINS_COSMIC_BARRAGE_2','Cosmic Barrage (3)':'TWINS_COSMIC_BARRAGE_3','Cosmic Barrage (5)':'TWINS_COSMIC_BARRAGE_5','Cosmic Barrage (7)':'TWINS_COSMIC_BARRAGE_7','Nuclear Inferno (1)':'TWINS_NUCLEAR_INFERNO_1','Nuclear Inferno (2)':'TWINS_NUCLEAR_INFERNO_2','Nuclear Inferno (3)':'TWINS_NUCLEAR_INFERNO_3','Nuclear Inferno (4)':'TWINS_NUCLEAR_INFERNO_4','Tidal Force':'TWINS_TIDAL_FORCE',
+  'Cosmic Barrage 2':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 3':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 5':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 7':'TWINS_COSMIC_BARRAGE','Nuclear Inferno 1':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 2':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 3':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 4':'TWINS_NUCLEAR_INFERNO','Tidal Force':'TWINS_TIDAL_FORCE',
   'Encounter Start (RAD)':'RADEN_ENC_START','Health % (RAD)':'RADEN_HEALTH','Phase 2 (RAD)':'RADEN_PHASE_2','Fatal Strike':'RADEN_FATAL_STRIKE','Murderous Strike':'RADEN_MURDEROUS_STRIKE','Sanguine Horror':'RADEN_SANGUINE_HORROR','Crackling Stalker':'RADEN_CRACKLING_STALKER','Creation':'RADEN_CREATION','Call Essence':'RADEN_CALL_ESSENCE','Anima Phase':'RADEN_ANIMA_PHASE','Vita Phase':'RADEN_VITA_PHASE','Unstable Vita':'RADEN_UNSTABLE_VITA','Ruin':'RADEN_RUIN',
 };
 
@@ -3125,7 +3125,7 @@ const BOSS_ABILITY_KEYS = {
   'leishen_p2': { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
   'leishen_p3': { key: 'LEISHEN_BALL_LIGHTNING_P3',     castLabel: 'Ball Lightning P3' },
   'leishen':    { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
-  'twins':      { key: 'TWINS_COSMIC_BARRAGE_2', castLabel: 'Cosmic Barrage' },
+  'twins':      { key: 'TWINS_COSMIC_BARRAGE', castLabel: 'Cosmic Barrage' },
   'raden':      { key: 'RADEN_CREATION',                castLabel: 'Material of Creation' },
 };
 
@@ -3171,10 +3171,8 @@ function getBossAbilityKey(boss, rowKey, abName) {
   }
   if (boss.id === 'twins') {
     if (abName && abName.toLowerCase().includes('tidal')) return 'TWINS_TIDAL_FORCE';
-    const n = getCastNumber(abName);
-    if (abName && abName.toLowerCase().includes('nuclear')) return 'TWINS_NUCLEAR_INFERNO_' + n;
-    if (abName && abName.toLowerCase().includes('cosmic')) return 'TWINS_COSMIC_BARRAGE_' + n;
-    return 'TWINS_COSMIC_BARRAGE_2';
+    if (abName && abName.toLowerCase().includes('nuclear')) return 'TWINS_NUCLEAR_INFERNO';
+    return 'TWINS_COSMIC_BARRAGE';
   }
   if (boss.id === 'leishen') {
     if (abName && abName.toLowerCase().includes('diffusion')) return 'LEISHEN_DIFFUSION_CHAIN_P3';
