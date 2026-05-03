@@ -3169,6 +3169,13 @@ function getBossAbilityKey(boss, rowKey, abName) {
     if (abName && abName.toLowerCase().includes('windstorm')) return 'QON_WINDSTORM';
     return BOSS_ABILITY_KEYS['ironqon'].key;
   }
+  if (boss.id === 'twins') {
+    if (abName && abName.toLowerCase().includes('tidal')) return 'TWINS_TIDAL_FORCE';
+    const n = getCastNumber(abName);
+    if (abName && abName.toLowerCase().includes('nuclear')) return 'TWINS_NUCLEAR_INFERNO_' + n;
+    if (abName && abName.toLowerCase().includes('cosmic')) return 'TWINS_COSMIC_BARRAGE_' + n;
+    return 'TWINS_COSMIC_BARRAGE_2';
+  }
   if (boss.id === 'leishen') {
     if (abName && abName.toLowerCase().includes('diffusion')) return 'LEISHEN_DIFFUSION_CHAIN_P3';
     if (abName && abName.includes('P3')) return BOSS_ABILITY_KEYS['leishen_p3'].key;
