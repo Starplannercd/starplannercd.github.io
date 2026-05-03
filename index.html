@@ -2458,7 +2458,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   track.style.width = (isEncStart ? Math.max(totalW + 400, 3200) : Math.max(totalW + 400, 1600)) + 'px';
 
   // Grid lines every 30s — extend to cover full track width
-  const gridEnd = isEncStart ? Math.max(boss.duration, 3200 / PX_PER_SEC) : boss.duration;
+  const gridEnd = isEncStart ? Math.max(boss.duration, 3200 / pps) : boss.duration;
   for (let t = 30; t < gridEnd; t += 30) {
     const gl = document.createElement('div');
     gl.className = 'track-gridline';
