@@ -3234,7 +3234,9 @@ function buildFojiExport() {
             ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
             : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
-          const who = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
+          const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
+          const _whoRemap = { 'DK1':'UHDK1' };
+          const who = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
