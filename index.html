@@ -1131,6 +1131,7 @@
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
     <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
+    <button class="btn" id="shamanBtn" style="border-color:#0070de44;color:#0070deaa;">Shaman</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -2257,6 +2258,8 @@ const CD_ICON_URLS = {
   'avwrath':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_avenginewrath.jpg',
   'goak':        'https://wow.zamimg.com/images/wow/icons/large/spell_holy_heroism.jpg',
   'holyavenger': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_holyavenger.jpg',
+  'ascend':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_elementalshaman_ability_04.jpg',
+  'slt':        'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_spiritlink.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -5406,6 +5409,7 @@ function showWclModal() {
 })();
 
 document.getElementById('wclBtn').addEventListener('click', showWclModal);
+document.getElementById('shamanBtn')?.addEventListener('click', showShamanView);
 
 
 
@@ -6355,6 +6359,7 @@ if (_viewId) {
 // ── Holy Paladin CD View (Shift+M) ──
 const HPALA_CDS = ['devo1','goak','holyavenger','avwrath','lhammer','divfavor'];
 const hpalaViewStyle = 'icon-grid';
+const SHAMAN_CDS = ['htt','ag','ascend','slt'];
 
 // Short name override for this view
 const HPALA_SHORT = { devo1:'Devo', devo2:'Devo', devo3:'Devo' };
@@ -6588,6 +6593,89 @@ function showHPalaView() {
   });
 
 
+}
+
+function buildShamanContent() {
+  let html = '';
+  BOSSES.forEach(boss => {
+    const bossData = placedCDs[boss.id] || {};
+    const rows = [];
+    boss.sections.forEach((sec, si) => {
+      sec.abilities.forEach((ab, ai) => {
+        const rowKey = `${si}-${ai}`;
+        const placements = (bossData[rowKey] || []).filter(p => SHAMAN_CDS.includes(p.cdId));
+        if (!placements.length) return;
+        const sorted = [...placements].sort((a,b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
+        rows.push({ ab, sorted });
+      });
+    });
+    if (!rows.length) return;
+
+    const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #2e3040;">` : '';
+
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#0d0f15;border-bottom:1px solid #2e3040;">
+      ${pImg}
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0a0c12;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#0070de66;margin-bottom:3px;">Shaman Cooldowns</div>
+        <div style="font-size:16px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${boss.name}</div>
+      </div>
+    </div>`;
+
+    const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
+    html += `<div style="border:1px solid #1e2030;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+  });
+  return html || '<div style="color:#5a5d78;font-size:13px;padding:20px;">No shaman CDs placed yet.</div>';
+}
+
+function showShamanView() {
+  const existing = document.getElementById('shamanViewOverlay');
+  if (existing) { existing.remove(); return; }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'shamanViewOverlay';
+  overlay.className = 'modal-overlay';
+  overlay.style.alignItems = 'flex-start';
+  overlay.style.padding = '20px';
+
+  overlay.innerHTML = `<div class="ss-modal">
+    <div class="ss-toolbar" style="position:relative;">
+      <h3>Shaman CDs</h3>
+      <button id="shamanSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="shamanClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+    </div>
+    <div class="ss-content" id="shamanContent" style="background:#08090d;padding:20px 24px;overflow-y:auto;flex:1;"></div>
+  </div>`;
+
+  document.body.appendChild(overlay);
+
+  const contentEl = overlay.querySelector('#shamanContent');
+  contentEl.innerHTML = buildShamanContent();
+
+  overlay.querySelector('#shamanClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('mousedown', e => { if (e.target === overlay) overlay.remove(); });
+
+  overlay.querySelector('#shamanSsBtn').addEventListener('click', () => {
+    const btn = overlay.querySelector('#shamanSsBtn');
+    btn.textContent = 'Capturing…';
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = () => {
+      const clone = contentEl.cloneNode(true);
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      document.body.appendChild(clone);
+      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+        clone.remove();
+        const a = document.createElement('a');
+        a.download = 'shaman-cds.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        btn.textContent = '📷 Screenshot';
+      }).catch(() => { clone.remove(); btn.textContent = '📷 Screenshot'; });
+    };
+    script.onerror = () => { btn.textContent = '📷 Screenshot'; };
+    document.head.appendChild(script);
+  });
 }
 
 // Shift+M shortcut
