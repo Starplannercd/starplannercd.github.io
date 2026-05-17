@@ -1175,8 +1175,8 @@ const CD_POOL = [
   { id:'xuen',      name:'Invoke Xuen',   short:'Xuen',  cd:180, dur:45,color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'revival',   name:'Revival',       short:'Revival',cd:180,dur:0, color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'devo3',    name:'Ret Devotion Aura',    short:'RDevo', cd:180, dur:6,  color:'#c85890', textColor:'#ffb8d8', who:'RETPALA1',  core:false },
-  { id:'ascend',   name:'Ascendance',           short:'Asc',   cd:180, dur:15, color:'#0070de', textColor:'#88c8ff', who:'RSHAM1',    core:false },
-  { id:'slt',      name:'Spirit Link Totem',    short:'SLT',   cd:180, dur:6,  color:'#0070de', textColor:'#88c8ff', who:'RSHAM1',    core:false },
+  { id:'ascend',   name:'Ascendance',           short:'Asc',   cd:180, dur:15, color:'#0070de', textColor:'#88c8ff', who:'ELE1',      core:false },
+  { id:'slt',      name:'Spirit Link Totem',    short:'SLT',   cd:180, dur:6,  color:'#0070de', textColor:'#88c8ff', who:'ELE1',      core:false },
   { id:'goak',     name:'Guardian of Ancient Kings', short:'GoAK', cd:180, dur:10, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
   { id:'holyavenger', name:'Holy Avenger',           short:'HA',   cd:180, dur:18, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
   { id:'avwrath',  name:'Avenging Wrath',            short:'AW',   cd:180, dur:20, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
@@ -1214,7 +1214,7 @@ const SPEC_CD_MAP = {
   'Holy Paladin':     { who:'HPALA1',    cds:['devo1'] },
   'Discipline':       { who:'DISC1',     cds:['pwb','dh'] },
   'Holy Priest':      { who:'HPRIEST1',  cds:['dh'] },
-  'Restoration Sham': { who:'RSHAM1',    cds:['htt','ascend','slt'] },
+  'Restoration Sham': { who:'RSHAM1',    cds:['htt'] },
   'Restoration Dru':  { who:'RDRUID1',   cds:['tranq'] },
   'Mistweaver':       { who:'MWMONK1',   cds:['xuen','revival'] },
   // Tanks
@@ -1226,7 +1226,7 @@ const SPEC_CD_MAP = {
   'Windwalker':       { who:'WWMONK1',   cds:[] },
   // DPS
   'Shadow Priest':    { who:'SPRIEST1',  cds:['ve'] },
-  'Elemental':        { who:'ELE1',      cds:['htt','ag'] },
+  'Elemental':        { who:'ELE1',      cds:['htt','ag','ascend','slt'] },
   'Enhancement':      { who:'ENH1',      cds:['ag'] },
   'Arms Warrior':     { who:'DPSWARR1',  cds:['dem','rc'] },
   'Fury Warrior':     { who:'FURYWARR1', cds:['rc'] },
@@ -3147,6 +3147,8 @@ const CD_SPELL_IDS = {
   've':        '15286',
   'ag':        '108281',
   'htt':       '108280',
+  'ascend':    '114052',
+  'slt':       '98008',
   'amz':       '51052',
   'smoke':     '76577',
   'dh':        '64843',
@@ -3235,7 +3237,7 @@ function buildFojiExport() {
             : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
-          const _whoRemap = { 'DK1':'UHDK1' };
+          const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1' };
           const who = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
