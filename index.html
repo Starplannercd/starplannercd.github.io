@@ -1131,7 +1131,6 @@
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
     <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
-    <button class="btn" id="shamanBtn" style="border-color:#0070de44;color:#0070deaa;">Shaman</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -2258,7 +2257,7 @@ const CD_ICON_URLS = {
   'avwrath':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_avenginewrath.jpg',
   'goak':        'https://wow.zamimg.com/images/wow/icons/large/spell_holy_heroism.jpg',
   'holyavenger': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_holyavenger.jpg',
-  'ascend':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_elementalshaman_ability_04.jpg',
+  'ascend':     'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_ascendance_elemental.jpg',
   'slt':        'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_spiritlink.jpg',
 };
 
@@ -5409,7 +5408,6 @@ function showWclModal() {
 })();
 
 document.getElementById('wclBtn').addEventListener('click', showWclModal);
-document.getElementById('shamanBtn')?.addEventListener('click', showShamanView);
 
 
 
@@ -6681,6 +6679,7 @@ function showShamanView() {
 // Shift+M shortcut
 document.addEventListener('keydown', e => {
   if (e.shiftKey && e.key === 'M') showHPalaView();
+  if (e.shiftKey && e.key === 'S') showShamanView();
 });
 
 
