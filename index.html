@@ -5039,28 +5039,36 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   var CD_DURATIONS = {
     62618:10, 31821:8, 86150:8, 105809:20, 31884:20,
     108280:10, 108281:10, 115213:3, 15286:30,
-    76577:5, 97462:10, 114203:10
+    76577:5, 97462:10, 114203:10,
+    114049:15, 98008:6
   };
 
+  // Collect all spell IDs across all logs
   var allSids = [];
   logsData.forEach(function(log) {
     Object.keys(log.casts).forEach(function(sid) {
       if (allSids.indexOf(+sid) < 0) allSids.push(+sid);
     });
   });
-  var SPELL_ORDER = [62618,31821,86150,105809,31884,108280,108281,115213,15286,76577,97462,114203,
+  var SPELL_ORDER = [62618,31821,86150,105809,31884,108280,108281,114049,98008,115213,15286,76577,97462,114203,
     33206,47585,498,108271,30823,45438,198158,104773,118038,871,5277,31224];
   allSids.sort(function(a,b) {
     var ai=SPELL_ORDER.indexOf(a), bi=SPELL_ORDER.indexOf(b);
     if(ai<0)ai=99; if(bi<0)bi=99; return ai-bi;
   });
 
-  var ROW_H = 34;
-  var LABEL_W = 62;
-  var W = 560;
+  // Shared timeline width based on longest log
   var maxDuration = Math.max.apply(null, logsData.map(function(l){return l.duration;}));
-  var sharedPps = W / (maxDuration / 1000); // all logs use same scale
+  var W = 560;
+  var sharedPps = W / (maxDuration / 1000);
   var tickEvery = maxDuration <= 180000 ? 15 : maxDuration <= 360000 ? 30 : 60;
+  var ROW_H = 32;
+  var LABEL_W = 66;
+  var BUCKET_MS = 5000;
+  var numBuckets = Math.ceil(maxDuration / BUCKET_MS);
+
+  // View mode toggle
+  var viewMode = 'timeline'; // 'timeline' or 'heatmap'
 
   function fmtT(ms) {
     var s = Math.round(ms/1000);
@@ -5070,21 +5078,20 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
   }
 
-  function buildRuler(pps) {
+  function buildRuler() {
     var html = '<div style="display:flex;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
-    html += '<div style="position:relative;width:'+W+'px;height:16px;">';
+    html += '<div style="position:relative;width:'+W+'px;height:18px;">';
     for (var ti=0; ti*tickEvery*1000<=maxDuration+tickEvery*1000; ti++) {
-      var tx = Math.min(Math.round(ti*tickEvery*pps), W);
+      var tx = Math.min(Math.round(ti*tickEvery*sharedPps), W);
       html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
-      html += '<span style="position:absolute;left:'+tx+'px;top:1px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*tickEvery)+'</span>';
+      html += '<span style="position:absolute;left:'+tx+'px;top:2px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*tickEvery)+'</span>';
     }
     html += '</div></div>';
     return html;
   }
 
-  function buildBossRow(log, pps) {
-    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length > 0;
+  function buildBossRow(log) {
     var bossAbilities = [];
     var bossMatch = BOSSES.find(function(b){return b.name===bossName;});
     if (bossMatch && bossMatch.sections) {
@@ -5092,110 +5099,157 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         (sec.abilities||[]).forEach(function(ab){bossAbilities.push(ab);});
       });
     }
+    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length > 0;
     if (!hasBossEvts && !bossAbilities.length) return '';
 
     var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#3a4060;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.07em;">Boss</div>';
-    html += '<div style="position:relative;width:'+W+'px;height:22px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    html += '<div style="position:relative;width:'+W+'px;height:20px;background:#05060a;border-radius:2px;overflow:hidden;">';
 
     if (hasBossEvts) {
-      // Group events by spell, then dedupe times, label once per unique window
       bossSpells.forEach(function(spell, gi) {
         var times = log.bossEvts[gi] || [];
-        if (!times.length) return;
-        // times are already deduplicated to one per 3s window by fetch
-        // Just draw a single clean marker per time with label
         times.forEach(function(t) {
-          var x = Math.round((t/1000)*pps);
-          html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';transform:translateX(-50%);"></div>';
-          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;">'+spell.name+' '+fmtT(t)+'</span>';
+          var x = Math.round((t/1000)*sharedPps);
+          html += '<div title="'+spell.name+' '+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';transform:translateX(-50%);"></div>';
+          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;">'+spell.name+' '+fmtT(t)+'</span>';
         });
       });
     } else {
-      // Dedupe hardcoded by name (strip number), show label + time once per phase
       var seen = {};
       bossAbilities.forEach(function(ab) {
         if (ab.time*1000 > log.duration+15000) return;
-        var x = Math.min(Math.round(ab.time*pps), W-1);
+        var x = Math.min(Math.round(ab.time*sharedPps), W-2);
         var shortName = ab.name.replace(/\s+\d+$/,'');
         html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
-        // Label only if not shown recently
-        if (!seen[shortName] || x - seen[shortName] > 50) {
-          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
+        if (!seen[shortName] || x-seen[shortName] > 50) {
+          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
           seen[shortName] = x;
         }
       });
     }
-
     html += '</div></div>';
-    html += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #111320;"></div></div>';
+    html += '<div style="display:flex;margin-bottom:5px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #111320;"></div></div>';
     return html;
   }
 
-  function buildCdRow(sid, log, pps, spell) {
-    var times = log.casts[+sid] || [];
-    var active = times.length > 0;
-    var color = spell ? spell.color : '#8892b0';
-    var label = spell ? spell.short : String(sid);
-    var cdDurPx = ((CD_DURATIONS[+sid] || 10) * pps);
-
-    var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
-    // Label
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#1e2030')+';text-align:right;padding-right:7px;white-space:nowrap;">'+label+'</div>';
-    // Track
-    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
-
-    // Gridlines
-    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*pps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
-    }
-
-    // Cast: vertical opaque duration bar + block marker + time label
-    times.forEach(function(t) {
-      var x = Math.round((t/1000)*pps);
-      var barW = Math.round(cdDurPx);
-
-      // Duration bar — vertical, full height, semi-transparent
-      html += '<div style="position:absolute;left:'+x+'px;top:0;width:'+barW+'px;height:100%;background:'+color+';opacity:0.12;"></div>';
-
-      // Cast block (solid left edge)
-      html += '<div style="position:absolute;left:'+x+'px;top:3px;bottom:3px;width:6px;background:'+color+';border-radius:2px;"></div>';
-
-      // Time label
-      html += '<div style="position:absolute;left:'+(x+9)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:'+color+';white-space:nowrap;text-shadow:0 1px 3px #000;">'+fmtT(t)+'</div>';
+  // Collect all cast times per spell across all logs for heatmap
+  var allCastsBySpell = {};
+  logsData.forEach(function(log) {
+    Object.keys(log.casts).forEach(function(sid) {
+      if (!allCastsBySpell[sid]) allCastsBySpell[sid] = [];
+      log.casts[sid].forEach(function(t){ allCastsBySpell[sid].push(t); });
     });
-
-    html += '</div></div>';
-    return html;
-  }
-
-  var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">'
-    +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '
-    +bossName+' &middot; ranks 26\u201335 execution &middot; '+(mode==='personal'?'Personal Defensives':'Raid CDs')
-    +'</div>';
-
-  logsData.forEach(function(log, li) {
-    var pps = sharedPps;
-
-    html += '<div style="margin-bottom:14px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
-
-    // Header
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">';
-    html += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+log.rank+'</span>';
-    html += '<span style="font-size:10px;color:#2e3050;">&middot; '+fmtT(log.duration)+'</span>';
-    html += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#3a4060;text-decoration:none;margin-left:auto;border:1px solid #1e2232;padding:2px 8px;border-radius:3px;">View \u2197</a>';
-    html += '</div>';
-
-    if (li === 0) html += buildRuler(pps);
-    html += buildBossRow(log, pps);
-    allSids.forEach(function(sid) {
-      html += buildCdRow(sid, log, pps, spellMap[+sid]);
-    });
-
-    html += '</div>';
   });
 
-  container.innerHTML = html;
+  function buildHeatmapRow(sid) {
+    var spell = spellMap[+sid]; if (!spell) return '';
+    var times = allCastsBySpell[sid] || [];
+    if (!times.length) return '';
+    var buckets = new Array(numBuckets).fill(0);
+    times.forEach(function(t){ var b=Math.floor(t/BUCKET_MS); if(b<numBuckets) buckets[b]++; });
+    var maxB = Math.max.apply(null, buckets.concat([1]));
+    var cellW = W / numBuckets;
+
+    var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+spell.color+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
+    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    for (var bi=0; bi<numBuckets; bi++) {
+      if (!buckets[bi]) continue;
+      var intensity = Math.sqrt(buckets[bi]/maxB);
+      var op = (intensity*0.85+0.1).toFixed(2);
+      html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+spell.color+';opacity:'+op+';"></div>';
+    }
+    // Gridlines
+    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.4);pointer-events:none;"></div>';
+    }
+    // Peak time labels
+    var peaks = [];
+    for (var bi2=0; bi2<numBuckets; bi2++) {
+      if (buckets[bi2] >= maxB*0.6) peaks.push(bi2);
+    }
+    // Merge adjacent peaks
+    var merged = [], last = -99;
+    peaks.forEach(function(bi){ if(bi-last>2){ merged.push(bi); } last=bi; });
+    merged.forEach(function(bi) {
+      var x = Math.round((bi*BUCKET_MS/1000)*sharedPps);
+      html += '<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function buildTimelineRow(sid, log) {
+    var spell = spellMap[+sid]; if (!spell) return '';
+    var times = log.casts[+sid] || [];
+    var active = times.length > 0;
+    var color = spell.color;
+    var cdDurPx = ((CD_DURATIONS[+sid]||10)*sharedPps);
+
+    var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#1e2030')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
+    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
+    }
+    times.forEach(function(t) {
+      var x = Math.round((t/1000)*sharedPps);
+      html += '<div style="position:absolute;left:'+x+'px;top:0;width:'+Math.round(cdDurPx)+'px;height:100%;background:'+color+';opacity:0.12;"></div>';
+      html += '<div style="position:absolute;left:'+x+'px;top:3px;bottom:3px;width:5px;background:'+color+';border-radius:2px;"></div>';
+      html += '<div style="position:absolute;left:'+(x+7)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:'+color+';white-space:nowrap;text-shadow:0 1px 3px #000;">'+fmtT(t)+'</div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderAll() {
+    var avgSec = Math.round(avgDuration/1000);
+    var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
+
+    var toggleHtml = '<div style="display:flex;gap:6px;margin-bottom:12px;align-items:center;">'
+      +'<span style="font-size:10px;color:#4a4d62;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '+bossName+' &middot; avg '+avgStr+'</span>'
+      +'<div style="margin-left:auto;display:flex;gap:4px;">'
+      +'<button id="wclViewTimeline" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(viewMode==='timeline'?'#ff8c0066':'#2e3040')+';background:'+(viewMode==='timeline'?'#ff8c0018':'transparent')+';color:'+(viewMode==='timeline'?'#ff8c00':'#5a6080')+';">Timeline</button>'
+      +'<button id="wclViewHeatmap" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(viewMode==='heatmap'?'#ff8c0066':'#2e3040')+';background:'+(viewMode==='heatmap'?'#ff8c0018':'transparent')+';color:'+(viewMode==='heatmap'?'#ff8c00':'#5a6080')+';">Heatmap</button>'
+      +'</div></div>';
+
+    var bodyHtml = '';
+
+    if (viewMode === 'heatmap') {
+      // Single combined heatmap view
+      bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
+      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">Brighter = more commonly used in that window &middot; Time label = peak usage</div>';
+      bodyHtml += buildRuler();
+      allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid); });
+      bodyHtml += '</div>';
+    } else {
+      // Per-log timeline view
+      logsData.forEach(function(log, li) {
+        bodyHtml += '<div style="margin-bottom:12px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:10px 14px;">';
+        bodyHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
+        bodyHtml += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+(log.rank)+'</span>';
+        bodyHtml += '<span style="font-size:10px;color:#2e3050;">&middot; '+fmtT(log.duration)+'</span>';
+        bodyHtml += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#3a4060;text-decoration:none;margin-left:auto;border:1px solid #1e2232;padding:2px 8px;border-radius:3px;">View \u2197</a>';
+        bodyHtml += '</div>';
+        bodyHtml += buildRuler();
+        bodyHtml += buildBossRow(log);
+        allSids.forEach(function(sid){ bodyHtml += buildTimelineRow(sid, log); });
+        bodyHtml += '</div>';
+      });
+    }
+
+    container.innerHTML = toggleHtml + bodyHtml;
+
+    container.querySelector('#wclViewTimeline').addEventListener('click', function(){
+      viewMode = 'timeline'; renderAll();
+    });
+    container.querySelector('#wclViewHeatmap').addEventListener('click', function(){
+      viewMode = 'heatmap'; renderAll();
+    });
+  }
+
+  renderAll();
 }
 function showWclModal() {
   var existing = document.getElementById('wclOverlay');
@@ -5272,20 +5326,24 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 26-50...</div>';
-      var rankQ = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
-      var rd = await wclQuery(rankQ, {id:encId});
-      var pageRankings = (rd&&rd.worldData&&rd.worldData.encounter&&rd.worldData.encounter.fightRankings&&rd.worldData.encounter.fightRankings.rankings)||[];
+      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-35...</div>';
+      var rq1 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:1)}}}';
+      var rq2 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
+      var rd1 = await wclQuery(rq1, {id:encId});
+      var rd2 = await wclQuery(rq2, {id:encId});
+      var p1 = (rd1&&rd1.worldData&&rd1.worldData.encounter&&rd1.worldData.encounter.fightRankings&&rd1.worldData.encounter.fightRankings.rankings)||[];
+      var p2 = (rd2&&rd2.worldData&&rd2.worldData.encounter&&rd2.worldData.encounter.fightRankings&&rd2.worldData.encounter.fightRankings.rankings)||[];
+      var pageRankings = p1.concat(p2).slice(9, 34); // ranks 10-34
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
-      var logsData = []; // [{duration, casts:{sid:[times]}, code, rank}]
+      var logsData = [];
       var fightDurations = [];
       var processed = 0;
-      var limit = Math.min(pageRankings.length, 10);
+      var limit = pageRankings.length;
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
@@ -5361,7 +5419,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5390,7 +5448,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 26+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
           }
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
