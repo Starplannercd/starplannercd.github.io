@@ -5392,98 +5392,99 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   renderAll();
 }
 function renderWclComp(container, logsData, logCount, bossName) {
-  // Detect healer count per log using healer CD proxy
-  var HEALER_SIDS = [62618,31821,86150,105809,31884,108280,114049,98008,64843,740];
-  var TANK_SIDS = [115213,31821]; // Avert Harm = Brewmaster, Devo = any pala tank
-
   var healerCounts = {2:0, 3:0, other:0};
-  var tankCounts = {2:0, 3:0, other:0};
+  var tankCounts = {1:0, 2:0, 3:0, other:0};
   var killTimes = [];
+  var specFreq = {};
 
   logsData.forEach(function(log) {
-    // Count distinct healer sources
-    var healerSources = {};
-    HEALER_SIDS.forEach(function(sid) {
-      var times2 = log.casts[sid] || [];
-      if (times2.length) healerSources['healer_'+sid] = true;
-    });
-    // Rough: if HTT or AG present = shaman healer; PW:B = disc; Devo = hpala
-    var hasDisc = !!(log.casts[62618] && log.casts[62618].length);
-    var hasHPala = !!(log.casts[31821] && log.casts[31821].length);
-    var hasShaman = !!(log.casts[108280] && log.casts[108280].length) || !!(log.casts[108281] && log.casts[108281].length);
-    var hasHTT = !!(log.casts[108280] && log.casts[108280].length);
-    var hasTranq = !!(log.casts[740] && log.casts[740].length);
-    var hasHymn = !!(log.casts[64843] && log.casts[64843].length);
-    var numHealers = [hasDisc, hasHPala, hasShaman||hasTranq||hasHymn].filter(Boolean).length;
-    if (numHealers >= 3) healerCounts[3]++;
-    else if (numHealers === 2) healerCounts[2]++;
-    else healerCounts.other++;
-
-    // Tank detection: Avert Harm = Brewmaster tank present
-    var hasBrew = !!(log.casts[115213] && log.casts[115213].length);
-    // 2-tank = has brew + any pala tank (devo); 3-tank hard to detect cleanly, skip for now
-    tankCounts[2]++;
-
     killTimes.push(log.duration);
+    var players = log.players || [];
+
+    if (players.length) {
+      var tanks = players.filter(function(p){return p.role==='tanks';}).length;
+      var healers = players.filter(function(p){return p.role==='healers';}).length;
+      if (tanks <= 1) tankCounts[1]++;
+      else if (tanks === 2) tankCounts[2]++;
+      else if (tanks === 3) tankCounts[3]++;
+      else tankCounts.other++;
+      if (healers <= 1) healerCounts.other++;
+      else if (healers === 2) healerCounts[2]++;
+      else healerCounts[3]++;
+      players.forEach(function(p) {
+        if (!p.spec) return;
+        var key = p.spec + ' (' + p.type + ')';
+        specFreq[key] = (specFreq[key]||0) + 1;
+      });
+    } else {
+      var hasDisc = !!(log.casts[62618] && log.casts[62618].length);
+      var hasHPala = !!(log.casts[31821] && log.casts[31821].length);
+      var hasShaman = !!(log.casts[108280] && log.casts[108280].length);
+      var numHealers = [hasDisc,hasHPala,hasShaman].filter(Boolean).length;
+      if (numHealers >= 3) healerCounts[3]++; else if (numHealers === 2) healerCounts[2]++; else healerCounts.other++;
+      tankCounts.other++;
+    }
   });
 
   killTimes.sort(function(a,b){return a-b;});
   function fmtT2(ms) { var s=Math.round(ms/1000); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); }
-  var medKill = killTimes[Math.floor(killTimes.length/2)] || 0;
-  var minKill = killTimes[0] || 0;
-  var maxKill = killTimes[killTimes.length-1] || 0;
-
-  // Kill time histogram
-  var bucketSz = 15000; // 15s buckets
-  var minMs = Math.floor(minKill/bucketSz)*bucketSz;
-  var maxMs = Math.ceil(maxKill/bucketSz)*bucketSz;
-  var histBuckets = {};
-  for (var t=minMs; t<=maxMs; t+=bucketSz) histBuckets[t]=0;
-  killTimes.forEach(function(t){ var b=Math.floor(t/bucketSz)*bucketSz; histBuckets[b]=(histBuckets[b]||0)+1; });
-  var maxHist = Math.max.apply(null, Object.values(histBuckets).concat([1]));
-
-  var W2 = 400;
-  var histHtml = '<div style="position:relative;width:'+W2+'px;height:60px;background:#05060a;border-radius:4px;overflow:hidden;margin-top:8px;">';
-  var bucketKeys = Object.keys(histBuckets).map(Number).sort(function(a,b){return a-b;});
-  var bw = W2 / bucketKeys.length;
-  bucketKeys.forEach(function(t, i) {
-    var h = Math.round((histBuckets[t]/maxHist)*56);
-    if (h < 1) return;
-    histHtml += '<div style="position:absolute;left:'+(i*bw).toFixed(1)+'px;bottom:0;width:'+Math.ceil(bw-1)+'px;height:'+h+'px;background:#c8a84b;opacity:0.8;border-radius:2px 2px 0 0;"></div>';
-    histHtml += '<span style="position:absolute;left:'+(i*bw+bw/2).toFixed(1)+'px;bottom:0;transform:translateX(-50%);font-size:7px;color:#5a6080;white-space:nowrap;">'+fmtT2(t)+'</span>';
-  });
-  histHtml += '</div>';
-
-  function statRow(label, val) {
-    return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #0f1018;">'
-      +'<span style="font-size:11px;color:#6878a0;">'+label+'</span>'
-      +'<span style="font-size:12px;font-weight:700;color:#c8d0e8;">'+val+'</span>'
-      +'</div>';
-  }
-
-  var h2Used = healerCounts[2], h3Used = healerCounts[3];
+  var medKill = killTimes[Math.floor(killTimes.length/2)]||0;
+  var minKill = killTimes[0]||0;
+  var maxKill = killTimes[killTimes.length-1]||0;
   var total = logsData.length;
 
-  container.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+  var bucketSz = 15000;
+  var histBuckets = {};
+  killTimes.forEach(function(t){ var b=Math.floor(t/bucketSz)*bucketSz; histBuckets[b]=(histBuckets[b]||0)+1; });
+  var bucketKeys = Object.keys(histBuckets).map(Number).sort(function(a,b){return a-b;});
+  var maxHist = Math.max.apply(null,bucketKeys.map(function(k){return histBuckets[k];}).concat([1]));
+  var W2=360, bw=W2/Math.max(bucketKeys.length,1);
+  var histHtml = '<div style="position:relative;width:'+W2+'px;height:50px;background:#05060a;border-radius:4px;overflow:hidden;margin-top:8px;">';
+  bucketKeys.forEach(function(t,i){
+    var h=Math.round((histBuckets[t]/maxHist)*46); if(!h) return;
+    histHtml+='<div style="position:absolute;left:'+(i*bw).toFixed(1)+'px;bottom:0;width:'+Math.ceil(bw-1)+'px;height:'+h+'px;background:#c8a84b;opacity:0.8;border-radius:2px 2px 0 0;" title="'+fmtT2(t)+': '+histBuckets[t]+' logs"></div>';
+  });
+  histHtml+='<span style="position:absolute;left:2px;bottom:2px;font-size:7px;color:#4a5060;">'+fmtT2(minKill)+'</span>';
+  histHtml+='<span style="position:absolute;right:2px;bottom:2px;font-size:7px;color:#4a5060;">'+fmtT2(maxKill)+'</span>';
+  histHtml+='</div>';
+
+  function statRow(label,val,sub){
+    return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #0f1018;">'
+      +'<span style="font-size:11px;color:#6878a0;">'+label+'</span>'
+      +'<span style="font-size:12px;font-weight:700;color:#c8d0e8;">'+val+(sub?'<span style="font-size:9px;color:#4a5060;margin-left:6px;">'+sub+'</span>':'')+'</span>'
+      +'</div>';
+  }
+  function pct(n){ return total?'('+Math.round(n/total*100)+'%)':''; }
+
+  var specRows = Object.entries(specFreq).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+  var specHtml = specRows.length ? specRows.map(function(e){
+    var w=Math.round(e[1]/total*100);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #0a0b12;">'
+      +'<div style="flex:1;font-size:10px;color:#8892b0;">'+e[0]+'</div>'
+      +'<div style="font-size:10px;font-weight:700;color:#c8d0e8;min-width:24px;text-align:right;">'+e[1]+'</div>'
+      +'<div style="width:70px;height:5px;background:#0d0e16;border-radius:3px;overflow:hidden;"><div style="width:'+w+'%;height:100%;background:#c8a84b;opacity:0.7;border-radius:3px;"></div></div>'
+      +'</div>';
+  }).join('')
+  : '<div style="font-size:10px;color:#3a4060;padding:8px 0;">Re-fetch logs to get player spec data.</div>';
+
+  container.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">'
     +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
     +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Kill Times</div>'
-    +statRow('Fastest', fmtT2(minKill))
-    +statRow('Median', fmtT2(medKill))
-    +statRow('Slowest', fmtT2(maxKill))
-    +'<div style="font-size:9px;color:#3a4060;margin-top:8px;margin-bottom:4px;">Distribution (15s buckets)</div>'
-    +histHtml
+    +statRow('Fastest',fmtT2(minKill))+statRow('Median',fmtT2(medKill))+statRow('Slowest',fmtT2(maxKill))
+    +'<div style="font-size:9px;color:#3a4060;margin-top:10px;margin-bottom:2px;">Distribution</div>'+histHtml
     +'</div>'
     +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
-    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Comp Detection</div>'
-    +'<div style="font-size:9px;color:#4a4d62;margin-bottom:10px;">Based on healer CD proxy (Disc · Holy Pal · Shaman/Druid)</div>'
-    +statRow('2-healed', h2Used+' / '+total+' logs ('+(Math.round(h2Used/total*100))+'%)')
-    +statRow('3-healed', h3Used+' / '+total+' logs ('+(Math.round(h3Used/total*100))+'%)')
-    +statRow('Unclear', healerCounts.other+' / '+total+' logs')
-    +'<div style="font-size:9px;color:#3a4060;margin-top:10px;">Tank detection limited without tank-specific CD data in these logs.</div>'
+    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Comp</div>'
+    +'<div style="font-size:9px;font-weight:700;color:#4a5060;text-transform:uppercase;margin-bottom:4px;">Tanks</div>'
+    +statRow('1-tanked',tankCounts[1],pct(tankCounts[1]))+statRow('2-tanked',tankCounts[2],pct(tankCounts[2]))+statRow('3-tanked',tankCounts[3],pct(tankCounts[3]))
+    +'<div style="font-size:9px;font-weight:700;color:#4a5060;text-transform:uppercase;margin-bottom:4px;margin-top:10px;">Healers</div>'
+    +statRow('2-healed',healerCounts[2],pct(healerCounts[2]))+statRow('3-healed',healerCounts[3],pct(healerCounts[3]))
     +'</div>'
-    +'</div>';
+    +'</div>'
+    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
+    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Spec Frequency</div>'
+    +specHtml+'</div>';
 }
-
 
 function showWclModal() {
   var existing = document.getElementById('wclOverlay');
@@ -5645,7 +5646,7 @@ function showWclModal() {
         var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
         if (!code||!fid) continue;
         try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data}}}}';
+          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime friendlyPlayers} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} playerDetails(fightIDs:[$fid]){data}}}}';
           var d = await wclQuery(q, {c:code, fid:fid});
           var rep = d&&d.reportData&&d.reportData.report;
           var evts = (rep&&rep.events&&rep.events.data)||[];
@@ -5654,6 +5655,19 @@ function showWclModal() {
           var fStart = fight.startTime;
           var fDur = fight.endTime - fight.startTime;
           fightDurations.push(fDur);
+
+          // Extract player specs from playerDetails
+          var playerSpecs = []; // [{name, type, spec, role}]
+          try {
+            var pd = rep && rep.playerDetails && rep.playerDetails.data;
+            if (pd) {
+              var pdObj = typeof pd === 'string' ? JSON.parse(pd) : pd;
+              ['tanks','healers','dps'].forEach(function(role) {
+                var arr = (pdObj && pdObj.playerDetails && pdObj.playerDetails[role]) || [];
+                arr.forEach(function(p) { playerSpecs.push({name:p.name, type:p.type, spec:p.specs&&p.specs[0]&&p.specs[0].spec, role:role}); });
+              });
+            }
+          } catch(e) {}
 
           // Fetch boss ability events separately if we have spell IDs for this boss
           // Fetch boss ability times from DamageTaken events
@@ -5714,7 +5728,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes, players: playerSpecs });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5743,7 +5757,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes, players: playerSpecs });
           }
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
