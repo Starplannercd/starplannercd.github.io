@@ -5142,7 +5142,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     });
   });
 
-  function buildHeatmapRow(sid) {
+  function buildHeatmapRow(sid, heatStyle) {
     var spell = spellMap[+sid]; if (!spell) return '';
     var times = allCastsBySpell[sid] || [];
     if (!times.length) return '';
@@ -5151,32 +5151,99 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var maxB = Math.max.apply(null, buckets.concat([1]));
     var cellW = W / numBuckets;
 
-    var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
+    // Compute peaks for labels
+    var peaks = [], last2 = -99;
+    for (var bi3=0; bi3<numBuckets; bi3++) {
+      if (buckets[bi3] >= maxB*0.5 && bi3-last2>2) { peaks.push(bi3); last2=bi3; }
+    }
+
+    var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+spell.color+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
-    html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
-    for (var bi=0; bi<numBuckets; bi++) {
-      if (!buckets[bi]) continue;
-      var intensity = Math.sqrt(buckets[bi]/maxB);
-      var op = (intensity*0.85+0.1).toFixed(2);
-      html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+spell.color+';opacity:'+op+';"></div>';
+
+    if (heatStyle === 'bars') {
+      // Style 1: Vertical bars — height shows frequency
+      var BAR_H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+BAR_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var pct = buckets[bi]/maxB;
+        var barH = Math.round(pct*BAR_H);
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;bottom:0;width:'+Math.ceil(cellW)+'px;height:'+barH+'px;background:'+spell.color+';opacity:'+(pct*0.7+0.3).toFixed(2)+';"></div>';
+      }
+      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.5);pointer-events:none;"></div>';
+      }
+      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:2px;font-size:8px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 2px #000;white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
+      html += '</div>';
+
+    } else if (heatStyle === 'opacity') {
+      // Style 2: Full-height opacity blocks — current style improved
+      html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var intensity = Math.pow(buckets[bi]/maxB, 0.6);
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+spell.color+';opacity:'+(intensity*0.9+0.1).toFixed(2)+';"></div>';
+      }
+      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.5);pointer-events:none;"></div>';
+      }
+      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
+      html += '</div>';
+
+    } else if (heatStyle === 'dots') {
+      // Style 3: Dot strip — each cast is a dot on a strip
+      var DOT_H = 36;
+      html += '<div style="position:relative;width:'+W+'px;height:'+DOT_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
+      }
+      times.forEach(function(t) {
+        var x = Math.round((t/1000)*sharedPps);
+        html += '<div title="'+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:'+spell.color+';opacity:0.7;"></div>';
+      });
+      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+4)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 2px #000;white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
+      html += '</div>';
+
+    } else if (heatStyle === 'gradient') {
+      // Style 4: Smooth gradient glow — gaussian-blurred look via overlapping semi-transparent divs
+      var GRAD_H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+GRAD_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var pct2 = buckets[bi]/maxB;
+        var glowW = Math.max(cellW*3, 12);
+        var x = bi*cellW + cellW/2 - glowW/2;
+        html += '<div style="position:absolute;left:'+x.toFixed(1)+'px;top:0;width:'+glowW.toFixed(1)+'px;height:100%;background:radial-gradient(ellipse at center, '+spell.color+' 0%, transparent 70%);opacity:'+(pct2*0.8+0.1).toFixed(2)+';"></div>';
+      }
+      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.4);pointer-events:none;"></div>';
+      }
+      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
+      html += '</div>';
+
+    } else if (heatStyle === 'cards') {
+      // Style 5: Cast cards — clean time badges showing when each cast happens, sized by frequency
+      html += '<div style="position:relative;width:'+W+'px;min-height:24px;padding:3px 0;display:flex;flex-wrap:wrap;gap:0;">';
+      peaks.forEach(function(bi) {
+        var x = Math.round((bi*BUCKET_MS/1000)*sharedPps);
+        var pct3 = buckets[bi]/maxB;
+        var count = buckets[bi];
+        var fs = Math.round(8+pct3*4);
+        html += '<div style="position:absolute;left:'+(x-18)+'px;top:2px;text-align:center;">'
+          +'<div style="font-size:'+fs+'px;font-weight:700;color:'+spell.color+';white-space:nowrap;border-bottom:2px solid '+spell.color+';padding-bottom:1px;">'+fmtT(bi*BUCKET_MS)+'</div>'
+          +'<div style="font-size:8px;color:#4a4d62;">'+count+'/'+logCount+'</div>'
+          +'</div>';
+      });
+      // Also draw faint dots for non-peak times
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi] || buckets[bi] >= maxB*0.5) continue;
+        var x = Math.round((bi*cellW+cellW/2)*1);
+        html += '<div style="position:absolute;left:'+x+'px;top:50%;transform:translateY(-50%);width:3px;height:3px;border-radius:50%;background:'+spell.color+';opacity:0.3;"></div>';
+      }
+      html += '</div>';
     }
-    // Gridlines
-    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.4);pointer-events:none;"></div>';
-    }
-    // Peak time labels
-    var peaks = [];
-    for (var bi2=0; bi2<numBuckets; bi2++) {
-      if (buckets[bi2] >= maxB*0.6) peaks.push(bi2);
-    }
-    // Merge adjacent peaks
-    var merged = [], last = -99;
-    peaks.forEach(function(bi){ if(bi-last>2){ merged.push(bi); } last=bi; });
-    merged.forEach(function(bi) {
-      var x = Math.round((bi*BUCKET_MS/1000)*sharedPps);
-      html += '<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>';
-    });
-    html += '</div></div>';
+
+    html += '</div>';
     return html;
   }
 
@@ -5207,28 +5274,24 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var avgSec = Math.round(avgDuration/1000);
     var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var toggleHtml = '<div style="display:flex;gap:6px;margin-bottom:12px;align-items:center;">'
-      +'<span style="font-size:10px;color:#4a4d62;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '+bossName+' &middot; avg '+avgStr+'</span>'
-      +'<div style="margin-left:auto;display:flex;gap:4px;">'
-      +'<button id="wclViewTimeline" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(viewMode==='timeline'?'#ff8c0066':'#2e3040')+';background:'+(viewMode==='timeline'?'#ff8c0018':'transparent')+';color:'+(viewMode==='timeline'?'#ff8c00':'#5a6080')+';">Timeline</button>'
-      +'<button id="wclViewHeatmap" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(viewMode==='heatmap'?'#ff8c0066':'#2e3040')+';background:'+(viewMode==='heatmap'?'#ff8c0018':'transparent')+';color:'+(viewMode==='heatmap'?'#ff8c00':'#5a6080')+';">Heatmap</button>'
-      +'</div></div>';
+    var VIEWS = ['timeline','bars','opacity','dots','gradient','cards'];
+    var VIEW_LABELS = {timeline:'Timeline',bars:'Bar Chart',opacity:'Heat Blocks',dots:'Dot Strip',gradient:'Glow',cards:'Cast Cards'};
+
+    var toggleHtml = '<div style="font-size:10px;color:#4a4d62;margin-bottom:8px;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '+bossName+' &middot; avg '+avgStr+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">';
+    VIEWS.forEach(function(v) {
+      var isActive = viewMode===v;
+      toggleHtml += '<button class="wcl-view-btn" data-view="'+v+'" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(isActive?'#ff8c0066':'#2e3040')+';background:'+(isActive?'#ff8c0018':'transparent')+';color:'+(isActive?'#ff8c00':'#5a6080')+';">'+VIEW_LABELS[v]+'</button>';
+    });
+    toggleHtml += '</div>';
 
     var bodyHtml = '';
 
-    if (viewMode === 'heatmap') {
-      // Single combined heatmap view
-      bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
-      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">Brighter = more commonly used in that window &middot; Time label = peak usage</div>';
-      bodyHtml += buildRuler();
-      allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid); });
-      bodyHtml += '</div>';
-    } else {
-      // Per-log timeline view
-      logsData.forEach(function(log, li) {
+    if (viewMode === 'timeline') {
+      logsData.forEach(function(log) {
         bodyHtml += '<div style="margin-bottom:12px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:10px 14px;">';
         bodyHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
-        bodyHtml += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+(log.rank)+'</span>';
+        bodyHtml += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+log.rank+'</span>';
         bodyHtml += '<span style="font-size:10px;color:#2e3050;">&middot; '+fmtT(log.duration)+'</span>';
         bodyHtml += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#3a4060;text-decoration:none;margin-left:auto;border:1px solid #1e2232;padding:2px 8px;border-radius:3px;">View \u2197</a>';
         bodyHtml += '</div>';
@@ -5237,15 +5300,24 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         allSids.forEach(function(sid){ bodyHtml += buildTimelineRow(sid, log); });
         bodyHtml += '</div>';
       });
+    } else {
+      var desc = {
+        bars:'Height of bar = how many logs used it in that 5s window',
+        opacity:'Brighter block = more common in that 5s window',
+        dots:'Each dot = one cast. Overlapping dots = common timing',
+        gradient:'Soft glow centered on cast clusters',
+        cards:'Time badges sized by frequency. Count = how many of '+logCount+' logs cast it then'
+      };
+      bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
+      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'+desc[viewMode]+'</div>';
+      bodyHtml += buildRuler();
+      allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, viewMode); });
+      bodyHtml += '</div>';
     }
 
     container.innerHTML = toggleHtml + bodyHtml;
-
-    container.querySelector('#wclViewTimeline').addEventListener('click', function(){
-      viewMode = 'timeline'; renderAll();
-    });
-    container.querySelector('#wclViewHeatmap').addEventListener('click', function(){
-      viewMode = 'heatmap'; renderAll();
+    container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ viewMode = btn.dataset.view; renderAll(); });
     });
   }
 
