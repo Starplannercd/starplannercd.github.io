@@ -5538,16 +5538,22 @@ function showWclModal() {
       // Always fetch fresh (cache is for tab-switching only, not for blocking fetch)
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
       results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-45...</div>';
-      var rq1 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:5)}}}';
-      var rq2 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:6)}}}';
-      var rq3 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:7)}}}';
-      var rd1 = await wclQuery(rq1, {id:encId});
-      var rd2 = await wclQuery(rq2, {id:encId});
-      var rd3 = await wclQuery(rq3, {id:encId});
-      var p1 = (rd1&&rd1.worldData&&rd1.worldData.encounter&&rd1.worldData.encounter.fightRankings&&rd1.worldData.encounter.fightRankings.rankings)||[];
-      var p2 = (rd2&&rd2.worldData&&rd2.worldData.encounter&&rd2.worldData.encounter.fightRankings&&rd2.worldData.encounter.fightRankings.rankings)||[];
-      var p3 = (rd3&&rd3.worldData&&rd3.worldData.encounter&&rd3.worldData.encounter.fightRankings&&rd3.worldData.encounter.fightRankings.rankings)||[];
-      var pageRankings = p1.concat(p2).concat(p3).slice(24, 64); // ranks 125-164
+      // Fetch pages starting at rank 125 (page 5, offset 24 = rank 125)
+      // Crawl pages until we have at least 40 entries to try, continuing past 165 if needed
+      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings from rank 125...</div>';
+      var allRankEntries = [];
+      var crawlPage = 5; // page 5 = ranks 101-125
+      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
+      while (allRankEntries.length < 24 + 60 && crawlPage <= 14) {
+        var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
+        var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
+        if (!cpage.length) break;
+        allRankEntries = allRankEntries.concat(cpage);
+        crawlPage++;
+        if (allRankEntries.length >= 24 + 60) break;
+      }
+      // Start at rank 125 (index 24 within fetched entries), no hard upper limit
+      var pageRankings = allRankEntries.slice(24);
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
@@ -5558,7 +5564,7 @@ function showWclModal() {
       var fightDurations = [];
       var logsHpsData = [];
       var processed = 0;
-      var limit = pageRankings.length;
+      var limit = pageRankings.length; // try as many as available, stop at 40 processed
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
@@ -5681,7 +5687,8 @@ function showWclModal() {
             logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
           }
           processed++;
-          results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
+          results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/40 logs (rank '+(125+ri)+')...</div>';
+          if (processed >= 40) break;
         } catch(le){ console.warn('WCL log error:', le); }
       }
 
