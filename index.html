@@ -5453,7 +5453,7 @@ function showWclModal() {
       + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
       + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
       + '<select id="wclBoss" style="flex:1;background:#0d0e16;border:1px solid #2e3550;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
-      + '<span style="font-size:10px;color:#6878a0;font-weight:600;white-space:nowrap;">Old SoO · ranks 105–145 · execution</span>'
+      + '<span style="font-size:10px;color:#6878a0;font-weight:600;white-space:nowrap;">Old SoO · ranks 125–165 · execution</span>'
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
@@ -5540,11 +5540,14 @@ function showWclModal() {
       results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-45...</div>';
       var rq1 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:5)}}}';
       var rq2 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:6)}}}';
+      var rq3 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:7)}}}';
       var rd1 = await wclQuery(rq1, {id:encId});
       var rd2 = await wclQuery(rq2, {id:encId});
+      var rd3 = await wclQuery(rq3, {id:encId});
       var p1 = (rd1&&rd1.worldData&&rd1.worldData.encounter&&rd1.worldData.encounter.fightRankings&&rd1.worldData.encounter.fightRankings.rankings)||[];
       var p2 = (rd2&&rd2.worldData&&rd2.worldData.encounter&&rd2.worldData.encounter.fightRankings&&rd2.worldData.encounter.fightRankings.rankings)||[];
-      var pageRankings = p1.concat(p2).slice(4, 44); // ranks 105-144
+      var p3 = (rd3&&rd3.worldData&&rd3.worldData.encounter&&rd3.worldData.encounter.fightRankings&&rd3.worldData.encounter.fightRankings.rankings)||[];
+      var pageRankings = p1.concat(p2).concat(p3).slice(24, 64); // ranks 125-164
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
@@ -5646,7 +5649,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 105+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5675,7 +5678,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 105+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
           }
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
