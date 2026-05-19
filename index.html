@@ -5458,8 +5458,8 @@ function showWclModal() {
       + '</div>'
       // Mode buttons — glassy pill style
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
-      + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);">⚔ Raid CDs</button>'
-      + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">🛡 Defensives</button>'
+      + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);"><span style="font-size:18px;line-height:1;">⚔</span>&nbsp;Raid CDs</button>'
+      + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;"><span style="font-size:18px;line-height:1;">🛡</span>&nbsp;Defensives</button>'
 
       + '</div>'
       // Fetch button — prominent
@@ -5492,37 +5492,36 @@ function showWclModal() {
   }
   modeRaidBtn.addEventListener('click', function(){
     setWclMode('raid');
-    var encId2 = parseInt(bossEl.value);
-    if (!encId2) return;
-    var ck = 'wcl_soo_cache_'+encId2+'_raid';
-    try {
-      var cached = localStorage.getItem(ck);
-      if (cached) {
-        var cd3 = JSON.parse(cached);
-        var bs3 = getBossSpellsForName(cd3.bossName);
-        box.querySelector('#wclResults').innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Cached \xb7 '+new Date(cd3.ts).toLocaleDateString()+'</div>';
-        renderWclDisplay(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName, cd3.avgDuration, bs3, WCL_SPELLS, 'raid');
-      }
-    } catch(e) {}
+    loadCachedOrBlank(parseInt(bossEl.value), 'raid');
   });
   modePersonalBtn.addEventListener('click', function(){
     setWclMode('personal');
-    var encId2 = parseInt(bossEl.value);
-    if (!encId2) return;
-    var ck = 'wcl_soo_cache_'+encId2+'_personal';
-    try {
-      var cached = localStorage.getItem(ck);
-      if (cached) {
-        var cd3 = JSON.parse(cached);
-        var bs3 = getBossSpellsForName(cd3.bossName);
-        box.querySelector('#wclResults').innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Cached \xb7 '+new Date(cd3.ts).toLocaleDateString()+'</div>';
-        renderWclDisplay(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName, cd3.avgDuration, bs3, WCL_PERSONAL_SPELLS, 'personal');
-      }
-    } catch(e) {}
+    loadCachedOrBlank(parseInt(bossEl.value), 'personal');
   });
   var bossEl = box.querySelector('#wclBoss');
   wclLoadEncounters().then(function(){
     bossEl.innerHTML = '<option value="">-- Choose boss --</option>' + Object.keys(WCL_ENCOUNTERS).map(function(n){return '<option value="'+WCL_ENCOUNTERS[n]+'">'+n+'</option>';}).join('');
+  });
+
+  function loadCachedOrBlank(encId3, mode3) {
+    var results3 = box.querySelector('#wclResults');
+    if (!encId3) { results3.innerHTML = ''; return; }
+    var ck3 = 'wcl_soo_cache_'+encId3+'_'+mode3;
+    try {
+      var cached3 = localStorage.getItem(ck3);
+      if (cached3) {
+        var cd4 = JSON.parse(cached3);
+        var bs4 = getBossSpellsForName(cd4.bossName);
+        var sm4 = mode3==='personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
+        renderWclDisplay(results3, cd4.logsData, cd4.processed, cd4.bossName, cd4.avgDuration, bs4, sm4, mode3, cd4.hpsData||[]);
+      } else {
+        results3.innerHTML = '<div style="color:#3a4060;font-size:11px;padding:20px 0;text-align:center;">No data cached for this boss · click Fetch Data to load</div>';
+      }
+    } catch(e) { results3.innerHTML = ''; }
+  }
+
+  bossEl.addEventListener('change', function() {
+    loadCachedOrBlank(parseInt(bossEl.value), wclMode);
   });
   box.querySelector('#wclFetch').addEventListener('click', async function(){
     var encId = parseInt(bossEl.value);
@@ -5536,18 +5535,8 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Check cache first
+      // Always fetch fresh (cache is for tab-switching only, not for blocking fetch)
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      try {
-        var cached = localStorage.getItem(cacheKey2);
-        if (cached) {
-          var cd2 = JSON.parse(cached);
-          results.innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Using cached data from '+new Date(cd2.ts).toLocaleDateString()+'</div>';
-          var bossSpells2 = getBossSpellsForName(cd2.bossName);
-          renderWclDisplay(results, cd2.logsData, cd2.processed, cd2.bossName, cd2.avgDuration, bossSpells2, wclMode==='personal'?WCL_PERSONAL_SPELLS:WCL_SPELLS, wclMode);
-          btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
-        }
-      } catch(e) {}
       results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-45...</div>';
       var rq1 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:1)}}}';
       var rq2 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
@@ -5704,7 +5693,7 @@ function showWclModal() {
       // Cache results for this encounter
       try {
         var cacheKey = 'wcl_soo_cache_'+encId+'_'+wclMode;
-        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,ts:Date.now()}));
+        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,hpsData:logsHpsData,ts:Date.now()}));
       } catch(e) {}
       renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode, logsHpsData);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
