@@ -4929,7 +4929,7 @@ var WCL_SPELLS = {
   31821:{name:'Devotion Aura',short:'Devo',color:'#f58cba'},
   86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
   105809:{name:'Holy Avenger',short:'HAvenger',color:'#f58cba'},
-  31884:{name:'Avenging Wrath',short:'Wings',color:'#f0e080'},
+  31884:{name:'Avenging Wrath',short:'Wings',color:'#f58cba'},
   // Priest
   62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
   64843:{name:'Divine Hymn',short:'Hymn',color:'#cccccc'},
@@ -5045,7 +5045,7 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode) {
+function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode, logsHpsData) {
   if (!spellMap) spellMap = WCL_SPELLS;
   if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
@@ -5383,6 +5383,45 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     bodyHtml += buildRuler();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
     bodyHtml += '</div>';
+
+    // HPS chart below heatmap (raid mode only)
+    if (mode !== 'personal' && logsHpsData && logsHpsData.length) {
+      var HEAL_BUCKET_MS = 10000;
+      var numHealB = Math.ceil(maxDuration / HEAL_BUCKET_MS);
+      var avgHpsBuckets = new Array(numHealB).fill(0);
+      var hpsCounts = new Array(numHealB).fill(0);
+      logsHpsData.forEach(function(ld) {
+        (ld.buckets||[]).forEach(function(healAmt, bi) {
+          if (bi < numHealB) { avgHpsBuckets[bi] += healAmt / (HEAL_BUCKET_MS/1000); hpsCounts[bi]++; }
+        });
+      });
+      for (var ii=0; ii<numHealB; ii++) { if (hpsCounts[ii]) avgHpsBuckets[ii] /= hpsCounts[ii]; }
+      var maxHps = Math.max.apply(null, avgHpsBuckets.concat([1]));
+      var HPSW = W, HPSH = 56;
+      var hpsCellW = HPSW / numHealB;
+      var pts = '0,'+HPSH;
+      for (var hbi=0; hbi<numHealB; hbi++) {
+        var hx = ((hbi+0.5)*hpsCellW).toFixed(1);
+        var hy = (HPSH - Math.pow(avgHpsBuckets[hbi]/maxHps, 0.55)*HPSH*0.9).toFixed(1);
+        pts += ' '+hx+','+hy;
+      }
+      pts += ' '+HPSW+','+HPSH;
+      var polyLine = pts.slice(pts.indexOf(' ')+1, pts.lastIndexOf(' '));
+      var maxHpsLabel = maxHps >= 1000000 ? (maxHps/1000000).toFixed(1)+'M' : maxHps >= 1000 ? Math.round(maxHps/1000)+'k' : Math.round(maxHps)+'';
+      bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;margin-top:10px;">';
+      bodyHtml += '<div style="font-size:10px;font-weight:700;color:#48a868;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">Avg Raid HPS <span style="font-size:9px;color:#3a4060;font-weight:400;text-transform:none;">peak '+maxHpsLabel+' HPS</span></div>';
+      bodyHtml += buildRuler();
+      bodyHtml += '<div style="display:flex;align-items:center;margin-bottom:2px;"><div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#48a868;text-align:right;padding-right:7px;">HPS</div>';
+      bodyHtml += '<div style="position:relative;width:'+HPSW+'px;height:'+HPSH+'px;background:#05060a;border-radius:3px;overflow:hidden;">';
+      for (var hti=1; hti*tickEvery*1000<=maxDuration; hti++) {
+        bodyHtml += '<div style="position:absolute;left:'+Math.round(hti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.4);pointer-events:none;"></div>';
+      }
+      bodyHtml += '<svg width="'+HPSW+'" height="'+HPSH+'" style="position:absolute;top:0;left:0;overflow:visible;">';
+      bodyHtml += '<polygon points="'+pts+'" fill="#48a868" fill-opacity="0.25"/>';
+      bodyHtml += '<polyline points="'+polyLine+'" fill="none" stroke="#48a868" stroke-width="2" stroke-opacity="0.9"/>';
+      bodyHtml += '</svg></div></div></div>';
+    }
+
     container.innerHTML = toggleHtml + bodyHtml;
     container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
       btn.addEventListener('click', function(){ viewMode=btn.dataset.view; renderAll(); });
@@ -5390,100 +5429,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   }
 
   renderAll();
-}
-function renderWclComp(container, logsData, logCount, bossName) {
-  var healerCounts = {2:0, 3:0, other:0};
-  var tankCounts = {1:0, 2:0, 3:0, other:0};
-  var killTimes = [];
-  var specFreq = {};
-
-  logsData.forEach(function(log) {
-    killTimes.push(log.duration);
-    var players = log.players || [];
-
-    if (players.length) {
-      var tanks = players.filter(function(p){return p.role==='tanks';}).length;
-      var healers = players.filter(function(p){return p.role==='healers';}).length;
-      if (tanks <= 1) tankCounts[1]++;
-      else if (tanks === 2) tankCounts[2]++;
-      else if (tanks === 3) tankCounts[3]++;
-      else tankCounts.other++;
-      if (healers <= 1) healerCounts.other++;
-      else if (healers === 2) healerCounts[2]++;
-      else healerCounts[3]++;
-      players.forEach(function(p) {
-        if (!p.spec) return;
-        var key = p.spec + ' (' + p.type + ')';
-        specFreq[key] = (specFreq[key]||0) + 1;
-      });
-    } else {
-      var hasDisc = !!(log.casts[62618] && log.casts[62618].length);
-      var hasHPala = !!(log.casts[31821] && log.casts[31821].length);
-      var hasShaman = !!(log.casts[108280] && log.casts[108280].length);
-      var numHealers = [hasDisc,hasHPala,hasShaman].filter(Boolean).length;
-      if (numHealers >= 3) healerCounts[3]++; else if (numHealers === 2) healerCounts[2]++; else healerCounts.other++;
-      tankCounts.other++;
-    }
-  });
-
-  killTimes.sort(function(a,b){return a-b;});
-  function fmtT2(ms) { var s=Math.round(ms/1000); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); }
-  var medKill = killTimes[Math.floor(killTimes.length/2)]||0;
-  var minKill = killTimes[0]||0;
-  var maxKill = killTimes[killTimes.length-1]||0;
-  var total = logsData.length;
-
-  var bucketSz = 15000;
-  var histBuckets = {};
-  killTimes.forEach(function(t){ var b=Math.floor(t/bucketSz)*bucketSz; histBuckets[b]=(histBuckets[b]||0)+1; });
-  var bucketKeys = Object.keys(histBuckets).map(Number).sort(function(a,b){return a-b;});
-  var maxHist = Math.max.apply(null,bucketKeys.map(function(k){return histBuckets[k];}).concat([1]));
-  var W2=360, bw=W2/Math.max(bucketKeys.length,1);
-  var histHtml = '<div style="position:relative;width:'+W2+'px;height:50px;background:#05060a;border-radius:4px;overflow:hidden;margin-top:8px;">';
-  bucketKeys.forEach(function(t,i){
-    var h=Math.round((histBuckets[t]/maxHist)*46); if(!h) return;
-    histHtml+='<div style="position:absolute;left:'+(i*bw).toFixed(1)+'px;bottom:0;width:'+Math.ceil(bw-1)+'px;height:'+h+'px;background:#c8a84b;opacity:0.8;border-radius:2px 2px 0 0;" title="'+fmtT2(t)+': '+histBuckets[t]+' logs"></div>';
-  });
-  histHtml+='<span style="position:absolute;left:2px;bottom:2px;font-size:7px;color:#4a5060;">'+fmtT2(minKill)+'</span>';
-  histHtml+='<span style="position:absolute;right:2px;bottom:2px;font-size:7px;color:#4a5060;">'+fmtT2(maxKill)+'</span>';
-  histHtml+='</div>';
-
-  function statRow(label,val,sub){
-    return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #0f1018;">'
-      +'<span style="font-size:11px;color:#6878a0;">'+label+'</span>'
-      +'<span style="font-size:12px;font-weight:700;color:#c8d0e8;">'+val+(sub?'<span style="font-size:9px;color:#4a5060;margin-left:6px;">'+sub+'</span>':'')+'</span>'
-      +'</div>';
-  }
-  function pct(n){ return total?'('+Math.round(n/total*100)+'%)':''; }
-
-  var specRows = Object.entries(specFreq).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
-  var specHtml = specRows.length ? specRows.map(function(e){
-    var w=Math.round(e[1]/total*100);
-    return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #0a0b12;">'
-      +'<div style="flex:1;font-size:10px;color:#8892b0;">'+e[0]+'</div>'
-      +'<div style="font-size:10px;font-weight:700;color:#c8d0e8;min-width:24px;text-align:right;">'+e[1]+'</div>'
-      +'<div style="width:70px;height:5px;background:#0d0e16;border-radius:3px;overflow:hidden;"><div style="width:'+w+'%;height:100%;background:#c8a84b;opacity:0.7;border-radius:3px;"></div></div>'
-      +'</div>';
-  }).join('')
-  : '<div style="font-size:10px;color:#3a4060;padding:8px 0;">Re-fetch logs to get player spec data.</div>';
-
-  container.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">'
-    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
-    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Kill Times</div>'
-    +statRow('Fastest',fmtT2(minKill))+statRow('Median',fmtT2(medKill))+statRow('Slowest',fmtT2(maxKill))
-    +'<div style="font-size:9px;color:#3a4060;margin-top:10px;margin-bottom:2px;">Distribution</div>'+histHtml
-    +'</div>'
-    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
-    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Comp</div>'
-    +'<div style="font-size:9px;font-weight:700;color:#4a5060;text-transform:uppercase;margin-bottom:4px;">Tanks</div>'
-    +statRow('1-tanked',tankCounts[1],pct(tankCounts[1]))+statRow('2-tanked',tankCounts[2],pct(tankCounts[2]))+statRow('3-tanked',tankCounts[3],pct(tankCounts[3]))
-    +'<div style="font-size:9px;font-weight:700;color:#4a5060;text-transform:uppercase;margin-bottom:4px;margin-top:10px;">Healers</div>'
-    +statRow('2-healed',healerCounts[2],pct(healerCounts[2]))+statRow('3-healed',healerCounts[3],pct(healerCounts[3]))
-    +'</div>'
-    +'</div>'
-    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
-    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Spec Frequency</div>'
-    +specHtml+'</div>';
 }
 
 function showWclModal() {
@@ -5514,8 +5459,8 @@ function showWclModal() {
       // Mode buttons — glassy pill style
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);">⚔ Raid CDs</button>'
-      + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">🛡 Personal</button>'
-      + '<button id="wclModeComp" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">📊 Comp</button>'
+      + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">🛡 Defensives</button>'
+
       + '</div>'
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
@@ -5536,7 +5481,6 @@ function showWclModal() {
   var wclMode = 'raid'; // 'raid' or 'personal'
   var modeRaidBtn = box.querySelector('#wclModeRaid');
   var modePersonalBtn = box.querySelector('#wclModePersonal');
-  var modeCompBtn = box.querySelector('#wclModeComp');
   var fetchBtn2 = box.querySelector('#wclFetch');
   function setWclMode(mode) {
     wclMode = mode;
@@ -5544,7 +5488,6 @@ function showWclModal() {
     var inactiveStyle = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
     modeRaidBtn.style.cssText = mode==='raid' ? activeStyle : inactiveStyle;
     modePersonalBtn.style.cssText = mode==='personal' ? activeStyle : inactiveStyle;
-    if (modeCompBtn) modeCompBtn.style.cssText = mode==='comp' ? activeStyle : inactiveStyle;
     fetchBtn2.textContent = mode==='comp' ? 'ANALYSE COMP' : 'FETCH DATA';
   }
   modeRaidBtn.addEventListener('click', function(){
@@ -5574,23 +5517,6 @@ function showWclModal() {
         var bs3 = getBossSpellsForName(cd3.bossName);
         box.querySelector('#wclResults').innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Cached \xb7 '+new Date(cd3.ts).toLocaleDateString()+'</div>';
         renderWclDisplay(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName, cd3.avgDuration, bs3, WCL_PERSONAL_SPELLS, 'personal');
-      }
-    } catch(e) {}
-  });
-  if (modeCompBtn) modeCompBtn.addEventListener('click', function(){
-    setWclMode('comp');
-    var encId2 = parseInt(bossEl.value);
-    var bossName3 = bossEl.options[bossEl.selectedIndex] ? bossEl.options[bossEl.selectedIndex].text : '';
-    if (!encId2) return;
-    // Use raid cache for comp analysis since it has the same logs
-    var ck = 'wcl_soo_cache_'+encId2+'_raid';
-    try {
-      var cached = localStorage.getItem(ck);
-      if (cached) {
-        var cd3 = JSON.parse(cached);
-        renderWclComp(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName);
-      } else {
-        box.querySelector('#wclResults').innerHTML = '<div style="color:#5a6080;font-size:11px;padding:16px 0;">Fetch Raid CDs first to load logs, then switch here.</div>';
       }
     } catch(e) {}
   });
@@ -5638,6 +5564,7 @@ function showWclModal() {
 
       var logsData = [];
       var fightDurations = [];
+      var logsHpsData = [];
       var processed = 0;
       var limit = pageRankings.length;
 
@@ -5646,28 +5573,30 @@ function showWclModal() {
         var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
         if (!code||!fid) continue;
         try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime friendlyPlayers} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} playerDetails(fightIDs:[$fid]){data}}}}';
+          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
           var d = await wclQuery(q, {c:code, fid:fid});
           var rep = d&&d.reportData&&d.reportData.report;
           var evts = (rep&&rep.events&&rep.events.data)||[];
+          var healEvts = (rep&&rep.healingEvents&&rep.healingEvents.data)||[];
           var fight = rep&&rep.fights&&rep.fights[0];
           if (!fight) continue;
           var fStart = fight.startTime;
           var fDur = fight.endTime - fight.startTime;
           fightDurations.push(fDur);
 
-          // Extract player specs from playerDetails
-          var playerSpecs = []; // [{name, type, spec, role}]
-          try {
-            var pd = rep && rep.playerDetails && rep.playerDetails.data;
-            if (pd) {
-              var pdObj = typeof pd === 'string' ? JSON.parse(pd) : pd;
-              ['tanks','healers','dps'].forEach(function(role) {
-                var arr = (pdObj && pdObj.playerDetails && pdObj.playerDetails[role]) || [];
-                arr.forEach(function(p) { playerSpecs.push({name:p.name, type:p.type, spec:p.specs&&p.specs[0]&&p.specs[0].spec, role:role}); });
-              });
-            }
-          } catch(e) {}
+          // Build HPS buckets (10s windows) for this log
+          var HEAL_BUCKET_MS = 10000;
+          var numHealBuckets = Math.ceil(fDur / HEAL_BUCKET_MS);
+          var healBuckets = new Array(numHealBuckets).fill(0);
+          healEvts.forEach(function(ev) {
+            if (ev.type !== 'heal' && ev.type !== 'absorbed') return;
+            var rel = ev.timestamp - fStart;
+            if (rel < 0 || rel >= fDur) return;
+            var b = Math.floor(rel / HEAL_BUCKET_MS);
+            healBuckets[b] = (healBuckets[b] || 0) + (ev.amount || 0);
+          });
+          if (!logsHpsData) logsHpsData = [];
+          logsHpsData.push({ buckets: healBuckets, duration: fDur });
 
           // Fetch boss ability events separately if we have spell IDs for this boss
           // Fetch boss ability times from DamageTaken events
@@ -5728,7 +5657,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes, players: playerSpecs });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5757,7 +5686,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes, players: playerSpecs });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 10+ri, bossEvts: bossEvtTimes });
           }
           processed++;
           results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/'+limit+' logs...</div>';
@@ -5777,7 +5706,7 @@ function showWclModal() {
         var cacheKey = 'wcl_soo_cache_'+encId+'_'+wclMode;
         localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,ts:Date.now()}));
       } catch(e) {}
-      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode);
+      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode, logsHpsData);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent = wclMode==='personal' ? 'Fetch Personal Defensives' : 'Fetch Raid CDs'; btn.disabled=false;
   });
@@ -6141,6 +6070,8 @@ function showPlansMenu(ev) {
       btn.addEventListener('mouseleave', () => { btn.style.color = '#2e3040'; });
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        const planName = getPlans()[btn.dataset.id]?.name || 'this plan';
+        if (!confirm('Delete "' + planName + '"?')) return;
         if (getActivePlanId() === btn.dataset.id) switchToPlan(FULL_RAID_ID);
         deletePlan(btn.dataset.id);
         rebuildList();
