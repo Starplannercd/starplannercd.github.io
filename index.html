@@ -4922,18 +4922,35 @@ async function wclLoadEncounters() {
 
 // Tracked spells — NO Tranq (740) and NO Hymn (64843)
 var WCL_SPELLS = {
-  62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
+  // Paladin
   31821:{name:'Devotion Aura',short:'Devo',color:'#f58cba'},
-  97462:{name:'Rally',short:'Rally',color:'#c79c6e'},
-  114203:{name:'Demo Banner',short:'Demo',color:'#c79c6e'},
-  108280:{name:'Healing Tide Totem',short:'HTT',color:'#0070de'},
-  108281:{name:'Ancestral Guidance',short:'AG',color:'#0070de'},
-  115213:{name:'Avert Harm',short:'Avert',color:'#00ff96'},
-  15286:{name:'Vampiric Embrace',short:'VE',color:'#888888'},
-  76577:{name:'Smoke Bomb',short:'Smoke',color:'#fff569'},
   86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
   105809:{name:'Holy Avenger',short:'HAvenger',color:'#f58cba'},
-  31884:{name:'Avenging Wrath',short:'Wings',color:'#f0e080'}
+  31884:{name:'Avenging Wrath',short:'Wings',color:'#f0e080'},
+  114158:{name:"Light's Hammer",short:'LHammer',color:'#f58cba'},
+  // Priest
+  62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
+  64843:{name:'Divine Hymn',short:'Hymn',color:'#cccccc'},
+  // Shaman
+  108280:{name:'Healing Tide Totem',short:'HTT',color:'#0070de'},
+  108281:{name:'Ancestral Guidance',short:'AG',color:'#0070de'},
+  114049:{name:'Ascendance',short:'Asc',color:'#0070de'},
+  98008:{name:'Spirit Link Totem',short:'SLT',color:'#0070de'},
+  // Warrior
+  97462:{name:'Rally',short:'Rally',color:'#c79c6e'},
+  114203:{name:'Demo Banner',short:'Demo',color:'#c79c6e'},
+  // Monk
+  115213:{name:'Avert Harm',short:'Avert',color:'#00ff96'},
+  // Shadow Priest
+  15286:{name:'Vampiric Embrace',short:'VE',color:'#888888'},
+  // Rogue
+  76577:{name:'Smoke Bomb',short:'Smoke',color:'#fff569'},
+  // Death Knight
+  51052:{name:'Anti-Magic Zone',short:'AMZ',color:'#c41f3b'},
+  // Druid
+  740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'},
+  // Hunter
+  34477:{name:'Misdirection',short:'MisdirXeno',color:'#abd473'},
 };
 
 // Boss ability spell IDs for fetching from WCL events
@@ -5150,100 +5167,188 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     times.forEach(function(t){ var b=Math.floor(t/BUCKET_MS); if(b<numBuckets) buckets[b]++; });
     var maxB = Math.max.apply(null, buckets.concat([1]));
     var cellW = W / numBuckets;
+    var color = spell.color;
 
-    // Compute peaks for labels
-    var peaks = [], last2 = -99;
-    for (var bi3=0; bi3<numBuckets; bi3++) {
-      if (buckets[bi3] >= maxB*0.5 && bi3-last2>2) { peaks.push(bi3); last2=bi3; }
-    }
+    // Contrast helper: use cubic power so sparse vs dense is very obvious
+    function intensity(count) { return Math.pow(count/maxB, 0.4); }
+    function opacity(count) { var i=intensity(count); return (i*0.92+0.08).toFixed(3); }
 
-    var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+spell.color+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
+    var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+color+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
 
-    if (heatStyle === 'bars') {
-      // Style 1: Vertical bars — height shows frequency
-      var BAR_H = 40;
-      html += '<div style="position:relative;width:'+W+'px;height:'+BAR_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    var H = 34; // row height for most styles
+
+    if (heatStyle==='bars') {
+      // 1. Vertical bars — height encodes frequency
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
       for (var bi=0; bi<numBuckets; bi++) {
         if (!buckets[bi]) continue;
-        var pct = buckets[bi]/maxB;
-        var barH = Math.round(pct*BAR_H);
-        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;bottom:0;width:'+Math.ceil(cellW)+'px;height:'+barH+'px;background:'+spell.color+';opacity:'+(pct*0.7+0.3).toFixed(2)+';"></div>';
+        var barH = Math.max(2, Math.round(intensity(buckets[bi])*H));
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;bottom:0;width:'+Math.ceil(cellW)+'px;height:'+barH+'px;background:'+color+';"></div>';
       }
-      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.5);pointer-events:none;"></div>';
-      }
-      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:2px;font-size:8px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 2px #000;white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
-      html += '</div>';
 
-    } else if (heatStyle === 'opacity') {
-      // Style 2: Full-height opacity blocks — current style improved
-      html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    } else if (heatStyle==='opacity') {
+      // 2. Full-height opacity blocks
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
       for (var bi=0; bi<numBuckets; bi++) {
         if (!buckets[bi]) continue;
-        var intensity = Math.pow(buckets[bi]/maxB, 0.6);
-        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+spell.color+';opacity:'+(intensity*0.9+0.1).toFixed(2)+';"></div>';
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+color+';opacity:'+opacity(buckets[bi])+';"></div>';
       }
-      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.5);pointer-events:none;"></div>';
-      }
-      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
-      html += '</div>';
 
-    } else if (heatStyle === 'dots') {
-      // Style 3: Dot strip — each cast is a dot on a strip
-      var DOT_H = 36;
-      html += '<div style="position:relative;width:'+W+'px;height:'+DOT_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
-      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
-      }
+    } else if (heatStyle==='dots') {
+      // 3. Dot strip — each cast is a circle
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
       times.forEach(function(t) {
         var x = Math.round((t/1000)*sharedPps);
-        html += '<div title="'+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:'+spell.color+';opacity:0.7;"></div>';
+        html += '<div style="position:absolute;left:'+x+'px;top:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:'+color+';opacity:0.65;"></div>';
       });
-      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+4)+'px;bottom:2px;font-size:8px;font-weight:700;color:'+spell.color+';text-shadow:0 1px 2px #000;white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
-      html += '</div>';
 
-    } else if (heatStyle === 'gradient') {
-      // Style 4: Smooth gradient glow — gaussian-blurred look via overlapping semi-transparent divs
-      var GRAD_H = 40;
-      html += '<div style="position:relative;width:'+W+'px;height:'+GRAD_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+    } else if (heatStyle==='gradient') {
+      // 4. Radial glow blobs
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
       for (var bi=0; bi<numBuckets; bi++) {
         if (!buckets[bi]) continue;
-        var pct2 = buckets[bi]/maxB;
-        var glowW = Math.max(cellW*3, 12);
-        var x = bi*cellW + cellW/2 - glowW/2;
-        html += '<div style="position:absolute;left:'+x.toFixed(1)+'px;top:0;width:'+glowW.toFixed(1)+'px;height:100%;background:radial-gradient(ellipse at center, '+spell.color+' 0%, transparent 70%);opacity:'+(pct2*0.8+0.1).toFixed(2)+';"></div>';
+        var cx = bi*cellW + cellW/2;
+        var gw = Math.max(cellW*4, 16);
+        html += '<div style="position:absolute;left:'+(cx-gw/2).toFixed(1)+'px;top:0;width:'+gw.toFixed(1)+'px;height:100%;background:radial-gradient(ellipse at center,'+color+' 0%,transparent 70%);opacity:'+opacity(buckets[bi])+';"></div>';
       }
-      for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-        html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.4);pointer-events:none;"></div>';
-      }
-      peaks.forEach(function(bi){ var x=Math.round((bi*BUCKET_MS/1000)*sharedPps); html+='<span style="position:absolute;left:'+(x+2)+'px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;">'+fmtT(bi*BUCKET_MS)+'</span>'; });
-      html += '</div>';
 
-    } else if (heatStyle === 'cards') {
-      // Style 5: Cast cards — clean time badges showing when each cast happens, sized by frequency
-      html += '<div style="position:relative;width:'+W+'px;min-height:24px;padding:3px 0;display:flex;flex-wrap:wrap;gap:0;">';
-      peaks.forEach(function(bi) {
-        var x = Math.round((bi*BUCKET_MS/1000)*sharedPps);
-        var pct3 = buckets[bi]/maxB;
-        var count = buckets[bi];
-        var fs = Math.round(8+pct3*4);
-        html += '<div style="position:absolute;left:'+(x-18)+'px;top:2px;text-align:center;">'
-          +'<div style="font-size:'+fs+'px;font-weight:700;color:'+spell.color+';white-space:nowrap;border-bottom:2px solid '+spell.color+';padding-bottom:1px;">'+fmtT(bi*BUCKET_MS)+'</div>'
-          +'<div style="font-size:8px;color:#4a4d62;">'+count+'/'+logCount+'</div>'
-          +'</div>';
-      });
-      // Also draw faint dots for non-peak times
+    } else if (heatStyle==='spike') {
+      // 5. Center-spike: thin tall spike, height = frequency, very sharp contrast
+      H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
       for (var bi=0; bi<numBuckets; bi++) {
-        if (!buckets[bi] || buckets[bi] >= maxB*0.5) continue;
-        var x = Math.round((bi*cellW+cellW/2)*1);
-        html += '<div style="position:absolute;left:'+x+'px;top:50%;transform:translateY(-50%);width:3px;height:3px;border-radius:50%;background:'+spell.color+';opacity:0.3;"></div>';
+        if (!buckets[bi]) continue;
+        var spikeH = Math.max(3, Math.round(intensity(buckets[bi])*H));
+        var top2 = Math.round((H-spikeH)/2);
+        html += '<div style="position:absolute;left:'+(bi*cellW+cellW/2-1).toFixed(1)+'px;top:'+top2+'px;width:2px;height:'+spikeH+'px;background:'+color+';border-radius:1px;"></div>';
       }
-      html += '</div>';
+
+    } else if (heatStyle==='wave') {
+      // 6. Wave/area chart — SVG polyline
+      H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      var pts = '0,'+H;
+      for (var bi=0; bi<numBuckets; bi++) {
+        var x2 = (bi*cellW+cellW/2).toFixed(1);
+        var y2 = (H - intensity(buckets[bi])*H*0.9).toFixed(1);
+        pts += ' '+x2+','+y2;
+      }
+      pts += ' '+W+','+H;
+      html += '<svg width="'+W+'" height="'+H+'" style="position:absolute;top:0;left:0;"><polygon points="'+pts+'" fill="'+color+'" fill-opacity="0.5"/><polyline points="'+pts.replace('0,'+H+' ','').replace(' '+W+','+H,'')+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-opacity="0.9"/></svg>';
+
+    } else if (heatStyle==='heatgrid') {
+      // 7. Multi-row grid — each row = one log, column = time bucket, filled if cast happened
+      var rowH = Math.max(2, Math.floor(H / logsData.length));
+      H = rowH * logsData.length;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      logsData.forEach(function(log, li) {
+        var casts = log.casts[+sid] || [];
+        casts.forEach(function(t) {
+          var x3 = Math.round((t/1000)*sharedPps);
+          html += '<div style="position:absolute;left:'+x3+'px;top:'+(li*rowH)+'px;width:3px;height:'+(rowH)+'px;background:'+color+';opacity:0.8;transform:translateX(-50%);"></div>';
+        });
+      });
+
+    } else if (heatStyle==='ribbon') {
+      // 8. Ribbon — horizontal band that thickens at common times
+      H = 20;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var rh = Math.max(2, Math.round(intensity(buckets[bi])*(H)));
+        var ry = Math.round((H-rh)/2);
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:'+ry+'px;width:'+Math.ceil(cellW+0.5)+'px;height:'+rh+'px;background:'+color+';opacity:'+opacity(buckets[bi])+';"></div>';
+      }
+
+    } else if (heatStyle==='colortemp') {
+      // 9. Color temperature — sparse=dark blue, dense=bright yellow/white
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var v = intensity(buckets[bi]);
+        // Interpolate: 0=deep purple → 0.5=orange → 1.0=white
+        var r,g,b2;
+        if (v < 0.5) { var t2=v/0.5; r=Math.round(60+t2*195); g=Math.round(0+t2*60); b2=Math.round(120-t2*120); }
+        else { var t2=(v-0.5)/0.5; r=Math.round(255); g=Math.round(60+t2*195); b2=Math.round(t2*255); }
+        var col = 'rgb('+r+','+g+','+b2+')';
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+col+';"></div>';
+      }
+
+    } else if (heatStyle==='outline') {
+      // 10. Outline only — border box height by frequency, unfilled
+      H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var bh = Math.max(3, Math.round(intensity(buckets[bi])*H));
+        var bt2 = Math.round((H-bh)/2);
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:'+bt2+'px;width:'+Math.ceil(cellW)+'px;height:'+bh+'px;border:1px solid '+color+';opacity:'+opacity(buckets[bi])+';box-sizing:border-box;"></div>';
+      }
+
+    } else if (heatStyle==='scatter') {
+      // 11. Scatter — dots sized by count
+      H = 40;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var sz = Math.max(3, Math.round(intensity(buckets[bi])*16));
+        var cx2 = (bi*cellW+cellW/2).toFixed(1);
+        html += '<div style="position:absolute;left:'+cx2+'px;top:50%;transform:translate(-50%,-50%);width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+color+';opacity:'+opacity(buckets[bi])+';"></div>';
+      }
+
+    } else if (heatStyle==='stacked') {
+      // 12. Stacked dots — multiple dots stacked vertically, one per cast
+      var dotSz = 4, dotGap = 1;
+      var maxStack = logsData.length;
+      H = Math.max(20, maxStack*(dotSz+dotGap));
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        for (var di=0; di<buckets[bi]; di++) {
+          var dy = H - (di+1)*(dotSz+dotGap);
+          html += '<div style="position:absolute;left:'+(bi*cellW+cellW/2-dotSz/2).toFixed(1)+'px;top:'+dy+'px;width:'+dotSz+'px;height:'+dotSz+'px;border-radius:50%;background:'+color+';opacity:0.75;"></div>';
+        }
+      }
+
+    } else if (heatStyle==='piano') {
+      // 13. Piano roll — thin vertical ticks on a baseline, height = count
+      H = 32;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      html += '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:#1e2030;"></div>';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var ph = Math.max(2, Math.round(intensity(buckets[bi])*(H-2)));
+        html += '<div style="position:absolute;left:'+(bi*cellW+cellW/2-1).toFixed(1)+'px;bottom:1px;width:2px;height:'+ph+'px;background:'+color+';opacity:'+opacity(buckets[bi])+';border-radius:1px 1px 0 0;"></div>';
+      }
+
+    } else if (heatStyle==='mirror') {
+      // 14. Mirror bars — bars grow from center outward symmetrically
+      H = 32;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      html += '<div style="position:absolute;top:50%;left:0;right:0;height:1px;background:#1a1c28;"></div>';
+      for (var bi=0; bi<numBuckets; bi++) {
+        if (!buckets[bi]) continue;
+        var mh = Math.max(2, Math.round(intensity(buckets[bi])*(H/2)));
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:'+(H/2-mh)+'px;width:'+Math.ceil(cellW)+'px;height:'+(mh*2)+'px;background:'+color+';opacity:'+opacity(buckets[bi])+';"></div>';
+      }
+
+    } else {
+      // 15. Carpet — tiny dense cells, full width coverage, alpha only
+      H = 16;
+      html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
+      for (var bi=0; bi<numBuckets; bi++) {
+        var op2 = buckets[bi] ? Math.pow(buckets[bi]/maxB,0.5)*0.95 : 0;
+        if (op2 < 0.02) continue;
+        html += '<div style="position:absolute;left:'+(bi*cellW).toFixed(1)+'px;top:0;width:'+Math.ceil(cellW+0.5)+'px;height:100%;background:'+color+';opacity:'+op2.toFixed(3)+';"></div>';
+      }
     }
 
-    html += '</div>';
+    // Shared gridlines — no time labels on rows
+    for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.35);pointer-events:none;"></div>';
+    }
+    html += '</div></div>';
     return html;
   }
 
@@ -5253,7 +5358,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var active = times.length > 0;
     var color = spell.color;
     var cdDurPx = ((CD_DURATIONS[+sid]||10)*sharedPps);
-
     var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#1e2030')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
     html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
@@ -5274,19 +5378,51 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var avgSec = Math.round(avgDuration/1000);
     var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var VIEWS = ['timeline','bars','opacity','dots','gradient','cards'];
-    var VIEW_LABELS = {timeline:'Timeline',bars:'Bar Chart',opacity:'Heat Blocks',dots:'Dot Strip',gradient:'Glow',cards:'Cast Cards'};
+    var VIEWS = [
+      {id:'timeline',   label:'Timeline'},
+      {id:'bars',       label:'Bars'},
+      {id:'opacity',    label:'Heat Blocks'},
+      {id:'dots',       label:'Dot Strip'},
+      {id:'gradient',   label:'Glow'},
+      {id:'spike',      label:'Spikes'},
+      {id:'wave',       label:'Wave'},
+      {id:'heatgrid',   label:'Grid'},
+      {id:'ribbon',     label:'Ribbon'},
+      {id:'colortemp',  label:'Temp'},
+      {id:'outline',    label:'Outline'},
+      {id:'scatter',    label:'Scatter'},
+      {id:'stacked',    label:'Stacked'},
+      {id:'piano',      label:'Piano'},
+      {id:'mirror',     label:'Mirror'},
+      {id:'carpet',     label:'Carpet'},
+    ];
+    var VIEW_DESC = {
+      bars:'Bar height = cast frequency',
+      opacity:'Block brightness = frequency',
+      dots:'Every cast as a dot — overlaps show clusters',
+      gradient:'Soft glow blobs centered on clusters',
+      spike:'Sharp spikes from center — height = frequency',
+      wave:'Area curve — peaks show common windows',
+      heatgrid:'One row per log — see exactly which logs cluster',
+      ribbon:'Horizontal band that thickens at common times',
+      colortemp:'Color shifts blue→orange→white with density',
+      outline:'Box outlines sized by frequency',
+      scatter:'Circles sized by frequency',
+      stacked:'Dots stack vertically — count visible at a glance',
+      piano:'Piano roll ticks from baseline',
+      mirror:'Symmetric bars from center',
+      carpet:'Dense compact strip — opacity only',
+    };
 
     var toggleHtml = '<div style="font-size:10px;color:#4a4d62;margin-bottom:8px;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '+bossName+' &middot; avg '+avgStr+'</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">';
+      +'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:10px;">';
     VIEWS.forEach(function(v) {
-      var isActive = viewMode===v;
-      toggleHtml += '<button class="wcl-view-btn" data-view="'+v+'" style="padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(isActive?'#ff8c0066':'#2e3040')+';background:'+(isActive?'#ff8c0018':'transparent')+';color:'+(isActive?'#ff8c00':'#5a6080')+';">'+VIEW_LABELS[v]+'</button>';
+      var isActive = viewMode===v.id;
+      toggleHtml += '<button class="wcl-view-btn" data-view="'+v.id+'" style="padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid '+(isActive?'#ff8c0066':'#2e3040')+';background:'+(isActive?'#ff8c0018':'transparent')+';color:'+(isActive?'#ff8c00':'#5a6080')+';">'+v.label+'</button>';
     });
     toggleHtml += '</div>';
 
     var bodyHtml = '';
-
     if (viewMode === 'timeline') {
       logsData.forEach(function(log) {
         bodyHtml += '<div style="margin-bottom:12px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:10px 14px;">';
@@ -5301,15 +5437,9 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         bodyHtml += '</div>';
       });
     } else {
-      var desc = {
-        bars:'Height of bar = how many logs used it in that 5s window',
-        opacity:'Brighter block = more common in that 5s window',
-        dots:'Each dot = one cast. Overlapping dots = common timing',
-        gradient:'Soft glow centered on cast clusters',
-        cards:'Time badges sized by frequency. Count = how many of '+logCount+' logs cast it then'
-      };
+      var desc = VIEW_DESC[viewMode] || '';
       bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
-      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'+desc[viewMode]+'</div>';
+      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'+desc+'</div>';
       bodyHtml += buildRuler();
       allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, viewMode); });
       bodyHtml += '</div>';
@@ -5317,7 +5447,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
     container.innerHTML = toggleHtml + bodyHtml;
     container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){ viewMode = btn.dataset.view; renderAll(); });
+      btn.addEventListener('click', function(){ viewMode=btn.dataset.view; renderAll(); });
     });
   }
 
