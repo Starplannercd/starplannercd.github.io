@@ -4927,7 +4927,6 @@ var WCL_SPELLS = {
   86150:{name:'Guardian of Ancient Kings',short:'GoAK',color:'#f58cba'},
   105809:{name:'Holy Avenger',short:'HAvenger',color:'#f58cba'},
   31884:{name:'Avenging Wrath',short:'Wings',color:'#f0e080'},
-  114158:{name:"Light's Hammer",short:'LHammer',color:'#f58cba'},
   // Priest
   62618:{name:'Power Word: Barrier',short:'PW:B',color:'#ffffff'},
   64843:{name:'Divine Hymn',short:'Hymn',color:'#cccccc'},
@@ -4949,8 +4948,6 @@ var WCL_SPELLS = {
   51052:{name:'Anti-Magic Zone',short:'AMZ',color:'#c41f3b'},
   // Druid
   740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'},
-  // Hunter
-  34477:{name:'Misdirection',short:'MisdirXeno',color:'#abd473'},
 };
 
 // Boss ability spell IDs for fetching from WCL events
@@ -5231,7 +5228,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       var pts = '0,'+H;
       for (var bi=0; bi<numBuckets; bi++) {
         var x2 = (bi*cellW+cellW/2).toFixed(1);
-        var y2 = (H - intensity(buckets[bi])*H*0.9).toFixed(1);
+        var y2 = (H - Math.pow(buckets[bi]/maxB, 0.25)*H*0.92).toFixed(1);
         pts += ' '+x2+','+y2;
       }
       pts += ' '+W+','+H;
