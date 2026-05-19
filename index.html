@@ -4894,18 +4894,30 @@ async function wclQuery(gql, variables) {
   return data.data;
 }
 
-var WCL_TOT_ZONE_ID = 1046;
+var WCL_TOT_ZONE_ID = 1098; // Siege of Orgrimmar
 var WCL_ENCOUNTERS = {};
 async function wclLoadEncounters() {
   if (Object.keys(WCL_ENCOUNTERS).length) return;
-  try {
-    var d = await wclQuery('{worldData{zone(id:1046){encounters{id name}}}}', {});
-    var encs = (d && d.worldData && d.worldData.zone && d.worldData.zone.encounters) || [];
-    if (encs.length) { WCL_ENCOUNTERS = {}; encs.forEach(function(e){WCL_ENCOUNTERS[e.name]=e.id;}); }
-    else throw new Error('empty');
-  } catch(e) {
-    WCL_ENCOUNTERS = {"Jin'rokh the Breaker":1140,"Horridon":1141,"Council of Elders":1142,"Tortos":1143,"Megaera":1144,"Ji-Kun":1145,"Durumu the Forgotten":1146,"Primordius":1147,"Dark Animus":1148,"Iron Qon":1149,"Twin Consorts":1150,"Lei Shen":1151,"Ra-den":1152};
+  // Try several candidate zone IDs for SoO on MoP Classic
+  var candidateZones = [1098, 1105, 1106, 5];
+  for (var zi=0; zi<candidateZones.length; zi++) {
+    try {
+      var zid = candidateZones[zi];
+      var d = await wclQuery('{worldData{zone(id:'+zid+'){name encounters{id name}}}}', {});
+      var zone = d && d.worldData && d.worldData.zone;
+      var encs = zone && zone.encounters || [];
+      console.log('WCL zone', zid, '=', zone && zone.name, '— encounters:', encs.length);
+      if (encs.length >= 10) { // SoO has 14 bosses
+        WCL_ENCOUNTERS = {};
+        encs.forEach(function(e){WCL_ENCOUNTERS[e.name]=e.id;});
+        console.log('WCL using zone', zid, ':', Object.keys(WCL_ENCOUNTERS).join(', '));
+        return;
+      }
+    } catch(e) { console.warn('Zone probe failed:', e); }
   }
+  // Fallback hardcoded
+  console.warn('WCL: Using hardcoded SoO encounter IDs');
+  WCL_ENCOUNTERS = {"Immerseus":1132,"The Fallen Protectors":1133,"Norushen":1134,"Sha of Pride":1135,"Galakras":1136,"Iron Juggernaut":1137,"Kor'kron Dark Shaman":1138,"General Nazgrim":1139,"Malkorok":1140,"Spoils of Pandaria":1141,"Thok the Bloodthirsty":1142,"Siegecrafter Blackfuse":1143,"Paragons of the Klaxxi":1144,"Garrosh Hellscream":1145};
 }
 
 // Tracked spells — NO Tranq (740) and NO Hymn (64843)
@@ -5159,7 +5171,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   var html = '<div style="font-size:10px;color:#4a4d62;margin-bottom:12px;">'
     +'<strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '
-    +bossName+' &middot; ranks 26\u201335 &middot; '+(mode==='personal'?'Personal Defensives':'Raid CDs')
+    +bossName+' &middot; ranks 26\u201335 execution &middot; '+(mode==='personal'?'Personal Defensives':'Raid CDs')
     +'</div>';
 
   logsData.forEach(function(log, li) {
@@ -5196,7 +5208,7 @@ function showWclModal() {
   var box = document.createElement('div');
   box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
-  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Throne of Thunder &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
   if (!authed) {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
