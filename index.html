@@ -5082,7 +5082,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   var numBuckets = Math.ceil(maxDuration / BUCKET_MS);
 
   // View mode toggle
-  var viewMode = 'timeline'; // 'timeline' or 'heatmap'
+  var viewMode = 'wave';
 
   function fmtT(ms) {
     var s = Math.round(ms/1000);
@@ -5375,73 +5375,11 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var avgSec = Math.round(avgDuration/1000);
     var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var VIEWS = [
-      {id:'timeline',   label:'Timeline'},
-      {id:'bars',       label:'Bars'},
-      {id:'opacity',    label:'Heat Blocks'},
-      {id:'dots',       label:'Dot Strip'},
-      {id:'gradient',   label:'Glow'},
-      {id:'spike',      label:'Spikes'},
-      {id:'wave',       label:'Wave'},
-      {id:'heatgrid',   label:'Grid'},
-      {id:'ribbon',     label:'Ribbon'},
-      {id:'colortemp',  label:'Temp'},
-      {id:'outline',    label:'Outline'},
-      {id:'scatter',    label:'Scatter'},
-      {id:'stacked',    label:'Stacked'},
-      {id:'piano',      label:'Piano'},
-      {id:'mirror',     label:'Mirror'},
-      {id:'carpet',     label:'Carpet'},
-    ];
-    var VIEW_DESC = {
-      bars:'Bar height = cast frequency',
-      opacity:'Block brightness = frequency',
-      dots:'Every cast as a dot — overlaps show clusters',
-      gradient:'Soft glow blobs centered on clusters',
-      spike:'Sharp spikes from center — height = frequency',
-      wave:'Area curve — peaks show common windows',
-      heatgrid:'One row per log — see exactly which logs cluster',
-      ribbon:'Horizontal band that thickens at common times',
-      colortemp:'Color shifts blue→orange→white with density',
-      outline:'Box outlines sized by frequency',
-      scatter:'Circles sized by frequency',
-      stacked:'Dots stack vertically — count visible at a glance',
-      piano:'Piano roll ticks from baseline',
-      mirror:'Symmetric bars from center',
-      carpet:'Dense compact strip — opacity only',
-    };
-
-    var toggleHtml = '<div style="font-size:10px;color:#4a4d62;margin-bottom:8px;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs &middot; '+bossName+' &middot; avg '+avgStr+'</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:10px;">';
-    VIEWS.forEach(function(v) {
-      var isActive = viewMode===v.id;
-      toggleHtml += '<button class="wcl-view-btn" data-view="'+v.id+'" style="padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700;cursor:pointer;border:1px solid '+(isActive?'#ff8c0066':'#2e3040')+';background:'+(isActive?'#ff8c0018':'transparent')+';color:'+(isActive?'#ff8c00':'#5a6080')+';">'+v.label+'</button>';
-    });
-    toggleHtml += '</div>';
-
-    var bodyHtml = '';
-    if (viewMode === 'timeline') {
-      logsData.forEach(function(log) {
-        bodyHtml += '<div style="margin-bottom:12px;background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:10px 14px;">';
-        bodyHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
-        bodyHtml += '<span style="font-size:10px;font-weight:700;color:#3a4060;letter-spacing:0.08em;text-transform:uppercase;">Rank #'+log.rank+'</span>';
-        bodyHtml += '<span style="font-size:10px;color:#2e3050;">&middot; '+fmtT(log.duration)+'</span>';
-        bodyHtml += '<a href="https://classic.warcraftlogs.com/reports/'+log.code+'" target="_blank" style="font-size:9px;color:#3a4060;text-decoration:none;margin-left:auto;border:1px solid #1e2232;padding:2px 8px;border-radius:3px;">View \u2197</a>';
-        bodyHtml += '</div>';
-        bodyHtml += buildRuler();
-        bodyHtml += buildBossRow(log);
-        allSids.forEach(function(sid){ bodyHtml += buildTimelineRow(sid, log); });
-        bodyHtml += '</div>';
-      });
-    } else {
-      var desc = VIEW_DESC[viewMode] || '';
-      bodyHtml += '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
-      bodyHtml += '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">'+desc+'</div>';
-      bodyHtml += buildRuler();
-      allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, viewMode); });
-      bodyHtml += '</div>';
-    }
-
+    var toggleHtml = '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs · '+bossName+' · avg kill <strong style="color:#c8d0e8;">'+avgStr+'</strong></div>';
+    var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
+    bodyHtml += buildRuler();
+    allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
+    bodyHtml += '</div>';
     container.innerHTML = toggleHtml + bodyHtml;
     container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
       btn.addEventListener('click', function(){ viewMode=btn.dataset.view; renderAll(); });
@@ -5461,7 +5399,7 @@ function showWclModal() {
   var box = document.createElement('div');
   box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
-  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">WARCRAFT LOGS</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
   if (!authed) {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
@@ -5469,9 +5407,8 @@ function showWclModal() {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
       + '<div style="display:flex;gap:12px;margin-bottom:10px;">'
       + '<div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses...</option></select></div>'
-      + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Ranks 26\u201345 execution &middot; up to <strong style="color:#c8d0e8;">20</strong> logs</div>'
+      + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Old SoO logs, ranks 10 through 35, sorted by execution</div>'
       + '</div>'
-      + '<div style="margin-bottom:10px;padding:7px 10px;background:#12141a;border-radius:5px;border:1px solid #2e3040;font-size:10px;color:#4a4d62;">Comp filter: Prot Pal &middot; Brewmaster &middot; Holy Pal &middot; Disc &middot; Shadow &middot; Ele &middot; Mage &middot; Lock &middot; Warrior &middot; Rogue</div>'
       + '<div style="display:flex;gap:6px;margin-bottom:10px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:7px;border-radius:5px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:11px;font-weight:700;cursor:pointer;">Raid CDs</button>'
       + '<button id="wclModePersonal" style="flex:1;padding:7px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#5a6080;font-size:11px;font-weight:700;cursor:pointer;">Personal Defensives</button>'
