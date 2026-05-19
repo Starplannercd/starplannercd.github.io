@@ -2873,6 +2873,9 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Spellsteal':            '30449',
   'Stampeding Roar':       '106898',
   'Thunderstorm':          '51490',
+  'Dismantle':             '51722',
+  'Smoke Bomb':             '76577',
+  'Disarm':                '676',
 };
 
 let activePopup = null;
@@ -5375,7 +5378,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var avgSec = Math.round(avgDuration/1000);
     var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var toggleHtml = '<div style="font-size:10px;color:#4a4d62;margin-bottom:10px;"><strong style="color:#c8d0e8;">'+logCount+'</strong> logs · '+bossName+' · avg kill <strong style="color:#c8d0e8;">'+avgStr+'</strong></div>';
+    var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span></div>';
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
@@ -5405,17 +5408,23 @@ function showWclModal() {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
   } else {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
-      + '<div style="display:flex;gap:12px;margin-bottom:10px;">'
-      + '<div style="flex:1;"><label style="font-size:10px;color:#6878a0;display:block;margin-bottom:5px;">Boss</label><select id="wclBoss" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:5px;font-size:12px;"><option value="">Loading bosses...</option></select></div>'
-      + '<div style="font-size:10px;color:#4a4d62;padding:6px 0;">Old SoO logs, ranks 10 through 35, sorted by execution</div>'
+      // Boss selector row with label inline
+      + '<div style="margin-bottom:14px;">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
+      + '<span style="font-size:11px;font-weight:700;color:#8892b0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
+      + '<select id="wclBoss" style="flex:1;background:#0d0e16;border:1px solid #2e3550;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
+      + '<span style="font-size:10px;color:#3a4060;white-space:nowrap;">Old SoO · ranks 10&ndash;45 · execution</span>'
       + '</div>'
-      + '<div style="display:flex;gap:6px;margin-bottom:10px;">'
-      + '<button id="wclModeRaid" style="flex:1;padding:7px;border-radius:5px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:11px;font-weight:700;cursor:pointer;">Raid CDs</button>'
-      + '<button id="wclModePersonal" style="flex:1;padding:7px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#5a6080;font-size:11px;font-weight:700;cursor:pointer;">Personal Defensives</button>'
       + '</div>'
-      + '<button id="wclFetch" style="width:100%;padding:9px;border-radius:6px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:16px;">Fetch Raid CDs</button>'
+      // Mode buttons — glassy pill style
+      + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+      + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);">⚔ Raid CDs</button>'
+      + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">🛡 Personal</button>'
+      + '</div>'
+      // Fetch button — prominent
+      + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
       + '<div id="wclResults"></div>'
-      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1e2030;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a3d52;font-size:10px;cursor:pointer;">Disconnect</button></div>'
+      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#2e3550;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
   }
   box.innerHTML = headerHtml + bodyHtml;
@@ -5435,13 +5444,13 @@ function showWclModal() {
   function setWclMode(mode) {
     wclMode = mode;
     if (mode === 'raid') {
-      modeRaidBtn.style.borderColor='#ff8c0066'; modeRaidBtn.style.background='#ff8c0018'; modeRaidBtn.style.color='#ff8c00';
-      modePersonalBtn.style.borderColor='#2e3040'; modePersonalBtn.style.background='transparent'; modePersonalBtn.style.color='#5a6080';
-      fetchBtn2.textContent = 'Fetch Raid CDs';
+      modeRaidBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);';
+      modePersonalBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
+      fetchBtn2.textContent = 'FETCH DATA';
     } else {
-      modePersonalBtn.style.borderColor='#ff8c0066'; modePersonalBtn.style.background='#ff8c0018'; modePersonalBtn.style.color='#ff8c00';
-      modeRaidBtn.style.borderColor='#2e3040'; modeRaidBtn.style.background='transparent'; modeRaidBtn.style.color='#5a6080';
-      fetchBtn2.textContent = 'Fetch Personal Defensives';
+      modePersonalBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);';
+      modeRaidBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
+      fetchBtn2.textContent = 'FETCH DATA';
     }
   }
   modeRaidBtn.addEventListener('click', function(){ setWclMode('raid'); });
@@ -5462,14 +5471,26 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-35...</div>';
+      // Check cache first
+      var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
+      try {
+        var cached = localStorage.getItem(cacheKey2);
+        if (cached) {
+          var cd2 = JSON.parse(cached);
+          results.innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Using cached data from '+new Date(cd2.ts).toLocaleDateString()+'</div>';
+          var bossSpells2 = getBossSpellsForName(cd2.bossName);
+          renderWclDisplay(results, cd2.logsData, cd2.processed, cd2.bossName, cd2.avgDuration, bossSpells2, wclMode==='personal'?WCL_PERSONAL_SPELLS:WCL_SPELLS, wclMode);
+          btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
+        }
+      } catch(e) {}
+      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-45...</div>';
       var rq1 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:1)}}}';
       var rq2 = 'query($id:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:2)}}}';
       var rd1 = await wclQuery(rq1, {id:encId});
       var rd2 = await wclQuery(rq2, {id:encId});
       var p1 = (rd1&&rd1.worldData&&rd1.worldData.encounter&&rd1.worldData.encounter.fightRankings&&rd1.worldData.encounter.fightRankings.rankings)||[];
       var p2 = (rd2&&rd2.worldData&&rd2.worldData.encounter&&rd2.worldData.encounter.fightRankings&&rd2.worldData.encounter.fightRankings.rankings)||[];
-      var pageRankings = p1.concat(p2).slice(9, 34); // ranks 10-34
+      var pageRankings = p1.concat(p2).slice(9, 44); // ranks 10-44
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
@@ -5599,6 +5620,11 @@ function showWclModal() {
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
       var bossName2 = bossEl.options[bossEl.selectedIndex].text;
       var spellMap = wclMode === 'personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
+      // Cache results for this encounter
+      try {
+        var cacheKey = 'wcl_soo_cache_'+encId+'_'+wclMode;
+        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,ts:Date.now()}));
+      } catch(e) {}
       renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent = wclMode==='personal' ? 'Fetch Personal Defensives' : 'Fetch Raid CDs'; btn.disabled=false;
