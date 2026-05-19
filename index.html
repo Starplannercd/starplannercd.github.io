@@ -5391,6 +5391,100 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   renderAll();
 }
+function renderWclComp(container, logsData, logCount, bossName) {
+  // Detect healer count per log using healer CD proxy
+  var HEALER_SIDS = [62618,31821,86150,105809,31884,108280,114049,98008,64843,740];
+  var TANK_SIDS = [115213,31821]; // Avert Harm = Brewmaster, Devo = any pala tank
+
+  var healerCounts = {2:0, 3:0, other:0};
+  var tankCounts = {2:0, 3:0, other:0};
+  var killTimes = [];
+
+  logsData.forEach(function(log) {
+    // Count distinct healer sources
+    var healerSources = {};
+    HEALER_SIDS.forEach(function(sid) {
+      var times2 = log.casts[sid] || [];
+      if (times2.length) healerSources['healer_'+sid] = true;
+    });
+    // Rough: if HTT or AG present = shaman healer; PW:B = disc; Devo = hpala
+    var hasDisc = !!(log.casts[62618] && log.casts[62618].length);
+    var hasHPala = !!(log.casts[31821] && log.casts[31821].length);
+    var hasShaman = !!(log.casts[108280] && log.casts[108280].length) || !!(log.casts[108281] && log.casts[108281].length);
+    var hasHTT = !!(log.casts[108280] && log.casts[108280].length);
+    var hasTranq = !!(log.casts[740] && log.casts[740].length);
+    var hasHymn = !!(log.casts[64843] && log.casts[64843].length);
+    var numHealers = [hasDisc, hasHPala, hasShaman||hasTranq||hasHymn].filter(Boolean).length;
+    if (numHealers >= 3) healerCounts[3]++;
+    else if (numHealers === 2) healerCounts[2]++;
+    else healerCounts.other++;
+
+    // Tank detection: Avert Harm = Brewmaster tank present
+    var hasBrew = !!(log.casts[115213] && log.casts[115213].length);
+    // 2-tank = has brew + any pala tank (devo); 3-tank hard to detect cleanly, skip for now
+    tankCounts[2]++;
+
+    killTimes.push(log.duration);
+  });
+
+  killTimes.sort(function(a,b){return a-b;});
+  function fmtT2(ms) { var s=Math.round(ms/1000); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); }
+  var medKill = killTimes[Math.floor(killTimes.length/2)] || 0;
+  var minKill = killTimes[0] || 0;
+  var maxKill = killTimes[killTimes.length-1] || 0;
+
+  // Kill time histogram
+  var bucketSz = 15000; // 15s buckets
+  var minMs = Math.floor(minKill/bucketSz)*bucketSz;
+  var maxMs = Math.ceil(maxKill/bucketSz)*bucketSz;
+  var histBuckets = {};
+  for (var t=minMs; t<=maxMs; t+=bucketSz) histBuckets[t]=0;
+  killTimes.forEach(function(t){ var b=Math.floor(t/bucketSz)*bucketSz; histBuckets[b]=(histBuckets[b]||0)+1; });
+  var maxHist = Math.max.apply(null, Object.values(histBuckets).concat([1]));
+
+  var W2 = 400;
+  var histHtml = '<div style="position:relative;width:'+W2+'px;height:60px;background:#05060a;border-radius:4px;overflow:hidden;margin-top:8px;">';
+  var bucketKeys = Object.keys(histBuckets).map(Number).sort(function(a,b){return a-b;});
+  var bw = W2 / bucketKeys.length;
+  bucketKeys.forEach(function(t, i) {
+    var h = Math.round((histBuckets[t]/maxHist)*56);
+    if (h < 1) return;
+    histHtml += '<div style="position:absolute;left:'+(i*bw).toFixed(1)+'px;bottom:0;width:'+Math.ceil(bw-1)+'px;height:'+h+'px;background:#c8a84b;opacity:0.8;border-radius:2px 2px 0 0;"></div>';
+    histHtml += '<span style="position:absolute;left:'+(i*bw+bw/2).toFixed(1)+'px;bottom:0;transform:translateX(-50%);font-size:7px;color:#5a6080;white-space:nowrap;">'+fmtT2(t)+'</span>';
+  });
+  histHtml += '</div>';
+
+  function statRow(label, val) {
+    return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #0f1018;">'
+      +'<span style="font-size:11px;color:#6878a0;">'+label+'</span>'
+      +'<span style="font-size:12px;font-weight:700;color:#c8d0e8;">'+val+'</span>'
+      +'</div>';
+  }
+
+  var h2Used = healerCounts[2], h3Used = healerCounts[3];
+  var total = logsData.length;
+
+  container.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
+    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Kill Times</div>'
+    +statRow('Fastest', fmtT2(minKill))
+    +statRow('Median', fmtT2(medKill))
+    +statRow('Slowest', fmtT2(maxKill))
+    +'<div style="font-size:9px;color:#3a4060;margin-top:8px;margin-bottom:4px;">Distribution (15s buckets)</div>'
+    +histHtml
+    +'</div>'
+    +'<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:14px;">'
+    +'<div style="font-size:10px;font-weight:700;color:#6878a0;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Comp Detection</div>'
+    +'<div style="font-size:9px;color:#4a4d62;margin-bottom:10px;">Based on healer CD proxy (Disc · Holy Pal · Shaman/Druid)</div>'
+    +statRow('2-healed', h2Used+' / '+total+' logs ('+(Math.round(h2Used/total*100))+'%)')
+    +statRow('3-healed', h3Used+' / '+total+' logs ('+(Math.round(h3Used/total*100))+'%)')
+    +statRow('Unclear', healerCounts.other+' / '+total+' logs')
+    +'<div style="font-size:9px;color:#3a4060;margin-top:10px;">Tank detection limited without tank-specific CD data in these logs.</div>'
+    +'</div>'
+    +'</div>';
+}
+
+
 function showWclModal() {
   var existing = document.getElementById('wclOverlay');
   if (existing) { existing.remove(); return; }
@@ -5402,7 +5496,7 @@ function showWclModal() {
   var box = document.createElement('div');
   box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
-  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#4a4d62;margin-top:1px;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#6878a0;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
   if (!authed) {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
@@ -5411,15 +5505,16 @@ function showWclModal() {
       // Boss selector row with label inline
       + '<div style="margin-bottom:14px;">'
       + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
-      + '<span style="font-size:11px;font-weight:700;color:#8892b0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
+      + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
       + '<select id="wclBoss" style="flex:1;background:#0d0e16;border:1px solid #2e3550;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
-      + '<span style="font-size:10px;color:#3a4060;white-space:nowrap;">Old SoO · ranks 10&ndash;45 · execution</span>'
+      + '<span style="font-size:10px;color:#6878a0;font-weight:600;white-space:nowrap;">Old SoO · ranks 10–45 · execution</span>'
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);">⚔ Raid CDs</button>'
       + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">🛡 Personal</button>'
+      + '<button id="wclModeComp" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;">📊 Comp</button>'
       + '</div>'
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
@@ -5440,21 +5535,64 @@ function showWclModal() {
   var wclMode = 'raid'; // 'raid' or 'personal'
   var modeRaidBtn = box.querySelector('#wclModeRaid');
   var modePersonalBtn = box.querySelector('#wclModePersonal');
+  var modeCompBtn = box.querySelector('#wclModeComp');
   var fetchBtn2 = box.querySelector('#wclFetch');
   function setWclMode(mode) {
     wclMode = mode;
-    if (mode === 'raid') {
-      modeRaidBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);';
-      modePersonalBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
-      fetchBtn2.textContent = 'FETCH DATA';
-    } else {
-      modePersonalBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);';
-      modeRaidBtn.style.cssText = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
-      fetchBtn2.textContent = 'FETCH DATA';
-    }
+    var activeStyle = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);';
+    var inactiveStyle = 'flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;';
+    modeRaidBtn.style.cssText = mode==='raid' ? activeStyle : inactiveStyle;
+    modePersonalBtn.style.cssText = mode==='personal' ? activeStyle : inactiveStyle;
+    if (modeCompBtn) modeCompBtn.style.cssText = mode==='comp' ? activeStyle : inactiveStyle;
+    fetchBtn2.textContent = mode==='comp' ? 'ANALYSE COMP' : 'FETCH DATA';
   }
-  modeRaidBtn.addEventListener('click', function(){ setWclMode('raid'); });
-  modePersonalBtn.addEventListener('click', function(){ setWclMode('personal'); });
+  modeRaidBtn.addEventListener('click', function(){
+    setWclMode('raid');
+    var encId2 = parseInt(bossEl.value);
+    if (!encId2) return;
+    var ck = 'wcl_soo_cache_'+encId2+'_raid';
+    try {
+      var cached = localStorage.getItem(ck);
+      if (cached) {
+        var cd3 = JSON.parse(cached);
+        var bs3 = getBossSpellsForName(cd3.bossName);
+        box.querySelector('#wclResults').innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Cached \xb7 '+new Date(cd3.ts).toLocaleDateString()+'</div>';
+        renderWclDisplay(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName, cd3.avgDuration, bs3, WCL_SPELLS, 'raid');
+      }
+    } catch(e) {}
+  });
+  modePersonalBtn.addEventListener('click', function(){
+    setWclMode('personal');
+    var encId2 = parseInt(bossEl.value);
+    if (!encId2) return;
+    var ck = 'wcl_soo_cache_'+encId2+'_personal';
+    try {
+      var cached = localStorage.getItem(ck);
+      if (cached) {
+        var cd3 = JSON.parse(cached);
+        var bs3 = getBossSpellsForName(cd3.bossName);
+        box.querySelector('#wclResults').innerHTML = '<div style="color:#48a868;font-size:10px;margin-bottom:6px;">Cached \xb7 '+new Date(cd3.ts).toLocaleDateString()+'</div>';
+        renderWclDisplay(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName, cd3.avgDuration, bs3, WCL_PERSONAL_SPELLS, 'personal');
+      }
+    } catch(e) {}
+  });
+  if (modeCompBtn) modeCompBtn.addEventListener('click', function(){
+    setWclMode('comp');
+    var encId2 = parseInt(bossEl.value);
+    var bossName3 = bossEl.options[bossEl.selectedIndex] ? bossEl.options[bossEl.selectedIndex].text : '';
+    if (!encId2) return;
+    // Use raid cache for comp analysis since it has the same logs
+    var ck = 'wcl_soo_cache_'+encId2+'_raid';
+    try {
+      var cached = localStorage.getItem(ck);
+      if (cached) {
+        var cd3 = JSON.parse(cached);
+        renderWclComp(box.querySelector('#wclResults'), cd3.logsData, cd3.processed, cd3.bossName);
+      } else {
+        box.querySelector('#wclResults').innerHTML = '<div style="color:#5a6080;font-size:11px;padding:16px 0;">Fetch Raid CDs first to load logs, then switch here.</div>';
+      }
+    } catch(e) {}
+  });
   var bossEl = box.querySelector('#wclBoss');
   wclLoadEncounters().then(function(){
     bossEl.innerHTML = '<option value="">-- Choose boss --</option>' + Object.keys(WCL_ENCOUNTERS).map(function(n){return '<option value="'+WCL_ENCOUNTERS[n]+'">'+n+'</option>';}).join('');
