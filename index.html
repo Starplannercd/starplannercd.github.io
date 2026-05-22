@@ -4588,7 +4588,7 @@ function updateSyncIndicator(state) {
     connecting:   { dot:'#4888c8', text:'Connecting…' },
   };
   const s = states[state] || states.disconnected;
-  el.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${s.dot};display:inline-block;margin-right:5px;flex-shrink:0;"></span><span style="font-size:10px;color:${s.dot};font-weight:600;letter-spacing:0.04em;">${s.text}</span>`;
+  el.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${s.dot};display:inline-block;margin-right:5px;flex-shrink:0;"></span><span style="font-size:10px;color:${s.dot};font-weight:600;letter-spacing:0.04em;">${s.text}${state === 'connected' ? ' 😊' : ''}</span>`;
 }
 
 function initFirebase() {
