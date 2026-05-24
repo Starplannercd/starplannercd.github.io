@@ -5095,14 +5095,25 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
   }
 
+  function smartTick(durationMs, targetLabels) {
+    // Pick a tick interval that gives roughly targetLabels labels
+    var dSec = durationMs / 1000;
+    var candidates = [10,15,20,30,45,60,90,120];
+    for (var ci=0; ci<candidates.length; ci++) {
+      if (dSec / candidates[ci] <= targetLabels) return candidates[ci];
+    }
+    return 120;
+  }
+
   function buildRuler() {
+    var rTick = smartTick(maxDuration, 10); // ~10 labels for heatmap ruler
     var html = '<div style="display:flex;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
     html += '<div style="position:relative;width:'+W+'px;height:18px;">';
-    for (var ti=0; ti*tickEvery*1000<=maxDuration+tickEvery*1000; ti++) {
-      var tx = Math.min(Math.round(ti*tickEvery*sharedPps), W);
+    for (var ti=0; ti*rTick*1000<=maxDuration+rTick*1000; ti++) {
+      var tx = Math.min(Math.round(ti*rTick*sharedPps), W);
       html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
-      html += '<span style="position:absolute;left:'+tx+'px;top:2px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*tickEvery)+'</span>';
+      html += '<span style="position:absolute;left:'+tx+'px;top:2px;font-size:10px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*rTick)+'</span>';
     }
     html += '</div></div>';
     return html;
@@ -5409,11 +5420,12 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       var polyLine = pts.slice(pts.indexOf(' ')+1, pts.lastIndexOf(' '));
       var maxHpsLabel = maxHps >= 1000000 ? (maxHps/1000000).toFixed(1)+'M' : maxHps >= 1000 ? Math.round(maxHps/1000)+'k' : Math.round(maxHps)+'';
 
-      // Build 15s ruler for HPS
+      // Build smart ruler for HPS (~15 labels)
+      var hpsTick = smartTick(maxDuration, 15);
       var hpsRulerHtml = '<div style="display:flex;margin-bottom:3px;"><div style="width:'+LABEL_W+'px;flex-shrink:0;"></div><div style="position:relative;width:'+HPSW+'px;height:16px;">';
-      for (var hri=0; hri*15*1000<=maxDuration; hri++) {
-        var hrx = Math.min(Math.round(hri*15*sharedPps), HPSW);
-        var hrlabel = Math.floor(hri*15/60)+':'+(hri*15%60<10?'0':'')+(hri*15%60);
+      for (var hri=0; hri*hpsTick*1000<=maxDuration; hri++) {
+        var hrx = Math.min(Math.round(hri*hpsTick*sharedPps), HPSW);
+        var hrlabel = Math.floor(hri*hpsTick/60)+':'+(hri*hpsTick%60<10?'0':'')+(hri*hpsTick%60);
         hpsRulerHtml += '<div style="position:absolute;left:'+hrx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
         hpsRulerHtml += '<span style="position:absolute;left:'+hrx+'px;top:2px;font-size:9px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+hrlabel+'</span>';
       }
@@ -5424,9 +5436,9 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       bodyHtml += hpsRulerHtml;
       bodyHtml += '<div style="display:flex;align-items:center;margin-bottom:2px;"><div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#48a868;text-align:right;padding-right:7px;">HPS</div>';
       bodyHtml += '<div style="position:relative;width:'+HPSW+'px;height:'+HPSH+'px;background:#05060a;border-radius:3px;overflow:hidden;">';
-      // 15s gridlines on HPS chart
-      for (var hti=1; hti*15*1000<=maxDuration; hti++) {
-        bodyHtml += '<div style="position:absolute;left:'+Math.round(hti*15*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.05);pointer-events:none;"></div>';
+      // Gridlines matching HPS ruler
+      for (var hti=1; hti*hpsTick*1000<=maxDuration; hti++) {
+        bodyHtml += '<div style="position:absolute;left:'+Math.round(hti*hpsTick*sharedPps)+'px;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.05);pointer-events:none;"></div>';
       }
       bodyHtml += '<svg width="'+HPSW+'" height="'+HPSH+'" style="position:absolute;top:0;left:0;overflow:visible;">';
       bodyHtml += '<polygon points="'+pts+'" fill="#48a868" fill-opacity="0.25"/>';
