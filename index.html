@@ -5076,10 +5076,12 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   // Shared timeline width based on longest log
   var maxDuration = Math.max.apply(null, logsData.map(function(l){return l.duration;}));
-  var PX_PER_SEC = 15; // 15px/s → 15s ticks land 225px apart
-  var W = Math.max(560, Math.ceil((maxDuration / 1000) * PX_PER_SEC));
+  var W = Math.max(560, Math.ceil(maxDuration / 1000 / 15) * 32); // min 32px per 15s tick
   var sharedPps = W / (maxDuration / 1000);
-  var tickEvery = 15; // always 15-second ticks
+  var tickEvery = 15;
+  // Resize the WCL modal box to fit the wider ruler if needed
+  var _wclBox = document.getElementById('wclModalBox');
+  if (_wclBox) { var _needed = W + 66 + 60; if (_needed > 700) _wclBox.style.width = Math.min(_needed, window.innerWidth * 0.96) + 'px'; }
   var ROW_H = 32;
   var LABEL_W = 66;
   var BUCKET_MS = 5000;
@@ -5475,7 +5477,7 @@ function showWclModal() {
   ov.className = 'modal-overlay';
   ov.style.cssText = 'align-items:flex-start;padding:20px;';
   var box = document.createElement('div');
-  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.id = 'wclModalBox'; box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
   var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#6878a0;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
@@ -5499,7 +5501,7 @@ function showWclModal() {
       + '</div>'
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
-      + '<div id="wclResults" style="overflow-x:auto;"></div>'
+      + '<div id="wclResults"></div>'
       + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#2e3550;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
   }
