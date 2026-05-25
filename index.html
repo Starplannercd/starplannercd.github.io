@@ -5117,15 +5117,13 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       if (tx > W) break;
       var isMajor = (ts % 60 === 0);
       var isHalf  = (ts % 30 === 0);
-      var tickH   = isMajor ? 8 : isHalf ? 5 : 3;
-      var lineCol = isMajor ? '#3a3f58' : '#252838';
-      var txtCol  = isMajor ? '#a0a8c8' : '#525878';
+      var tickH   = isMajor ? 8 : isHalf ? 5 : 4;
+      var lineCol = isMajor ? '#4a5070' : isHalf ? '#353858' : '#252838';
+      var txtCol  = isMajor ? '#c8d0f0' : isHalf ? '#7880a8' : '#525878';
       var txtSize = isMajor ? '10' : '9';
-      var fontW   = isMajor ? '700' : '500';
+      var fontW   = isMajor ? '700' : '400';
       html += '<div style="position:absolute;left:'+tx+'px;bottom:0;width:1px;height:'+tickH+'px;background:'+lineCol+';transform:translateX(-50%);"></div>';
-      if (isMajor || isHalf) {
-        html += '<span style="position:absolute;left:'+tx+'px;top:0;font-size:'+txtSize+'px;font-weight:'+fontW+';color:'+txtCol+';transform:translateX(-50%);white-space:nowrap;line-height:1;">'+fmtS(ts)+'</span>';
-      }
+      html += '<span style="position:absolute;left:'+tx+'px;top:0;font-size:'+txtSize+'px;font-weight:'+fontW+';color:'+txtCol+';transform:translateX(-50%);white-space:nowrap;line-height:1;">'+fmtS(ts)+'</span>';
     }
     html += '</div></div>';
     return html;
