@@ -5076,9 +5076,10 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   // Shared timeline width based on longest log
   var maxDuration = Math.max.apply(null, logsData.map(function(l){return l.duration;}));
-  var W = 560;
+  var PX_PER_SEC = 15; // 15px/s → 15s ticks land 225px apart
+  var W = Math.max(560, Math.ceil((maxDuration / 1000) * PX_PER_SEC));
   var sharedPps = W / (maxDuration / 1000);
-  var tickEvery = maxDuration <= 180000 ? 15 : maxDuration <= 360000 ? 30 : 60;
+  var tickEvery = 15; // always 15-second ticks
   var ROW_H = 32;
   var LABEL_W = 66;
   var BUCKET_MS = 5000;
@@ -5105,15 +5106,24 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   }
 
   function buildRuler() {
-    var rTick = smartTick(maxDuration, 25);
-    var html = '<div style="display:flex;margin-bottom:3px;">';
+    var html = '<div style="display:flex;margin-bottom:4px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;"></div>';
-    html += '<div style="position:relative;width:'+W+'px;height:18px;overflow:hidden;">';
-    for (var ti=0; ti*rTick*1000<=maxDuration; ti++) {
-      var tx = Math.round(ti*rTick*sharedPps);
+    html += '<div style="position:relative;width:'+W+'px;height:22px;">';
+    var dSec = Math.ceil(maxDuration / 1000);
+    for (var ts=0; ts<=dSec; ts+=15) {
+      var tx = Math.round(ts * sharedPps);
       if (tx > W) break;
-      html += '<div style="position:absolute;left:'+tx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
-      html += '<span style="position:absolute;left:'+tx+'px;top:2px;font-size:10px;font-weight:700;color:#8892b0;transform:translateX(-50%);white-space:nowrap;">'+fmtS(ti*rTick)+'</span>';
+      var isMajor = (ts % 60 === 0);
+      var isHalf  = (ts % 30 === 0);
+      var tickH   = isMajor ? 8 : isHalf ? 5 : 3;
+      var lineCol = isMajor ? '#3a3f58' : '#252838';
+      var txtCol  = isMajor ? '#a0a8c8' : '#525878';
+      var txtSize = isMajor ? '10' : '9';
+      var fontW   = isMajor ? '700' : '500';
+      html += '<div style="position:absolute;left:'+tx+'px;bottom:0;width:1px;height:'+tickH+'px;background:'+lineCol+';transform:translateX(-50%);"></div>';
+      if (isMajor || isHalf) {
+        html += '<span style="position:absolute;left:'+tx+'px;top:0;font-size:'+txtSize+'px;font-weight:'+fontW+';color:'+txtCol+';transform:translateX(-50%);white-space:nowrap;line-height:1;">'+fmtS(ts)+'</span>';
+      }
     }
     html += '</div></div>';
     return html;
@@ -5489,7 +5499,7 @@ function showWclModal() {
       + '</div>'
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
-      + '<div id="wclResults"></div>'
+      + '<div id="wclResults" style="overflow-x:auto;"></div>'
       + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#2e3550;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
   }
