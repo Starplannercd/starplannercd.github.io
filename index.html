@@ -4499,7 +4499,7 @@ function refreshBossSelectLabels() {
   });
 }
 
-document.getElementById('clearBtn').addEventListener('click', () => {
+document.getElementById('clearBtn')?.addEventListener('click', () => {
   const boss = getBoss();
   const hasAny = Object.values(placedCDs[boss.id] || {}).some(arr => arr && arr.length > 0);
   if (!hasAny) return;
