@@ -25,14 +25,14 @@
     --forge: #e07820;
     --sha: #6a3a8a;
     --red: #c84848;
-    --blue: #4888c8;
+    --blue: #c83a20;
     --green: #48a868;
     --purple: #8868c8;
     --orange: #c87838;
     --teal: #38a8b8;
     --pink: #c84888;
     --yellow: #c8b838;
-    --gold: #d4a832;
+    --gold: #c83a20;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -145,27 +145,27 @@
   .resize-handle { display: none; }
 
   /* Auth screen */
-  #authScreen { position:fixed;inset:0;background:#08090d;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0; }
-  .auth-box { background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:36px 40px;width:380px;max-width:92vw;display:flex;flex-direction:column;align-items:center;gap:20px; }
-  .auth-title { font-size:18px;font-weight:800;color:#c8a84b;letter-spacing:0.06em;text-align:center; }
-  .auth-sub { font-size:11px;color:#4a4d62;text-align:center;letter-spacing:0.04em; }
-  .auth-google-btn { display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:6px;border:1px solid #3a3d52;background:#1e2028;color:#d4d6e8;font-size:13px;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:border-color 0.15s; }
-  .auth-google-btn:hover { border-color:#c8a84b; }
+  #authScreen { position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0; }
+  .auth-box { background:#141008;border:1px solid #3a2e20;border-radius:12px;padding:36px 40px;width:380px;max-width:92vw;display:flex;flex-direction:column;align-items:center;gap:20px; }
+  .auth-title { font-size:18px;font-weight:800;color:#c83a20;letter-spacing:0.06em;text-align:center; }
+  .auth-sub { font-size:11px;color:#5a4838;text-align:center;letter-spacing:0.04em; }
+  .auth-google-btn { display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:6px;border:1px solid #4a3828;background:#241e14;color:#d8c8b0;font-size:13px;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:border-color 0.15s; }
+  .auth-google-btn:hover { border-color:#c83a20; }
   .auth-google-btn svg { flex-shrink:0; }
-  .auth-status { font-size:11px;color:#8a8da8;text-align:center;min-height:16px; }
+  .auth-status { font-size:11px;color:#8a7060;text-align:center;min-height:16px; }
   .auth-error { font-size:11px;color:#c84848;text-align:center; }
-  .auth-pending { background:#12141a;border:1px solid #c8a84b33;border-radius:8px;padding:16px;font-size:11px;color:#8a8da8;text-align:center;line-height:1.7;width:100%; }
-  .auth-pending strong { color:#c8a84b; }
-  .auth-signout { position:fixed;top:8px;right:12px;font-size:10px;color:#3a3d52;background:transparent;border:none;cursor:pointer;letter-spacing:0.04em;z-index:10000; }
-  .auth-signout:hover { color:#8a8da8; }
+  .auth-pending { background:#1a1610;border:1px solid #c83a2033;border-radius:8px;padding:16px;font-size:11px;color:#8a7060;text-align:center;line-height:1.7;width:100%; }
+  .auth-pending strong { color:#c83a20; }
+  .auth-signout { position:fixed;top:8px;right:12px;font-size:10px;color:#4a3828;background:transparent;border:none;cursor:pointer;letter-spacing:0.04em;z-index:10000; }
+  .auth-signout:hover { color:#8a7060; }
 
   /* Fill state indicators */
-  .fill-banner { background: linear-gradient(90deg,#c8a84b22,#c8a84b11,transparent); border-bottom: 2px solid #c8a84b; padding: 5px 16px; display:flex; align-items:center; gap:10px; font-size:11px; font-weight:700; color:#c8a84b; letter-spacing:0.06em; }
-  .fill-banner-pill { background:#c8a84b22; border:1px solid #c8a84b66; border-radius:20px; padding:2px 10px; font-size:10px; color:#c8a84b; font-weight:700; }
-  .fill-stripe { height:3px; background:linear-gradient(90deg,#c8a84b,#c8a84b88,transparent); }
-  .fill-sidebar-badge { position:fixed; left:0; top:50%; transform:translateY(-50%); background:#c8a84b; color:#0a0b0f; font-size:9px; font-weight:900; letter-spacing:0.1em; writing-mode:vertical-rl; text-orientation:mixed; padding:12px 4px; border-radius:0 4px 4px 0; z-index:50; cursor:default; }
-  .fill-topbar-badge { background:#c8a84b; color:#0a0b0f; font-size:9px; font-weight:900; letter-spacing:0.08em; padding:3px 8px; border-radius:3px; text-transform:uppercase; }
-  .fill-pulse-dot { width:9px; height:9px; border-radius:50%; background:#c8a84b; animation:fill-pulse 1.8s ease-in-out infinite; flex-shrink:0; }
+  .fill-banner { background: linear-gradient(90deg,#c83a2022,#c83a2011,transparent); border-bottom: 2px solid #c83a20; padding: 5px 16px; display:flex; align-items:center; gap:10px; font-size:11px; font-weight:700; color:#c83a20; letter-spacing:0.06em; }
+  .fill-banner-pill { background:#c83a2022; border:1px solid #c83a2066; border-radius:20px; padding:2px 10px; font-size:10px; color:#c83a20; font-weight:700; }
+  .fill-stripe { height:3px; background:linear-gradient(90deg,#c83a20,#c83a2088,transparent); }
+  .fill-sidebar-badge { position:fixed; left:0; top:50%; transform:translateY(-50%); background:#c83a20; color:#0e0c0a; font-size:9px; font-weight:900; letter-spacing:0.1em; writing-mode:vertical-rl; text-orientation:mixed; padding:12px 4px; border-radius:0 4px 4px 0; z-index:50; cursor:default; }
+  .fill-topbar-badge { background:#c83a20; color:#0e0c0a; font-size:9px; font-weight:900; letter-spacing:0.08em; padding:3px 8px; border-radius:3px; text-transform:uppercase; }
+  .fill-pulse-dot { width:9px; height:9px; border-radius:50%; background:#c83a20; animation:fill-pulse 1.8s ease-in-out infinite; flex-shrink:0; }
   @keyframes fill-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
   /* EXPAND BUTTON STYLES */
   .expand-tabbar-btn {
@@ -293,7 +293,7 @@
   .sp-who { font-weight:600; }
   .sp-cd-name { display:flex; align-items:center; gap:5px; }
   .sp-cd-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .sp-offset { color:#8a8da8; }
+  .sp-offset { color:#8a7060; }
   .sp-custom { color:#c87020; font-style:italic; }
 
   /* NOTES PANEL */
@@ -397,7 +397,7 @@
   .boss-ready-wrap.ready .boss-ready-label {
     border-color: transparent;
     background: #48a868;
-    color: #0a0b0f;
+    color: #0e0c0a;
   }
 
   .boss-name { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; text-transform: uppercase; }
@@ -597,8 +597,8 @@
   .offset-popup {
     position: fixed;
     z-index: 99999;
-    background: var(--bg2, #161820);
-    border: 1px solid var(--border2, #3a3d52);
+    background: var(--bg2, #1e1a12);
+    border: 1px solid var(--border2, #4a3828);
     border-radius: 6px;
     padding: 10px 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.5);
@@ -609,13 +609,13 @@
   }
   .offset-popup label {
     font-size: 11px;
-    color: #8a8da8;
+    color: #8a7060;
   }
   .offset-popup input[type=number] {
     width: 100%;
-    background: #0e0f13;
-    border: 1px solid #3a3d52;
-    color: #d4d6e8;
+    background: #141008;
+    border: 1px solid #4a3828;
+    color: #d8c8b0;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 13px;
@@ -630,12 +630,12 @@
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid #3a3d52;
-    background: #1e2028;
-    color: #d4d6e8;
+    border: 1px solid #4a3828;
+    background: #241e14;
+    color: #d8c8b0;
   }
   .offset-popup button.confirm {
-    border-color: #4888c8;
+    border-color: #c83a20;
     color: #88c8ff;
   }
   .offset-popup button:hover { opacity: 0.8; }
@@ -645,15 +645,15 @@
   .btn-save { border-color: #48a868 !important; color: #48a868 !important; }
   .btn-save:hover { background: #48a86822 !important; }
   .btn-manage:hover { background: #38a8b822 !important; }
-  .btn-export { border-color: #c8a84b !important; color: #c8a84b !important; }
+  .btn-export { border-color: #c83a20 !important; color: #c83a20 !important; }
   .btn-screenshot { border-color: #c8cae0 !important; color: #c8cae0 !important; }
 
   .btn-screenshot:hover { background: #c8cae022 !important; }
 
   /* SCREENSHOT MODAL */
   .ss-modal {
-    background: #0e0f13;
-    border: 1px solid #2e3040;
+    background: #141008;
+    border: 1px solid #3a2e20;
     border-radius: 8px;
     padding: 0;
     width: 90vw;
@@ -668,27 +668,27 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    background: #161820;
-    border-bottom: 1px solid #2e3040;
+    background: #1e1a12;
+    border-bottom: 1px solid #3a2e20;
     flex-shrink: 0;
   }
-  .ss-toolbar h3 { font-size:13px; font-weight:500; color:#c8a84b; flex:1; }
+  .ss-toolbar h3 { font-size:13px; font-weight:500; color:#c83a20; flex:1; }
   .ss-mode-btn {
     padding: 4px 12px;
     border-radius: 3px;
-    border: 1px solid #3a3d52;
-    background: #1e2028;
-    color: #8a8da8;
+    border: 1px solid #4a3828;
+    background: #241e14;
+    color: #8a7060;
     font-size: 11px;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
   .ss-mode-btn.active { border-color: #38a8b8; color: #38a8b8; }
-  .ss-content { flex: 1; overflow-y: auto; padding: 20px 24px; background: #08090d; }
+  .ss-content { flex: 1; overflow-y: auto; padding: 20px 24px; background: #0a0804; }
 
   /* SCREENSHOT LAYOUT */
-  .ss-page { background: #0b0c10; padding: 8px; }
+  .ss-page { background: #0e0c0a; padding: 8px; }
 
   /* Layout: side-center — portrait left, name vertically centered */
   .ss-layout-side-center .ss-boss-header-fancy { align-items: center; }
@@ -703,14 +703,14 @@
   .ss-layout-text-top .ss-boss-header-text { padding: 10px 16px 4px; }
 
   /* Base portrait — shared by all layouts */
-  .ss-boss-header-fancy { position: relative; overflow: hidden; display:flex; align-items: center; background: #0d0f15; border-bottom: 1px solid #c8a84b33; }
+  .ss-boss-header-fancy { position: relative; overflow: hidden; display:flex; align-items: center; background: #100e0a; border-bottom: 1px solid #c83a2033; }
   .ss-boss-portrait { display: block; flex-shrink: 0; }
 
   /* L1 — portrait left, name right, centered, gold glow */
   .ss-layout-l1 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l1 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l1 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l1 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000,0 0 30px #c8a84b55; }
+  .ss-layout-l1 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000,0 0 30px #c83a2055; }
 
   /* L2 — portrait left, name right, top-aligned */
   .ss-layout-l2 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:flex-start; }
@@ -728,7 +728,7 @@
   .ss-layout-l4 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l4 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l4 .ss-boss-header-text { padding:0 24px; }
-  .ss-layout-l4 .ss-boss-name-fancy { font-size:26px;font-weight:900;text-shadow:0 2px 16px #000,0 0 40px #c8a84b66;letter-spacing:.02em; }
+  .ss-layout-l4 .ss-boss-name-fancy { font-size:26px;font-weight:900;text-shadow:0 2px 16px #000,0 0 40px #c83a2066;letter-spacing:.02em; }
 
   /* L5 — portrait left, name right with bright white text */
   .ss-layout-l5 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
@@ -740,7 +740,7 @@
   .ss-layout-l6 .ss-boss-header-fancy { min-height:140px; flex-direction:row; align-items:center; }
   .ss-layout-l6 .ss-boss-portrait { width:160px;height:140px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l6 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l6 .ss-boss-name-fancy { font-size:22px;text-shadow:0 2px 12px #000,0 0 30px #c8a84b55; }
+  .ss-layout-l6 .ss-boss-name-fancy { font-size:22px;text-shadow:0 2px 12px #000,0 0 30px #c83a2055; }
 
   /* L7 — portrait left wider, name compressed right */
   .ss-layout-l7 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
@@ -777,38 +777,38 @@
   .ss-layout-l12 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l12 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l12 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l12 .ss-boss-header-text::after { content:"Throne of Thunder — Heroic 10"; display:block;font-size:9px;color:#5a5d78;letter-spacing:.08em;text-transform:uppercase;margin-top:4px; }
+  .ss-layout-l12 .ss-boss-header-text::after { content:"Throne of Thunder — Heroic 10"; display:block;font-size:9px;color:#5a4838;letter-spacing:.08em;text-transform:uppercase;margin-top:4px; }
   .ss-layout-l12 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000; }
 
   /* L13 — portrait left small, name large beside */
   .ss-layout-l13 .ss-boss-header-fancy { min-height:80px; flex-direction:row; align-items:center; }
   .ss-layout-l13 .ss-boss-portrait { width:100px;height:80px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l13 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l13 .ss-boss-name-fancy { font-size:24px;font-weight:900;text-shadow:0 2px 12px #000,0 0 30px #c8a84b55; }
+  .ss-layout-l13 .ss-boss-name-fancy { font-size:24px;font-weight:900;text-shadow:0 2px 12px #000,0 0 30px #c83a2055; }
 
   /* L14 — portrait left, name right, uppercase spaced */
-  .ss-layout-l14 .ss-boss-header-fancy { min-height:100px; flex-direction:row; align-items:center; background:#0d0f15; border-bottom:1px solid #c8a84b33; }
+  .ss-layout-l14 .ss-boss-header-fancy { min-height:100px; flex-direction:row; align-items:center; background:#100e0a; border-bottom:1px solid #c83a2033; }
   .ss-layout-l14 .ss-boss-portrait { width:150px;height:100px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 55%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 55%,transparent 100%);filter:brightness(.9) saturate(.85); }
   .ss-layout-l14 .ss-boss-header-text { padding:0 20px; display:flex; flex-direction:column; gap:4px; }
-  .ss-layout-l14 .ss-boss-name-fancy { font-size:18px;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:#c8a84b; }
+  .ss-layout-l14 .ss-boss-name-fancy { font-size:18px;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:#c83a20; }
 
   /* L15 — portrait left, name right, gradient gold-to-white text */
   .ss-layout-l15 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l15 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l15 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l15 .ss-boss-name-fancy { font-size:22px;background:linear-gradient(90deg,#c8a84b,#fff8dc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;text-shadow:none; }
+  .ss-layout-l15 .ss-boss-name-fancy { font-size:22px;background:linear-gradient(90deg,#c83a20,#fff8dc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;text-shadow:none; }
 
   /* L16 — portrait left, name right, with divider line */
   .ss-layout-l16 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l16 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
-  .ss-layout-l16 .ss-boss-header-text { padding:0 20px;border-left:2px solid #c8a84b66; }
+  .ss-layout-l16 .ss-boss-header-text { padding:0 20px;border-left:2px solid #c83a2066; }
   .ss-layout-l16 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000; }
 
   /* L17 — portrait left, name right, dark bg with border glow */
-  .ss-layout-l17 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; background:#080a0f;box-shadow:inset 0 0 40px #c8a84b22; }
+  .ss-layout-l17 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; background:#080a0f;box-shadow:inset 0 0 40px #c83a2022; }
   .ss-layout-l17 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.9); }
   .ss-layout-l17 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l17 .ss-boss-name-fancy { font-size:20px;text-shadow:0 0 20px #c8a84b,0 2px 8px #000; }
+  .ss-layout-l17 .ss-boss-name-fancy { font-size:20px;text-shadow:0 0 20px #c83a20,0 2px 8px #000; }
 
   /* L18 — portrait left, name right, purple mystical */
   .ss-layout-l18 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; background:linear-gradient(135deg,#120820 0%,#0c0c20 100%); }
@@ -820,21 +820,21 @@
   .ss-layout-l19 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l19 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l19 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l19 .ss-boss-name-fancy { font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#8a8da8;margin-bottom:2px; }
-  .ss-layout-l19 .ss-boss-header-text::after { content:attr(data-name);display:block;font-size:22px;font-weight:800;color:#c8a84b;text-shadow:0 2px 8px #000; }
+  .ss-layout-l19 .ss-boss-name-fancy { font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#8a7060;margin-bottom:2px; }
+  .ss-layout-l19 .ss-boss-header-text::after { content:attr(data-name);display:block;font-size:22px;font-weight:800;color:#c83a20;text-shadow:0 2px 8px #000; }
 
   /* L20 — portrait left, name right, stamped/engraved feel */
   .ss-layout-l20 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; background:linear-gradient(135deg,#0e0e14 0%,#141420 100%);border-bottom-color:#888; }
   .ss-layout-l20 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.75) grayscale(.4); }
   .ss-layout-l20 .ss-boss-header-text { padding:0 20px; }
   .ss-layout-l20 .ss-boss-name-fancy { font-size:20px;color:#d4c89a;text-shadow:0 1px 0 #000,0 -1px 0 #fff2;letter-spacing:.06em; }
-  .ss-boss-block { margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: #0a0b0f; border: 1px solid #2e3040; }
+  .ss-boss-block { margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: #0e0c0a; border: 1px solid #3a2e20; }
   .ss-boss-header-fancy {
     display: flex;
     align-items: center;
     gap: 0;
     background: linear-gradient(135deg, #1a1220 0%, #0e1830 100%);
-    border-bottom: 2px solid #c8a84b44;
+    border-bottom: 2px solid #c83a2044;
     position: relative;
     overflow: hidden;
     min-height: 80px;
@@ -845,20 +845,20 @@
     object-fit: contain;
     object-position: center;
     flex-shrink: 0;
-    filter: drop-shadow(0 0 8px #c8a84b44);
+    filter: drop-shadow(0 0 8px #c83a2044);
     padding: 4px;
   }
   .ss-boss-header-text {
     padding: 10px 16px;
     flex: 1;
   }
-  .ss-boss-name-fancy { font-size: 17px; font-weight: 700; color: #c8a84b; letter-spacing: 0.03em; }
-  .ss-boss-subtitle { font-size: 10px; color: #5a5d78; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .ss-boss-name-fancy { font-size: 17px; font-weight: 700; color: #c83a20; letter-spacing: 0.03em; }
+  .ss-boss-subtitle { font-size: 10px; color: #5a4838; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
   .ss-rows-wrap { padding: 4px 0; }
-  .ss-boss-name { font-size: 16px; font-weight: 600; color: #c8a84b; }
+  .ss-boss-name { font-size: 16px; font-weight: 600; color: #c83a20; }
   .ss-boss-ready { font-size: 10px; color: #48a868; border: 1px solid #48a868; border-radius: 3px; padding: 1px 6px; }
-  .ss-row { display:flex; align-items:stretch; gap:0; border-bottom:1px solid #161820; min-height:58px; }
-  .ss-label { width:200px; flex-shrink:0; display:flex; align-items:center; padding:0 0 0 0; border-right:1px solid #1e2030; overflow:hidden; }
+  .ss-row { display:flex; align-items:stretch; gap:0; border-bottom:1px solid #1e1a12; min-height:58px; }
+  .ss-label { width:200px; flex-shrink:0; display:flex; align-items:center; padding:0 0 0 0; border-right:1px solid #2a2218; overflow:hidden; }
   .ss-label-inner { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:0 12px; overflow:hidden; }
   .ss-label-marker { width:3px; align-self:stretch; flex-shrink:0; }
   .ss-label-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -866,8 +866,8 @@
   .ss-icons { display:flex; gap:4px; align-items:center; flex-wrap:wrap; padding:6px 14px; }
   .ss-icon { width:46px; height:46px; border-radius:6px; border:none; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; letter-spacing:0.03em; }
   .ss-real-icon { width:46px; height:46px; border-radius:6px; border:none; flex-shrink:0; object-fit:cover; }
-  .ss-empty { font-size:11px; color:#3a3d52; font-style:italic; }
-  .btn-export:hover { background: #c8a84b22 !important; }
+  .ss-empty { font-size:11px; color:#4a3828; font-style:italic; }
+  .btn-export:hover { background: #c83a2022 !important; }
 
   /* EXPORT MODAL */
   .modal-overlay {
@@ -877,8 +877,8 @@
     display: flex; align-items: center; justify-content: center;
   }
   .modal-box {
-    background: #161820;
-    border: 1px solid #3a3d52;
+    background: #1e1a12;
+    border: 1px solid #4a3828;
     border-radius: 8px;
     padding: 20px;
     width: 680px;
@@ -888,17 +888,17 @@
     flex-direction: column;
     gap: 12px;
   }
-  .modal-box h3 { font-size: 14px; font-weight: 500; color: #c8a84b; }
-  .modal-box .modal-sub { font-size: 11px; color: #5a5d78; }
+  .modal-box h3 { font-size: 14px; font-weight: 500; color: #c83a20; }
+  .modal-box .modal-sub { font-size: 11px; color: #5a4838; }
   .modal-output {
     flex: 1;
-    background: #0e0f13;
-    border: 1px solid #2e3040;
+    background: #141008;
+    border: 1px solid #3a2e20;
     border-radius: 4px;
     padding: 10px;
     font-family: monospace;
     font-size: 11px;
-    color: #d4d6e8;
+    color: #d8c8b0;
     word-break: break-all;
     overflow-y: auto;
     min-height: 80px;
@@ -909,10 +909,10 @@
   .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
   .modal-footer button {
     padding: 5px 14px; border-radius: 4px; font-size: 12px;
-    cursor: pointer; border: 1px solid #3a3d52;
-    background: #1e2028; color: #d4d6e8;
+    cursor: pointer; border: 1px solid #4a3828;
+    background: #241e14; color: #d8c8b0;
   }
-  .modal-footer button.copy-btn { border-color: #c8a84b; color: #c8a84b; }
+  .modal-footer button.copy-btn { border-color: #c83a20; color: #c83a20; }
   .modal-footer button:hover { opacity: 0.8; }
   .modal-warn { font-size: 11px; color: #c87838; }
 
@@ -930,18 +930,18 @@
     gap: 8px;
     padding: 6px 10px;
     border-radius: 4px;
-    background: #1e2028;
-    border: 1px solid #2e3040;
+    background: #241e14;
+    border: 1px solid #3a2e20;
     cursor: pointer;
     user-select: none;
     transition: border-color 0.15s;
   }
-  .manage-item.active { border-color: #3a3d52; background: #242634; }
-  .manage-item:hover { border-color: #4a5070; }
+  .manage-item.active { border-color: #4a3828; background: #241e14; }
+  .manage-item:hover { border-color: #c83a2066; }
   .manage-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .manage-item-name { font-size:12px; color:#d4d6e8; flex:1; }
-  .manage-item-who { font-size:10px; color:#5a5d78; }
-  .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #3a3d52; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
+  .manage-item-name { font-size:12px; color:#d8c8b0; flex:1; }
+  .manage-item-who { font-size:10px; color:#5a4838; }
+  .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #4a3828; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
   .manage-item.active .manage-check { background:#38a8b8; border-color:#38a8b8; color:#fff; }
 
   /* ROSTER CONFIGS */
@@ -1127,9 +1127,9 @@
 </style>
 </head>
 <body>
-<div id="authScreen" style="position:fixed;inset:0;background:#08090d;z-index:9999;display:flex;align-items:center;justify-content:center;">
+<div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div class="auth-box">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12h20"/></svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12h20"/></svg>
     <div class="auth-title">&lt;Professional&gt;</div>
     <div class="auth-title" style="font-size:14px;margin-top:-10px;letter-spacing:0.08em;">RCD Planner</div>
     <div class="auth-sub">Guild Access Only</div>
@@ -1143,33 +1143,9 @@
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
 <div id="app" style="display:none;">
   <div class="topbar">
-    <span class="topbar-title">
-  <svg width="28" height="22" viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- left axe -->
-    <g transform="translate(4,2) rotate(-30,10,12)">
-      <rect x="9" y="4" width="2.5" height="16" rx="1" fill="#6a5040"/>
-      <path d="M10.25 4 C10.25 4 5 6 5 10 C5 13 9 14 10.25 14 C11.5 14 15.5 13 15.5 10 C15.5 6 10.25 4 10.25 4Z" fill="#c83a20"/>
-      <path d="M10.25 4 C10.25 4 7 6 7 10 C7 12.5 9.5 13.5 10.25 13.5" fill="#e05030" opacity="0.5"/>
-    </g>
-    <!-- center horde skull glyph -->
-    <ellipse cx="28" cy="13" rx="6" ry="7" fill="#1c1916" stroke="#c83a20" stroke-width="1.2"/>
-    <ellipse cx="28" cy="11" rx="4" ry="4.5" fill="#c83a20" opacity="0.9"/>
-    <rect x="25" y="15" width="2" height="3" rx="0.5" fill="#c83a20"/>
-    <rect x="29" y="15" width="2" height="3" rx="0.5" fill="#c83a20"/>
-    <circle cx="26.2" cy="10.5" r="1.2" fill="#0e0c0a"/>
-    <circle cx="29.8" cy="10.5" r="1.2" fill="#0e0c0a"/>
-    <path d="M26 13 Q28 14.5 30 13" stroke="#0e0c0a" stroke-width="0.8" fill="none"/>
-    <!-- right axe (mirrored) -->
-    <g transform="translate(52,2) rotate(30,-10,12) scale(-1,1)">
-      <rect x="9" y="4" width="2.5" height="16" rx="1" fill="#6a5040"/>
-      <path d="M10.25 4 C10.25 4 5 6 5 10 C5 13 9 14 10.25 14 C11.5 14 15.5 13 15.5 10 C15.5 6 10.25 4 10.25 4Z" fill="#c83a20"/>
-      <path d="M10.25 4 C10.25 4 7 6 7 10 C7 12.5 9.5 13.5 10.25 13.5" fill="#e05030" opacity="0.5"/>
-    </g>
-    <!-- decorative side lines -->
-    <line x1="2" y1="13" x2="16" y2="13" stroke="#c83a20" stroke-width="0.6" opacity="0.5"/>
-    <line x1="40" y1="13" x2="54" y2="13" stroke="#c83a20" stroke-width="0.6" opacity="0.5"/>
-  </svg>
-  <span class="topbar-title-text">Siege of Orgrimmar</span>
+  <span class="topbar-title">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+  <span class="topbar-title-text">Professional</span>
 </span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
@@ -1178,7 +1154,7 @@
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
-    <button class="btn" id="wclBtn" style="border-color:#ff8c0044;color:#ff8c00aa;">WCL</button>
+    <button class="btn" id="wclBtn" style="border-color:#c83a2044;color:#c83a20aa;">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -1333,7 +1309,7 @@ const BOSSES = [
       {
         label: null,
         abilities: [
-          { name:'Lightning Storm', time:93, color:'#4888c8' },
+          { name:'Lightning Storm', time:93, color:'#c83a20' },
         ]
       }
     ]
@@ -1462,9 +1438,9 @@ const BOSSES = [
         label: 'Fist Smash',
         phaseStart: 370,
         abilities: [
-          { name:'Fist Smash 1', time:338, color:'#4888c8' },
-          { name:'Fist Smash 2', time:364, color:'#4888c8' },
-          { name:'Fist Smash 3', time:392, color:'#4888c8' },
+          { name:'Fist Smash 1', time:338, color:'#c83a20' },
+          { name:'Fist Smash 2', time:364, color:'#c83a20' },
+          { name:'Fist Smash 3', time:392, color:'#c83a20' },
         ]
       }
     ]
@@ -1515,9 +1491,9 @@ const BOSSES = [
       {
         label: 'Phase 2',
         abilities: [
-          { name:'Ball Lightning-P2 (1)', time:169, color:'#4888c8' },
-          { name:'Ball Lightning-P2 (2)', time:215, color:'#4888c8' },
-          { name:'Ball Lightning-P2 (3)', time:260, color:'#4888c8' },
+          { name:'Ball Lightning-P2 (1)', time:169, color:'#c83a20' },
+          { name:'Ball Lightning-P2 (2)', time:215, color:'#c83a20' },
+          { name:'Ball Lightning-P2 (3)', time:260, color:'#c83a20' },
         ]
       },
       {
@@ -1541,7 +1517,7 @@ const BOSSES = [
         abilities: [
           { name:'Material of Creation 1', time:20,  color:'#c8a838' },
           { name:'Material of Creation 4', time:120, color:'#c84848' },
-          { name:'HP Assign',              time:160, color:'#4888c8', hpAssign:true, hpPct:40 },
+          { name:'HP Assign',              time:160, color:'#c83a20', hpAssign:true, hpPct:40 },
         ]
       }
     ]
@@ -1686,7 +1662,7 @@ function updateFillIndicator() {
       rosterBtn.style.borderColor = '';
       rosterBtn.style.background = '';
     } else {
-      const firstCol = SPEC_CLASS_COLORS[fills[0][1].fillSpec] || '#c8a84b';
+      const firstCol = SPEC_CLASS_COLORS[fills[0][1].fillSpec] || '#c83a20';
       const parts = fills.map(([, f]) => SPEC_SHORT_NAMES[f.fillSpec] || f.fillSpec.split(' ').map(w=>w[0]).join(''));
       rosterBtn.textContent = 'Sub: ' + parts.join(' · ');
       rosterBtn.style.color = firstCol;
@@ -1751,14 +1727,14 @@ function showFillStylePicker() {
   const ov = document.createElement('div');
   ov.id = 'fillStylePickerOverlay';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:flex;align-items:center;justify-content:center;';
-  ov.innerHTML = `<div style="background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:20px;width:520px;max-height:88vh;overflow-y:auto;">
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:20px;width:520px;max-height:88vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="font-size:13px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;">Fill Style Options</h3>
-      <button id="fillStyleClose" style="background:transparent;border:none;color:#8a8da8;font-size:20px;cursor:pointer;">×</button>
+      <h3 style="font-size:13px;font-weight:700;color:#c83a20;letter-spacing:0.08em;text-transform:uppercase;">Fill Style Options</h3>
+      <button id="fillStyleClose" style="background:transparent;border:none;color:#8a7060;font-size:20px;cursor:pointer;">×</button>
     </div>
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#4a4d62;margin-bottom:8px;">Fill State Indicator</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:8px;">Fill State Indicator</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:20px;" id="fillIndGrid"></div>
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#4a4d62;margin-bottom:8px;">Saved Fill Menu Style</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:8px;">Saved Fill Menu Style</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="fillMenuGrid"></div>
   </div>`;
   document.body.appendChild(ov);
@@ -1768,7 +1744,7 @@ function showFillStylePicker() {
   FILL_IND_STYLES.forEach(s => {
     const btn = document.createElement('button');
     const sel = s.id === fillIndicatorStyle;
-    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c8a84b':'1px solid #2e3040'};background:${sel?'#c8a84b18':'#0e0f13'};color:${sel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
+    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #3a2e20'};background:${sel?'#c83a2018':'#141008'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
     btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
     btn.addEventListener('click', () => {
       fillIndicatorStyle = s.id;
@@ -1784,7 +1760,7 @@ function showFillStylePicker() {
   FILL_MENU_STYLES.forEach(s => {
     const btn = document.createElement('button');
     const sel = s.id === fillMenuStyle;
-    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c8a84b':'1px solid #2e3040'};background:${sel?'#c8a84b18':'#0e0f13'};color:${sel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
+    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #3a2e20'};background:${sel?'#c83a2018':'#141008'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
     btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
     btn.addEventListener('click', () => {
       fillMenuStyle = s.id;
@@ -1845,7 +1821,7 @@ function checkForSavedFill(playerWho, fillSpecName, onLoad, onFresh) {
 
 function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
   const short = SPEC_SHORT_NAMES[fillSpecName] || fillSpecName;
-  const col = SPEC_CLASS_COLORS[fillSpecName] || '#c8a84b';
+  const col = SPEC_CLASS_COLORS[fillSpecName] || '#c83a20';
   const savedDate = new Date(saved.savedAt).toLocaleDateString();
   const savedTime = new Date(saved.savedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
@@ -1858,12 +1834,12 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
       ov.className = 'modal-overlay';
-      ov.innerHTML = `<div style="background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+      ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
         <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:6px;">SAVED FILL DETECTED</div>
-        <div style="font-size:12px;color:#8a8da8;margin-bottom:20px;">You have a saved plan for <span style="color:${col};font-weight:700;">${short}</span> replacing <span style="color:#d0d8ec;font-weight:600;">${playerWho}</span> from ${savedDate} at ${savedTime}.</div>
+        <div style="font-size:12px;color:#8a7060;margin-bottom:20px;">You have a saved plan for <span style="color:${col};font-weight:700;">${short}</span> replacing <span style="color:#d0d8ec;font-weight:600;">${playerWho}</span> from ${savedDate} at ${savedTime}.</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <button id="sfLoad" style="padding:10px 16px;border-radius:6px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.04em;">Load Saved Plan</button>
-          <button id="sfFresh" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;font-weight:700;cursor:pointer;">Start Fresh</button>
+          <button id="sfFresh" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;font-weight:700;cursor:pointer;">Start Fresh</button>
           <button id="sfDelete" style="padding:6px 16px;border-radius:6px;border:none;background:transparent;color:#c84848;font-size:11px;cursor:pointer;">Delete saved plan</button>
         </div>
       </div>`;
@@ -1879,10 +1855,10 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
       const rect = btn?.getBoundingClientRect() || {bottom:60, left:200};
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
-      ov.style.cssText = `position:fixed;top:${rect.bottom+6}px;left:${rect.left}px;background:#12141a;border:1px solid ${col}44;border-radius:8px;padding:12px;width:300px;z-index:2000;box-shadow:0 8px 32px rgba(0,0,0,0.8);`;
+      ov.style.cssText = `position:fixed;top:${rect.bottom+6}px;left:${rect.left}px;background:#1a1610;border:1px solid ${col}44;border-radius:8px;padding:12px;width:300px;z-index:2000;box-shadow:0 8px 32px rgba(0,0,0,0.8);`;
       ov.innerHTML = `<div style="font-size:11px;font-weight:700;color:${col};margin-bottom:8px;">Saved plan found — ${savedDate}</div>
         <button id="sfLoad" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:11px;font-weight:700;cursor:pointer;margin-bottom:6px;">Load Saved Plan</button>
-        <button id="sfFresh" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:11px;cursor:pointer;margin-bottom:4px;">Start Fresh</button>
+        <button id="sfFresh" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:11px;cursor:pointer;margin-bottom:4px;">Start Fresh</button>
         <button id="sfDelete" style="display:block;width:100%;padding:4px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">Delete saved</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -1894,10 +1870,10 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
     case 'toast': {
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
-      ov.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#12141a;border:1px solid ${col}44;border-radius:8px;padding:12px 20px;z-index:2000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.8);min-width:360px;`;
-      ov.innerHTML = `<div style="flex:1;font-size:11px;color:#8a8da8;">Saved plan for <span style="color:${col};font-weight:700;">${short}</span> found (${savedDate})</div>
+      ov.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1610;border:1px solid ${col}44;border-radius:8px;padding:12px 20px;z-index:2000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.8);min-width:360px;`;
+      ov.innerHTML = `<div style="flex:1;font-size:11px;color:#8a7060;">Saved plan for <span style="color:${col};font-weight:700;">${short}</span> found (${savedDate})</div>
         <button id="sfLoad" style="padding:6px 12px;border-radius:4px;border:1px solid ${col};background:${col}18;color:${col};font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;">Load it</button>
-        <button id="sfFresh" style="padding:6px 12px;border-radius:4px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:10px;cursor:pointer;white-space:nowrap;">Start fresh</button>
+        <button id="sfFresh" style="padding:6px 12px;border-radius:4px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:10px;cursor:pointer;white-space:nowrap;">Start fresh</button>
         <button id="sfDelete" style="padding:6px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">✕</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -1908,11 +1884,11 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
     case 'sidebar-panel': {
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
-      ov.style.cssText = `position:fixed;top:0;right:0;bottom:0;width:280px;background:#0e0f13;border-left:1px solid ${col}44;z-index:2000;display:flex;flex-direction:column;padding:24px 20px;box-shadow:-8px 0 32px rgba(0,0,0,0.8);`;
+      ov.style.cssText = `position:fixed;top:0;right:0;bottom:0;width:280px;background:#141008;border-left:1px solid ${col}44;z-index:2000;display:flex;flex-direction:column;padding:24px 20px;box-shadow:-8px 0 32px rgba(0,0,0,0.8);`;
       ov.innerHTML = `<div style="font-size:12px;font-weight:700;color:${col};margin-bottom:8px;letter-spacing:0.06em;">SAVED FILL FOUND</div>
-        <div style="font-size:11px;color:#8a8da8;margin-bottom:24px;line-height:1.6;"><span style="color:${col};font-weight:700;">${short}</span> replacing ${playerWho}<br/><span style="color:#4a4d62;">Saved ${savedDate} at ${savedTime}</span></div>
+        <div style="font-size:11px;color:#8a7060;margin-bottom:24px;line-height:1.6;"><span style="color:${col};font-weight:700;">${short}</span> replacing ${playerWho}<br/><span style="color:#5a4838;">Saved ${savedDate} at ${savedTime}</span></div>
         <button id="sfLoad" style="padding:10px;border-radius:6px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;">Load Saved Plan</button>
-        <button id="sfFresh" style="padding:10px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;margin-bottom:auto;">Start Fresh</button>
+        <button id="sfFresh" style="padding:10px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;margin-bottom:auto;">Start Fresh</button>
         <button id="sfDelete" style="padding:8px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">Delete saved plan</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -1973,7 +1949,7 @@ function revertFill(playerWho) {
 }
 
 function showSubPlanPrompt(playerWho, specName) {
-  const col = SPEC_CLASS_COLORS[specName] || '#c8a84b';
+  const col = SPEC_CLASS_COLORS[specName] || '#c83a20';
   const short = SPEC_SHORT_NAMES[specName] || specName;
 
   // Check for existing plans with this sub combo
@@ -1986,22 +1962,22 @@ function showSubPlanPrompt(playerWho, specName) {
   let existingHtml = '';
   if (existing.length) {
     existingHtml = `<div style="margin-bottom:12px;">
-      <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
       ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col}44;background:${col}0d;color:${col};font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
-      <div style="font-size:10px;color:#2e3040;text-align:center;margin:8px 0;">— or —</div>
+      <div style="font-size:10px;color:#3a2e20;text-align:center;margin:8px 0;">— or —</div>
     </div>`;
   }
 
-  ov.innerHTML = `<div style="background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
     <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:4px;">Sub: ${short} for ${playerWho}</div>
-    <div style="font-size:11px;color:#6878a0;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
+    <div style="font-size:11px;color:#7a6050;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
     ${existingHtml}
-    <div style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
     <input id="subPlanName" type="text" placeholder='Plan name (e.g. "Sub: Ret")' value="Sub: ${short}"
-      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
     <div style="display:flex;gap:8px;">
       <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
-      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
     </div>
   </div>`;
 
@@ -2129,28 +2105,28 @@ function showRosterModal() {
       const plans = getPlans();
       const activePlanId = getActivePlanId();
       const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
-      let html = `<div style="margin-bottom:14px;border:1px solid #2e3040;border-radius:6px;overflow:hidden;">
-        <div style="padding:8px 12px;background:#0e0f13;border-bottom:1px solid #2e3040;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:10px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;">Saved Plans</span>
+      let html = `<div style="margin-bottom:14px;border:1px solid #3a2e20;border-radius:6px;overflow:hidden;">
+        <div style="padding:8px 12px;background:#141008;border-bottom:1px solid #3a2e20;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.1em;text-transform:uppercase;">Saved Plans</span>
           <div style="display:flex;gap:6px;">
-            <button id="planImportBtn" style="font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid #2e3040;background:transparent;color:#4a4d62;cursor:pointer;letter-spacing:0.04em;">↓ Import Foji</button>
+            <button id="planImportBtn" style="font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid #3a2e20;background:transparent;color:#5a4838;cursor:pointer;letter-spacing:0.04em;">↓ Import Foji</button>
           </div>
         </div>
         <div style="padding:6px;">`;
 
       // Full Raid
       const isActiveFull = activePlanId === FULL_RAID_ID;
-      html += `<div class="plan-row" data-plan-id="${FULL_RAID_ID}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActiveFull?'#c8a84b18':'transparent'};">
-        <span style="flex:1;font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c8a84b':'#c8d0e8'};">Full Raid</span>
-        ${isActiveFull ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;">ACTIVE</span>' : ''}
+      html += `<div class="plan-row" data-plan-id="${FULL_RAID_ID}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActiveFull?'#c83a2018':'transparent'};">
+        <span style="flex:1;font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c83a20':'#c8d0e8'};">Full Raid</span>
+        ${isActiveFull ? '<span style="font-size:9px;font-weight:700;color:#c83a20;letter-spacing:0.06em;">ACTIVE</span>' : ''}
       </div>`;
 
       entries.forEach(plan => {
         const isActive = activePlanId === plan.id;
-        html += `<div class="plan-row" data-plan-id="${plan.id}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActive?'#c8a84b18':'transparent'};">
-          <span style="flex:1;font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
-          ${isActive ? '<span style="font-size:9px;font-weight:700;color:#c8a84b;letter-spacing:0.06em;margin-right:6px;">ACTIVE</span>' : ''}
-          <button class="plan-del-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#3a3d52;font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;">✕</button>
+        html += `<div class="plan-row" data-plan-id="${plan.id}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActive?'#c83a2018':'transparent'};">
+          <span style="flex:1;font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c83a20':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
+          ${isActive ? '<span style="font-size:9px;font-weight:700;color:#c83a20;letter-spacing:0.06em;margin-right:6px;">ACTIVE</span>' : ''}
+          <button class="plan-del-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a3828;font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;">✕</button>
         </div>`;
       });
 
@@ -2221,17 +2197,17 @@ function showRosterModal() {
 
     const picker = document.createElement('div');
     picker.id = 'fillPickerArea';
-    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#161820;border:1px solid #3a3d52;border-radius:8px;padding:20px;width:420px;z-index:99999;display:flex;flex-direction:column;gap:12px;';
+    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1a12;border:1px solid #4a3828;border-radius:8px;padding:20px;width:420px;z-index:99999;display:flex;flex-direction:column;gap:12px;';
     picker.innerHTML = `
-      <h3 style="font-size:14px;font-weight:500;color:#c8a84b;">${player.name} is out — who is subbing in?</h3>
-      <div style="font-size:11px;color:#5a5d78;">Their CDs: ${player.cds.map(id => { const cd = CD_POOL.find(c=>c.id===id); return cd ? cd.name : id; }).join(', ') || 'none'}</div>
+      <h3 style="font-size:14px;font-weight:500;color:#c83a20;">${player.name} is out — who is subbing in?</h3>
+      <div style="font-size:11px;color:#5a4838;">Their CDs: ${player.cds.map(id => { const cd = CD_POOL.find(c=>c.id===id); return cd ? cd.name : id; }).join(', ') || 'none'}</div>
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;color:#8a8da8;">Fill spec</label>
-        <select id="fillSpecSelect" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:13px;">
+        <label style="font-size:11px;color:#8a7060;">Fill spec</label>
+        <select id="fillSpecSelect" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:13px;">
           ${getSpecOpts()}
         </select>
       </div>
-      <div id="fillPreview" style="background:#0e0f13;border:1px solid #2e3040;border-radius:4px;padding:10px;font-size:11px;color:#8a8da8;min-height:48px;"></div>
+      <div id="fillPreview" style="background:#141008;border:1px solid #3a2e20;border-radius:4px;padding:10px;font-size:11px;color:#8a7060;min-height:48px;"></div>
       <div style="display:flex;gap:8px;">
         <button id="confirmFill" class="btn copy-btn">Confirm Swap</button>
         <button id="cancelFill" class="btn">Cancel</button>
@@ -2246,11 +2222,11 @@ function showRosterModal() {
       const outIds = player.cds;
       const inIds = spec?.cds || [];
       if (outIds.length === 0 && inIds.length === 0) {
-        preview.innerHTML = '<span style="color:#5a5d78;">No CD changes — only WHO label updates.</span>';
+        preview.innerHTML = '<span style="color:#5a4838;">No CD changes — only WHO label updates.</span>';
         return;
       }
       const maxLen = Math.max(outIds.length, inIds.length);
-      let rows = '<div style="margin-bottom:6px;color:#5a5d78;">Changes across all bosses:</div>';
+      let rows = '<div style="margin-bottom:6px;color:#5a4838;">Changes across all bosses:</div>';
       for (let i = 0; i < maxLen; i++) {
         const fromCd = outIds[i] ? CD_POOL.find(c => c.id === outIds[i]) : null;
         const toCd   = inIds[i]  ? CD_POOL.find(c => c.id === inIds[i])  : null;
@@ -2258,7 +2234,7 @@ function showRosterModal() {
         const toLabel   = toCd   ? `${toCd.name} (${spec.who})` : '<span style="color:#c84848;">removed</span>';
         rows += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
           <span style="color:#ff8888;min-width:140px;">− ${fromLabel}</span>
-          <span style="color:#5a5d78;">→</span>
+          <span style="color:#5a4838;">→</span>
           <span style="color:${toCd ? '#88ff88' : '#c84848'};">+ ${toLabel}</span>
         </div>`;
       }
@@ -2495,7 +2471,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   const label = document.createElement('div');
   label.className = 'ability-label';
   if (ab.encounterStart) {
-    label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a8da8;font-style:italic;">${ab.name}</div>`;
+    label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a7060;font-style:italic;">${ab.name}</div>`;
   } else if (ab.hpAssign) {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
   } else {
@@ -2578,7 +2554,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     else if (_iconSt === 'inset'){ cdBorder = `border-color:${ec}44;border-top-color:${ec};`; }
     else if (_iconSt === 'double'){ cdBorder = `border-color:${ec};outline-color:${ec}44;`; }
     else                          { cdBorder = `border-color:${ec};`; }
-    cdTextCol = _solidFill ? '#0a0b0f' : et;
+    cdTextCol = _solidFill ? '#0e0c0a' : et;
     el.style.cssText = `left:${left}px; background:${cdBg}; ${cdBorder} color:${cdTextCol};`;
     const offsetStr = p.offset != null ? ` +${p.offset}s` : '';
     const displayWho = (cd.customType) ? (p.customWho || cd.who || 'ALL') : cd.who;
@@ -2986,52 +2962,52 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
 
     if (isHpAssign) {
       const hpVal = p.hpPct != null ? p.hpPct : 40;
-      popup.innerHTML = '<label style="font-size:12px;color:#c8a84b;">HP Assign — set health %</label>'
+      popup.innerHTML = '<label style="font-size:12px;color:#c83a20;">HP Assign — set health %</label>'
         + '<label>Health % trigger</label>'
         + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="8" max="40" step="1"'
-        + ' style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
+        + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
     } else {
     popup.innerHTML = isCustom ? `
-    <label style="font-size:12px;color:#c8a84b;">Custom Assign — edit</label>
+    <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Boss Ability</label>
-      <select id="customBossAbility" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+      <select id="customBossAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${_bossAbOpts}
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Ability</label>
-      <select id="customAbility" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+      <select id="customAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>WHO</label>
-      <select id="customWho" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+      <select id="customWho" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${['ALL', ...CD_POOL.filter(c => c.who && c.who !== 'ALL').map(c => c.who).filter((v,i,a) => a.indexOf(v) === i).sort()].map(w => `<option value="${w}" ${(p.customWho || 'ALL') === w ? 'selected' : ''}>${w}</option>`).join('')}
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Overwrite TTS (optional)</label>
-      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Custom Name (display on sheet)</label>
-      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Offset (seconds)</label>
-      <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="1" style="background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="1" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetCancel">Cancel</button>
     </div>` : `
-    <label style="font-size:12px;color:#c8a84b;">${cd.short} — set offset</label>
+    <label style="font-size:12px;color:#c83a20;">${cd.short} — set offset</label>
     <label>Offset (seconds) — type or scroll</label>
     <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="1"
-      style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetClear">Clear</button>
@@ -3107,7 +3083,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   if (offsetInputEl) {
     function colorOffsetInput() {
       const v = parseInt(offsetInputEl.value) || 0;
-      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#d4d6e8';
+      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#d8c8b0';
     }
     colorOffsetInput();
     offsetInputEl.addEventListener('input', colorOffsetInput);
@@ -3311,7 +3287,7 @@ function showExportModal() {
   overlay.className = 'modal-overlay';
 
   const emptyHtml = !text
-    ? `<div style="font-size:12px;color:#5a5d78;">No cooldowns placed yet. Place some cooldowns on the ability rows first.</div>`
+    ? `<div style="font-size:12px;color:#5a4838;">No cooldowns placed yet. Place some cooldowns on the ability rows first.</div>`
     : '';
 
   overlay.innerHTML = `
@@ -3383,9 +3359,9 @@ function showManageModal() {
   const inactiveCDs = orderedCDs.filter(c => !activeSetIds.has(c.id));
 
   const itemsHtml = `
-    <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #1e2028;margin-bottom:4px;">● Active</div>
+    <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #241e14;margin-bottom:4px;">● Active</div>
     ${activeCDs.map(makeCdItem).join('')}
-    <div style="font-size:11px;font-weight:600;color:#5a5d78;padding:12px 4px 2px;grid-column:1/-1;border-bottom:1px solid #1e2028;margin-bottom:4px;">○ Inactive</div>
+    <div style="font-size:11px;font-weight:600;color:#5a4838;padding:12px 4px 2px;grid-column:1/-1;border-bottom:1px solid #241e14;margin-bottom:4px;">○ Inactive</div>
     ${inactiveCDs.map(makeCdItem).join('')}
   `;
 
@@ -3693,19 +3669,19 @@ function buildSsIconEl(cd, p, ab) {
     case 'bracket':
       return `<div style="display:flex;align-items:center;gap:3px;">
         ${imgHtml}
-        <span style="font-size:10px;font-weight:700;color:#c8a84b;white-space:nowrap;">[${info}]</span>
+        <span style="font-size:10px;font-weight:700;color:#c83a20;white-space:nowrap;">[${info}]</span>
       </div>`;
 
     case 'slash':
       return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
         ${imgHtml}
-        <span style="font-size:9px;color:#8a8da8;white-space:nowrap;">${cd.short}/${info}</span>
+        <span style="font-size:9px;color:#8a7060;white-space:nowrap;">${cd.short}/${info}</span>
       </div>`;
 
     case 'dot-prefix':
       return `<div style="display:flex;align-items:center;gap:3px;">
         ${imgHtml}
-        <span style="font-size:10px;color:#c8a84b;white-space:nowrap;">· ${info}</span>
+        <span style="font-size:10px;color:#c83a20;white-space:nowrap;">· ${info}</span>
       </div>`;
 
     case 'box-outline':
@@ -3724,7 +3700,7 @@ function buildSsIconEl(cd, p, ab) {
       return `<div style="display:flex;align-items:center;gap:4px;">
         ${imgHtml}
         <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-          <span style="font-size:9px;color:#4a4d62;white-space:nowrap;">${cd.short}</span>
+          <span style="font-size:9px;color:#5a4838;white-space:nowrap;">${cd.short}</span>
           <span style="font-size:11px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
         </div>
       </div>`;
@@ -3796,7 +3772,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -3805,7 +3781,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -3814,7 +3790,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -3832,7 +3808,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div style="padding:0 12px;overflow:hidden;display:flex;align-items:center;gap:6px;">
           <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-          <span style="color:#2e3040;font-size:12px;">·</span>
+          <span style="color:#3a2e20;font-size:12px;">·</span>
           <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">${t}</span>
         </div>
       </div>`;
@@ -3871,7 +3847,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#4a4d62;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
         </div>
       </div>`;
   }
@@ -3886,19 +3862,19 @@ function buildSsRow(ab, iconsHtml) {
 
   switch(ssRowStyle) {
     case 'dark-cards':
-      return `<div style="display:flex;align-items:center;gap:0;margin:4px 0;border-radius:6px;background:#12141a;border:1px solid #1e2030;overflow:hidden;">
+      return `<div style="display:flex;align-items:center;gap:0;margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #2a2218;overflow:hidden;">
         <div style="width:4px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:10px 14px;border-right:1px solid #1e2030;">
+        <div style="width:180px;flex-shrink:0;padding:10px 14px;border-right:1px solid #2a2218;">
           <div style="font-size:12px;font-weight:700;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:10px;color:#6878a0;margin-top:3px;letter-spacing:0.04em;">${abTime}</div>
+          <div style="font-size:10px;color:#7a6050;margin-top:3px;letter-spacing:0.04em;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
     case 'pill-time':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #161820;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:56px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid #1e2030;">
+        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid #2a2218;">
           <div style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
           <span style="display:inline-block;font-size:9px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;border-radius:10px;padding:2px 7px;letter-spacing:0.04em;align-self:flex-start;">${abTime}</span>
         </div>
@@ -3909,13 +3885,13 @@ function buildSsRow(ab, iconsHtml) {
       return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #0f1018;min-height:52px;">
         <div style="width:190px;flex-shrink:0;padding:0 16px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
           <div style="font-size:11px;font-weight:600;color:#a0a8c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;">${name}</div>
-          <div style="font-size:10px;color:#3a3d52;letter-spacing:0.06em;">${abTime}</div>
+          <div style="font-size:10px;color:#4a3828;letter-spacing:0.06em;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
     case 'accent-left':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #161820;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:56px;">
         <div style="width:4px;align-self:stretch;background:${c};flex-shrink:0;margin-right:0;"></div>
         <div style="width:180px;flex-shrink:0;padding:0 14px;background:${c}0a;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:1px solid ${c}22;">
           <div style="font-size:12px;font-weight:700;color:#d0d8ec;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
@@ -3925,19 +3901,19 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'two-col':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #161820;min-height:52px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:52px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:100px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #1e2030;">
+        <div style="width:100px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #2a2218;">
           <div style="font-size:11px;font-weight:700;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
         </div>
-        <div style="width:56px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #1e2030;">
+        <div style="width:56px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #2a2218;">
           <div style="font-size:11px;font-weight:600;color:#e8eaf2;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:6px 12px;">${icons}</div>
       </div>`;
 
     case 'full-color':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0a0b0f;min-height:58px;background:${c}0d;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #0e0c0a;min-height:58px;background:${c}0d;">
         <div style="width:200px;flex-shrink:0;display:flex;align-items:stretch;border-right:1px solid ${c}22;">${buildSsLabel(ab)
           .replace(/class="ss-label"/g,'style="width:200px;display:flex;align-items:stretch;"')
           .replace(/class="ss-label-marker"/g,`style="width:3px;align-self:stretch;flex-shrink:0;background:${c}"`)
@@ -3948,11 +3924,11 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'compact-inline':
-      return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #161820;min-height:46px;">
+      return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #1e1a12;min-height:46px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:190px;flex-shrink:0;padding:0 12px;display:flex;align-items:center;gap:6px;border-right:1px solid #1e2030;overflow:hidden;">
+        <div style="width:190px;flex-shrink:0;padding:0 12px;display:flex;align-items:center;gap:6px;border-right:1px solid #2a2218;overflow:hidden;">
           <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">${name}</span>
-          <span style="font-size:10px;font-weight:500;color:#8890aa;white-space:nowrap;flex-shrink:0;">${abTime}</span>
+          <span style="font-size:10px;font-weight:500;color:#8a7060;white-space:nowrap;flex-shrink:0;">${abTime}</span>
         </div>
         <div style="display:flex;gap:3px;align-items:center;flex-wrap:wrap;padding:4px 12px;">${icons}</div>
       </div>`;
@@ -3976,10 +3952,10 @@ function buildSsRow(ab, iconsHtml) {
 function buildSsBossHeader(boss, portraitUrl) {
   const p = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" ` : null;
   const name = boss.name;
-  return `<div style="display:flex;overflow:hidden;height:90px;background:#0d0f15;border-bottom:1px solid #2e3040;">
-    ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #2e3040;" />` : ''}
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;background:#0a0c12;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c8a84b66;margin-bottom:5px;">Cooldowns</div>
+  return `<div style="display:flex;overflow:hidden;height:90px;background:#100e0a;border-bottom:1px solid #3a2e20;">
+    ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;" />` : ''}
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;background:#0e0c0a;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c83a2066;margin-bottom:5px;">Cooldowns</div>
       <div style="font-size:19px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${name}</div>
     </div>
   </div>`;
@@ -3999,7 +3975,7 @@ function renderSsBossBlock(boss) {
     return buildSsRow(ab, iconsHtml);
   }).join('');
 
-  return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #1e2030;">
+  return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #2a2218;">
     ${buildSsBossHeader(boss, portraitUrl)}
     <div class="ss-rows-wrap">${rowsHtml}</div>
   </div>`;
@@ -4013,15 +3989,15 @@ function showScreenshotModal() {
 
   function buildContent() {
     return BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
-      '<div style="color:#5a5d78;font-size:13px;padding:20px 0;">No assignments placed yet.</div>';
+      '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed yet.</div>';
   }
 
   overlay.innerHTML = `
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
-        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#4888c8;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
-        <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#c83a20;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
+        <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
     </div>`;
@@ -4052,9 +4028,9 @@ function showScreenshotModal() {
     };
     loadH2C(() => {
       const clone = ssContent.cloneNode(true);
-      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#0a0804;padding:20px 24px;z-index:-9999;pointer-events:none;`;
       document.body.appendChild(clone);
-      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+      html2canvas(clone, { backgroundColor:'#0a0804', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
         clone.remove();
         const a = document.createElement('a');
         a.download = 'rcd-screenshot.png';
@@ -4071,11 +4047,11 @@ function showScreenshotModal() {
     if (existing) { existing.remove(); return; }
     const picker = document.createElement('div');
     picker.id = 'ssIconInfoPicker';
-    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#12141a;border:1px solid #2e3040;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#1a1610;border:1px solid #3a2e20;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
     SS_ICON_INFO_STYLES.forEach(s => {
       const btn = document.createElement('button');
       const isSel = s.id === ssIconInfoStyle;
-      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};text-align:left;cursor:pointer;`;
+      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c83a20':'1px solid #3a2e20'};background:${isSel?'#c83a2018':'#141008'};color:${isSel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
       btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
       btn.addEventListener('click', () => {
         ssIconInfoStyle = s.id;
@@ -4112,7 +4088,7 @@ function formatTime(s) {
 
 
 const BOSS_ICONS = {
-  'jinrokh':    { color: '#4888c8', abbr: 'JR' },
+  'jinrokh':    { color: '#c83a20', abbr: 'JR' },
   'horridon':   { color: '#c87838', abbr: 'HO' },
   'council':    { color: '#8868c8', abbr: 'CE' },
   'tortos':     { color: '#a86838', abbr: 'TO' },
@@ -4120,7 +4096,7 @@ const BOSS_ICONS = {
   'jikun':      { color: '#38a868', abbr: 'JK' },
   'darkanimus': { color: '#c84888', abbr: 'DA' },
   'ironqon':    { color: '#c86028', abbr: 'IQ' },
-  'leishen':    { color: '#4888c8', abbr: 'LS' },
+  'leishen':    { color: '#c83a20', abbr: 'LS' },
   'raden':      { color: '#c8a838', abbr: 'RA' },
 };
 
@@ -4331,7 +4307,7 @@ function getPlayerName(who) {
 
 function getPlayerColor(who) {
   const p = DEFAULT_ROSTER.find(r => r.who === who);
-  return p ? p.color : '#d4d6e8';
+  return p ? p.color : '#d8c8b0';
 }
 
 function renderSheetPreview(el) {
@@ -4384,18 +4360,18 @@ function renderSheetPreview(el) {
     </tr></thead><tbody>`;
 
   rows.forEach((r, i) => {
-    const delayColor = r.offset < 0 ? '#ff8888' : r.offset > 0 ? '#88ff88' : '#8a8da8';
+    const delayColor = r.offset < 0 ? '#ff8888' : r.offset > 0 ? '#88ff88' : '#8a7060';
     html += `<tr>
-      <td style="color:#5a5d78;">${i + 1}</td>
+      <td style="color:#5a4838;">${i + 1}</td>
       <td>${formatAbilityName(r.ab.name)}</td>
-      <td style="color:#d4d6e8;">${r.castNum}</td>
+      <td style="color:#d8c8b0;">${r.castNum}</td>
       <td style="color:${delayColor};font-weight:600;">${r.offset}</td>
       <td class="sp-who" style="color:${r.playerColor};">${r.who}</td>
       <td style="color:${r.playerColor};">${r.playerName}</td>
       <td><div class="sp-cd-name"><div class="sp-cd-dot" style="background:${r.cd.color};"></div>${r.cdName}</div></td>
       <td style="color:#c87020;">${r.tts || ''}</td>
       <td style="color:#c87020;">${r.displayName || ''}</td>
-      <td style="color:#8a8da8;">${r.customIcon || ''}</td>
+      <td style="color:#8a7060;">${r.customIcon || ''}</td>
     </tr>`;
   });
 
@@ -4454,7 +4430,7 @@ function showImportFojiModal() {
   overlay.innerHTML = `<div class="modal-box" style="width:560px;">
     <h3>Import Foji</h3>
     <div class="modal-sub" style="font-size:13px;margin-bottom:12px;">Paste your Foji export string below to import cooldown assignments.</div>
-    <textarea id="importFojiInput" style="width:100%;height:160px;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:10px;border-radius:6px;font-size:11px;font-family:monospace;resize:vertical;" placeholder="Paste Foji string here..."></textarea>
+    <textarea id="importFojiInput" style="width:100%;height:160px;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:10px;border-radius:6px;font-size:11px;font-family:monospace;resize:vertical;" placeholder="Paste Foji string here..."></textarea>
     <div id="importFojiStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
     <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
       <button id="importFojiConfirm" class="btn copy-btn">Import</button>
@@ -4631,9 +4607,9 @@ function updateSyncIndicator(state) {
   if (!el) return;
   const states = {
     connected:    { dot:'#48a868', text:'Synced' },
-    saving:       { dot:'#c8a84b', text:'Saving…' },
+    saving:       { dot:'#c83a20', text:'Saving…' },
     disconnected: { dot:'#c84848', text:'Offline' },
-    connecting:   { dot:'#4888c8', text:'Connecting…' },
+    connecting:   { dot:'#c83a20', text:'Connecting…' },
   };
   const s = states[state] || states.disconnected;
   el.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${s.dot};display:inline-block;margin-right:5px;flex-shrink:0;"></span><span style="font-size:10px;color:${s.dot};font-weight:600;letter-spacing:0.04em;">${s.text}</span>`;
@@ -5005,7 +4981,7 @@ var WCL_SPELLS = {
 // Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
 // dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
-  'jinrokh':   [{ids:[137358], name:'Lightning Storm', color:'#4888c8', dataType:'DamageTaken'}],
+  'jinrokh':   [{ids:[137358], name:'Lightning Storm', color:'#c83a20', dataType:'DamageTaken'}],
   'horridon':  [{ids:[136817], name:'Bestial Cry', color:'#c87838', dataType:'DamageTaken'}],
   'council':   [{ids:[136986,137492], name:'Discharge', color:'#8868c8', dataType:'DamageTaken'}],
   'tortos':    [{ids:[134920], name:'Quake Stomp', color:'#a86838', dataType:'DamageTaken'}],
@@ -5097,7 +5073,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   if (!spellMap) spellMap = WCL_SPELLS;
   if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
-    container.innerHTML = '<div style="color:#5a5d78;font-size:12px;padding:20px 0;">No data found.</div>';
+    container.innerHTML = '<div style="color:#5a4838;font-size:12px;padding:20px 0;">No data found.</div>';
     return;
   }
 
@@ -5165,8 +5141,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       var isMajor = (ts % 60 === 0);
       var isHalf  = (ts % 30 === 0);
       var tickH   = isMajor ? 8 : isHalf ? 5 : 4;
-      var lineCol = isMajor ? '#6a7098' : isHalf ? '#4a5070' : '#353858';
-      var txtCol  = isMajor ? '#c8d0f0' : isHalf ? '#7880a8' : '#525878';
+      var lineCol = isMajor ? '#6a5040' : isHalf ? '#c83a2066' : '#342818';
+      var txtCol  = isMajor ? '#d8c8b0' : isHalf ? '#806050' : '#5a4838';
       var txtSize = isMajor ? '10' : '9';
       var fontW   = isMajor ? '700' : '400';
       html += '<div style="position:absolute;left:'+tx+'px;bottom:0;width:1px;height:'+tickH+'px;background:'+lineCol+';transform:translateX(-50%);"></div>';
@@ -5383,7 +5359,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       // 13. Piano roll — thin vertical ticks on a baseline, height = count
       H = 32;
       html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
-      html += '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:#1e2030;"></div>';
+      html += '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:#2a2218;"></div>';
       for (var bi=0; bi<numBuckets; bi++) {
         if (!buckets[bi]) continue;
         var ph = Math.max(2, Math.round(intensity(buckets[bi])*(H-2)));
@@ -5428,10 +5404,10 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var color = spell.color;
     var cdDurPx = ((CD_DURATIONS[+sid]||10)*sharedPps);
     var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#1e2030')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#2a2218')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
     html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
     for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
-      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0c0e1a;pointer-events:none;"></div>';
+      html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0e0c0a;pointer-events:none;"></div>';
     }
     times.forEach(function(t) {
       var x = Math.round((t/1000)*sharedPps);
@@ -5484,7 +5460,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       for (var hri=0; hri*hpsTick*1000<=maxDuration; hri++) {
         var hrx = Math.min(Math.round(hri*hpsTick*sharedPps), HPSW);
         var hrlabel = Math.floor(hri*hpsTick/60)+':'+(hri*hpsTick%60<10?'0':'')+(hri*hpsTick%60);
-        hpsRulerHtml += '<div style="position:absolute;left:'+hrx+'px;top:0;bottom:0;border-left:1px solid #22253a;"></div>';
+        hpsRulerHtml += '<div style="position:absolute;left:'+hrx+'px;top:0;bottom:0;border-left:1px solid #2e2620;"></div>';
         hpsRulerHtml += '<span style="position:absolute;left:'+hrx+'px;top:2px;font-size:9px;font-weight:700;color:#5a6080;transform:translateX(-50%);white-space:nowrap;">'+hrlabel+'</span>';
       }
       hpsRulerHtml += '</div></div>';
@@ -5522,20 +5498,20 @@ function showWclModal() {
   ov.className = 'modal-overlay';
   ov.style.cssText = 'align-items:flex-start;padding:20px;';
   var box = document.createElement('div');
-  box.id = 'wclModalBox'; box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.id = 'wclModalBox'; box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
-  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#ff8c00;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#6878a0;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #2a2218;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#c83a20;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#7a6050;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
   if (!authed) {
-    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#4a4d62;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #ff8c0066;background:#ff8c0018;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
+    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#5a4838;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #c83a2066;background:#c83a2018;color:#c83a20;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
   } else {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
       // Boss selector row with label inline
       + '<div style="margin-bottom:14px;">'
       + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
       + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
-      + '<select id="wclBoss" style="flex:1;background:#0d0e16;border:1px solid #2e3550;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
-      + '<span style="font-size:10px;color:#6878a0;font-weight:600;white-space:nowrap;">Old SoO · ranks 125–165 · execution</span>'
+      + '<select id="wclBoss" style="flex:1;background:#100e0c;border:1px solid #3a2e20;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
+      + '<span style="font-size:10px;color:#7a6050;font-weight:600;white-space:nowrap;">Old SoO · ranks 125–165 · execution</span>'
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
@@ -5547,7 +5523,7 @@ function showWclModal() {
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
       + '<div id="wclResults"></div>'
-      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#2e3550;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
+      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a2e20;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
   }
   box.innerHTML = headerHtml + bodyHtml;
@@ -5610,7 +5586,7 @@ function showWclModal() {
     if (!encId) { alert('Please select a boss.'); return; }
     var btn = box.querySelector('#wclFetch'), results = box.querySelector('#wclResults');
     btn.textContent = 'Fetching...'; btn.disabled = true;
-    results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Querying Warcraft Logs...</div>';
+    results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
       // Ranks 26-45: page 2 of execution rankings, 20 logs max
       var bossName = bossEl.options[bossEl.selectedIndex].text;
@@ -5619,10 +5595,10 @@ function showWclModal() {
 
       // Always fetch fresh (cache is for tab-switching only, not for blocking fetch)
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings 10-45...</div>';
+      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching rankings 10-45...</div>';
       // Fetch pages starting at rank 125 (page 5, offset 24 = rank 125)
       // Crawl pages until we have at least 40 entries to try, continuing past 165 if needed
-      results.innerHTML = '<div style="color:#4a4d62;font-size:12px;">Fetching rankings from rank 125...</div>';
+      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching rankings from rank 125...</div>';
       var allRankEntries = [];
       var crawlPage = 5; // page 5 = ranks 101-125
       var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
@@ -5769,7 +5745,7 @@ function showWclModal() {
             logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
           }
           processed++;
-          results.innerHTML='<div style="color:#4a4d62;font-size:12px;">Processing '+processed+'/40 logs (rank '+(125+ri)+')...</div>';
+          results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing '+processed+'/40 logs (rank '+(125+ri)+')...</div>';
           if (processed >= 40) break;
         } catch(le){ console.warn('WCL log error:', le); }
       }
@@ -5833,8 +5809,8 @@ function showPlanAnimPicker() {
   ov.id = 'planAnimPickerOv';
   ov.className = 'modal-overlay';
   const box = document.createElement('div');
-  box.style.cssText = 'background:#12141a;border:1px solid #2e3040;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
-  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#c8a84b;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;">×</button></div>'
+  box.style.cssText = 'background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
+  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#c83a20;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;">×</button></div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="animGrid"></div>';
   ov.appendChild(box);
   document.body.appendChild(ov);
@@ -5842,7 +5818,7 @@ function showPlanAnimPicker() {
   PLAN_ANIM_STYLES.forEach(s => {
     const isSel = s.id === planAnimStyle;
     const btn = document.createElement('button');
-    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c8a84b':'1px solid #2e3040'};background:${isSel?'#c8a84b18':'#0e0f13'};color:${isSel?'#c8a84b':'#8a8da8'};cursor:pointer;font-size:12px;font-weight:600;`;
+    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c83a20':'1px solid #3a2e20'};background:${isSel?'#c83a2018':'#141008'};color:${isSel?'#c83a20':'#8a7060'};cursor:pointer;font-size:12px;font-weight:600;`;
     btn.textContent = s.name;
     btn.addEventListener('click', () => {
       planAnimStyle = s.id;
@@ -6045,7 +6021,7 @@ function showPlansMenu(ev) {
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding-top:52px;';
 
   const box = document.createElement('div');
-  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
+  box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
 
   function buildBoxHtml() {
     const plans = getPlans();
@@ -6058,33 +6034,33 @@ function showPlansMenu(ev) {
       const isActive = activePlanId === plan.id;
       return `<div class="plan-card" data-id="${plan.id}" style="
         display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
-        border-bottom:1px solid #161820;transition:background 0.1s;
-        background:${isActive ? '#c8a84b0f' : 'transparent'};
+        border-bottom:1px solid #1e1a12;transition:background 0.1s;
+        background:${isActive ? '#c83a200f' : 'transparent'};
         position:relative;
       ">
         <div style="
           width:3px;height:36px;border-radius:2px;flex-shrink:0;
-          background:${isActive ? '#c8a84b' : '#2e3040'};
+          background:${isActive ? '#c83a20' : '#3a2e20'};
           transition:background 0.15s;
         "></div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?'#c8a84b':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s;">${plan.name}</div>
-          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c8a84b99;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#3a3d52;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
+          <div style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?'#c83a20':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s;">${plan.name}</div>
+          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c83a2099;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#4a3828;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
         </div>
-        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c8a84b;flex-shrink:0;box-shadow:0 0 8px #c8a84b88;"></div>' : ''}
-        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a4d62;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#2e3040;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
+        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c83a20;flex-shrink:0;box-shadow:0 0 8px #c83a2088;"></div>' : ''}
+        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#5a4838;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#3a2e20;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
       </div>`;
     }).join('');
 
     return `
-      <div style="padding:14px 18px 10px;border-bottom:1px solid #1e2030;display:flex;align-items:center;gap:8px;">
-        <div style="font-size:12px;font-weight:700;color:#c8a84b;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
-        <button id="plansCloseBtn" style="background:transparent;border:none;color:#4a4d62;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
+      <div style="padding:14px 18px 10px;border-bottom:1px solid #2a2218;display:flex;align-items:center;gap:8px;">
+        <div style="font-size:12px;font-weight:700;color:#c83a20;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
+        <button id="plansCloseBtn" style="background:transparent;border:none;color:#5a4838;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
-      <div style="padding:12px;border-top:1px solid #1e2030;display:flex;gap:8px;">
-        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
-        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#1e2030;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
+      <div style="padding:12px;border-top:1px solid #2a2218;display:flex;gap:8px;">
+        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#2a2218;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
+        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#2a2218;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
       </div>`;
   }
 
@@ -6115,7 +6091,7 @@ function showPlansMenu(ev) {
     cards.forEach(c => {
       if (c.dataset.id === id) {
         c.style.transition = 'background 0.2s';
-        c.style.background = '#c8a84b18';
+        c.style.background = '#c83a2018';
       }
     });
     setTimeout(() => {
@@ -6137,8 +6113,8 @@ function showPlansMenu(ev) {
     });
 
     box.querySelectorAll('.plan-edit-btn').forEach(btn => {
-      btn.addEventListener('mouseenter', () => { btn.style.color = '#c8a84b'; });
-      btn.addEventListener('mouseleave', () => { btn.style.color = '#4a4d62'; });
+      btn.addEventListener('mouseenter', () => { btn.style.color = '#c83a20'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#5a4838'; });
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         close();
@@ -6148,7 +6124,7 @@ function showPlansMenu(ev) {
 
     box.querySelectorAll('.plan-del-x').forEach(btn => {
       btn.addEventListener('mouseenter', () => { btn.style.color = '#c84848'; });
-      btn.addEventListener('mouseleave', () => { btn.style.color = '#2e3040'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#3a2e20'; });
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const planName = getPlans()[btn.dataset.id]?.name || 'this plan';
@@ -6160,10 +6136,10 @@ function showPlansMenu(ev) {
       });
     });
 
-    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#2e3040'; });
-    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#1e2030'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2e3040'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#1e2030'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#3a2e20'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#2a2218'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#3a2e20'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2a2218'; });
     box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
       close();
       showNewPlanPicker();
@@ -6186,7 +6162,7 @@ function showNewPlanPicker() {
   ov.style.alignItems = 'center';
 
   const box = document.createElement('div');
-  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
 
   const selectedOut = new Set();       // who values subbed out
   const subIns = {};                    // who -> specName (sub-in spec)
@@ -6206,14 +6182,14 @@ function showNewPlanPicker() {
       const players = DEFAULT_ROSTER.filter(p => p.role === role);
       if (!players.length) return '';
       return `<div style="margin-bottom:12px;">
-        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="font-size:9px;font-weight:700;color:#5a4838;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           ${players.map(p => {
             const isSel = selectedOut.has(p.who);
             const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
-            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #3a2e20'};background:${isSel?p.color+'22':'#1a1610'};min-width:120px;">
               <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
-              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#4a3828'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
             </button>`;
           }).join('')}
         </div>
@@ -6225,16 +6201,16 @@ function showNewPlanPicker() {
 
     box.innerHTML = `
       <div style="display:flex;align-items:center;margin-bottom:4px;">
-        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 1 of 2</div></div>
-        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c83a20;">New Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;padding:0;">×</button>
       </div>
-      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Select players who are <strong style="color:#c8d0e8;">subbing out</strong>.</div>
+      <div style="font-size:11px;color:#5a4838;margin-bottom:16px;">Select players who are <strong style="color:#c8d0e8;">subbing out</strong>.</div>
       <div id="npPlayers">${playersHtml}</div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
-        <div style="font-size:10px;color:#4a4d62;margin-bottom:10px;">${anySelected?'Subbing out: <span style="color:#c8d0e8;">'+selectedNames+'</span>':'Select at least one player to sub out, or proceed with a Full Raid copy.'}</div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #2a2218;">
+        <div style="font-size:10px;color:#5a4838;margin-bottom:10px;">${anySelected?'Subbing out: <span style="color:#c8d0e8;">'+selectedNames+'</span>':'Select at least one player to sub out, or proceed with a Full Raid copy.'}</div>
         <div style="display:flex;gap:8px;">
-          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">${anySelected?'Next →':'Create Copy of Full Raid'}</button>
-          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c83a2066;background:#c83a2022;color:#c83a20;font-size:12px;font-weight:700;cursor:pointer;">${anySelected?'Next →':'Create Copy of Full Raid'}</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
         </div>
       </div>`;
 
@@ -6265,16 +6241,16 @@ function showNewPlanPicker() {
       const currentSub = subIns[p.who] || '';
       const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
       const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
-      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1e1a12;">
         <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
-          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#5a4838;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#1a1610;border:1px solid #4a3828;color:#d8c8b0;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
             <option value="">— No sub-in —</option>
             ${specOptsHtml}
           </select>
         </div>
-        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames || '<span style="color:#2e3040;">no CDs</span>'}</div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames || '<span style="color:#3a2e20;">no CDs</span>'}</div>
       </div>`;
     }).join('');
 
@@ -6287,18 +6263,18 @@ function showNewPlanPicker() {
 
     box.innerHTML = `
       <div style="display:flex;align-items:center;margin-bottom:4px;">
-        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
-        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">New Plan — Step 2 of 2</div></div>
-        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+        <button id="npBack" style="background:transparent;border:none;color:#7a6050;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c83a20;">New Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;padding:0;">×</button>
       </div>
-      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Choose who's <strong style="color:#c8d0e8;">subbing in</strong> for each player. Their CDs will be added to the palette.</div>
+      <div style="font-size:11px;color:#5a4838;margin-bottom:16px;">Choose who's <strong style="color:#c8d0e8;">subbing in</strong> for each player. Their CDs will be added to the palette.</div>
       <div>${playersHtml}</div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #2a2218;">
         <input id="npName" type="text" placeholder="Plan name…" value="Sub: ${selectedNames}"
-          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+          style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
         <div style="display:flex;gap:8px;">
-          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Create Plan</button>
-          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c83a2066;background:#c83a2022;color:#c83a20;font-size:12px;font-weight:700;cursor:pointer;">Create Plan</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
         </div>
       </div>`;
 
@@ -6407,7 +6383,7 @@ function showEditPlanPicker(planId) {
   ov.style.alignItems = 'center';
 
   const box = document.createElement('div');
-  box.style.cssText = 'background:#0e0f13;border:1px solid #2e3040;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:520px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
 
   const selectedOut = new Set(preSelectedOut);
   const subIns = Object.assign({}, preSubIns);
@@ -6427,14 +6403,14 @@ function showEditPlanPicker(planId) {
       const players = DEFAULT_ROSTER.filter(p => p.role === role);
       if (!players.length) return '';
       return `<div style="margin-bottom:12px;">
-        <div style="font-size:9px;font-weight:700;color:#4a4d62;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
+        <div style="font-size:9px;font-weight:700;color:#5a4838;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">${roleLabels[role]}</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           ${players.map(p => {
             const isSel = selectedOut.has(p.who);
             const cdNames = p.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? cd.short : id; }).join(', ');
-            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #2e3040'};background:${isSel?p.color+'22':'#12141a'};min-width:120px;">
+            return `<button class="sub-player-btn" data-who="${p.who}" style="padding:8px 12px;border-radius:6px;cursor:pointer;text-align:left;border:${isSel?'2px solid '+p.color:'1px solid #3a2e20'};background:${isSel?p.color+'22':'#1a1610'};min-width:120px;">
               <div style="font-size:12px;font-weight:${isSel?'700':'500'};color:${isSel?p.color:'#c8d0e8'};">${p.name}</div>
-              <div style="font-size:9px;color:${isSel?p.color+'99':'#3a3d52'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
+              <div style="font-size:9px;color:${isSel?p.color+'99':'#4a3828'};margin-top:2px;">${p.spec}${cdNames?' · '+cdNames:''}</div>
             </button>`;
           }).join('')}
         </div>
@@ -6443,15 +6419,15 @@ function showEditPlanPicker(planId) {
 
     box.innerHTML = `
       <div style="display:flex;align-items:center;margin-bottom:4px;">
-        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 1 of 2</div></div>
-        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c83a20;">Edit Plan — Step 1 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;padding:0;">×</button>
       </div>
-      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust who's subbing out.</div>
+      <div style="font-size:11px;color:#5a4838;margin-bottom:16px;">Adjust who's subbing out.</div>
       <div>${playersHtml}</div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #2a2218;">
         <div style="display:flex;gap:8px;">
-          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Next →</button>
-          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="npNext" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c83a2066;background:#c83a2022;color:#c83a20;font-size:12px;font-weight:700;cursor:pointer;">Next →</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
         </div>
       </div>`;
 
@@ -6478,33 +6454,33 @@ function showEditPlanPicker(planId) {
       const currentSub = subIns[p.who] || '';
       const subSpec = currentSub ? SPEC_CD_MAP[currentSub] : null;
       const subCdNames = subSpec ? subSpec.cds.map(id => { const cd = CD_POOL.find(c => c.id === id); return cd ? `<span style="display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${cd.color}44;color:${cd.color};background:${cd.color}18;margin:1px;">${cd.short}</span>`:''; }).join('') : '';
-      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161820;">
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1e1a12;">
         <div style="width:3px;height:36px;border-radius:2px;background:${p.color};flex-shrink:0;"></div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#4a4d62;">subbing out</span></div>
-          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#12141a;border:1px solid #3a3d52;color:#d4d6e8;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
+          <div style="font-size:12px;font-weight:600;color:${p.color};margin-bottom:4px;">${p.name} <span style="font-size:10px;color:#5a4838;">subbing out</span></div>
+          <select class="sub-in-select" data-who="${p.who}" style="width:100%;background:#1a1610;border:1px solid #4a3828;color:#d8c8b0;padding:6px 8px;border-radius:4px;font-size:11px;cursor:pointer;">
             <option value="">— No sub-in —</option>${specOptsHtml}
           </select>
         </div>
-        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames||'<span style="color:#2e3040;">no CDs</span>'}</div>
+        <div style="font-size:10px;min-width:80px;text-align:right;">${subCdNames||'<span style="color:#3a2e20;">no CDs</span>'}</div>
       </div>`;
     }).join('');
 
     const selectedNames = subbedPlayers.map(p => p.name).join(', ');
     box.innerHTML = `
       <div style="display:flex;align-items:center;margin-bottom:4px;">
-        <button id="npBack" style="background:transparent;border:none;color:#6878a0;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
-        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c8a84b;">Edit Plan — Step 2 of 2</div></div>
-        <button id="npClose" style="background:transparent;border:none;color:#4a4d62;font-size:20px;cursor:pointer;padding:0;">×</button>
+        <button id="npBack" style="background:transparent;border:none;color:#7a6050;font-size:12px;cursor:pointer;padding:0;margin-right:10px;">← Back</button>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#c83a20;">Edit Plan — Step 2 of 2</div></div>
+        <button id="npClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;padding:0;">×</button>
       </div>
-      <div style="font-size:11px;color:#4a4d62;margin-bottom:16px;">Adjust sub-ins and rename if needed.</div>
+      <div style="font-size:11px;color:#5a4838;margin-bottom:16px;">Adjust sub-ins and rename if needed.</div>
       <div>${playersHtml}</div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2030;">
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #2a2218;">
         <input id="npName" type="text" placeholder="Plan name…" value="${plan.name}"
-          style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+          style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
         <div style="display:flex;gap:8px;">
-          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c8a84b66;background:#c8a84b22;color:#c8a84b;font-size:12px;font-weight:700;cursor:pointer;">Save Changes</button>
-          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #2e3040;background:transparent;color:#8a8da8;font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="npCreate" style="flex:1;padding:10px;border-radius:6px;border:1px solid #c83a2066;background:#c83a2022;color:#c83a20;font-size:12px;font-weight:700;cursor:pointer;">Save Changes</button>
+          <button id="npCancel" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
         </div>
       </div>`;
 
@@ -6573,8 +6549,8 @@ function showImportFojiAsPlan() {
   overlay.innerHTML = `<div class="modal-box" style="width:560px;">
     <h3>Import Foji as New Plan</h3>
     <div class="modal-sub" style="font-size:13px;margin-bottom:8px;">Give this plan a name, then paste your Foji string.</div>
-    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
-    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#0e0f13;border:1px solid #3a3d52;color:#d4d6e8;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
+    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
+    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
     <div id="importPlanStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
     <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
       <button id="importPlanConfirm" class="btn copy-btn">Import & Save</button>
@@ -6683,24 +6659,24 @@ async function initViewMode(viewId) {
 
   const viewEl = document.createElement('div');
   viewEl.id = 'viewPage';
-  viewEl.style.cssText = 'min-height:100vh;background:#08090d;font-family:var(--app-font, Inter, system-ui, sans-serif);';
+  viewEl.style.cssText = 'min-height:100vh;background:#0a0804;font-family:var(--app-font, Inter, system-ui, sans-serif);';
 
   // Header
   viewEl.innerHTML = `
-    <div style="background:#0d0f15;border-bottom:2px solid #c8a84b44;padding:14px 28px;display:flex;align-items:center;gap:16px;">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+    <div style="background:#100e0a;border-bottom:2px solid #c83a2044;padding:14px 28px;display:flex;align-items:center;gap:16px;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
       <div style="display:flex;flex-direction:column;justify-content:center;gap:3px;">
-        <div style="font-size:18px;font-weight:900;color:#c8a84b;letter-spacing:0.04em;line-height:1;">&lt;Professional&gt; Raid Cooldowns</div>
-        <div style="font-size:10px;color:#4a4d62;letter-spacing:0.06em;text-transform:uppercase;line-height:1;">Throne of Thunder · Heroic 10</div>
+        <div style="font-size:18px;font-weight:900;color:#c83a20;letter-spacing:0.04em;line-height:1;">&lt;Professional&gt; Raid Cooldowns</div>
+        <div style="font-size:10px;color:#5a4838;letter-spacing:0.06em;text-transform:uppercase;line-height:1;">Throne of Thunder · Heroic 10</div>
       </div>
-      <div style="margin-left:32px;font-size:10px;color:#4a4d62;letter-spacing:0.03em;text-align:right;line-height:1.5;">Icon numbers:<br><span style="color:#ff8888;">− before cast</span> · <span style="color:#88ff88;">+ after cast</span></div>
+      <div style="margin-left:32px;font-size:10px;color:#5a4838;letter-spacing:0.03em;text-align:right;line-height:1.5;">Icon numbers:<br><span style="color:#ff8888;">− before cast</span> · <span style="color:#88ff88;">+ after cast</span></div>
     </div>
     <div id="viewContent" style="padding:20px 28px;"></div>`;
 
   document.body.appendChild(viewEl);
 
   const viewContent = viewEl.querySelector('#viewContent');
-  viewContent.innerHTML = '<div style="color:#4a4d62;font-size:13px;padding:20px 0;">Loading…</div>';
+  viewContent.innerHTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">Loading…</div>';
 
   try {
     const db = firebase.database();
@@ -6719,7 +6695,7 @@ async function initViewMode(viewId) {
 
     // Build content
     const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
-      '<div style="color:#5a5d78;font-size:13px;padding:20px 0;">No assignments placed.</div>';
+      '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
     viewContent.innerHTML = html;
     attachSsIconErrors(viewContent);
 
@@ -6777,20 +6753,20 @@ function buildHPalaRow(ab, sorted, style) {
 
   switch(style) {
     case 'badge-row':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:56px;">
         <div style="background:${c}22;border-right:1px solid ${c}44;min-width:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <span style="font-size:11px;font-weight:700;color:${c};">${abTime}</span>
         </div>
-        <div style="width:150px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;border-right:1px solid #1e2030;">
+        <div style="width:150px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;border-right:1px solid #2a2218;">
           <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
       </div>`;
 
     case 'pill-icons':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:60px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:60px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #1e2030;">
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #2a2218;">
           <span style="font-size:12px;font-weight:600;color:${c};">${name}</span>
           <span style="display:inline-block;margin-top:4px;font-size:9px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;border-radius:10px;padding:1px 8px;align-self:flex-start;">${abTime}</span>
         </div>
@@ -6800,7 +6776,7 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'accent-left':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:56px;background:${c}0a;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:56px;background:${c}0a;">
         <div style="width:4px;background:${c};flex-shrink:0;"></div>
         <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
           <span style="font-size:12px;font-weight:700;color:#d0d8ec;">${name}</span>
@@ -6810,15 +6786,15 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'two-col':
-      return `<div style="display:flex;align-items:center;border-bottom:1px solid #161820;min-height:48px;">
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #1e1a12;min-height:48px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
         <div style="width:130px;flex-shrink:0;padding:0 12px;font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-        <div style="width:48px;flex-shrink:0;padding:0 10px;font-size:11px;font-weight:600;color:#e8eaf2;border-right:1px solid #1e2030;">${abTime}</div>
+        <div style="width:48px;flex-shrink:0;padding:0 10px;font-size:11px;font-weight:600;color:#e8eaf2;border-right:1px solid #2a2218;">${abTime}</div>
         <div style="display:flex;gap:5px;align-items:center;padding:6px 12px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'36px'):''}).join('')}</div>
       </div>`;
 
     case 'icon-grid':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:72px;background:${c}08;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:72px;background:${c}08;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
         <div style="width:155px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
           <span style="font-size:13px;font-weight:700;color:${c};">${name}</span>
@@ -6830,30 +6806,30 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'dark-card':
-      return `<div style="margin:4px 0;border-radius:6px;background:#12141a;border:1px solid #1e2030;overflow:hidden;display:flex;align-items:stretch;">
+      return `<div style="margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #2a2218;overflow:hidden;display:flex;align-items:stretch;">
         <div style="width:4px;background:${c};flex-shrink:0;border-radius:6px 0 0 6px;"></div>
-        <div style="width:155px;flex-shrink:0;padding:10px 14px;border-right:1px solid #1e2030;">
+        <div style="width:155px;flex-shrink:0;padding:10px 14px;border-right:1px solid #2a2218;">
           <div style="font-size:12px;font-weight:700;color:${c};">${name}</div>
-          <div style="font-size:10px;color:#6878a0;margin-top:3px;">${abTime}</div>
+          <div style="font-size:10px;color:#7a6050;margin-top:3px;">${abTime}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
       </div>`;
 
     case 'slash':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:54px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:54px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="display:flex;align-items:center;gap:0;padding:0 14px;width:200px;flex-shrink:0;border-right:1px solid #1e2030;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:0;padding:0 14px;width:200px;flex-shrink:0;border-right:1px solid #2a2218;overflow:hidden;">
           <span style="font-size:11px;font-weight:600;color:#e8eaf2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-          <span style="font-size:14px;color:#2e3040;margin:0 8px;flex-shrink:0;">/</span>
+          <span style="font-size:14px;color:#3a2e20;margin:0 8px;flex-shrink:0;">/</span>
           <span style="font-size:11px;font-weight:700;color:${c};flex-shrink:0;">${abTime}</span>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'38px'):''}).join('')}</div>
       </div>`;
 
     case 'bold-ability':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:60px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:60px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid #1e2030;">
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid #2a2218;">
           <span style="font-size:15px;font-weight:900;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;">${name}</span>
           <span style="font-size:10px;color:#e8eaf2;margin-top:2px;">${abTime}</span>
         </div>
@@ -6861,7 +6837,7 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'chip':
-      return `<div style="display:flex;align-items:center;border-bottom:1px solid #161820;min-height:54px;padding:8px 14px;gap:12px;">
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #1e1a12;min-height:54px;padding:8px 14px;gap:12px;">
         <div style="display:flex;flex-direction:column;gap:5px;width:180px;flex-shrink:0;">
           <span style="display:inline-block;font-size:10px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;padding:3px 10px;border-radius:4px;align-self:flex-start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${name}</span>
           <span style="font-size:10px;font-weight:600;color:#e8eaf2;padding-left:2px;">${abTime}</span>
@@ -6889,7 +6865,7 @@ function buildHPalaRow(ab, sorted, style) {
 
     case 'timeline':
     default:
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #161820;min-height:58px;background:${c}08;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:58px;background:${c}08;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
         <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid ${c}22;">
           <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
@@ -6919,20 +6895,20 @@ function buildHPalaContent() {
     if (!rows.length) return;
 
     const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
-    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #2e3040;">` : '';
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;">` : '';
 
-    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#0d0f15;border-bottom:1px solid #2e3040;">
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #3a2e20;">
       ${pImg}
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0a0c12;">
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c8a84b66;margin-bottom:3px;">Cooldowns</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0e0c0a;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c83a2066;margin-bottom:3px;">Cooldowns</div>
         <div style="font-size:16px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${boss.name}</div>
       </div>
     </div>`;
 
     const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
-    html += `<div style="border:1px solid #1e2030;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+    html += `<div style="border:1px solid #2a2218;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
   });
-  return html || '<div style="color:#5a5d78;font-size:13px;padding:20px;">No holy paladin CDs placed yet.</div>';
+  return html || '<div style="color:#5a4838;font-size:13px;padding:20px;">No holy paladin CDs placed yet.</div>';
 }
 
 function showHPalaView() {
@@ -6948,10 +6924,10 @@ function showHPalaView() {
   overlay.innerHTML = `<div class="ss-modal">
     <div class="ss-toolbar" style="position:relative;">
       <h3>Holy Paladin CDs</h3>
-      <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-      <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+      <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
     </div>
-    <div class="ss-content" id="hpalaContent" style="background:#08090d;padding:20px 24px;overflow-y:auto;flex:1;"></div>
+    <div class="ss-content" id="hpalaContent" style="background:#0a0804;padding:20px 24px;overflow-y:auto;flex:1;"></div>
   </div>`;
 
   document.body.appendChild(overlay);
@@ -6971,9 +6947,9 @@ function showHPalaView() {
     script.onload = () => {
       // Create a temp full-height clone so html2canvas captures everything
       const clone = contentEl.cloneNode(true);
-      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#0a0804;padding:20px 24px;z-index:-9999;pointer-events:none;`;
       document.body.appendChild(clone);
-      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+      html2canvas(clone, { backgroundColor:'#0a0804', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
         clone.remove();
         const a = document.createElement('a');
         a.download = 'hpala-cds.png';
@@ -7006,20 +6982,20 @@ function buildShamanContent() {
     if (!rows.length) return;
 
     const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
-    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #2e3040;">` : '';
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;">` : '';
 
-    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#0d0f15;border-bottom:1px solid #2e3040;">
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #3a2e20;">
       ${pImg}
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0a0c12;">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0e0c0a;">
         <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#0070de66;margin-bottom:3px;">Shaman Cooldowns</div>
         <div style="font-size:16px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${boss.name}</div>
       </div>
     </div>`;
 
     const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
-    html += `<div style="border:1px solid #1e2030;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+    html += `<div style="border:1px solid #2a2218;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
   });
-  return html || '<div style="color:#5a5d78;font-size:13px;padding:20px;">No shaman CDs placed yet.</div>';
+  return html || '<div style="color:#5a4838;font-size:13px;padding:20px;">No shaman CDs placed yet.</div>';
 }
 
 function showShamanView() {
@@ -7035,10 +7011,10 @@ function showShamanView() {
   overlay.innerHTML = `<div class="ss-modal">
     <div class="ss-toolbar" style="position:relative;">
       <h3>Shaman CDs</h3>
-      <button id="shamanSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-      <button id="shamanClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3d52;background:#1e2028;color:#8a8da8;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+      <button id="shamanSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="shamanClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
     </div>
-    <div class="ss-content" id="shamanContent" style="background:#08090d;padding:20px 24px;overflow-y:auto;flex:1;"></div>
+    <div class="ss-content" id="shamanContent" style="background:#0a0804;padding:20px 24px;overflow-y:auto;flex:1;"></div>
   </div>`;
 
   document.body.appendChild(overlay);
@@ -7056,9 +7032,9 @@ function showShamanView() {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
     script.onload = () => {
       const clone = contentEl.cloneNode(true);
-      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#08090d;padding:20px 24px;z-index:-9999;pointer-events:none;`;
+      clone.style.cssText = `position:fixed;top:0;left:0;width:1100px;height:auto;overflow:visible;background:#0a0804;padding:20px 24px;z-index:-9999;pointer-events:none;`;
       document.body.appendChild(clone);
-      html2canvas(clone, { backgroundColor:'#08090d', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
+      html2canvas(clone, { backgroundColor:'#0a0804', scale:3, useCORS:true, allowTaint:true, width:1100, height:clone.scrollHeight }).then(canvas => {
         clone.remove();
         const a = document.createElement('a');
         a.download = 'shaman-cds.png';
