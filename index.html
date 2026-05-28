@@ -9,18 +9,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Throne of Thunder — Raid Cooldown Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0b0f;
-    --bg2: #12141a;
-    --bg3: #1a1c24;
-    --border: #22242e;
-    --border2: #2e3040;
-    --text: #e8eaf2;
-    --text2: #8a8da8;
-    --text3: #4a4d62;
-    --accent: #c8a84b;
+    --bg: #1a1208;
+    --bg2: #231a0a;
+    --bg3: #2c2010;
+    --border: #3d2e14;
+    --border2: #54400e;
+    --text: #ede0c4;
+    --text2: #a89060;
+    --text3: #6b5530;
+    --accent: #d4aa4a;
     --accent2: #a07830;
     --red: #c84848;
     --blue: #4888c8;
@@ -47,44 +47,70 @@
 
   /* TOP BAR */
   .topbar {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 20px;
+    background: linear-gradient(180deg, #2e2210 0%, #1e1608 60%, #160f04 100%);
+    border-bottom: 2px solid #6b5020;
+    border-top: 2px solid #c8a84b;
+    padding: 6px 20px 6px 20px;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     flex-shrink: 0;
-    backdrop-filter: blur(0);
+    position: relative;
+  }
+  .topbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4aa4a88, #d4aa4a, #d4aa4a88, transparent);
+    pointer-events: none;
   }
 
   .topbar-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.06em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
     white-space: nowrap;
-    margin-right: 4px;
+    margin-right: 8px;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+  .topbar-title svg {
+    display: block;
+    color: #d4aa4a;
+    filter: drop-shadow(0 1px 3px #d4aa4a55);
+  }
+  .topbar-title-text {
+    font-family: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #d4aa4a;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px #d4aa4a44;
+    line-height: 1;
   }
 
   .boss-select {
-    background: var(--bg);
-    border: 1px solid var(--border2);
+    background: #1e1508;
+    border: 1px solid #4a3510;
     color: var(--text);
     padding: 5px 10px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
     min-width: 200px;
     transition: border-color 0.15s;
   }
   .boss-select:hover { border-color: var(--accent); }
-  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,168,75,0.15); }
+  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(212,170,74,0.15); }
 
   .btn {
-    background: #1a1c26;
-    border: none;
-    border-radius: 0px;
+    background: #2a1e08;
+    border: 1px solid #4a3510;
+    border-radius: 3px;
     color: var(--text2);
     padding: 6px 14px;
     font-size: 12px;
@@ -94,7 +120,7 @@
     white-space: nowrap;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
   }
-  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,168,75,0.06); }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(212,170,74,0.08); }
   .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
 
   .hint {
@@ -1122,7 +1148,7 @@
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
 <div id="app" style="display:none;">
   <div class="topbar">
-    <span class="topbar-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>&lt;Professional&gt; RCD Planner</span>
+    <span class="topbar-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg><span class="topbar-title-text">Professional</span></span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
     <button class="btn btn-danger" id="clearBtn">Clear Boss</button>
@@ -5076,10 +5102,9 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
   // Shared timeline width based on longest log
   var maxDuration = Math.max.apply(null, logsData.map(function(l){return l.duration;}));
-  var W = Math.max(560, Math.ceil(maxDuration / 1000 / 15) * 32); // min 32px per 15s tick
+  var W = Math.max(560, Math.ceil(maxDuration / 1000 / 15) * 32);
   var sharedPps = W / (maxDuration / 1000);
   var tickEvery = 15;
-  // Resize the WCL modal box to fit the wider ruler if needed
   var _wclBox = document.getElementById('wclModalBox');
   if (_wclBox) { var _needed = W + 66 + 60; if (_needed > 700) _wclBox.style.width = Math.min(_needed, window.innerWidth * 0.96) + 'px'; }
   var ROW_H = 32;
