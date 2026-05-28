@@ -12,16 +12,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #1a1208;
-    --bg2: #231a0a;
-    --bg3: #2c2010;
-    --border: #3d2e14;
-    --border2: #54400e;
-    --text: #ede0c4;
-    --text2: #a89060;
-    --text3: #6b5530;
-    --accent: #d4aa4a;
-    --accent2: #a07830;
+    --bg: #0a0802;
+    --bg2: #100c02;
+    --bg3: #181202;
+    --border: #261a04;
+    --border2: #382606;
+    --text: #f0d880;
+    --text2: #c28818;
+    --text3: #644408;
+    --accent: #e09010;
+    --accent2: #b06808;
     --red: #c84848;
     --blue: #4888c8;
     --green: #48a868;
@@ -47,9 +47,9 @@
 
   /* TOP BAR */
   .topbar {
-    background: linear-gradient(180deg, #2e2210 0%, #1e1608 60%, #160f04 100%);
-    border-bottom: 2px solid #6b5020;
-    border-top: 2px solid #c8a84b;
+    background: linear-gradient(180deg, #201604 0%, #0e0a02 100%);
+    border-bottom: 2px solid #261a04;
+    border-top: 2px solid #e09010;
     padding: 6px 20px 6px 20px;
     display: flex;
     align-items: center;
@@ -57,14 +57,6 @@
     flex-wrap: wrap;
     flex-shrink: 0;
     position: relative;
-  }
-  .topbar::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #d4aa4a88, #d4aa4a, #d4aa4a88, transparent);
-    pointer-events: none;
   }
 
   .topbar-title {
@@ -94,8 +86,8 @@
   }
 
   .boss-select {
-    background: #1e1508;
-    border: 1px solid #4a3510;
+    background: #0e0a02;
+    border: 1px solid #261a04;
     color: var(--text);
     padding: 5px 10px;
     border-radius: 4px;
@@ -105,11 +97,11 @@
     transition: border-color 0.15s;
   }
   .boss-select:hover { border-color: var(--accent); }
-  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(212,170,74,0.15); }
+  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,144,16,0.15); }
 
   .btn {
-    background: #2a1e08;
-    border: 1px solid #4a3510;
+    background: #100a02;
+    border: 1px solid #261a04;
     border-radius: 3px;
     color: var(--text2);
     padding: 6px 14px;
@@ -120,7 +112,7 @@
     white-space: nowrap;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
   }
-  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(212,170,74,0.08); }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(224,144,16,0.08); }
   .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
 
   .hint {
