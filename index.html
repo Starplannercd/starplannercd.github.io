@@ -12,16 +12,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #2a2318;
-    --bg2: #342c1e;
-    --bg3: #3e3426;
-    --border: #564430;
-    --border2: #705840;
-    --text: #e8d9b8;
-    --text2: #a88858;
-    --text3: #6a5030;
-    --accent: #c4843a;
-    --accent2: #8a5420;
+    --bg: #0e0c0a;
+    --bg2: #141210;
+    --bg3: #1c1916;
+    --border: #2e2620;
+    --border2: #483830;
+    --text: #d8c8b0;
+    --text2: #8a7060;
+    --text3: #504038;
+    --accent: #c83a20;
+    --accent2: #8a2010;
+    --forge: #e07820;
+    --sha: #6a3a8a;
     --red: #c84848;
     --blue: #4888c8;
     --green: #48a868;
@@ -47,9 +49,9 @@
 
   /* TOP BAR */
   .topbar {
-    background: linear-gradient(180deg, #3e3422 0%, #281e10 100%);
-    border-bottom: 2px solid #564430;
-    border-top: 2px solid #c4843a;
+    background: linear-gradient(180deg, #1e1a16 0%, #0c0a08 100%);
+    border-bottom: 3px solid #c83a20;
+    border-top: 3px solid #c83a20;
     padding: 6px 20px 6px 20px;
     display: flex;
     align-items: center;
@@ -57,6 +59,7 @@
     flex-wrap: wrap;
     flex-shrink: 0;
     position: relative;
+    box-shadow: 0 2px 12px rgba(200,58,32,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
   }
 
   .topbar-title {
@@ -71,23 +74,23 @@
   }
   .topbar-title svg {
     display: block;
-    color: #d4aa4a;
-    filter: drop-shadow(0 1px 3px #d4aa4a55);
+    color: #c83a20;
+    filter: drop-shadow(0 0 4px #c83a2088);
   }
   .topbar-title-text {
     font-family: 'Cinzel', 'Palatino Linotype', Georgia, serif;
     font-size: 11px;
-    font-weight: 600;
-    color: #d4aa4a;
+    font-weight: 700;
+    color: #e07820;
     letter-spacing: 0.38em;
     text-transform: uppercase;
-    text-shadow: 0 1px 6px #d4aa4a44;
+    text-shadow: 0 0 8px #e0782066;
     line-height: 1;
   }
 
   .boss-select {
-    background: #2a2318;
-    border: 1px solid #564430;
+    background: #0e0c0a;
+    border: 1px solid #2e2620;
     color: var(--text);
     padding: 5px 10px;
     border-radius: 4px;
@@ -97,11 +100,11 @@
     transition: border-color 0.15s;
   }
   .boss-select:hover { border-color: var(--accent); }
-  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(196,132,58,0.15); }
+  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,58,32,0.20); }
 
   .btn {
-    background: #2e2618;
-    border: 1px solid #564430;
+    background: #181410;
+    border: 1px solid #2e2620;
     border-radius: 3px;
     color: var(--text2);
     padding: 6px 14px;
@@ -112,7 +115,7 @@
     white-space: nowrap;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
   }
-  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(196,132,58,0.08); }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,58,32,0.10); }
   .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
 
   .hint {
@@ -1140,7 +1143,34 @@
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
 <div id="app" style="display:none;">
   <div class="topbar">
-    <span class="topbar-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg><span class="topbar-title-text">Professional</span></span>
+    <span class="topbar-title">
+  <svg width="28" height="22" viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- left axe -->
+    <g transform="translate(4,2) rotate(-30,10,12)">
+      <rect x="9" y="4" width="2.5" height="16" rx="1" fill="#6a5040"/>
+      <path d="M10.25 4 C10.25 4 5 6 5 10 C5 13 9 14 10.25 14 C11.5 14 15.5 13 15.5 10 C15.5 6 10.25 4 10.25 4Z" fill="#c83a20"/>
+      <path d="M10.25 4 C10.25 4 7 6 7 10 C7 12.5 9.5 13.5 10.25 13.5" fill="#e05030" opacity="0.5"/>
+    </g>
+    <!-- center horde skull glyph -->
+    <ellipse cx="28" cy="13" rx="6" ry="7" fill="#1c1916" stroke="#c83a20" stroke-width="1.2"/>
+    <ellipse cx="28" cy="11" rx="4" ry="4.5" fill="#c83a20" opacity="0.9"/>
+    <rect x="25" y="15" width="2" height="3" rx="0.5" fill="#c83a20"/>
+    <rect x="29" y="15" width="2" height="3" rx="0.5" fill="#c83a20"/>
+    <circle cx="26.2" cy="10.5" r="1.2" fill="#0e0c0a"/>
+    <circle cx="29.8" cy="10.5" r="1.2" fill="#0e0c0a"/>
+    <path d="M26 13 Q28 14.5 30 13" stroke="#0e0c0a" stroke-width="0.8" fill="none"/>
+    <!-- right axe (mirrored) -->
+    <g transform="translate(52,2) rotate(30,-10,12) scale(-1,1)">
+      <rect x="9" y="4" width="2.5" height="16" rx="1" fill="#6a5040"/>
+      <path d="M10.25 4 C10.25 4 5 6 5 10 C5 13 9 14 10.25 14 C11.5 14 15.5 13 15.5 10 C15.5 6 10.25 4 10.25 4Z" fill="#c83a20"/>
+      <path d="M10.25 4 C10.25 4 7 6 7 10 C7 12.5 9.5 13.5 10.25 13.5" fill="#e05030" opacity="0.5"/>
+    </g>
+    <!-- decorative side lines -->
+    <line x1="2" y1="13" x2="16" y2="13" stroke="#c83a20" stroke-width="0.6" opacity="0.5"/>
+    <line x1="40" y1="13" x2="54" y2="13" stroke="#c83a20" stroke-width="0.6" opacity="0.5"/>
+  </svg>
+  <span class="topbar-title-text">Siege of Orgrimmar</span>
+</span>
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
     <button class="btn btn-danger" id="clearBtn">Clear Boss</button>
