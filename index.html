@@ -113,10 +113,97 @@
     letter-spacing: 0.06em;
     cursor: pointer;
     white-space: nowrap;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
   }
   .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,58,32,0.10); }
   .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
+
+  /* ── Button Style Themes ── */
+
+  /* 1: Iron Plate (default) — already set above */
+
+  /* 2: Parchment Stamp */
+  body.btnstyle-2 .btn {
+    background: #2a1e08; border: 1px solid #c8840044; border-radius: 0;
+    color: #c88440; font-family: 'Cinzel', Georgia, serif; font-size: 10px; letter-spacing: 0.12em;
+    padding: 6px 16px; text-transform: uppercase;
+  }
+  body.btnstyle-2 .btn:hover { background: #c8840022; border-color: #c88440; color: #e0a040; }
+
+  /* 3: Blood Seal */
+  body.btnstyle-3 .btn {
+    background: linear-gradient(180deg, #2a0e08 0%, #1a0804 100%);
+    border: 1px solid #c83a20; border-radius: 2px;
+    color: #e87060; font-size: 11px; letter-spacing: 0.08em;
+    box-shadow: inset 0 1px 0 rgba(255,100,60,0.15), 0 1px 4px rgba(200,58,32,0.3);
+  }
+  body.btnstyle-3 .btn:hover { background: linear-gradient(180deg,#3a1208 0%,#2a0c04 100%); color: #ff8870; box-shadow: inset 0 1px 0 rgba(255,100,60,0.2), 0 2px 8px rgba(200,58,32,0.5); }
+
+  /* 4: Forge Chip */
+  body.btnstyle-4 .btn {
+    background: #1c1810; border: none; border-radius: 0;
+    border-left: 3px solid #c83a20;
+    color: #d8c8b0; font-size: 11px; letter-spacing: 0.05em;
+    padding: 6px 14px 6px 11px;
+  }
+  body.btnstyle-4 .btn:hover { border-left-color: #e07820; color: #e07820; background: #241e14; }
+
+  /* 5: Horde Banner */
+  body.btnstyle-5 .btn {
+    background: transparent; border: none; border-radius: 0;
+    border-bottom: 2px solid #3a2e20;
+    color: #8a7060; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 12px 4px;
+  }
+  body.btnstyle-5 .btn:hover { border-bottom-color: #c83a20; color: #c83a20; }
+
+  /* 6: Iron Rivet */
+  body.btnstyle-6 .btn {
+    background: radial-gradient(ellipse at 50% 0%, #2a2420 0%, #141008 100%);
+    border: 1px solid #4a3828; border-radius: 4px;
+    color: #b09870; font-size: 12px; letter-spacing: 0.04em;
+    box-shadow: 0 2px 0 #0a0804, inset 0 1px 0 rgba(255,200,100,0.08);
+  }
+  body.btnstyle-6 .btn:hover { background: radial-gradient(ellipse at 50% 0%,#382e24 0%,#1c1408 100%); color: #e09820; border-color: #705028; transform: translateY(-1px); box-shadow: 0 3px 0 #0a0804; }
+  body.btnstyle-6 .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #0a0804; }
+
+  /* 7: Ember Glow */
+  body.btnstyle-7 .btn {
+    background: #100c08; border: 1px solid #e0782033; border-radius: 4px;
+    color: #c87838; font-size: 11px; letter-spacing: 0.06em;
+    box-shadow: 0 0 6px rgba(224,120,32,0.12), inset 0 0 12px rgba(224,120,32,0.04);
+  }
+  body.btnstyle-7 .btn:hover { border-color: #e07820; color: #f09030; box-shadow: 0 0 12px rgba(224,120,32,0.3), inset 0 0 16px rgba(224,120,32,0.08); }
+
+  /* 8: Kor'kron Tag */
+  body.btnstyle-8 .btn {
+    background: #181410; border: 1px solid #3a2e20; border-radius: 0;
+    color: #8a7060; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 5px 12px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+  body.btnstyle-8 .btn:hover { background: #c83a2018; border-color: #c83a20; color: #c83a20; }
+
+  /* Style picker widget */
+  #btnStylePicker {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 6px; border-left: 1px solid #2e2620; margin-left: 4px;
+    flex-shrink: 0;
+  }
+  #btnStylePicker span {
+    font-size: 9px; color: #5a4838; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  }
+  #btnStylePrev, #btnStyleNext {
+    width: 18px; height: 18px; background: #181410; border: 1px solid #2e2620;
+    border-radius: 2px; color: #8a7060; font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  #btnStylePrev:hover, #btnStyleNext:hover { border-color: #c83a20; color: #c83a20; }
+  #btnStyleLabel {
+    font-size: 9px; color: #8a7060; white-space: nowrap; min-width: 80px; text-align: center;
+    letter-spacing: 0.06em;
+  }
 
   .hint {
     font-size: 10px;
@@ -1158,6 +1245,12 @@
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
+    <div id="btnStylePicker">
+      <span>BTN</span>
+      <button id="btnStylePrev">&#8249;</button>
+      <span id="btnStyleLabel">Iron Plate</span>
+      <button id="btnStyleNext">&#8250;</button>
+    </div>
   </div>
   <div class="main">
     <div class="main-top">
@@ -7136,6 +7229,40 @@ document.addEventListener('change', e => {
 
 
 
+</script>
+<script>
+(function() {
+  var BTN_STYLES = [
+    { cls: '',           label: 'Iron Plate'    },
+    { cls: 'btnstyle-2', label: 'Parchment'     },
+    { cls: 'btnstyle-3', label: 'Blood Seal'    },
+    { cls: 'btnstyle-4', label: 'Forge Chip'    },
+    { cls: 'btnstyle-5', label: 'Horde Banner'  },
+    { cls: 'btnstyle-6', label: 'Iron Rivet'    },
+    { cls: 'btnstyle-7', label: 'Ember Glow'    },
+    { cls: 'btnstyle-8', label: "Kor'kron Tag"  },
+  ];
+  var cur = 0;
+  var STORAGE_KEY = 'rcd_btn_style';
+  try { var saved = parseInt(localStorage.getItem(STORAGE_KEY)); if (!isNaN(saved) && saved >= 0 && saved < BTN_STYLES.length) cur = saved; } catch(e){}
+
+  function apply() {
+    var body = document.body;
+    BTN_STYLES.forEach(function(s) { if (s.cls) body.classList.remove(s.cls); });
+    if (BTN_STYLES[cur].cls) body.classList.add(BTN_STYLES[cur].cls);
+    var lbl = document.getElementById('btnStyleLabel');
+    if (lbl) lbl.textContent = BTN_STYLES[cur].label;
+    try { localStorage.setItem(STORAGE_KEY, cur); } catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    apply();
+    var prev = document.getElementById('btnStylePrev');
+    var next = document.getElementById('btnStyleNext');
+    if (prev) prev.addEventListener('click', function() { cur = (cur - 1 + BTN_STYLES.length) % BTN_STYLES.length; apply(); });
+    if (next) next.addEventListener('click', function() { cur = (cur + 1) % BTN_STYLES.length; apply(); });
+  });
+})();
 </script>
 </body>
 </html>
