@@ -5521,26 +5521,27 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Always fetch fresh (cache is for tab-switching only, not for blocking fetch)
+      // PTR logs are unranked — query reports directly from the zone
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching rankings...</div>';
-      var allRankEntries = [];
-      var crawlPage = 1;
-      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(metric:execution,page:$pg)}}}';
-      var rawResponse = null;
-      while (allRankEntries.length < 40 && crawlPage <= 6) {
-        var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
-        if (crawlPage === 1) rawResponse = crd;
-        var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
-        if (!cpage.length) break;
-        allRankEntries = allRankEntries.concat(cpage);
-        crawlPage++;
-      }
-      var pageRankings = allRankEntries;
+      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Searching zone reports...</div>';
+
+      // Step 1: get recent reports from zone 1054
+      var reportsQuery = '{reportData{reports(zoneID:1054,limit:25){data{code title fights(killType:Kills){id encounterID startTime endTime}}}}}';
+      var rptData = await wclQuery(reportsQuery, {});
+      var allReports = (rptData&&rptData.reportData&&rptData.reportData.reports&&rptData.reportData.reports.data)||[];
+
+      // Step 2: flatten into {code, fid} pairs for the selected encounter
+      var pageRankings = [];
+      allReports.forEach(function(rep) {
+        (rep.fights||[]).forEach(function(f) {
+          if (f.encounterID === encId && f.startTime && f.endTime) {
+            pageRankings.push({ code: rep.code, fid: f.id, startTime: f.startTime, endTime: f.endTime });
+          }
+        });
+      });
 
       if (!pageRankings.length) {
-        var debugInfo = 'encId=' + encId + '<br>rawResponse=' + JSON.stringify(rawResponse).substring(0, 400);
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div><div style="color:#8a7060;font-size:10px;margin-top:8px;word-break:break-all;">' + debugInfo + '</div>';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss in zone 1054.</div><div style="color:#8a7060;font-size:10px;margin-top:8px;">Reports checked: '+allReports.length+' | encId: '+encId+'</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
@@ -5548,11 +5549,11 @@ function showWclModal() {
       var fightDurations = [];
       var logsHpsData = [];
       var processed = 0;
-      var limit = pageRankings.length; // try as many as available, stop at 40 processed
+      var limit = Math.min(pageRankings.length, 40);
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
-        var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
+        var code = r.code, fid = r.fid;
         if (!code||!fid) continue;
         try {
           var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
@@ -5639,7 +5640,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5668,10 +5669,10 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: 125+ri, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes });
           }
           processed++;
-          results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing '+processed+'/40 logs (rank '+(125+ri)+')...</div>';
+          results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing '+processed+' of '+limit+' logs...</div>';
           if (processed >= 40) break;
         } catch(le){ console.warn('WCL log error:', le); }
       }
