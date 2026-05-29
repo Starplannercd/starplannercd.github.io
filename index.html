@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-auth-compat.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Throne of Thunder — Raid Cooldown Planner</title>
+<title>Siege of Orgrimmar — Raid Cooldown Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1393,225 +1393,93 @@ Object.defineProperty(window, 'CDS', { get: getCDS });
 
 const BOSSES = [
   {
-    id:'jinrokh', name:"Jin'rokh the Breaker",
-    desc:'Heroic 10 · ~5 min fight',
-    duration: 320,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Lightning Storm', time:93, color:'#c83a20' },
-        ]
-      }
-    ]
+    id:'immerseus', name:'Immerseus',
+    desc:'Heroic · Vale of Eternal Sorrows',
+    duration: 360,
+    sections: [{ label: null, abilities: [] }]
   },
   {
-    id:'horridon', name:'Horridon',
-    desc:'Heroic 10 · ~8 min fight',
-    duration: 310,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Bestial Cry 1', time:257, color:'#c87838' },
-          { name:'Bestial Cry 2', time:268, color:'#c87838' },
-          { name:'Bestial Cry 3', time:279, color:'#c87838' },
-          { name:'Bestial Cry 4', time:291, color:'#c87838' },
-        ]
-      }
-    ]
-  },
-  {
-    id:'council', name:'Council of Elders',
-    desc:'Heroic 10 · ~6 min fight',
-    duration: 200,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Discharge 1', time:53, color:'#8868c8' },
-          { name:'Discharge 2', time:79, color:'#8868c8' },
-          { name:'Discharge 3', time:148, color:'#8868c8' },
-          { name:'Discharge 4', time:174, color:'#8868c8' },
-        ]
-      }
-    ]
-  },
-  {
-    id:'tortos', name:'Tortos',
-    desc:'Heroic 10 · ~5 min fight',
-    duration: 155,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Quake Stomp 1', time:31, color:'#a86838' },
-          { name:'Quake Stomp 2', time:79, color:'#a86838' },
-          { name:'Quake Stomp 3', time:129,  color:'#a86838' },
-        ]
-      }
-    ]
-  },
-  {
-    id:'megaera', name:'Megaera',
-    desc:'Heroic 10 · ~7 min fight',
-    duration: 290,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Rampage 1', time:26,  color:'#c84848' },
-          { name:'Rampage 2', time:63,  color:'#c84848' },
-          { name:'Rampage 3', time:109, color:'#c84848' },
-          { name:'Rampage 4', time:149, color:'#c84848' },
-          { name:'Rampage 5', time:194, color:'#c84848' },
-          { name:'Rampage 6', time:235, color:'#c84848' },
-        ]
-      }
-    ]
-  },
-  {
-    id:'jikun', name:"Ji-Kun",
-    desc:'Heroic 10 · ~4 min fight',
-    duration: 240,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Quills 1', time:63,  color:'#38a868' },
-          { name:'Quills 2', time:144, color:'#38a868' },
-        ]
-      }
-    ]
-  },
-  {
-    id:'darkanimus', name:'Dark Animus',
-    desc:'Heroic 10 · ~4 min fight',
-    duration: 240,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-        ]
-      }
-    ]
-  },
-  {
-    id:'ironqon', name:'Iron Qon',
-    desc:'Heroic 10 · ~8 min fight',
+    id:'fallenprotectors', name:'The Fallen Protectors',
+    desc:'Heroic · Vale of Eternal Sorrows',
     duration: 480,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-        ]
-      },
-      {
-        label: 'Unleashed Flames',
-        abilities: [
-          { name:'Unleashed Flames 3', time:33,  color:'#c86028' },
-          { name:'Unleashed Flames 4', time:41,  color:'#c86028' },
-          { name:'Unleashed Flames 5', time:49,  color:'#c86028' },
-          { name:'Unleashed Flames 6', time:57,  color:'#c86028' },
-          { name:'Unleashed Flames 7', time:65,  color:'#c86028' },
-        ]
-      },
-      {
-        label: 'Fist Smash',
-        phaseStart: 370,
-        abilities: [
-          { name:'Fist Smash 1', time:338, color:'#c83a20' },
-          { name:'Fist Smash 2', time:364, color:'#c83a20' },
-          { name:'Fist Smash 3', time:392, color:'#c83a20' },
-        ]
-      }
-    ]
+    sections: [{ label: null, abilities: [] }]
   },
   {
-        id:'twins', name:'Twin Consorts',
-    desc:"Heroic 10 · Lu'an & Suen",
-    duration: 450,
-    sections: [
-      {
-        label: "P1 — Lu'an",
-        abilities: [
-          { name:'Cosmic Barrage 2', time:46,  color:'#6888ff' },
-          { name:'Cosmic Barrage 3', time:72,  color:'#6888ff' },
-          { name:'Cosmic Barrage 5', time:116, color:'#6888ff' },
-          { name:'Cosmic Barrage 7', time:163, color:'#6888ff' },
-        ]
-      },
-      {
-        label: 'P2 — Suen',
-        abilities: [
-          { name:'Nuclear Inferno 1', time:235, color:'#ff9848' },
-          { name:'Nuclear Inferno 2', time:289, color:'#ff9848' },
-          { name:'Nuclear Inferno 3', time:339, color:'#ff9848' },
-          { name:'Nuclear Inferno 4', time:394, color:'#ff9848' },
-        ]
-      },
-      {
-        label: 'P3 — Both',
-        abilities: [
-          { name:'Tidal Force', time:407, color:'#48d8ff' },
-        ]
-      }
-    ]
+    id:'norushen', name:'Norushen',
+    desc:'Heroic · Vale of Eternal Sorrows',
+    duration: 360,
+    sections: [{ label: null, abilities: [] }]
   },
   {
-    id:'leishen', name:'Lei Shen',
-    desc:'Heroic 10 · ~8 min fight',
-    duration: 500,
-    raden: false,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-        ]
-      },
-      {
-        label: 'Phase 2',
-        abilities: [
-          { name:'Ball Lightning-P2 (1)', time:169, color:'#c83a20' },
-          { name:'Ball Lightning-P2 (2)', time:215, color:'#c83a20' },
-          { name:'Ball Lightning-P2 (3)', time:260, color:'#c83a20' },
-        ]
-      },
-      {
-        label: 'Phase 3',
-        phaseStart: 420,
-        abilities: [
-          { name:'Thunderstruck-P3 (1)', time:384, color:'#c8a838' },
-          { name:'Thunderstruck-P3 (2)', time:415, color:'#c8a838' },
-        ]
-      }
-    ]
+    id:'sha', name:'Sha of Pride',
+    desc:'Heroic · Vale of Eternal Sorrows',
+    duration: 480,
+    sections: [{ label: null, abilities: [] }]
   },
   {
-    id:'raden', name:'Ra-den',
-    desc:'Heroic 10 · ~4:25 fight',
-    duration: 265,
-    raden: false,
+    id:'galakras', name:'Galakras',
+    desc:'Heroic · Gates of Retribution',
+    duration: 600,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'ironjuggernaut', name:'Iron Juggernaut',
+    desc:'Heroic · Gates of Retribution',
+    duration: 420,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'darkshaman', name:"Kor'kron Dark Shaman",
+    desc:'Heroic · Gates of Retribution',
+    duration: 480,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'generalnazmak', name:'General Nazgrim',
+    desc:'Heroic · Gates of Retribution',
+    duration: 420,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'malkorok', name:'Malkorok',
+    desc:'Heroic · Underhold',
+    duration: 360,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'spoils', name:'Spoils of Pandaria',
+    desc:'Heroic · Underhold',
+    duration: 360,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'thok', name:'Thok the Bloodthirsty',
+    desc:'Heroic · Underhold',
+    duration: 480,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'siegecrafter', name:'Siegecrafter Blackfuse',
+    desc:'Heroic · Pinnacle of Storms',
+    duration: 480,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'paragons', name:'Paragons of the Klaxxi',
+    desc:'Heroic · Pinnacle of Storms',
+    duration: 600,
+    sections: [{ label: null, abilities: [] }]
+  },
+  {
+    id:'garrosh', name:'Garrosh Hellscream',
+    desc:'Heroic · Pinnacle of Storms',
+    duration: 600,
     sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Material of Creation 1', time:20,  color:'#c8a838' },
-          { name:'Material of Creation 4', time:120, color:'#c84848' },
-          { name:'HP Assign',              time:160, color:'#c83a20', hpAssign:true, hpPct:40 },
-        ]
-      }
+      { label: 'Phase 1', abilities: [] },
+      { label: 'Intermission 1', abilities: [] },
+      { label: 'Phase 2', abilities: [] },
+      { label: 'Intermission 2', abilities: [] },
+      { label: 'Phase 3', abilities: [] },
     ]
   },
 ];
@@ -2997,47 +2865,30 @@ const CUSTOM_ABILITY_SPELL_IDS = {
 let activePopup = null;
 
 const FOJI_BOSS_ABILITIES = {
-  jinrokh:    ['Encounter Start (JIN)','Health % (JIN)','Thundering Throw','Static Burst','Ionization','Lightning Storm (JIN)','Focused Lightning'],
-  horridon:   ['Encounter Start (HOR)','Health % (HOR)','Door Opening','Double Swipe','Dire Call','Charge','Triple Puncture','Jalak','Farraki','Gurubashi','Drakkari','Amani','Dino','Bestial Cry'],
-  council:    ['Encounter Start (COU)','Health % (COU)','Biting Cold','Frostbite','Blessed Loa','Shadowed Loa','Twisted Fate','Frigid Assault','Quicksand','Sandstorm','Reckless Charge','Discharge'],
-  tortos:     ['Encounter Start (TOR)','Health % (TOR)','Bite','Call of Tortos','Quake Stomp','Furious Breath','Summon Bats','Shell Concussion'],
-  megaera:    ['Encounter Start (MEG)','Health % (MEG)','Cinders','Torrent of Ice','Rampage','Breaths'],
-  jikun:      ['Encounter Start (JIK)','Health % (JIK)','Quills','Nest','Guardian','Down Draft','Talon Rake','Feed Young'],
-  darkanimus: ['Encounter Start (ANI)','Health % (ANI)','Boss Spawn','Siphon Anima','Anima Ring','Anima Font','Empower Golem','Interrupting Jolt','Crimson Wake'],
-  ironqon:    ['Encounter Start (QON)','Health % (QON)','Impale','Throw Spear','Unleashed Flame','Unleashed Flame (P4)','Phase 2 (QON)','Phase 3 (QON)','Phase 4 (QON)','Fist Smash','Windstorm','Frost Spike','Whirling Winds','Deadzone','Lightning Storm (QON)','Lightning Storm P2 (QON)','Lightning Storm P4 (QON)','Rising Anger','Molten Overload','Freeze'],
-  twins:      ['Encounter Start (TWIN)','Health % (TWIN)','Day','Light of Day','Fan of Flames','Ice Comet','Nuclear Inferno','Tidal Force','Tears of the Sun','Cosmic Barrage','Night','Beast of Nightmares','Phase 2 (TWIN)','Phase 3 (TWIN)','Phase 4 (TWIN)'],
-  leishen:    ['Encounter Start (LEI)','Health % (LEI)','Conduit','Thunderstruck','Thunderstruck P3','Static Shock','Static Shock P2','Static Shock P3','Static Shock Intermission','Overcharge','Overcharge P2','Overcharge P3','Overcharge Int','Bouncing Bolt','Bouncing Bolt P2','Bouncing Bolt P3','Bouncing Bolt Intermission','Crashing Thunder','Decapitate','Diffusion Chain','Diffusion Chain P2','Diffusion Chain P3','Diffusion Chain Intermission','Helm of Command','Lightning Whip','Lightning Whip P3','Ball Lightning P2','Ball Lightning P3','Fusion Slash','Violent Gale','Intermission','P2 Start','P3 Start'],
-  durumu:     ['Encounter Start (DUR)','Health % (DUR)','Light Spectrum','Disintegration Beam','Lingering Gaze','Force of Will','Hard Stare','Dark Parasite','Life Drain','Walls of Ice'],
-  raden:      ['Encounter Start (RAD)','Health % (RAD)','Phase 2 (RAD)','Fatal Strike','Murderous Strike','Sanguine Horror','Crackling Stalker','Creation','Call Essence','Anima Phase','Vita Phase','Unstable Vita','Ruin'],
+  immerseus:       ['Encounter Start','Health %'],
+  fallenprotectors:['Encounter Start','Health %'],
+  norushen:        ['Encounter Start','Health %'],
+  sha:             ['Encounter Start','Health %'],
+  galakras:        ['Encounter Start','Health %'],
+  ironjuggernaut:  ['Encounter Start','Health %'],
+  darkshaman:      ['Encounter Start','Health %'],
+  generalnazmak:   ['Encounter Start','Health %'],
+  malkorok:        ['Encounter Start','Health %'],
+  spoils:          ['Encounter Start','Health %'],
+  thok:            ['Encounter Start','Health %'],
+  siegecrafter:    ['Encounter Start','Health %'],
+  paragons:        ['Encounter Start','Health %'],
+  garrosh:         ['Encounter Start','Health %','Phase 2','Phase 3','Intermission 1','Intermission 2'],
 };
 
 // Also map display name -> Foji key for export
 const FOJI_ABILITY_KEYS = {
-  // Jin'rokh
-  'Encounter Start (JIN)':'JINROKH_ENC_START','Health % (JIN)':'JINROKH_HEALTH','Thundering Throw':'JINROKH_THUNDERING_THROW','Static Burst':'JINROKH_STATIC_BURST','Ionization':'JINROKH_IONIZATION','Lightning Storm (JIN)':'JINROKH_LIGHTNING_STORM','Focused Lightning':'JINROKH_FOCUSED_LIGHTNING',
-  // Horridon
-  'Encounter Start (HOR)':'HORRIDON_ENC_START','Health % (HOR)':'HORRIDON_HEALTH','Door Opening':'HORRIDON_DOOR_OPENING','Double Swipe':'HORRIDON_DOUBLE_SWIPE','Dire Call':'HORRIDON_DIRE_CALL','Charge':'HORRIDON_CHARGE','Triple Puncture':'HORRIDON_TRIPLE_PUNCTURE','Jalak':'HORRIDON_JALAK','Farraki':'HORRIDON_FARRAKI','Gurubashi':'HORRIDON_GURUBASHI','Drakkari':'HORRIDON_DRAKKARI','Amani':'HORRIDON_AMANI','Dino':'HORRIDON_DINO','Bestial Cry':'HORRIDON_BESTIAL_CRY',
-  // Council
-  'Encounter Start (COU)':'COUNCIL_ENC_START','Health % (COU)':'COUNCIL_HEALTH','Biting Cold':'COUNCIL_BITING_COLD','Frostbite':'COUNCIL_FROSTBITE','Blessed Loa':'COUNCIL_BLESSED_LOA','Shadowed Loa':'COUNCIL_SHADOWED_LOA','Twisted Fate':'COUNCIL_TWISTED_FATE','Frigid Assault':'COUNCIL_FRIGID_ASSAULT','Quicksand':'COUNCIL_QUICKSAND','Sandstorm':'COUNCIL_SANDSTORM','Reckless Charge':'COUNCIL_RECKLESS_CHARGE','Discharge':'COUNCIL_DISCHARGE',
-  // Tortos
-  'Encounter Start (TOR)':'TORTOS_ENC_START','Health % (TOR)':'TORTOS_HEALTH','Bite':'TORTOS_BITE','Call of Tortos':'TORTOS_CALL','Quake Stomp':'TORTOS_QUAKE_STOMP','Furious Breath':'TORTOS_FURIOUS_BREATH','Summon Bats':'TORTOS_SUMMON_BATS','Shell Concussion':'TORTOS_SHELL_CONCUSSION',
-  // Megaera
-  'Encounter Start (MEG)':'MEGAERA_ENC_START','Health % (MEG)':'MEGAERA_HEALTH','Cinders':'MEGAERA_CINDERS','Torrent of Ice':'MEGAERA_TORRENT_OF_ICE','Rampage':'MEGAERA_RAMPAGE','Breaths':'MEGAERA_BREATHS',
-  // Ji-Kun
-  'Encounter Start (JIK)':'JIKUN_ENC_START','Health % (JIK)':'JIKUN_HEALTH','Quills':'JIKUN_QUILLS','Nest':'JIKUN_NEST','Guardian':'JIKUN_GUARDIAN','Down Draft':'JIKUN_DOWN_DRAFT','Talon Rake':'JIKUN_TALON_RAKE','Feed Young':'JIKUN_FEED_YOUNG',
-  // Dark Animus
-  'Encounter Start (ANI)':'ANIMUS_ENC_START','Health % (ANI)':'ANIMUS_HEALTH','Boss Spawn':'ANIMUS_BOSS_SPAWN','Siphon Anima':'ANIMUS_SIPHON_ANIMA','Anima Ring':'ANIMUS_ANIMA_RING','Anima Font':'ANIMUS_ANIMA_FONT','Empower Golem':'ANIMUS_EMPOWER_GOLEM','Interrupting Jolt':'ANIMUS_INTERRUPTING_JOLT','Crimson Wake':'ANIMUS_CRIMSON_WAKE',
-  // Iron Qon
-  'Encounter Start (QON)':'QON_ENC_START','Health % (QON)':'QON_HEALTH','Impale':'QON_IMPALE','Throw Spear':'QON_THROW_SPEAR','Unleashed Flame':'QON_UNLEASHED_FLAME','Unleashed Flame (P4)':'QON_UNLEASHED_FLAME_P4','Phase 2 (QON)':'QON_PHASE_2','Phase 3 (QON)':'QON_PHASE_3','Phase 4 (QON)':'QON_PHASE_4','Fist Smash':'QON_FIST_SMASH','Windstorm':'QON_WINDSTORM','Frost Spike':'QON_FROST_SPIKE','Whirling Winds':'QON_WHIRLING_WINDS','Deadzone':'QON_DEADZONE','Lightning Storm (QON)':'QON_LIGHTNING_STORM','Lightning Storm P2 (QON)':'QON_LIGHTNING_STORM_P2','Lightning Storm P4 (QON)':'QON_LIGHTNING_STORM_P4','Rising Anger':'QON_RISING_ANGER','Molten Overload':'QON_MOLTEN_OVERLOAD','Freeze':'QON_FREEZE',
-  // Twin Consorts
-  'Encounter Start (TWIN)':'TWIN_ENC_START','Health % (TWIN)':'TWIN_HEALTH','Day':'TWIN_DAY','Light of Day':'TWIN_LIGHT_OF_DAY','Fan of Flames':'TWIN_FAN_OF_FLAMES','Ice Comet':'TWIN_ICE_COMET','Nuclear Inferno':'TWIN_NUCLEAR_INFERNO','Tidal Force':'TWIN_TIDAL_FORCE','Tears of the Sun':'TWIN_TEARS_OF_THE_SUN','Cosmic Barrage':'TWIN_COSMIC_BARRAGE','Night':'TWIN_NIGHT','Beast of Nightmares':'TWIN_BEAST_OF_NIGHTMARES','Phase 2 (TWIN)':'TWIN_PHASE_2','Phase 3 (TWIN)':'TWIN_PHASE_3','Phase 4 (TWIN)':'TWIN_PHASE_4',
-  // Lei Shen
-  'Encounter Start (LEI)':'LEISHEN_ENC_START','Health % (LEI)':'LEISHEN_HEALTH','Conduit':'LEISHEN_CONDUIT','Thunderstruck':'LEISHEN_THUNDERSTRUCK','Thunderstruck P3':'LEISHEN_THUNDERSTRUCK_P3','Static Shock':'LEISHEN_STATIC_SHOCK','Static Shock P2':'LEISHEN_STATIC_SHOCK_P2','Static Shock P3':'LEISHEN_STATIC_SHOCK_P3','Static Shock Intermission':'LEISHEN_STATIC_SHOCK_INT','Overcharge':'LEISHEN_OVERCHARGE','Overcharge P2':'LEISHEN_OVERCHARGE_P2','Overcharge P3':'LEISHEN_OVERCHARGE_P3','Overcharge Int':'LEISHEN_OVERCHARGE_INT','Bouncing Bolt':'LEISHEN_BOUNCING_BOLT','Bouncing Bolt P2':'LEISHEN_BOUNCING_BOLT_P2','Bouncing Bolt P3':'LEISHEN_BOUNCING_BOLT_P3','Bouncing Bolt Intermission':'LEISHEN_BOUNCING_BOLT_INT','Crashing Thunder':'LEISHEN_CRASHING_THUNDER','Decapitate':'LEISHEN_DECAPITATE','Diffusion Chain':'LEISHEN_DIFFUSION_CHAIN','Diffusion Chain P2':'LEISHEN_DIFFUSION_CHAIN_P2','Diffusion Chain P3':'LEISHEN_DIFFUSION_CHAIN_P3','Diffusion Chain Intermission':'LEISHEN_DIFFUSION_CHAIN_INT','Helm of Command':'LEISHEN_HELM_OF_COMMAND','Lightning Whip':'LEISHEN_LIGHTNING_WHIP','Lightning Whip P3':'LEISHEN_LIGHTNING_WHIP_P3','Ball Lightning P2':'LEISHEN_BALL_LIGHTNING','Ball Lightning P3':'LEISHEN_BALL_LIGHTNING_P3','Fusion Slash':'LEISHEN_FUSION_SLASH','Violent Gale':'LEISHEN_VIOLENT_GALE','Intermission':'LEISHEN_INTERMISSION','P2 Start':'LEISHEN_P2_START','P3 Start':'LEISHEN_P3_START',
-  // Durumu
-  'Encounter Start (DUR)':'DURUMU_ENC_START','Health % (DUR)':'DURUMU_HEALTH','Light Spectrum':'DURUMU_LIGHT_SPECTRUM','Disintegration Beam':'DURUMU_DISINTEGRATION_BEAM','Lingering Gaze':'DURUMU_LINGERING_GAZE','Force of Will':'DURUMU_FORCE_OF_WILL','Hard Stare':'DURUMU_HARD_STARE','Dark Parasite':'DURUMU_DARK_PARASITE','Life Drain':'DURUMU_LIFE_DRAIN','Walls of Ice':'DURUMU_WALLS_OF_ICE',
-  // Ra-den
-  'Cosmic Barrage 2':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 3':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 5':'TWINS_COSMIC_BARRAGE','Cosmic Barrage 7':'TWINS_COSMIC_BARRAGE','Nuclear Inferno 1':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 2':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 3':'TWINS_NUCLEAR_INFERNO','Nuclear Inferno 4':'TWINS_NUCLEAR_INFERNO','Tidal Force':'TWINS_TIDAL_FORCE',
-  'Encounter Start (RAD)':'RADEN_ENC_START','Health % (RAD)':'RADEN_HEALTH','Phase 2 (RAD)':'RADEN_PHASE_2','Fatal Strike':'RADEN_FATAL_STRIKE','Murderous Strike':'RADEN_MURDEROUS_STRIKE','Sanguine Horror':'RADEN_SANGUINE_HORROR','Crackling Stalker':'RADEN_CRACKLING_STALKER','Creation':'RADEN_CREATION','Call Essence':'RADEN_CALL_ESSENCE','Anima Phase':'RADEN_ANIMA_PHASE','Vita Phase':'RADEN_VITA_PHASE','Unstable Vita':'RADEN_UNSTABLE_VITA','Ruin':'RADEN_RUIN',
+  'Encounter Start': 'ENC_START',
+  'Health %': 'HEALTH',
+  'Phase 2': 'PHASE_2',
+  'Phase 3': 'PHASE_3',
+  'Intermission 1': 'INT_1',
+  'Intermission 2': 'INT_2',
 };
 
 
@@ -5089,19 +4940,20 @@ var WCL_BOSS_SPELLS = {
 // Map WCL encounter names to boss spell keys
 function getBossSpellsForName(bossName) {
   var map = {
-    "Jin'rokh the Breaker": 'jinrokh',
-    'Horridon': 'horridon',
-    'Council of Elders': 'council',
-    'Tortos': 'tortos',
-    'Megaera': 'megaera',
-    'Ji-Kun': 'jikun',
-    'Durumu the Forgotten': null,
-    'Primordius': null,
-    'Dark Animus': 'darkanimus',
-    'Iron Qon': 'ironqon',
-    'Twin Consorts': 'twins',
-    'Lei Shen': 'leishen',
-    'Ra-den': 'raden',
+    'Immerseus': 'immerseus',
+    'The Fallen Protectors': 'fallenprotectors',
+    'Norushen': 'norushen',
+    'Sha of Pride': 'sha',
+    'Galakras': 'galakras',
+    'Iron Juggernaut': 'ironjuggernaut',
+    "Kor'kron Dark Shaman": 'darkshaman',
+    'General Nazgrim': 'generalnazmak',
+    'Malkorok': 'malkorok',
+    'Spoils of Pandaria': 'spoils',
+    'Thok the Bloodthirsty': 'thok',
+    'Siegecrafter Blackfuse': 'siegecrafter',
+    'Paragons of the Klaxxi': 'paragons',
+    'Garrosh Hellscream': 'garrosh',
   };
   var key = map[bossName];
   return key ? (WCL_BOSS_SPELLS[key] || []) : [];
