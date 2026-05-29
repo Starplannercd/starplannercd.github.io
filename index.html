@@ -5527,8 +5527,10 @@ function showWclModal() {
       var allRankEntries = [];
       var crawlPage = 1;
       var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(metric:execution,page:$pg)}}}';
+      var rawResponse = null;
       while (allRankEntries.length < 40 && crawlPage <= 6) {
         var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
+        if (crawlPage === 1) rawResponse = crd;
         var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
         if (!cpage.length) break;
         allRankEntries = allRankEntries.concat(cpage);
@@ -5537,7 +5539,8 @@ function showWclModal() {
       var pageRankings = allRankEntries;
 
       if (!pageRankings.length) {
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div>';
+        var debugInfo = 'encId=' + encId + '<br>rawResponse=' + JSON.stringify(rawResponse).substring(0, 400);
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs found for this boss.</div><div style="color:#8a7060;font-size:10px;margin-top:8px;word-break:break-all;">' + debugInfo + '</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
