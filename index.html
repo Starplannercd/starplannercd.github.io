@@ -1396,7 +1396,32 @@ const BOSSES = [
     id:'immerseus', name:'Immerseus',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 360,
-    sections: [{ label: null, abilities: [] }]
+    sections: [
+      {
+        label: null,
+        abilities: [
+          { name:'Encounter Start',  time:0,   color:'#ffffff', encounterStart:true },
+          { name:'Swirl 1',          time:18,  color:'#4888c8' },
+          { name:'Swirl 2',          time:36,  color:'#4888c8' },
+          { name:'Swirl 3',          time:54,  color:'#4888c8' },
+          { name:'Split 1',          time:75,  color:'#8868c8' },
+          { name:'Reform 1',         time:105, color:'#48a868' },
+          { name:'Swirl 4',          time:123, color:'#4888c8' },
+          { name:'Swirl 5',          time:141, color:'#4888c8' },
+          { name:'Swirl 6',          time:159, color:'#4888c8' },
+          { name:'Split 2',          time:175, color:'#8868c8' },
+          { name:'Reform 2',         time:205, color:'#48a868' },
+          { name:'Swirl 7',          time:223, color:'#4888c8' },
+          { name:'Swirl 8',          time:241, color:'#4888c8' },
+          { name:'Swirl 9',          time:259, color:'#4888c8' },
+          { name:'Split 3',          time:275, color:'#8868c8' },
+          { name:'Reform 3',         time:305, color:'#48a868' },
+          { name:'Swirl 10',         time:323, color:'#4888c8' },
+          { name:'Swirl 11',         time:341, color:'#4888c8' },
+          { name:'Split 4',          time:355, color:'#8868c8' },
+        ]
+      }
+    ]
   },
   {
     id:'fallenprotectors', name:'The Fallen Protectors',
