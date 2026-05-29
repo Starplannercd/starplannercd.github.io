@@ -3085,21 +3085,20 @@ function setCustomPlacementMeta(bossId, rowKey, placedId, who, spellId, tts, cus
 
 // ---- Foji Export ----
 const BOSS_ABILITY_KEYS = {
-  'jinrokh':    { key: 'JINROKH_LIGHTNING_STORM',      castLabel: 'Lightning Storm' },
-  'horridon':   { key: 'HORRIDON_BESTIAL_CRY',          castLabel: 'Bestial Cry' },
-  'council':    { key: 'COUNCIL_DISCHARGE',              castLabel: 'Discharge' },
-  'tortos':     { key: 'TORTOS_STOMP',                  castLabel: 'Quake Stomp' },
-  'megaera':    { key: 'MEGAERA_RAMPAGE',                castLabel: 'Rampage' },
-  'jikun':      { key: 'JIKUN_QUILLS',                  castLabel: 'Quills' },
-  'darkanimus': { key: 'ANIMUS_INTERRUPTING_JOLT',      castLabel: 'Interrupting Jolt' },
-  'ironqon':    { key: 'QON_UNLEASHED_FLAME',           castLabel: 'Unleashed Flames' },
-  'ironqon_fist':{ key: 'QON_FIST_SMASH',              castLabel: 'Fist Smash' },
-  'leishen_p1': { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
-  'leishen_p2': { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
-  'leishen_p3': { key: 'LEISHEN_BALL_LIGHTNING_P3',     castLabel: 'Ball Lightning P3' },
-  'leishen':    { key: 'LEISHEN_BALL_LIGHTNING',        castLabel: 'Ball Lightning' },
-  'twins':      { key: 'TWINS_COSMIC_BARRAGE', castLabel: 'Cosmic Barrage' },
-  'raden':      { key: 'RADEN_CREATION',                castLabel: 'Material of Creation' },
+  'immerseus':        { key: 'IMMERSEUS_ENC_START',      castLabel: 'Encounter Start' },
+  'fallenprotectors': { key: 'PROTECTORS_ENC_START',     castLabel: 'Encounter Start' },
+  'norushen':         { key: 'NORUSHEN_ENC_START',       castLabel: 'Encounter Start' },
+  'sha':              { key: 'SHA_ENC_START',             castLabel: 'Encounter Start' },
+  'galakras':         { key: 'GALAKRAS_ENC_START',       castLabel: 'Encounter Start' },
+  'ironjuggernaut':   { key: 'JUGGERNAUT_ENC_START',     castLabel: 'Encounter Start' },
+  'darkshaman':       { key: 'DARKSHAMAN_ENC_START',     castLabel: 'Encounter Start' },
+  'generalnazmak':    { key: 'NAZGRIM_ENC_START',        castLabel: 'Encounter Start' },
+  'malkorok':         { key: 'MALKOROK_ENC_START',       castLabel: 'Encounter Start' },
+  'spoils':           { key: 'SPOILS_ENC_START',         castLabel: 'Encounter Start' },
+  'thok':             { key: 'THOK_ENC_START',           castLabel: 'Encounter Start' },
+  'siegecrafter':     { key: 'BLACKFUSE_ENC_START',      castLabel: 'Encounter Start' },
+  'paragons':         { key: 'PARAGONS_ENC_START',       castLabel: 'Encounter Start' },
+  'garrosh':          { key: 'GARROSH_ENC_START',        castLabel: 'Encounter Start' },
 };
 
 const CD_SPELL_IDS = {
@@ -3132,30 +3131,8 @@ const CD_SPELL_IDS = {
 
 // Determine which boss ability key to use for a row
 function getBossAbilityKey(boss, rowKey, abName) {
-  if (abName === 'Encounter Start') {
-    const keyMap = { darkanimus: 'ANIMUS_ENC_START', raden: 'RADEN_ENC_START', ironqon: 'QON_ENC_START' };
-    return keyMap[boss.id] || boss.id.toUpperCase() + '_ENC_START';
-  }
-  if (abName && abName.startsWith('HP Assign')) {
-    return 'RADEN_HEALTH';
-  }
-  if (boss.id === 'ironqon') {
-    if (abName && abName.toLowerCase().includes('fist')) return BOSS_ABILITY_KEYS['ironqon_fist'].key;
-    if (abName && abName.toLowerCase().includes('windstorm')) return 'QON_WINDSTORM';
-    return BOSS_ABILITY_KEYS['ironqon'].key;
-  }
-  if (boss.id === 'twins') {
-    if (abName && abName.toLowerCase().includes('tidal')) return 'TWINS_TIDAL_FORCE';
-    if (abName && abName.toLowerCase().includes('nuclear')) return 'TWINS_NUCLEAR_INFERNO';
-    return 'TWINS_COSMIC_BARRAGE';
-  }
-  if (boss.id === 'leishen') {
-    if (abName && abName.toLowerCase().includes('diffusion')) return 'LEISHEN_DIFFUSION_CHAIN_P3';
-    if (abName && abName.includes('P3')) return BOSS_ABILITY_KEYS['leishen_p3'].key;
-    if (abName && abName.includes('P2')) return BOSS_ABILITY_KEYS['leishen_p2'].key;
-    return BOSS_ABILITY_KEYS['leishen_p1'].key;
-  }
-  return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() }).key;
+  if (abName && abName.startsWith('HP Assign')) return boss.id.toUpperCase() + '_HEALTH';
+  return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
 }
 
 // Extract cast number from ability name (e.g. "Discharge 3" -> 3)
@@ -4031,16 +4008,20 @@ function formatTime(s) {
 
 
 const BOSS_ICONS = {
-  'jinrokh':    { color: '#c83a20', abbr: 'JR' },
-  'horridon':   { color: '#c87838', abbr: 'HO' },
-  'council':    { color: '#8868c8', abbr: 'CE' },
-  'tortos':     { color: '#a86838', abbr: 'TO' },
-  'megaera':    { color: '#c84848', abbr: 'ME' },
-  'jikun':      { color: '#38a868', abbr: 'JK' },
-  'darkanimus': { color: '#c84888', abbr: 'DA' },
-  'ironqon':    { color: '#c86028', abbr: 'IQ' },
-  'leishen':    { color: '#c83a20', abbr: 'LS' },
-  'raden':      { color: '#c8a838', abbr: 'RA' },
+  'immerseus':        { color: '#4888c8', abbr: 'IM' },
+  'fallenprotectors': { color: '#c84848', abbr: 'FP' },
+  'norushen':         { color: '#c8a838', abbr: 'NO' },
+  'sha':              { color: '#8868c8', abbr: 'SH' },
+  'galakras':         { color: '#c87838', abbr: 'GA' },
+  'ironjuggernaut':   { color: '#888888', abbr: 'IJ' },
+  'darkshaman':       { color: '#38a868', abbr: 'DS' },
+  'generalnazmak':    { color: '#c83a20', abbr: 'GN' },
+  'malkorok':         { color: '#8868c8', abbr: 'MA' },
+  'spoils':           { color: '#c8a838', abbr: 'SP' },
+  'thok':             { color: '#c84848', abbr: 'TH' },
+  'siegecrafter':     { color: '#888888', abbr: 'SB' },
+  'paragons':         { color: '#38a8b8', abbr: 'PK' },
+  'garrosh':          { color: '#c83a20', abbr: 'GH' },
 };
 
 function updateNotesTabIcon() {
@@ -4924,17 +4905,20 @@ var WCL_SPELLS = {
 // Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
 // dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
-  'jinrokh':   [{ids:[137358], name:'Lightning Storm', color:'#c83a20', dataType:'DamageTaken'}],
-  'horridon':  [{ids:[136817], name:'Bestial Cry', color:'#c87838', dataType:'DamageTaken'}],
-  'council':   [{ids:[136986,137492], name:'Discharge', color:'#8868c8', dataType:'DamageTaken'}],
-  'tortos':    [{ids:[134920], name:'Quake Stomp', color:'#a86838', dataType:'DamageTaken'}],
-  'megaera':   [{ids:[139548,139549,139551,139552], name:'Rampage', color:'#c84848', dataType:'DamageTaken'}],
-  'jikun':     [{ids:[134380], name:'Quills', color:'#48c888', dataType:'DamageTaken'}],
-  'darkanimus':[{ids:[138782], name:'Int. Jolt', color:'#c84888', dataType:'DamageTaken'}],
-  'ironqon':   [],
-  'twins':     [{ids:[136752], name:'Cosmic Barrage', color:'#6888ff', dataType:'DamageTaken'},{ids:[137341], name:'Nuc. Inferno', color:'#ff9848', dataType:'DamageTaken'}],
-  'leishen':   [{ids:[135556], name:'Ball Lightning', color:'#c8c848', dataType:'DamageTaken'},{ids:[136743], name:'Thunderstruck', color:'#c8c848', dataType:'DamageTaken'}],
-  'raden':     [],
+  'immerseus':        [],
+  'fallenprotectors': [],
+  'norushen':         [],
+  'sha':              [],
+  'galakras':         [],
+  'ironjuggernaut':   [],
+  'darkshaman':       [],
+  'generalnazmak':    [],
+  'malkorok':         [],
+  'spoils':           [],
+  'thok':             [],
+  'siegecrafter':     [],
+  'paragons':         [],
+  'garrosh':          [],
 };
 
 // Map WCL encounter names to boss spell keys
