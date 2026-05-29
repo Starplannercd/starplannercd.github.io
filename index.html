@@ -5525,10 +5525,17 @@ function showWclModal() {
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
       results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Searching zone reports...</div>';
 
-      // Step 1: get recent reports from zone 1054
-      var reportsQuery = '{reportData{reports(zoneID:1054,limit:25){data{code title fights(killType:Kills){id encounterID startTime endTime}}}}}';
+      // Step 1: get recent reports — try zone filter first, fall back to unfiltered
+      var reportsQuery = '{reportData{reports(zoneID:1054,limit:25){data{code fights(killType:Kills){id encounterID startTime endTime}}}}}';
       var rptData = await wclQuery(reportsQuery, {});
       var allReports = (rptData&&rptData.reportData&&rptData.reportData.reports&&rptData.reportData.reports.data)||[];
+      // If zone filter returns nothing, try without zone filter and match by encounterID
+      if (!allReports.length) {
+        results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Trying unfiltered report search...</div>';
+        var reportsQuery2 = '{reportData{reports(limit:25){data{code fights(killType:Kills){id encounterID startTime endTime}}}}}';
+        var rptData2 = await wclQuery(reportsQuery2, {});
+        allReports = (rptData2&&rptData2.reportData&&rptData2.reportData.reports&&rptData2.reportData.reports.data)||[];
+      }
 
       // Step 2: flatten into {code, fid} pairs for the selected encounter
       var pageRankings = [];
