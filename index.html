@@ -4869,7 +4869,7 @@ var WCL_ENCOUNTERS = {};
 async function wclLoadEncounters() {
   if (Object.keys(WCL_ENCOUNTERS).length) return;
   // Try several candidate zone IDs for SoO on MoP Classic
-  var candidateZones = [1098, 1105, 1106, 5];
+  var candidateZones = [1054, 1098, 1105, 1106, 5]; // 1054 = SOO PTR zone
   for (var zi=0; zi<candidateZones.length; zi++) {
     try {
       var zid = candidateZones[zi];
@@ -4877,7 +4877,7 @@ async function wclLoadEncounters() {
       var zone = d && d.worldData && d.worldData.zone;
       var encs = zone && zone.encounters || [];
       console.log('WCL zone', zid, '=', zone && zone.name, '— encounters:', encs.length);
-      if (encs.length >= 10) { // SoO has 14 bosses
+      if (encs.length >= 1) { // accept any zone with bosses (PTR may be partial)
         WCL_ENCOUNTERS = {};
         encs.forEach(function(e){WCL_ENCOUNTERS[e.name]=e.id;});
         console.log('WCL using zone', zid, ':', Object.keys(WCL_ENCOUNTERS).join(', '));
