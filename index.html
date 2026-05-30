@@ -4762,6 +4762,7 @@ window.renderTimeline = function() {
   }
 
   bar.style.cursor = 'ns-resize';
+  setCollapsed(true); // start collapsed
 
   bar.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
