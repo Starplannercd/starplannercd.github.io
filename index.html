@@ -1401,23 +1401,12 @@ const BOSSES = [
         label: null,
         abilities: [
           { name:'Encounter Start',  time:0,   color:'#ffffff', encounterStart:true },
-          { name:'Swirl 1',          time:18,  color:'#4888c8' },
-          { name:'Swirl 2',          time:36,  color:'#4888c8' },
-          { name:'Swirl 3',          time:54,  color:'#4888c8' },
           { name:'Split 1',          time:75,  color:'#8868c8' },
           { name:'Reform 1',         time:105, color:'#48a868' },
-          { name:'Swirl 4',          time:123, color:'#4888c8' },
-          { name:'Swirl 5',          time:141, color:'#4888c8' },
-          { name:'Swirl 6',          time:159, color:'#4888c8' },
           { name:'Split 2',          time:175, color:'#8868c8' },
           { name:'Reform 2',         time:205, color:'#48a868' },
-          { name:'Swirl 7',          time:223, color:'#4888c8' },
-          { name:'Swirl 8',          time:241, color:'#4888c8' },
-          { name:'Swirl 9',          time:259, color:'#4888c8' },
           { name:'Split 3',          time:275, color:'#8868c8' },
           { name:'Reform 3',         time:305, color:'#48a868' },
-          { name:'Swirl 10',         time:323, color:'#4888c8' },
-          { name:'Swirl 11',         time:341, color:'#4888c8' },
           { name:'Split 4',          time:355, color:'#8868c8' },
         ]
       }
@@ -1427,7 +1416,25 @@ const BOSSES = [
     id:'fallenprotectors', name:'The Fallen Protectors',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 480,
-    sections: [{ label: null, abilities: [] }]
+    sections: [
+      {
+        label: null,
+        abilities: [
+          { name:'Encounter Start',   time:0,   color:'#ffffff', encounterStart:true },
+          { name:'Calamity 1',        time:45,  color:'#8868c8' },
+          { name:'Calamity 2',        time:90,  color:'#8868c8' },
+          { name:'Inferno Strike 1',  time:115, color:'#c84848' },
+          { name:'Calamity 3',        time:140, color:'#8868c8' },
+          { name:'Calamity 4',        time:185, color:'#8868c8' },
+          { name:'Inferno Strike 2',  time:210, color:'#c84848' },
+          { name:'Calamity 5',        time:235, color:'#8868c8' },
+          { name:'Calamity 6',        time:285, color:'#8868c8' },
+          { name:'Calamity 7',        time:335, color:'#8868c8' },
+          { name:'Dark Calamity 1',   time:390, color:'#c83a20' },
+          { name:'Dark Calamity 2',   time:440, color:'#c83a20' },
+        ]
+      }
+    ]
   },
   {
     id:'norushen', name:'Norushen',
@@ -4744,7 +4751,7 @@ window.renderTimeline = function() {
   const COLLAPSED_H = 38; // just the bar itself
   const COLLAPSE_THRESHOLD = 60; // drag down this many px to collapse
   let dragStartY = null, dragStartH = null, isDragging = false;
-  let isCollapsed = false;
+  let isCollapsed = true;
 
   function setCollapsed(v) {
     isCollapsed = v;
