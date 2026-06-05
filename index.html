@@ -2998,8 +2998,15 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     } // end else (non-hp-assign)
 
   popup.style.left = Math.min(e.clientX, window.innerWidth - 220) + 'px';
-  popup.style.top = (e.clientY + 8) + 'px';
+  popup.style.top = '-9999px';
+  popup.style.visibility = 'hidden';
   document.body.appendChild(popup);
+  var popH = popup.offsetHeight || 200;
+  var topPos = e.clientY + 8;
+  if (topPos + popH > window.innerHeight - 8) topPos = e.clientY - popH - 8;
+  if (topPos < 8) topPos = 8;
+  popup.style.top = topPos + 'px';
+  popup.style.visibility = '';
   activePopup = popup;
 
   popup.querySelector('#offsetConfirm').addEventListener('click', () => {
@@ -5588,21 +5595,21 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Heroic 10-man execution rankings, ranks 1-30
+      // Heroic 10-man execution rankings, ranks 1-100
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
       results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching heroic 10-man rankings...</div>';
 
       var allRankEntries = [];
       var crawlPage = 1;
       var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
-      while (allRankEntries.length < 30 && crawlPage <= 3) {
+      while (allRankEntries.length < 100 && crawlPage <= 10) {
         var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
         var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
         if (!cpage.length) break;
         allRankEntries = allRankEntries.concat(cpage);
         crawlPage++;
       }
-      var pageRankings = allRankEntries.slice(0, 30);
+      var pageRankings = allRankEntries.slice(0, 100);
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No heroic 10-man logs found for this boss.</div>';
