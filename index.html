@@ -103,20 +103,28 @@
   .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,58,32,0.20); }
 
   .btn {
-    background: #181410;
-    border: 1px solid #2e2620;
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 11px;
+    background: linear-gradient(180deg, #1c1810 0%, #110d08 100%);
+    border: 1px solid #302620;
     border-radius: 3px;
-    color: var(--text2);
-    padding: 6px 14px;
-    font-size: 12px;
+    color: #7a6858;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
     cursor: pointer;
     white-space: nowrap;
-    transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+    transition: border-color 0.14s, color 0.14s, background 0.14s, box-shadow 0.14s;
   }
-  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,58,32,0.10); }
-  .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
+  .btn:hover {
+    background: linear-gradient(180deg, #241e16 0%, #16100a 100%);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .btn-danger:hover { border-color: var(--red); color: var(--red); }
 
   /* ── Button Style Themes ── */
 
@@ -448,7 +456,7 @@
   .timeline-area {
     flex: 1;
     overflow: auto;
-    padding: 12px 16px;
+    padding: 8px 16px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -458,7 +466,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 6px;
     flex-wrap: wrap;
     padding: 2px 0;
   }
@@ -727,15 +735,21 @@
   }
   .offset-popup button:hover { opacity: 0.8; }
 
-  .btn-manage { border-color: #4a8878 !important; color: #4a8878 !important; }
-  .btn-manage:hover { background: #4a887818 !important; }
-  .btn-save { border-color: #48a868 !important; color: #48a868 !important; }
-  .btn-save:hover { background: #48a86822 !important; }
-  .btn-manage:hover { background: #4a887818 !important; }
-  .btn-export { border-color: #c83a20 !important; color: #c83a20 !important; }
-  .btn-screenshot { border-color: #c8cae0 !important; color: #c8cae0 !important; }
+  /* ── Topbar button role colours ── */
+  .btn-manage  { border-color: #26483a; color: #3a7868; }
+  .btn-manage:hover  { border-color: #3a9878; color: #4ab898; background: linear-gradient(180deg,#111e18 0%,#0a1410 100%); box-shadow: 0 0 8px rgba(58,152,120,0.14), 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(100,200,160,0.05); }
 
-  .btn-screenshot:hover { background: #c8cae022 !important; }
+  .btn-export  { border-color: #581a0c; color: #b83820; }
+  .btn-export:hover  { border-color: #c83a20; color: #e84828; background: linear-gradient(180deg,#1c0e08 0%,#100804 100%); box-shadow: 0 0 10px rgba(200,58,32,0.2), 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,90,50,0.06); }
+
+  .btn-wcl     { border-color: #48380c; color: #907028; }
+  .btn-wcl:hover     { border-color: #c89830; color: #c89830; background: linear-gradient(180deg,#1c1608 0%,#100e04 100%); box-shadow: 0 0 8px rgba(200,152,48,0.14), 0 1px 3px rgba(0,0,0,0.5); }
+
+  .btn-screenshot { border-color: #283040; color: #486080; }
+  .btn-screenshot:hover { border-color: #4878a8; color: #6898c8; background: linear-gradient(180deg,#111620 0%,#0a0e18 100%); box-shadow: 0 0 8px rgba(72,120,168,0.14), 0 1px 3px rgba(0,0,0,0.5); }
+
+  .btn-save { border-color: #26503a; color: #38a868; }
+  .btn-save:hover { border-color: #48a868; color: #58c878; background: linear-gradient(180deg,#101e14 0%,#0a1410 100%); }
 
   /* SCREENSHOT MODAL */
   .ss-modal {
@@ -954,7 +968,6 @@
   .ss-icon { width:46px; height:46px; border-radius:6px; border:none; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; letter-spacing:0.03em; }
   .ss-real-icon { width:46px; height:46px; border-radius:6px; border:none; flex-shrink:0; object-fit:cover; }
   .ss-empty { font-size:11px; color:#4a3828; font-style:italic; }
-  .btn-export:hover { background: #c83a2022 !important; }
 
   /* EXPORT MODAL */
   .modal-overlay {
@@ -1031,9 +1044,10 @@
   .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #4a3828; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
   .manage-item.active .manage-check { background:#38a8b8; border-color:#38a8b8; color:#fff; }
 
+  .btn-roster { border-color: #362848; color: #604888; }
+  .btn-roster:hover { border-color: #6848a8; color: #8868c8; background: linear-gradient(180deg,#130f1c 0%,#0d0a14 100%); box-shadow: 0 0 8px rgba(104,72,168,0.14), 0 1px 3px rgba(0,0,0,0.5); }
+
   /* ROSTER CONFIGS */
-  .btn-roster { border-color: #8868c8; color: #8868c8; }
-  .btn-roster:hover { background: #8868c822 !important; }
   .roster-config-item {
     display: flex; align-items: center; gap: 8px;
     padding: 7px 10px; border-radius: 4px;
@@ -1240,7 +1254,7 @@
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
-    <button class="btn" id="wclBtn">WCL</button>
+    <button class="btn btn-wcl" id="wclBtn">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -2429,17 +2443,7 @@ function renderTimeline() {
   const LABEL_W = 160;
   const totalW = 3200;
 
-  // Ruler — tick marks only, no time labels
-  const ruler = document.createElement('div');
-  ruler.className = 'ruler';
-  ruler.style.paddingLeft = LABEL_W + 'px';
-  for (let t = 0; t <= 3200 / PX_PER_SEC; t += 30) {
-    const tick = document.createElement('div');
-    tick.className = 'ruler-tick';
-    tick.style.left = (LABEL_W + t * PX_PER_SEC) + 'px';
-    ruler.appendChild(tick);
-  }
-  grid.appendChild(ruler);
+  // Ruler removed — no tick marks above timeline
 
   // Collect all abilities flat per section
   const bossData = getPlacedKey(boss.id);
