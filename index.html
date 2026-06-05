@@ -5613,7 +5613,7 @@ function showWclModal() {
         var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
         if (!code||!fid) continue;
         try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime playerDetails} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
+          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
           var d = await wclQuery(q, {c:code, fid:fid});
           var rep = d&&d.reportData&&d.reportData.report;
           var evts = (rep&&rep.events&&rep.events.data)||[];
@@ -5626,13 +5626,18 @@ function showWclModal() {
 
           var roleCounts = { tanks: 0, healers: 0, dps: 0 };
           try {
-            var pd = fight.playerDetails;
-            if (typeof pd === 'string') pd = JSON.parse(pd);
-            if (pd && pd.playerDetails) pd = pd.playerDetails;
-            if (pd) {
-              roleCounts.tanks   = (pd.tanks   || []).length;
-              roleCounts.healers = (pd.healers  || []).length;
-              roleCounts.dps     = (pd.dps      || []).length;
+            var pdq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){playerDetails}}}}';
+            var pdd = await wclQuery(pdq, {c:code, fid:fid});
+            var pdfight = pdd&&pdd.reportData&&pdd.reportData.report&&pdd.reportData.report.fights&&pdd.reportData.report.fights[0];
+            if (pdfight) {
+              var pd = pdfight.playerDetails;
+              if (typeof pd === 'string') pd = JSON.parse(pd);
+              if (pd && pd.playerDetails) pd = pd.playerDetails;
+              if (pd) {
+                roleCounts.tanks   = (pd.tanks   || []).length;
+                roleCounts.healers = (pd.healers  || []).length;
+                roleCounts.dps     = (pd.dps      || []).length;
+              }
             }
           } catch(rce) {}
 
