@@ -213,12 +213,41 @@
     letter-spacing: 0.06em;
   }
 
-  .hint {
-    font-size: 10px;
-    color: var(--text3);
-    margin-left: auto;
-    letter-spacing: 0.03em;
+  /* Controls button & dropdown */
+  .controls-wrap { margin-left: auto; position: relative; flex-shrink: 0; }
+
+  .controls-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 7px);
+    right: 0;
+    background: #141210;
+    border: 1px solid #3a2e20;
+    border-radius: 5px;
+    padding: 8px 0 10px;
+    min-width: 258px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
+    z-index: 1000;
   }
+  .controls-dropdown.open { display: block; }
+
+  .controls-section-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #483828; padding: 8px 14px 3px;
+  }
+  .controls-section-label:first-child { padding-top: 4px; }
+
+  .controls-row {
+    display: flex; align-items: center; gap: 10px; padding: 3px 14px;
+  }
+  .controls-row kbd {
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+    color: #c8b090; background: #1e1a14; border: 1px solid #3a2e1e;
+    border-radius: 3px; padding: 2px 7px; white-space: nowrap;
+    min-width: 88px; text-align: center;
+    box-shadow: 0 1px 0 #080604; flex-shrink: 0;
+  }
+  .controls-row span { font-size: 11px; color: #7a6850; }
 
   /* MAIN LAYOUT */
   .main { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
@@ -1258,7 +1287,21 @@
     <button class="btn btn-wcl" id="wclBtn">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
-    <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
+    <div class="controls-wrap">
+      <button class="btn" id="controlsBtn" style="letter-spacing:0.07em;">Controls</button>
+      <div class="controls-dropdown" id="controlsDropdown">
+        <div class="controls-section-label">Mouse</div>
+        <div class="controls-row"><kbd>Drag</kbd><span>Place cooldown on timeline</span></div>
+        <div class="controls-row"><kbd>Right-click</kbd><span>Edit placed cooldown</span></div>
+        <div class="controls-row"><kbd>Middle-click</kbd><span>Remove placed cooldown</span></div>
+        <div class="controls-section-label">Keyboard</div>
+        <div class="controls-row"><kbd>Ctrl + C</kbd><span>Copy hovered cooldown</span></div>
+        <div class="controls-row"><kbd>Ctrl + V</kbd><span>Paste at cursor position</span></div>
+        <div class="controls-row"><kbd>Ctrl + Z</kbd><span>Undo last action</span></div>
+        <div class="controls-row"><kbd>Shift + M</kbd><span>Holy Paladin view</span></div>
+        <div class="controls-row"><kbd>Shift + S</kbd><span>Shaman view</span></div>
+      </div>
+    </div>
     <div id="btnStylePicker">
       <span>BTN</span>
       <button id="btnStylePrev">&#8249;</button>
@@ -4905,6 +4948,15 @@ window.renderTimeline = function() {
 buildPalette();
 buildBossSelect();
 updatePlansBtn();
+
+// Controls dropdown toggle
+(function() {
+  const btn = document.getElementById('controlsBtn');
+  const dd  = document.getElementById('controlsDropdown');
+  if (!btn || !dd) return;
+  btn.addEventListener('click', e => { e.stopPropagation(); dd.classList.toggle('open'); });
+  document.addEventListener('click', () => dd.classList.remove('open'));
+})();
 // One-time migration: FP Calamity 10 moved from row 0-16 → 0-10, Infernos/DMS shifted down
 (function() {
   const MIG_KEY = 'tot_rcd_fp_c10_v1';
