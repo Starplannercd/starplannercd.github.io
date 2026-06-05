@@ -2719,6 +2719,8 @@ function onDragUp(e) {
   // If barely moved, treat as click (no-op for move drags)
   if (!dragMoved && drag.isMove) return;
 
+  pushUndo();
+
   // Find drop target — temporarily hide ghost so elementFromPoint works
   dragGhostEl.style.display = 'none';
   const hit = document.elementFromPoint(e.clientX, e.clientY);
@@ -7238,13 +7240,30 @@ document.addEventListener('keydown', e => {
   if (e.shiftKey && e.key === 'S') showShamanView();
 });
 
-// ── Ctrl+C / Ctrl+V copy-paste for placed cooldowns ──
+// ── Ctrl+C / Ctrl+V copy-paste and Ctrl+Z undo for placed cooldowns ──
 let _cdClipboard = null;
 let _mouseX = 0, _mouseY = 0;
 document.addEventListener('mousemove', e => { _mouseX = e.clientX; _mouseY = e.clientY; });
 
+let _undoStack = [];
+function pushUndo() {
+  _undoStack.push(JSON.parse(JSON.stringify(placedCDs)));
+  if (_undoStack.length > 50) _undoStack.shift();
+}
+
 document.addEventListener('keydown', e => {
   if (!(e.ctrlKey || e.metaKey)) return;
+
+  if (e.key === 'z') {
+    if (!_undoStack.length) return;
+    e.preventDefault();
+    const prev = _undoStack.pop();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, prev);
+    isDirty = true;
+    renderTimeline();
+    return;
+  }
 
   if (e.key === 'c') {
     const el = document.elementFromPoint(_mouseX, _mouseY);
@@ -7269,6 +7288,7 @@ document.addEventListener('keydown', e => {
     const track = hit && hit.closest('.drop-target');
     if (!track) return;
     e.preventDefault();
+    pushUndo();
     const boss = getBoss();
     const rowKey = track.dataset.rowKey;
     const bossId = track.dataset.bossId;
@@ -7318,6 +7338,7 @@ window.placeCd = function(bossId, rowKey, cdId, time, cell) {
 const __origRemovePlaced = removePlaced;
 function __rawRemove(bossId, rowKey, placedId) { __origRemovePlaced(bossId, rowKey, placedId); }
 window.removePlaced = function(bossId, rowKey, placedId) {
+  pushUndo();
   if (anim('remove')) {
     const el = document.querySelector(`[data-placed-id="${placedId}"]`);
     if (el) {
