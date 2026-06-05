@@ -5404,11 +5404,15 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var logsWithRoles = logsData.filter(function(l){ return l.roles && (l.roles.tanks || l.roles.healers); }).length;
     var roleStr = '';
     if (logsWithRoles > 0) {
+      var modalT = modeOf(tankCounts), modalH = modeOf(healCounts), modalD = modeOf(dpsCounts);
+      var matchCount = logsData.filter(function(l){
+        return l.roles && String(l.roles.tanks)===String(modalT) && String(l.roles.healers)===String(modalH);
+      }).length;
       roleStr = '<span style="font-size:10px;color:#5a6080;margin-left:4px;">'
-        + '<span style="color:#4888c8;">'+modeOf(tankCounts)+'T</span>'
-        + ' <span style="color:#48a868;">'+modeOf(healCounts)+'H</span>'
-        + ' <span style="color:#8a7060;">'+modeOf(dpsCounts)+'D</span>'
-        + '<span style="color:#3a4050;"> (most common)</span>'
+        + '<span style="color:#4888c8;">'+modalT+'T</span>'
+        + ' <span style="color:#48a868;">'+modalH+'H</span>'
+        + ' <span style="color:#8a7060;">'+modalD+'D</span>'
+        + '<span style="color:#3a4050;"> &middot; '+matchCount+'/'+logsWithRoles+' logs</span>'
         + '</span>';
     }
     var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span>'+roleStr+'</div>';
