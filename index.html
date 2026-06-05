@@ -2961,6 +2961,45 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="8" max="40" step="1"'
         + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
+    } else if (isHpAssign && isCustom) {
+      const hpVal = p.hpPct != null ? p.hpPct : 40;
+      popup.innerHTML = `
+    <label style="font-size:12px;color:#c83a20;">Custom Assign — Health Assign row</label>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Health % trigger</label>
+      <input type="number" id="hpPctInput" value="${hpVal}" min="8" max="40" step="1"
+        style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:13px;font-weight:700;text-align:center;width:100%;box-sizing:border-box;" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Boss Ability</label>
+      <select id="customBossAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+        ${_bossAbOpts}
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Ability</label>
+      <select id="customAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+        ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>WHO</label>
+      <select id="customWho" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+        ${['ALL', ...CD_POOL.filter(c => c.who && c.who !== 'ALL').map(c => c.who).filter((v,i,a) => a.indexOf(v) === i).sort()].map(w => `<option value="${w}" ${(p.customWho || 'ALL') === w ? 'selected' : ''}>${w}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Overwrite TTS (optional)</label>
+      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Custom Name (display on sheet)</label>
+      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+    </div>
+    <div class="popup-btns">
+      <button class="confirm" id="offsetConfirm">Save</button>
+      <button id="offsetCancel">Cancel</button>
+    </div>`;
     } else {
     popup.innerHTML = isCustom ? `
     <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
@@ -3022,11 +3061,31 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   activePopup = popup;
 
   popup.querySelector('#offsetConfirm').addEventListener('click', () => {
-    if (isHpAssign) {
+    if (isHpAssign && !isCustom) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
       if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
+      closeOffsetPopup();
+      return;
+    }
+    if (isHpAssign && isCustom) {
+      const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
+      const who = popup.querySelector('#customWho').value.trim().toUpperCase() || 'ALL';
+      const ability = popup.querySelector('#customAbility')?.value || '';
+      const bossAbility = popup.querySelector('#customBossAbility')?.value || '';
+      let customName = popup.querySelector('#customName').value.trim();
+      let tts = popup.querySelector('#customTts').value.trim();
+      if (ability && !customName) customName = ability;
+      if (ability && !tts) tts = ability;
+      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
+      const placedItem = placedRow.find(x => x.id === p.id);
+      if (placedItem) {
+        placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct));
+        if (ability) placedItem.customAbility = ability;
+        placedItem.customBossAbility = bossAbility || null;
+      }
+      setCustomPlacementMeta(bossId, rowKey, p.id, who, 'nil', tts, customName, null);
       closeOffsetPopup();
       return;
     }
