@@ -5692,6 +5692,7 @@ function showWclModal() {
 
       // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
       function processBossEvts(bevts, spellGroup, bossEvtTimes, fStart) {
+        if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
         spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
         bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
@@ -5893,7 +5894,7 @@ function showWclModal() {
           processed++;
           results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
           if (processed >= 40) break;
-        } catch(le){ console.warn('WCL log error ri='+ri+':', le, le&&le.stack); results.innerHTML='<div style="color:#c84848;font-size:11px;">Log error (rank '+(ri+1)+'): '+le.message+'</div>'; }
+        } catch(le){ console.warn('WCL log error ri='+ri+':', le); }
       }
 
       if (!processed) {
