@@ -4849,6 +4849,10 @@ window.renderTimeline = function() {
     panel.style.height = (v ? COLLAPSED_H : DEFAULT_H) + 'px';
     panel.style.minHeight = (v ? COLLAPSED_H : 110) + 'px';
     bar.textContent = v ? '▲ Expand' : '▼ Collapse';
+    const tabs = panel.querySelector('.bottom-tabs');
+    const content = document.getElementById('bottomContent');
+    if (tabs) tabs.style.display = v ? 'none' : '';
+    if (content) content.style.display = v ? 'none' : '';
   }
 
   bar.style.cursor = 'ns-resize';
