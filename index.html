@@ -5613,7 +5613,7 @@ function showWclModal() {
         var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
         if (!code||!fid) continue;
         try {
-          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
+          var q = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime playerDetails} events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999){data} healingEvents:events(fightIDs:[$fid],dataType:Healing,startTime:0,endTime:9999999){data}}}}';
           var d = await wclQuery(q, {c:code, fid:fid});
           var rep = d&&d.reportData&&d.reportData.report;
           var evts = (rep&&rep.events&&rep.events.data)||[];
@@ -5623,6 +5623,18 @@ function showWclModal() {
           var fStart = fight.startTime;
           var fDur = fight.endTime - fight.startTime;
           fightDurations.push(fDur);
+
+          var roleCounts = { tanks: 0, healers: 0, dps: 0 };
+          try {
+            var pd = fight.playerDetails;
+            if (typeof pd === 'string') pd = JSON.parse(pd);
+            if (pd && pd.playerDetails) pd = pd.playerDetails;
+            if (pd) {
+              roleCounts.tanks   = (pd.tanks   || []).length;
+              roleCounts.healers = (pd.healers  || []).length;
+              roleCounts.dps     = (pd.dps      || []).length;
+            }
+          } catch(rce) {}
 
           // Build HPS buckets (10s windows) for this log
           var HEAL_BUCKET_MS = 10000;
@@ -5697,7 +5709,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes, roles: roleCounts });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -5726,7 +5738,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes, roles: roleCounts });
           }
           processed++;
           results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
