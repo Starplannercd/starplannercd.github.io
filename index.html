@@ -2946,7 +2946,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
   const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
 
-    if (isHpAssign) {
+    if (isHpAssign && !isCustom) {
       const hpVal = p.hpPct != null ? p.hpPct : 40;
       popup.innerHTML = '<label style="font-size:12px;color:#c83a20;">HP Assign — set health %</label>'
         + '<label>Health % trigger</label>'
