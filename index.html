@@ -228,7 +228,7 @@
   .bottom-panel {
     flex-shrink: 0;
     height: 320px;
-    min-height: 38px;
+    min-height: 14px;
     max-height: 90vh;
     background: var(--bg2);
     border-top: 1px solid var(--border);
@@ -4838,7 +4838,7 @@ window.renderTimeline = function() {
   const bar = document.getElementById('expandFullbar');
   if (!panel || !bar) return;
   const DEFAULT_H = 320;
-  const COLLAPSED_H = 38; // just the bar itself
+  const COLLAPSED_H = 14; // just the bar itself
   const COLLAPSE_THRESHOLD = 60; // drag down this many px to collapse
   let dragStartY = null, dragStartH = null, isDragging = false;
   let isCollapsed = true;
