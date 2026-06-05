@@ -5404,14 +5404,13 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var logsWithRoles = logsData.filter(function(l){ return l.roles && (l.roles.tanks || l.roles.healers); }).length;
     var roleStr = '';
     if (logsWithRoles > 0) {
-      var modalT = modeOf(tankCounts), modalH = modeOf(healCounts), modalD = modeOf(dpsCounts);
+      var modalT = modeOf(tankCounts), modalH = modeOf(healCounts);
       var matchCount = logsData.filter(function(l){
         return l.roles && String(l.roles.tanks)===String(modalT) && String(l.roles.healers)===String(modalH);
       }).length;
       roleStr = '<span style="font-size:10px;color:#5a6080;margin-left:4px;">'
         + '<span style="color:#4888c8;">'+modalT+'T</span>'
         + ' <span style="color:#48a868;">'+modalH+'H</span>'
-        + ' <span style="color:#8a7060;">'+modalD+'D</span>'
         + '<span style="color:#3a4050;"> &middot; '+matchCount+'/'+logsWithRoles+' logs</span>'
         + '</span>';
     }
