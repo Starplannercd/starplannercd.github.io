@@ -1435,13 +1435,13 @@ const BOSSES = [
           { name:'Calamity 7',        time:335, color:'#8868c8' },
           { name:'Calamity 8',        time:385, color:'#8868c8' },
           { name:'Calamity 9',        time:435, color:'#8868c8' },
+          { name:'Calamity 10',       time:485, color:'#8868c8' },
           { name:'Inferno Strike 1',  time:115, color:'#c84848' },
           { name:'Inferno Strike 2',  time:210, color:'#c84848' },
           { name:'Inferno Strike 3',  time:305, color:'#c84848' },
           { name:'Inferno Strike 4',  time:400, color:'#c84848' },
           { name:'Desperate Measures Sun 1',   time:390, color:'#c83a20' },
           { name:'Desperate Measures Sun 2',   time:440, color:'#c83a20' },
-          { name:'Calamity 10',       time:485, color:'#8868c8' },
         ]
       }
     ]
@@ -4838,6 +4838,27 @@ window.renderTimeline = function() {
 buildPalette();
 buildBossSelect();
 updatePlansBtn();
+// One-time migration: FP Calamity 10 moved from row 0-16 → 0-10, Infernos/DMS shifted down
+(function() {
+  const MIG_KEY = 'tot_rcd_fp_c10_v1';
+  if (localStorage.getItem(MIG_KEY)) return;
+  const remap = {'0-10':'0-11','0-11':'0-12','0-12':'0-13','0-13':'0-14','0-14':'0-15','0-15':'0-16','0-16':'0-10'};
+  function remapFP(pcd) {
+    if (!pcd || !pcd.fallenprotectors) return;
+    const fp = pcd.fallenprotectors, out = {};
+    Object.keys(fp).forEach(k => { out[remap[k] || k] = fp[k]; });
+    pcd.fallenprotectors = out;
+  }
+  [LS_KEY, FULL_RAID_SNAPSHOT_KEY].forEach(key => {
+    try { const r = localStorage.getItem(key); if (r) { const d = JSON.parse(r); if (d.placedCDs) { remapFP(d.placedCDs); localStorage.setItem(key, JSON.stringify(d)); } } } catch(e) {}
+  });
+  try {
+    const r = localStorage.getItem(PLANS_KEY);
+    if (r) { const plans = JSON.parse(r); Object.values(plans).forEach(p => { if (p && p.placedCDs) remapFP(p.placedCDs); }); localStorage.setItem(PLANS_KEY, JSON.stringify(plans)); }
+  } catch(e) {}
+  localStorage.setItem(MIG_KEY, '1');
+})();
+
 const _didRestore = autoLoad();
 refreshBossSelectLabels();
 renderTimeline();
