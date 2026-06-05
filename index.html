@@ -5631,9 +5631,27 @@ function showWclModal() {
           var roleCounts = { tanks: 0, healers: 0, dps: 0 };
           try {
             // Tank cooldowns: Shield Wall 871, Last Stand 12975, Demoralizing Shout 1160, Frenzied Regen 22842, Savage Defense 62606, Brewmaster ISB 115308, Prot Paladin Ardent Defender 31850
-            var TANK_SIDS   = {871:1,12975:1,1160:1,22842:1,62606:1,115308:1,31850:1,184364:1};
-            // Healer spells: Circle of Healing 34861, Wild Growth 48438, Prayer of Healing 596, Chain Heal 1064, Uplift 116670, Holy Radiance 82327
-            var HEALER_SIDS = {34861:1,48438:1,596:1,1064:1,116670:1,82327:1,88686:1};
+            // Tank: Shield Wall, Last Stand, Spell Reflect, Demo Shout, Shattering Throw,
+            //   Frenzied Regen, Savage Defense, Barkskin(guardian), Berserk(guardian),
+            //   Brewmaster: ISB 115308, Guard 115295, Purifying Brew 119582, Expel Harm 115072, Keg Smash 121253,
+            //   Prot War: Shield Slam 23922, Revenge 6572, Thunder Clap 6343, Shield Block 2565,
+            //   Prot Pal: Hammer of the Righteous 53595, Shield of the Righteous 53600, Ardent Defender 31850, Consecration 26573
+            var TANK_SIDS = {
+              871:1, 12975:1, 23920:1, 1160:1, 64382:1,       // War: Shield Wall, Last Stand, Spell Reflect, Demo Shout, Shattering Throw
+              23922:1, 6572:1, 6343:1, 2565:1, 12809:1,       // War: Shield Slam, Revenge, Thunder Clap, Shield Block, Concussion Blow
+              22842:1, 62606:1, 22812:1, 50334:1, 80964:1,    // Druid: Frenzied Regen, Savage Defense, Barkskin, Berserk, Pulverize
+              115308:1, 115295:1, 119582:1, 115072:1, 121253:1, 100780:1, // Monk: ISB, Guard, Purifying Brew, Expel Harm, Keg Smash, Jab
+              31850:1, 53595:1, 53600:1, 26573:1, 31935:1, 20138:1,       // Pal: Ardent Defender, HotR, ShotR, Consecration, Avenger's Shield, Reckoning
+              48792:1                                           // DK: Icebound Fortitude
+            };
+            // Healer: Disc/Holy Priest, Resto Druid, Resto Shaman, Holy Pal, MW Monk
+            var HEALER_SIDS = {
+              34861:1, 596:1, 47540:1, 33076:1, 527:1,        // Priest: Circle of Healing, Prayer of Healing, Penance, Prayer of Mending, Dispel
+              48438:1, 18562:1, 774:1, 33763:1, 17116:1,      // Druid: Wild Growth, Swiftmend, Rejuvenation, Lifebloom, Nature's Swiftness
+              1064:1, 8004:1, 974:1, 61295:1, 16190:1,        // Shaman: Chain Heal, Healing Surge, Earth Shield, Riptide, Mana Tide
+              82327:1, 85222:1, 20473:1, 54968:1, 31821:1,    // Pal: Holy Radiance, Word of Glory, Holy Shock, Beacon of Light, Aura Mastery
+              116670:1, 115151:1, 124682:1, 132120:1, 115313:1 // Monk: Uplift, Renewing Mist, Enveloping Mist, Chi Wave, Surging Mist
+            };
             var tankSrcs = {}, healSrcs = {};
             evts.forEach(function(ev) {
               if (ev.type !== 'cast') return;
