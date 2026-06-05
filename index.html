@@ -4988,6 +4988,13 @@ function getBossSpellsForName(bossName) {
     'Garrosh Hellscream': 'garrosh',
   };
   var key = map[bossName];
+  // Tolerant fallback: match ignoring a leading "The " and casing (WCL names can vary slightly)
+  if (!key && bossName) {
+    var norm = bossName.toLowerCase().replace(/^the\s+/, '').trim();
+    Object.keys(map).forEach(function(k){
+      if (k.toLowerCase().replace(/^the\s+/, '').trim() === norm) key = map[k];
+    });
+  }
   return key ? (WCL_BOSS_SPELLS[key] || []) : [];
 }
 
@@ -5688,6 +5695,7 @@ function showWclModal() {
       var fightDurations = [];
       var logsHpsData = [];
       var processed = 0;
+      var logErrors = [];
       var limit = pageRankings.length;
 
       // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
@@ -5795,9 +5803,10 @@ function showWclModal() {
 
           // Fetch boss ability events — separate queries per dataType
           var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 25s window)
+          // Declared here (not inside the if) so the diagnostic block below never references an undefined var
+          var dmgSpells = [], castSpells = [];
           if (bossSpells.length) {
             // Group spells by dataType
-            var dmgSpells = [], castSpells = [];
             bossSpells.forEach(function(spell, gi) {
               if (spell.dataType === 'Casts') castSpells.push({spell:spell, gi:gi});
               else dmgSpells.push({spell:spell, gi:gi});
@@ -5894,11 +5903,12 @@ function showWclModal() {
           processed++;
           results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
           if (processed >= 40) break;
-        } catch(le){ console.warn('WCL log error ri='+ri+':', le); }
+        } catch(le){ logErrors.push(le && le.message ? le.message : String(le)); console.warn('WCL log error ri='+ri+':', le); }
       }
 
       if (!processed) {
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs could be processed.</div>';
+        var firstErr = logErrors.length ? (' &middot; First error: ' + logErrors[0]) : '';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs could be processed.'+firstErr+'</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
