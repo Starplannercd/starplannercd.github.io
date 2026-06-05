@@ -5427,8 +5427,68 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         + '</span>';
     }
     var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span>'+roleStr+'</div>';
+    // ── Compute avg (median) boss spell cast times across all logs ──
+    var avgBossEvts = {}; // gi -> median time in ms
+    if (bossSpells && bossSpells.length) {
+      bossSpells.forEach(function(spell, gi) {
+        var allTimes = [];
+        logsData.forEach(function(log) {
+          var evts = log.bossEvts && log.bossEvts[gi];
+          if (!evts || !evts.length) return;
+          // Match by cast index — 1st cast across logs, 2nd cast across logs, etc.
+          evts.forEach(function(t, idx) {
+            if (!allTimes[idx]) allTimes[idx] = [];
+            allTimes[idx].push(t);
+          });
+        });
+        // Median per cast index
+        avgBossEvts[gi] = allTimes.map(function(arr) { return wclMedian(arr); });
+      });
+    }
+
+    // ── Build avg boss events row ──
+    function buildAvgBossRow() {
+      if (!bossSpells || !bossSpells.length) return '';
+      var hasAny = bossSpells.some(function(sp, gi){ return avgBossEvts[gi] && avgBossEvts[gi].length; });
+      if (!hasAny) return '';
+
+      var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
+      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#5a4838;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.06em;">avg</div>';
+      html += '<div style="position:relative;width:'+W+'px;height:22px;background:#08090e;border-radius:2px;overflow:hidden;">';
+
+      bossSpells.forEach(function(spell, gi) {
+        var times = avgBossEvts[gi] || [];
+        times.forEach(function(t, idx) {
+          var x = Math.round((t/1000)*sharedPps);
+          var label = spell.name.replace(/^SW\s+/,'SW ') + ' ' + (idx+1) + ' ' + fmtT(t);
+          // Tall hairline
+          html += '<div title="'+label+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:1px;background:'+spell.color+';opacity:0.9;transform:translateX(-50%);"></div>';
+          // Triangle pointer at top
+          html += '<div style="position:absolute;left:'+x+'px;top:0;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid '+spell.color+';opacity:0.9;"></div>';
+          // Label below
+          html += '<span style="position:absolute;left:'+(x+4)+'px;top:6px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;letter-spacing:0.02em;">'+(idx+1)+' '+fmtT(t)+'</span>';
+        });
+      });
+      html += '</div></div>';
+
+      // Thin separator line
+      html += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #1e1a12;"></div></div>';
+      return html;
+    }
+
+    // ── Collect avg boss event x positions for HPS overlay ──
+    var avgBossXs = []; // [{x, color, label}]
+    if (bossSpells) {
+      bossSpells.forEach(function(spell, gi) {
+        (avgBossEvts[gi] || []).forEach(function(t, idx) {
+          avgBossXs.push({ x: Math.round((t/1000)*sharedPps), color: spell.color, label: spell.name+' '+(idx+1) });
+        });
+      });
+    }
+
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
+    bodyHtml += buildAvgBossRow();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
     bodyHtml += '</div>';
 
@@ -5456,6 +5516,13 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       pts += ' '+HPSW+','+HPSH;
       var polyLine = pts.slice(pts.indexOf(' ')+1, pts.lastIndexOf(' '));
       var maxHpsLabel = maxHps >= 1000000 ? (maxHps/1000000).toFixed(1)+'M' : maxHps >= 1000 ? Math.round(maxHps/1000)+'k' : Math.round(maxHps)+'';
+      // Rescale avgBossXs to HPS chart width (same W but different bucket size)
+      var hpsOverlayHtml = '';
+      avgBossXs.forEach(function(ev) {
+        var hx = Math.round(ev.x * (HPSW / W));
+        hpsOverlayHtml += '<div title="'+ev.label+'" style="position:absolute;left:'+hx+'px;top:0;bottom:0;width:1px;background:'+ev.color+';opacity:0.35;pointer-events:none;"></div>';
+        hpsOverlayHtml += '<div style="position:absolute;left:'+hx+'px;bottom:0;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:4px solid '+ev.color+';opacity:0.5;pointer-events:none;"></div>';
+      });
 
       // Build smart ruler for HPS (~15 labels)
       var hpsTick = smartTick(maxDuration, 15);
