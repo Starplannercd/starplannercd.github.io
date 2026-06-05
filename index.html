@@ -284,7 +284,7 @@
     width: 100%;
     height: 14px;
     background: var(--bg3);
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -295,6 +295,7 @@
     text-transform: uppercase;
     user-select: none;
     flex-shrink: 0;
+    margin-top: auto;
     transition: background 0.15s, color 0.15s;
   }
   .expand-fullbar:hover { background: var(--border); color: var(--accent); }
@@ -1272,13 +1273,12 @@
     </div>
     <div class="bottom-panel" id="bottomPanel">
       <div class="resize-handle" id="resizeHandle"></div>
-      <!-- Option A: full-width bar -->
-      <div class="expand-fullbar" id="expandFullbar">▲ Expand</div>
       <div class="bottom-tabs">
         <div class="bottom-tab active" data-tab="sheet">Sheet Preview</div>
         <div class="bottom-tab" data-tab="notes"><span id="notesTabLabel">Notes</span></div>
       </div>
       <div class="bottom-content" id="bottomContent"></div>
+      <div class="expand-fullbar" id="expandFullbar">▲ Expand</div>
     </div>
   </div>
 </div>
