@@ -5801,10 +5801,23 @@ function showWclModal() {
       }
 
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
-      // Update the boss duration to match real log data so the timeline scales correctly
+      // Update boss duration and scale all ability times proportionally to the new avg
       var curBoss = getBoss();
       if (curBoss && avgDuration > 0) {
-        curBoss.duration = Math.round(avgDuration / 1000);
+        var newDurSec = Math.round(avgDuration / 1000);
+        var oldDurSec = curBoss.duration;
+        var scale = oldDurSec > 0 ? newDurSec / oldDurSec : 1;
+        // Scale each ability time proportionally (skip encounter start at time 0)
+        if (Math.abs(scale - 1) > 0.05) { // only rescale if >5% difference
+          curBoss.sections.forEach(function(sec) {
+            (sec.abilities || []).forEach(function(ab) {
+              if (!ab.encounterStart && ab.time > 0) {
+                ab.time = Math.round(ab.time * scale);
+              }
+            });
+          });
+        }
+        curBoss.duration = newDurSec;
         renderTimeline();
       }
       var bossName2 = bossEl.options[bossEl.selectedIndex].text;
