@@ -5690,6 +5690,24 @@ function showWclModal() {
       var processed = 0;
       var limit = pageRankings.length;
 
+      // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
+      function processBossEvts(bevts, spellGroup, bossEvtTimes, fStart) {
+        var idToGroup = {};
+        spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
+        bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
+        bevts.forEach(function(ev){
+          if (ev.type !== 'cast' && ev.type !== 'begincast') return;
+          var sid = ev.abilityGameID;
+          var gi = idToGroup[sid];
+          if (gi === undefined) return;
+          var rel = ev.timestamp - fStart;
+          if (rel<0||rel>900000) return;
+          if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
+          var times = bossEvtTimes[gi];
+          if (!times.length || rel - times[times.length-1] > 60000) times.push(rel);
+        });
+      }
+
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
         var code = r.report&&r.report.code, fid = r.report&&r.report.fightID;
@@ -5783,35 +5801,18 @@ function showWclModal() {
               if (spell.dataType === 'Casts') castSpells.push({spell:spell, gi:gi});
               else dmgSpells.push({spell:spell, gi:gi});
             });
-            function processBossEvts(bevts, spellGroup) {
-              var idToGroup = {};
-              spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
-              bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
-              bevts.forEach(function(ev){
-                // Only accept initial cast events, not removebuff/expiry/tick events
-                if (ev.type !== 'cast' && ev.type !== 'begincast') return;
-                var sid = ev.abilityGameID;
-                var gi = idToGroup[sid];
-                if (gi === undefined) return;
-                var rel = ev.timestamp - fStart;
-                if (rel<0||rel>900000) return;
-                if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-                var times = bossEvtTimes[gi];
-                if (!times.length || rel - times[times.length-1] > 60000) times.push(rel);
-              });
-            }
             try {
               if (dmgSpells.length) {
                 var bq1 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
                 var bd1 = await wclQuery(bq1, {c:code, fid:fid});
                 var bevts1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events&&bd1.reportData.report.events.data)||[];
-                processBossEvts(bevts1, dmgSpells);
+                processBossEvts(bevts1, dmgSpells, bossEvtTimes, fStart);
               }
               if (castSpells.length) {
                 var bq2 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
                 var bd2 = await wclQuery(bq2, {c:code, fid:fid});
                 var bevts2 = (bd2&&bd2.reportData&&bd2.reportData.report&&bd2.reportData.report.events&&bd2.reportData.report.events.data)||[];
-                processBossEvts(bevts2, castSpells);
+                processBossEvts(bevts2, castSpells, bossEvtTimes, fStart);
               }
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
