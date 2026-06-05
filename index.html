@@ -2829,10 +2829,11 @@ function handleRightClick(e, boss, rowKey, bossData) {
 
 
 // ---- Offset popup ----
-const CUSTOM_ABILITY_LIST = ['','Windwalk Totem','Mass Spell Reflection','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
+const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
 
 // Class colours per ability for custom assignments
 const CUSTOM_ABILITY_COLORS = {
+  'Bloodlust':          { color:'#c79c6e', textColor:'#ffcc55' }, // Shaman/bloodlust gold
   'Windwalk Totem':       { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Mass Spell Reflection':{ color:'#c79c6e', textColor:'#e8c87a' }, // Warrior brown
   'Capacitor Totem':      { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
@@ -2853,6 +2854,7 @@ const CUSTOM_ABILITY_COLORS = {
 
 // Short labels for custom abilities
 const CUSTOM_ABILITY_SHORTS = {
+  'Bloodlust':             'BL',
   'Windwalk Totem':        'WW',
   'Mass Spell Reflection': 'MSR',
   'Capacitor Totem':       'Cap',
@@ -2873,6 +2875,7 @@ const CUSTOM_ABILITY_SHORTS = {
 
 // Spell IDs for custom abilities (for Foji export)
 const CUSTOM_ABILITY_SPELL_IDS = {
+  'Bloodlust':             '2825',
   'Windwalk Totem':        '108273',
   'Mass Spell Reflection': '114028',
   'Capacitor Totem':       '192058',
@@ -5384,7 +5387,31 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var avgSec = Math.round(avgDuration/1000);
     var avgStr = Math.floor(avgSec/60)+':'+(avgSec%60<10?'0':'')+(avgSec%60);
 
-    var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span></div>';
+    // Tally role counts across all logs
+    var tankCounts = {}, healCounts = {}, dpsCounts = {};
+    logsData.forEach(function(log) {
+      var r = log.roles;
+      if (!r) return;
+      tankCounts[r.tanks]  = (tankCounts[r.tanks]  || 0) + 1;
+      healCounts[r.healers] = (healCounts[r.healers] || 0) + 1;
+      dpsCounts[r.dps]     = (dpsCounts[r.dps]     || 0) + 1;
+    });
+    function modeOf(obj) {
+      var best = null, bestN = 0;
+      Object.keys(obj).forEach(function(k) { if (obj[k] > bestN) { bestN = obj[k]; best = k; } });
+      return best !== null ? best : '?';
+    }
+    var logsWithRoles = logsData.filter(function(l){ return l.roles && (l.roles.tanks || l.roles.healers); }).length;
+    var roleStr = '';
+    if (logsWithRoles > 0) {
+      roleStr = '<span style="font-size:10px;color:#5a6080;margin-left:4px;">'
+        + '<span style="color:#4888c8;">'+modeOf(tankCounts)+'T</span>'
+        + ' <span style="color:#48a868;">'+modeOf(healCounts)+'H</span>'
+        + ' <span style="color:#8a7060;">'+modeOf(dpsCounts)+'D</span>'
+        + '<span style="color:#3a4050;"> (most common)</span>'
+        + '</span>';
+    }
+    var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span>'+roleStr+'</div>';
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
@@ -5482,7 +5509,7 @@ function showWclModal() {
 
       + '</div>'
       // Fetch button — prominent
-      + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH DATA</button>'
+      + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH CD TIMING DATA</button>'
       + '<div id="wclResults"></div>'
       + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a2e20;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
