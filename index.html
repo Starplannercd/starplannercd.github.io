@@ -2427,13 +2427,13 @@ function renderTimeline() {
 
   const PX_PER_SEC = 2.8;
   const LABEL_W = 160;
-  const totalW = Math.max(boss.duration * PX_PER_SEC, 1600);
+  const totalW = 3200;
 
   // Ruler — tick marks only, no time labels
   const ruler = document.createElement('div');
   ruler.className = 'ruler';
   ruler.style.paddingLeft = LABEL_W + 'px';
-  for (let t = 0; t <= boss.duration; t += 30) {
+  for (let t = 0; t <= 3200 / PX_PER_SEC; t += 30) {
     const tick = document.createElement('div');
     tick.className = 'ruler-tick';
     tick.style.left = (LABEL_W + t * PX_PER_SEC) + 'px';
@@ -2740,7 +2740,7 @@ function onDragUp(e) {
     const cellIndex = Math.floor(relX / (cellSize * pps));
     // Store cell center as time — icon will be centered on this
     let time = (cellIndex * cellSize) + (cellSize / 2);
-    time = Math.max(0, Math.min(boss.duration, time));
+    time = Math.max(0, time);
 
     if (drag.isMove) {
       // Check if target cell is occupied — if so, swap displaced CD to source cell
