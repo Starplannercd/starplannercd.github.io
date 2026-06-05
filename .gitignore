@@ -1,0 +1,7 @@
+# Claude Code local settings
+.claude/
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+*.swp
