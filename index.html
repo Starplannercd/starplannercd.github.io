@@ -7238,6 +7238,51 @@ document.addEventListener('keydown', e => {
   if (e.shiftKey && e.key === 'S') showShamanView();
 });
 
+// ── Ctrl+C / Ctrl+V copy-paste for placed cooldowns ──
+let _cdClipboard = null;
+let _mouseX = 0, _mouseY = 0;
+document.addEventListener('mousemove', e => { _mouseX = e.clientX; _mouseY = e.clientY; });
+
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+
+  if (e.key === 'c') {
+    const el = document.elementFromPoint(_mouseX, _mouseY);
+    const placedEl = el && el.closest('.placed-cd');
+    if (!placedEl) return;
+    e.preventDefault();
+    const rowKey = placedEl.dataset.rowKey;
+    const boss = getBoss();
+    const row = (placedCDs[boss.id] || {})[rowKey] || [];
+    const p = row.find(p => String(p.id) === placedEl.dataset.placedId);
+    if (!p) return;
+    _cdClipboard = { cdId: p.cdId, offset: p.offset, hpPct: p.hpPct,
+      customWho: p.customWho, customTts: p.customTts, customName: p.customName,
+      customAbility: p.customAbility, customSpellId: p.customSpellId, customBossAbility: p.customBossAbility };
+    placedEl.style.outline = '2px solid #fff8';
+    setTimeout(() => { if (placedEl.isConnected) placedEl.style.outline = ''; }, 350);
+  }
+
+  if (e.key === 'v') {
+    if (!_cdClipboard) return;
+    const hit = document.elementFromPoint(_mouseX, _mouseY);
+    const track = hit && hit.closest('.drop-target');
+    if (!track) return;
+    e.preventDefault();
+    const boss = getBoss();
+    const rowKey = track.dataset.rowKey;
+    const bossId = track.dataset.bossId;
+    const rect = track.getBoundingClientRect();
+    const cellIndex = Math.floor((_mouseX - rect.left) / (30 * 2.8));
+    const time = (cellIndex * 30) + 15;
+    const meta = { customWho: _cdClipboard.customWho, customTts: _cdClipboard.customTts,
+      customName: _cdClipboard.customName, customAbility: _cdClipboard.customAbility,
+      customSpellId: _cdClipboard.customSpellId, customBossAbility: _cdClipboard.customBossAbility,
+      hpPct: _cdClipboard.hpPct };
+    placeCdWithOffset(bossId, rowKey, _cdClipboard.cdId, time, _cdClipboard.offset, cellIndex, meta);
+  }
+});
+
 
 
 
