@@ -4953,7 +4953,7 @@ var WCL_SPELLS = {
 // Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
 // dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
-  'immerseus':        [],
+  'immerseus':        [{ids:[143574], name:'SW Corr', color:'#8868c8', dataType:'Casts'}],
   'fallenprotectors': [],
   'norushen':         [],
   'sha':              [],
@@ -5707,20 +5707,18 @@ function showWclModal() {
           if (!logsHpsData) logsHpsData = [];
           logsHpsData.push({ buckets: healBuckets, duration: fDur });
 
-          // Fetch boss ability events separately if we have spell IDs for this boss
-          // Fetch boss ability times from DamageTaken events
-          var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 3s window)
+          // Fetch boss ability events — separate queries per dataType
+          var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 25s window)
           if (bossSpells.length) {
-            try {
-              var bq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
-              var bd = await wclQuery(bq, {c:code, fid:fid});
-              var bevts = (bd&&bd.reportData&&bd.reportData.report&&bd.reportData.report.events&&bd.reportData.report.events.data)||[];
-              // Build a lookup: spellId -> groupIndex
+            // Group spells by dataType
+            var dmgSpells = [], castSpells = [];
+            bossSpells.forEach(function(spell, gi) {
+              if (spell.dataType === 'Casts') castSpells.push({spell:spell, gi:gi});
+              else dmgSpells.push({spell:spell, gi:gi});
+            });
+            function processBossEvts(bevts, spellGroup) {
               var idToGroup = {};
-              bossSpells.forEach(function(spell, gi) {
-                spell.ids.forEach(function(id){ idToGroup[id] = gi; });
-              });
-              // Sort by timestamp so simultaneous multi-ID events (e.g. 4x Rampage variants) dedup correctly
+              spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
               bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
               bevts.forEach(function(ev){
                 var sid = ev.abilityGameID;
@@ -5729,12 +5727,22 @@ function showWclModal() {
                 var rel = ev.timestamp - fStart;
                 if (rel<0||rel>900000) return;
                 if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-                // 25s dedup — Rampage lasts 20s, phases are 40-45s apart, so 25s safely catches all ticks
                 var times = bossEvtTimes[gi];
                 if (!times.length || rel - times[times.length-1] > 25000) times.push(rel);
               });
-              if (processed===0) {
-                console.log('Boss evt results:', JSON.stringify(bossEvtTimes));
+            }
+            try {
+              if (dmgSpells.length) {
+                var bq1 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
+                var bd1 = await wclQuery(bq1, {c:code, fid:fid});
+                var bevts1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events&&bd1.reportData.report.events.data)||[];
+                processBossEvts(bevts1, dmgSpells);
+              }
+              if (castSpells.length) {
+                var bq2 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
+                var bd2 = await wclQuery(bq2, {c:code, fid:fid});
+                var bevts2 = (bd2&&bd2.reportData&&bd2.reportData.report&&bd2.reportData.report.events&&bd2.reportData.report.events.data)||[];
+                processBossEvts(bevts2, castSpells);
               }
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
