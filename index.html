@@ -5624,21 +5624,23 @@ function showWclModal() {
           var fDur = fight.endTime - fight.startTime;
           fightDurations.push(fDur);
 
+          // Infer roles from unique sourceIDs casting known role-signature spells
           var roleCounts = { tanks: 0, healers: 0, dps: 0 };
           try {
-            var pdq = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){playerDetails}}}}';
-            var pdd = await wclQuery(pdq, {c:code, fid:fid});
-            var pdfight = pdd&&pdd.reportData&&pdd.reportData.report&&pdd.reportData.report.fights&&pdd.reportData.report.fights[0];
-            if (pdfight) {
-              var pd = pdfight.playerDetails;
-              if (typeof pd === 'string') pd = JSON.parse(pd);
-              if (pd && pd.playerDetails) pd = pd.playerDetails;
-              if (pd) {
-                roleCounts.tanks   = (pd.tanks   || []).length;
-                roleCounts.healers = (pd.healers  || []).length;
-                roleCounts.dps     = (pd.dps      || []).length;
-              }
-            }
+            // Tank cooldowns: Shield Wall 871, Last Stand 12975, Demoralizing Shout 1160, Frenzied Regen 22842, Savage Defense 62606, Brewmaster ISB 115308, Prot Paladin Ardent Defender 31850
+            var TANK_SIDS   = {871:1,12975:1,1160:1,22842:1,62606:1,115308:1,31850:1,184364:1};
+            // Healer spells: Circle of Healing 34861, Wild Growth 48438, Prayer of Healing 596, Chain Heal 1064, Uplift 116670, Holy Radiance 82327
+            var HEALER_SIDS = {34861:1,48438:1,596:1,1064:1,116670:1,82327:1,88686:1};
+            var tankSrcs = {}, healSrcs = {};
+            evts.forEach(function(ev) {
+              if (ev.type !== 'cast') return;
+              var sid = ev.abilityGameID, src = ev.sourceID;
+              if (TANK_SIDS[sid])   tankSrcs[src]  = 1;
+              if (HEALER_SIDS[sid]) healSrcs[src]  = 1;
+            });
+            roleCounts.tanks   = Object.keys(tankSrcs).length;
+            roleCounts.healers = Object.keys(healSrcs).length;
+            roleCounts.dps     = Math.max(0, 10 - roleCounts.tanks - roleCounts.healers);
           } catch(rce) {}
 
           // Build HPS buckets (10s windows) for this log
