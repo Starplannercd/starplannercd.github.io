@@ -1445,11 +1445,8 @@ const BOSSES = [
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 360,
     sections: [{ label: null, abilities: [
-      { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
-      { name:'Health Assign',   time:0,   color:'#c8a838', hpAssign:true },
-      { name:'Manifestation 1', time:90,  color:'#c84848' },
-      { name:'Manifestation 2', time:180, color:'#c84848' },
-      { name:'Manifestation 3', time:270, color:'#c84848' },
+      { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
+      { name:'Health Assign',   time:0, color:'#c8a838', hpAssign:true },
     ]}]
   },
   {
@@ -2912,7 +2909,7 @@ let activePopup = null;
 const FOJI_BOSS_ABILITIES = {
   immerseus:       ['Encounter Start','Health %'],
   fallenprotectors:['Encounter Start','Health %'],
-  norushen:        ['Encounter Start','Health Assign','Manifestation'],
+  norushen:        ['Encounter Start','Health Assign'],
   sha:             ['Encounter Start','Health %'],
   galakras:        ['Encounter Start','Health %'],
   ironjuggernaut:  ['Encounter Start','Health %'],
@@ -2931,7 +2928,6 @@ const FOJI_ABILITY_KEYS = {
   'Encounter Start': 'ENC_START',
   'Health %': 'HEALTH',
   'Health Assign': 'NORUSHEN_HEALTH',
-  'Manifestation': 'NORUSHEN_ENC_START',
   'Phase 2': 'PHASE_2',
   'Phase 3': 'PHASE_3',
   'Intermission 1': 'INT_1',
