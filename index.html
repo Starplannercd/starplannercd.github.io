@@ -4954,7 +4954,7 @@ var WCL_SPELLS = {
 // dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
   'immerseus':        [{ids:[143436], name:'SW Corr', color:'#8868c8', dataType:'Casts'}],
-  'fallenprotectors': [],
+  'fallenprotectors': [{ids:[143491,124845], name:'Calamity', color:'#8868c8', dataType:'Casts'}],
   'norushen':         [],
   'sha':              [],
   'galakras':         [],
@@ -5454,19 +5454,19 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
       var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
       html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#5a4838;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.06em;">avg</div>';
-      html += '<div style="position:relative;width:'+W+'px;height:22px;background:#08090e;border-radius:2px;overflow:hidden;">';
+      html += '<div style="position:relative;width:'+W+'px;height:28px;background:#08090e;border-radius:2px;overflow:hidden;">';
 
       bossSpells.forEach(function(spell, gi) {
         var times = avgBossEvts[gi] || [];
         times.forEach(function(t, idx) {
           var x = Math.round((t/1000)*sharedPps);
-          var label = spell.name.replace(/^SW\s+/,'SW ') + ' ' + (idx+1) + ' ' + fmtT(t);
-          // Tall hairline
-          html += '<div title="'+label+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:1px;background:'+spell.color+';opacity:0.9;transform:translateX(-50%);"></div>';
-          // Triangle pointer at top
-          html += '<div style="position:absolute;left:'+x+'px;top:0;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid '+spell.color+';opacity:0.9;"></div>';
-          // Label below
-          html += '<span style="position:absolute;left:'+(x+4)+'px;top:6px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;letter-spacing:0.02em;">'+(idx+1)+' '+fmtT(t)+'</span>';
+          var label = spell.name + ' ' + (idx+1) + ' @ ' + fmtT(t);
+          // Hairline
+          html += '<div title="'+label+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:1px;background:'+spell.color+';opacity:0.85;transform:translateX(-50%);"></div>';
+          // Cast number — centered on line, top
+          html += '<span style="position:absolute;left:'+x+'px;top:1px;transform:translateX(-50%);font-size:9px;font-weight:800;color:'+spell.color+';text-shadow:0 1px 3px #000;line-height:1;">'+(idx+1)+'</span>';
+          // Time — below the number, slightly offset right so it clears the line
+          html += '<span style="position:absolute;left:'+(x+4)+'px;bottom:2px;font-size:8px;font-weight:600;color:'+spell.color+';opacity:0.75;white-space:nowrap;text-shadow:0 1px 2px #000;">'+fmtT(t)+'</span>';
         });
       });
       html += '</div></div>';
@@ -5788,6 +5788,8 @@ function showWclModal() {
               spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
               bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
               bevts.forEach(function(ev){
+                // Only accept initial cast events, not removebuff/expiry/tick events
+                if (ev.type !== 'cast' && ev.type !== 'begincast') return;
                 var sid = ev.abilityGameID;
                 var gi = idToGroup[sid];
                 if (gi === undefined) return;
