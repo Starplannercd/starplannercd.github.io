@@ -4363,6 +4363,7 @@ function buildBossSelect() {
   sel.addEventListener('change', () => {
     currentBossId = sel.value;
     renderTimeline();
+    buildPalette();
     renderBottomPanel();
     updateNotesTabIcon();
   });
