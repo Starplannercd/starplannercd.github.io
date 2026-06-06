@@ -60,6 +60,11 @@
       <option value="Rogue|Combat">Combat Rogue</option>
       <option value="Rogue|Subtlety">Subtlety Rogue</option>
     </optgroup>
+    <optgroup label="Mage">
+      <option value="Mage|Fire">Fire Mage</option>
+      <option value="Mage|Frost">Frost Mage</option>
+      <option value="Mage|Arcane">Arcane Mage</option>
+    </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
 </div>
@@ -152,6 +157,30 @@ const TALENT_TIERS = {
     {level:75, choices:{108280:'Healing Tide Totem', 108281:'Ancestral Guidance', 108282:'Conductivity'}},
     {level:90, choices:{117012:'Unleashed Fury', 117013:'Primal Elementalist', 117014:'Elemental Blast'}},
   ],
+  'Mage|Fire': [
+    {level:15, choices:{12043:'Presence of Mind', 108843:'Blazing Speed', 108839:'Ice Floes'}},
+    {level:30, choices:{115610:'Temporal Shield', 140468:'Flameglow', 11426:'Ice Barrier'}},
+    {level:45, choices:{113724:'Ring of Frost', 111264:'Ice Ward', 102051:'Frostjaw'}},
+    {level:60, choices:{110959:'Greater Invisibility', 86949:'Cauterize', 112372:'Cold Snap'}},
+    {level:75, choices:{114923:'Nether Tempest', 44457:'Living Bomb', 112948:'Frost Bomb'}},
+    {level:90, choices:{114003:'Invocation', 116011:'Rune of Power', 1463:"Incanter's Ward"}},
+  ],
+  'Mage|Frost': [
+    {level:15, choices:{12043:'Presence of Mind', 108843:'Blazing Speed', 108839:'Ice Floes'}},
+    {level:30, choices:{115610:'Temporal Shield', 140468:'Flameglow', 11426:'Ice Barrier'}},
+    {level:45, choices:{113724:'Ring of Frost', 111264:'Ice Ward', 102051:'Frostjaw'}},
+    {level:60, choices:{110959:'Greater Invisibility', 86949:'Cauterize', 112372:'Cold Snap'}},
+    {level:75, choices:{114923:'Nether Tempest', 44457:'Living Bomb', 112948:'Frost Bomb'}},
+    {level:90, choices:{114003:'Invocation', 116011:'Rune of Power', 1463:"Incanter's Ward"}},
+  ],
+  'Mage|Arcane': [
+    {level:15, choices:{12043:'Presence of Mind', 108843:'Blazing Speed', 108839:'Ice Floes'}},
+    {level:30, choices:{115610:'Temporal Shield', 140468:'Flameglow', 11426:'Ice Barrier'}},
+    {level:45, choices:{113724:'Ring of Frost', 111264:'Ice Ward', 102051:'Frostjaw'}},
+    {level:60, choices:{110959:'Greater Invisibility', 86949:'Cauterize', 112372:'Cold Snap'}},
+    {level:75, choices:{114923:'Nether Tempest', 44457:'Living Bomb', 112948:'Frost Bomb'}},
+    {level:90, choices:{114003:'Invocation', 116011:'Rune of Power', 1463:"Incanter's Ward"}},
+  ],
   'Priest|Discipline': [
     {level:15, choices:{108920:'Void Tendrils', 108921:'Psyfiend', 114870:'Dominate Mind'}},
     {level:30, choices:{64129:'Body and Soul', 121536:'Angelic Feather', 114239:'Phantasm'}},
@@ -222,6 +251,10 @@ const GLYPH_NAMES = {
   55673:'Deep Wells', 120584:'Vampiric Embrace',
   // Rogue
   56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb',
+  // Mage
+  56368:'Combustion', 89926:'Inferno Blast', 146659:'Rapid Displacement',
+  56377:'Splitting Ice', 63090:'Water Elemental', 56383:'Mana Gem',
+  56364:'Icy Veins', 62210:'Arcane Power',
 };
 
 const MINOR_GLYPHS = new Set([55448, 63279, 147707, 55452, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770]);
