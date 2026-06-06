@@ -138,15 +138,30 @@ const TALENT_TIERS = {
     {level:75, choices:{105809:'Holy Avenger', 53376:'Sanctified Wrath', 86172:'Divine Purpose'}},
     {level:90, choices:{114165:'Holy Prism', 114158:"Light's Hammer", 114157:'Execution Sentence'}},
   ],
+  'Shaman|Restoration': [
+    {level:15, choices:{108270:'Stone Bulwark Totem', 108271:'Astral Shift', 30884:"Nature's Guardian"}},
+    {level:30, choices:{63374:'Frozen Power', 51485:'Earthgrab Totem', 108273:'Windwalk Totem'}},
+    {level:45, choices:{108285:'Call of the Elements', 108287:'Totemic Restoration', 108288:'Totemic Projection'}},
+    {level:60, choices:{108283:'Echo of the Elements', 16188:'Ancestral Swiftness', 16166:'Elemental Mastery'}},
+    {level:75, choices:{108280:'Healing Tide Totem', 108281:'Ancestral Guidance', 108282:'Conductivity'}},
+    {level:90, choices:{117012:'Unleashed Fury', 117013:'Primal Elementalist', 117014:'Elemental Blast'}},
+  ],
 };
 
 const GLYPH_NAMES = {
+  // Holy Paladin
   63218:'Beacon of Light', 54937:'Illumination', 54939:'Divinity', 54936:'Word of Glory',
   54924:'Divine Protection', 93466:'Protector of the Innocent', 89401:'Luminous Charger',
   146957:'Hand of Sacrifice', 146959:'Pillar of Light', 115934:'Bladed Judgment',
   115933:'Righteous Retreat', 115931:'Falling Avenger', 57979:'Winged Vengeance',
   57958:'Blessed Life', 57954:'Insight', 125043:'Contemplation', 89420:'Merciful Wrath',
   63223:'Light of Dawn', 54940:'Divine Favor', 63224:'Cleansing',
+  // Resto Shaman
+  55443:'Riptide', 55455:'Healing Stream Totem', 55441:'Water Shield',
+  55440:'Healing Wave', 55437:'Chain Heal', 55436:'Purify Spirit',
+  63279:'Telluric Currents', 63280:'Totemic Encirclement', 147780:"Spiritwalker's Grace",
+  147781:'Lakestrider', 55442:'Totemic Recall', 89523:'Capacitor Totem',
+  57862:'Shamanistic Rage', 58058:'Far Sight', 58056:'Astral Recall',
 };
 
 function glyphLabel(id, icon) {
