@@ -600,29 +600,28 @@ function pickOptimal(bossPlayers) {
 
 function toLua(bossResults) {
   var lines = [];
-  lines.push('-- Paste this inside BossReminderDB["profiles"]["Flubba"] = { ... }');
-  lines.push('-- (replace the existing Flubba block, or merge boss by boss)');
+  lines.push('-- Find ["Flubba"] = { in BossReminder.lua and replace the entire block with this');
   lines.push('-- Generated from WCL top-25 execution logs per boss');
-  lines.push('');
+  lines.push('["Flubba"] = {');
   for (var [bossName, data] of Object.entries(bossResults)) {
-    if (!data) { lines.push('-- '+bossName+': no data found'); continue; }
-    lines.push('["'+bossName+'"] = {');
-    lines.push('  ["items"] = {');
+    if (!data) { lines.push('  -- '+bossName+': no data found'); continue; }
+    lines.push('  ["'+bossName+'"] = {');
+    lines.push('    ["items"] = {');
     for (var id of data.glyphs) {
       var rawName = GLYPH_NAMES[id] || ('Glyph #'+id);
       var glyphName = rawName.startsWith('Glyph') ? rawName : 'Glyph of '+rawName;
       var icon = GLYPH_ICONS[id] || 0;
-      lines.push('    {["linkType"]="spell",["id"]='+id+',["name"]="'+glyphName+'",["icon"]='+icon+'},');
+      lines.push('      {["linkType"]="spell",["id"]='+id+',["name"]="'+glyphName+'",["icon"]='+icon+'},');
     }
     for (var t of data.talents) {
-      lines.push('    {["linkType"]="talent",["id"]='+t.id+',["name"]="'+t.name+'",["icon"]=0},');
+      lines.push('      {["linkType"]="talent",["id"]='+t.id+',["name"]="'+t.name+'",["icon"]=0},');
     }
+    lines.push('    },');
+    lines.push('    ["notes"] = "'+data.spec+' · '+data.specDist+' ('+data.n+' players)",');
+    lines.push('    ["gearSet"] = "",');
     lines.push('  },');
-    lines.push('  ["notes"] = "'+data.spec+' · '+data.specDist+' ('+data.n+' players)",');
-    lines.push('  ["gearSet"] = "",');
-    lines.push('},');
-    lines.push('');
   }
+  lines.push('},');
   return lines.join('\n');
 }
 
