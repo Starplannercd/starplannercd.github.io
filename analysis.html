@@ -241,8 +241,12 @@ async function processFight(fight, specClass, specName) {
 
   var pd = d?.reportData?.report?.playerDetails;
   var pdp = typeof pd === 'string' ? JSON.parse(pd) : pd;
-  var healers = pdp?.data?.playerDetails?.healers || [];
-  var targets = healers.filter(p => p.type === specClass && p.specs?.some(s => s.spec === specName));
+  var allPlayers = [
+    ...(pdp?.data?.playerDetails?.healers || []),
+    ...(pdp?.data?.playerDetails?.dps || []),
+    ...(pdp?.data?.playerDetails?.tanks || []),
+  ];
+  var targets = allPlayers.filter(p => p.type === specClass && p.specs?.some(s => s.spec === specName));
   if (!targets.length) return {players:[]};
 
   var ciEvents = d?.reportData?.report?.events?.data || [];
