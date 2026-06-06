@@ -55,6 +55,11 @@
       <option value="Priest|Holy">Holy Priest</option>
       <option value="Priest|Shadow">Shadow Priest</option>
     </optgroup>
+    <optgroup label="Rogue">
+      <option value="Rogue|Assassination">Assassination Rogue</option>
+      <option value="Rogue|Combat">Combat Rogue</option>
+      <option value="Rogue|Subtlety">Subtlety Rogue</option>
+    </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
 </div>
@@ -163,6 +168,30 @@ const TALENT_TIERS = {
     {level:75, choices:{10060:'Power Infusion', 123266:'Divine Insight', 109142:'Twist of Fate'}},
     {level:90, choices:{120517:'Halo', 110744:'Divine Star', 121135:'Cascade'}},
   ],
+  'Rogue|Assassination': [
+    {level:15, choices:{14062:'Nightstalker', 108208:'Subterfuge', 108209:'Shadow Focus'}},
+    {level:30, choices:{14190:'Deadly Momentum', 74001:'Combat Readiness', 115189:'Anticipation'}},
+    {level:45, choices:{51685:'Prey on the Weak', 108215:'Paralytic Poison', 108216:'Dirty Tricks'}},
+    {level:60, choices:{36554:'Shadowstep', 108212:'Burst of Speed', 14185:'Preparation'}},
+    {level:75, choices:{114014:'Shuriken Toss', 114021:'Versatility', 108211:'Leeching Poison'}},
+    {level:90, choices:{137619:'Marked for Death', 115189:'Anticipation', 114015:'Anticipation'}},
+  ],
+  'Rogue|Combat': [
+    {level:15, choices:{14062:'Nightstalker', 108208:'Subterfuge', 108209:'Shadow Focus'}},
+    {level:30, choices:{14190:'Deadly Momentum', 74001:'Combat Readiness', 115189:'Anticipation'}},
+    {level:45, choices:{51685:'Prey on the Weak', 108215:'Paralytic Poison', 108216:'Dirty Tricks'}},
+    {level:60, choices:{36554:'Shadowstep', 108212:'Burst of Speed', 14185:'Preparation'}},
+    {level:75, choices:{114014:'Shuriken Toss', 114021:'Versatility', 108211:'Leeching Poison'}},
+    {level:90, choices:{137619:'Marked for Death', 115189:'Anticipation', 114015:'Anticipation'}},
+  ],
+  'Rogue|Subtlety': [
+    {level:15, choices:{14062:'Nightstalker', 108208:'Subterfuge', 108209:'Shadow Focus'}},
+    {level:30, choices:{14190:'Deadly Momentum', 74001:'Combat Readiness', 115189:'Anticipation'}},
+    {level:45, choices:{51685:'Prey on the Weak', 108215:'Paralytic Poison', 108216:'Dirty Tricks'}},
+    {level:60, choices:{36554:'Shadowstep', 108212:'Burst of Speed', 14185:'Preparation'}},
+    {level:75, choices:{114014:'Shuriken Toss', 114021:'Versatility', 108211:'Leeching Poison'}},
+    {level:90, choices:{137619:'Marked for Death', 115189:'Anticipation', 114015:'Anticipation'}},
+  ],
   'Priest|Shadow': [
     {level:15, choices:{108920:'Void Tendrils', 108921:'Psyfiend', 114870:'Dominate Mind'}},
     {level:30, choices:{64129:'Body and Soul', 121536:'Angelic Feather', 114239:'Phantasm'}},
@@ -191,6 +220,8 @@ const GLYPH_NAMES = {
   55675:'Circle of Healing', 63248:'Binding Heal', 55686:'Inner Fire',
   55684:'Fade', 55692:'Smite', 119872:'Renew',
   55673:'Deep Wells', 120584:'Vampiric Embrace',
+  // Rogue
+  56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb',
 };
 
 const MINOR_GLYPHS = new Set([55448, 63279, 147707, 55452, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770]);
