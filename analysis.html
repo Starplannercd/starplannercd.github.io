@@ -46,6 +46,8 @@
     </optgroup>
     <optgroup label="Shaman">
       <option value="Shaman|Restoration">Resto Shaman</option>
+      <option value="Shaman|Elemental">Elemental Shaman</option>
+      <option value="Shaman|*">Shaman — spec split</option>
     </optgroup>
     <optgroup label="Monk">
       <option value="Monk|Mistweaver">Mistweaver Monk</option>
@@ -168,6 +170,14 @@ const TALENT_TIERS = {
     {level:75, choices:{108280:'Healing Tide Totem', 108281:'Ancestral Guidance', 108282:'Conductivity'}},
     {level:90, choices:{117012:'Unleashed Fury', 117013:'Primal Elementalist', 117014:'Elemental Blast'}},
   ],
+  'Shaman|Elemental': [
+    {level:15, choices:{108270:'Stone Bulwark Totem', 108271:'Astral Shift', 30884:"Nature's Guardian"}},
+    {level:30, choices:{63374:'Frozen Power', 51485:'Earthgrab Totem', 108273:'Windwalk Totem'}},
+    {level:45, choices:{108285:'Call of the Elements', 108287:'Totemic Restoration', 108288:'Totemic Projection'}},
+    {level:60, choices:{108283:'Echo of the Elements', 16188:'Ancestral Swiftness', 16166:'Elemental Mastery'}},
+    {level:75, choices:{108280:'Healing Tide Totem', 108281:'Ancestral Guidance', 108282:'Conductivity'}},
+    {level:90, choices:{117012:'Unleashed Fury', 117013:'Primal Elementalist', 117014:'Elemental Blast'}},
+  ],
   'Mage|Fire': [
     {level:15, choices:{12043:'Presence of Mind', 108843:'Blazing Speed', 108839:'Ice Floes'}},
     {level:30, choices:{115610:'Temporal Shield', 140468:'Flameglow', 11426:'Ice Barrier'}},
@@ -260,6 +270,9 @@ const GLYPH_NAMES = {
   55675:'Circle of Healing', 63248:'Binding Heal', 55686:'Inner Fire',
   55684:'Fade', 55692:'Smite', 119872:'Renew',
   55673:'Deep Wells', 120584:'Vampiric Embrace',
+  // Elemental Shaman
+  55450:'Chain Lightning', 55455:'Flame Shock', 55451:'Thunder', 63280:'Lava Lash',
+  55456:'Healing Stream Totem', 63283:'Fire Elemental Totem', 55462:'Lightning Shield',
   // Rogue
   56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb', 63269:'Cloak of Shadows', 56811:'Sprint', 146628:'Sharpened Knives',
   // Mage
