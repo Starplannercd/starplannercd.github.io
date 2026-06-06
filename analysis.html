@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SoO Class Analysis</title>
+<style>
+  body { background:#111; color:#ccc; font-family:monospace; padding:20px; max-width:900px; margin:0 auto; }
+  h1   { color:#c89830; margin-bottom:4px; }
+  h2   { color:#c89830; font-size:14px; margin:20px 0 6px; }
+  select, button { background:#1a1a1a; color:#ccc; border:1px solid #444; padding:6px 10px; font-family:monospace; font-size:13px; cursor:pointer; }
+  button:hover   { border-color:#c89830; color:#c89830; }
+  button:disabled{ opacity:0.4; cursor:default; }
+  #controls      { margin:16px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  #progress      { color:#888; font-size:12px; margin:10px 0; min-height:16px; }
+  #auth-btn      { background:#1a1a1a; color:#c89830; border:1px solid #c89830; padding:8px 16px; font-family:monospace; cursor:pointer; }
+  table  { border-collapse:collapse; width:100%; font-size:13px; margin-bottom:16px; }
+  th     { color:#c89830; text-align:left; border-bottom:1px solid #333; padding:4px 8px; }
+  td     { padding:4px 8px; border-bottom:1px solid #222; }
+  .bar   { display:inline-block; background:#4a3810; height:10px; vertical-align:middle; margin-right:6px; }
+  .pct   { color:#c89830; }
+  .dim   { color:#555; }
+  #results { margin-top:10px; }
+  .section { margin-bottom:24px; }
+  .meta  { color:#666; font-size:12px; margin-bottom:12px; }
+  a      { color:#888; font-size:12px; }
+</style>
+</head>
+<body>
+
+<h1>SoO Heroic 10 — Class Analysis</h1>
+<p style="color:#666;font-size:12px;margin:0 0 16px">Talent &amp; glyph usage from top execution logs · MoP Classic · <a href="/">← RCD Planner</a></p>
+
+<div id="auth-section">
+  <button id="auth-btn" onclick="doLogin()">Login with WarcraftLogs</button>
+  <span id="auth-status" style="color:#666;font-size:12px;margin-left:10px;"></span>
+</div>
+
+<div id="controls" style="display:none">
+  <select id="bossSelect"><option value="">Loading bosses...</option></select>
+  <select id="specSelect">
+    <optgroup label="Paladin">
+      <option value="Paladin|Holy">Holy Paladin</option>
+    </optgroup>
+    <optgroup label="Druid">
+      <option value="Druid|Restoration">Resto Druid</option>
+    </optgroup>
+    <optgroup label="Shaman">
+      <option value="Shaman|Restoration">Resto Shaman</option>
+    </optgroup>
+    <optgroup label="Monk">
+      <option value="Monk|Mistweaver">Mistweaver Monk</option>
+    </optgroup>
+    <optgroup label="Priest">
+      <option value="Priest|Discipline">Disc Priest</option>
+      <option value="Priest|Holy">Holy Priest</option>
+    </optgroup>
+  </select>
+  <button id="fetchBtn" onclick="doFetch()">Fetch</button>
+</div>
+
+<div id="progress"></div>
+<div id="results"></div>
+
+<script>
+// ── WCL OAuth (reuses token from RCD planner on same domain) ──────────────────
+const WCL_CLIENT_ID   = 'a181f533-c14e-4f52-9b17-252b64aa1585';
+const WCL_REDIRECT    = location.origin + location.pathname;
+const WCL_AUTH_URL    = 'https://www.warcraftlogs.com/oauth/authorize';
+const WCL_TOKEN_URL   = 'https://www.warcraftlogs.com/oauth/token';
+const WCL_GQL_URL     = 'https://www.warcraftlogs.com/api/v2/user';
+const WCL_TOKEN_KEY   = 'tot_rcd_wcl_token';
+const WCL_TOKEN_EXP   = 'tot_rcd_wcl_exp';
+const CLASSIC_ZONE    = 1054;
+const CONCURRENCY     = 8;
+
+function getToken() { return localStorage.getItem(WCL_TOKEN_KEY); }
+function isAuthed()  {
+  var exp = localStorage.getItem(WCL_TOKEN_EXP);
+  return !!getToken() && !!exp && Date.now() < parseInt(exp);
+}
+
+async function genVerifier() {
+  var arr = new Uint8Array(32); crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode(...arr)).replace(/[+/=]/g, c=>({'+':'-','/':'_','=':''}[c]));
+}
+async function genChallenge(v) {
+  var hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/[+/=]/g, c=>({'+':'-','/':'_','=':''}[c]));
+}
+
+async function doLogin() {
+  var v = await genVerifier(), ch = await genChallenge(v);
+  var state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('wcl_v', v);
+  sessionStorage.setItem('wcl_s', state);
+  var p = new URLSearchParams({client_id:WCL_CLIENT_ID, redirect_uri:WCL_REDIRECT, response_type:'code',
+    code_challenge:ch, code_challenge_method:'S256', state, scope:'view-user-profile'});
+  location.href = WCL_AUTH_URL + '?' + p;
+}
+
+async function handleCallback() {
+  var p = new URLSearchParams(location.search);
+  var code = p.get('code'), state = p.get('state');
+  if (!code || state !== sessionStorage.getItem('wcl_s')) return false;
+  var v = sessionStorage.getItem('wcl_v');
+  var body = new URLSearchParams({grant_type:'authorization_code', client_id:WCL_CLIENT_ID,
+    redirect_uri:WCL_REDIRECT, code, code_verifier:v});
+  var res = await fetch(WCL_TOKEN_URL, {method:'POST', body, headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+  var data = await res.json();
+  if (data.access_token) {
+    localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
+    localStorage.setItem(WCL_TOKEN_EXP, String(Date.now() + (data.expires_in||3600)*1000));
+    sessionStorage.removeItem('wcl_v'); sessionStorage.removeItem('wcl_s');
+    history.replaceState({}, '', location.pathname);
+    return true;
+  }
+  return false;
+}
+
+async function wclQuery(query, variables) {
+  var res = await fetch(WCL_GQL_URL, {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+getToken(), 'Content-Type':'application/json'},
+    body: JSON.stringify({query, variables})
+  });
+  var json = await res.json();
+  if (json.errors) throw new Error(json.errors[0]?.message || 'GraphQL error');
+  return json.data;
+}
+
+// ── talent / glyph tables ─────────────────────────────────────────────────────
+const TALENT_TIERS = {
+  'Paladin|Holy': [
+    {level:15, choices:{85499:'Speed of Light', 87172:'Long Arm of the Law', 26023:'Pursuit of Justice'}},
+    {level:30, choices:{105593:'Fist of Justice', 20066:'Repentance', 105727:'Seal of Justice'}},
+    {level:45, choices:{85804:'Selfless Healer', 114163:'Eternal Flame', 20925:'Sacred Shield'}},
+    {level:60, choices:{114039:'Hand of Purity', 114400:'Unbreakable Spirit', 114154:'Unbreakable Spirit', 105622:'Clemency'}},
+    {level:75, choices:{105809:'Holy Avenger', 53376:'Sanctified Wrath', 86172:'Divine Purpose'}},
+    {level:90, choices:{114165:'Holy Prism', 114158:"Light's Hammer", 114157:'Execution Sentence'}},
+  ],
+};
+
+const GLYPH_NAMES = {
+  63218:'Beacon of Light', 54937:'Illumination', 54939:'Divinity', 54936:'Word of Glory',
+  54924:'Divine Protection', 93466:'Protector of the Innocent', 89401:'Luminous Charger',
+  146957:'Hand of Sacrifice', 146959:'Pillar of Light', 115934:'Bladed Judgment',
+  115933:'Righteous Retreat', 115931:'Falling Avenger', 57979:'Winged Vengeance',
+  57958:'Blessed Life', 57954:'Insight', 125043:'Contemplation', 89420:'Merciful Wrath',
+  63223:'Light of Dawn', 54940:'Divine Favor', 63224:'Cleansing',
+};
+
+function glyphLabel(id, icon) {
+  if (GLYPH_NAMES[id]) return GLYPH_NAMES[id];
+  return (icon||'').replace(/\.jpg$/,'').split('_').slice(-2).join(' ') + ' ('+id+')';
+}
+
+function talentName(specKey, tier, id) {
+  var tiers = TALENT_TIERS[specKey];
+  if (!tiers || !tiers[tier]) return 'id:'+id;
+  return tiers[tier].choices[id] || 'id:'+id;
+}
+
+// ── fight data fetching ───────────────────────────────────────────────────────
+async function getFightRankings(encId, maxFights) {
+  var all = [], page = 1;
+  while (all.length < maxFights && page <= 10) {
+    var d = await wclQuery(
+      'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}',
+      {id:encId, pg:page}
+    );
+    var raw = d?.worldData?.encounter?.fightRankings;
+    var parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    var entries = parsed?.rankings || [];
+    if (!entries.length) break;
+    all.push(...entries);
+    if (!parsed?.hasMorePages) break;
+    page++;
+  }
+  return all.slice(0, maxFights);
+}
+
+async function processFight(fight, specClass, specName) {
+  var code = fight.report?.code, fightId = fight.report?.fightID;
+  if (!code || fightId == null) return null;
+  var fightStart = fight.startTime - fight.report.startTime;
+
+  var d = await wclQuery(
+    `query($c:String!,$fid:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){
+      playerDetails(fightIDs:[$fid])
+      events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$s,endTime:$e){data}
+    }}}`,
+    {c:code, fid:fightId, s:fightStart, e:fightStart+10000}
+  );
+
+  var pd = d?.reportData?.report?.playerDetails;
+  var pdp = typeof pd === 'string' ? JSON.parse(pd) : pd;
+  var healers = pdp?.data?.playerDetails?.healers || [];
+  var targets = healers.filter(p => p.type === specClass && p.specs?.some(s => s.spec === specName));
+  if (!targets.length) return {players:[]};
+
+  var ciEvents = d?.reportData?.report?.events?.data || [];
+  var ciByActor = {};
+  for (var ev of ciEvents) ciByActor[ev.sourceID] = ev;
+
+  var players = [];
+  var specKey = specClass+'|'+specName;
+  for (var player of targets) {
+    var ev = ciByActor[player.id];
+    if (!ev) continue;
+    var glyphs  = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>glyphLabel(g.spellID, g.icon));
+    var talents = [];
+    var tl = ev.talents||[];
+    for (var tier=0; tier<6; tier++) {
+      var t = tl[tier];
+      if (t && t.id && t.id !== -1) talents.push({tier, name:talentName(specKey, tier, t.id)});
+    }
+    players.push({name:player.name, glyphs, talents});
+  }
+  return {players};
+}
+
+async function runPool(items, fn, concurrency) {
+  var results = new Array(items.length);
+  var next = 0;
+  async function worker() {
+    while (next < items.length) {
+      var i = next++;
+      try { results[i] = await fn(items[i]); }
+      catch(e) { results[i] = {error: e.message.includes('archived') ? 'archived' : e.message.slice(0,50)}; }
+    }
+  }
+  await Promise.all(Array.from({length:concurrency}, worker));
+  return results;
+}
+
+// ── render results ────────────────────────────────────────────────────────────
+function renderResults(encName, specLabel, players, totalFights, elapsedSec) {
+  if (!players.length) {
+    document.getElementById('results').innerHTML = '<p style="color:#888">No '+specLabel+' found in these logs.</p>';
+    return;
+  }
+
+  var majorCounter = {}, talentCounters = [{},{},{},{},{},{}];
+  for (var p of players) {
+    for (var g of p.glyphs)  majorCounter[g]                      = (majorCounter[g]||0)+1;
+    for (var t of p.talents) talentCounters[t.tier][t.name]        = (talentCounters[t.tier][t.name]||0)+1;
+  }
+  var n = players.length;
+
+  var html = '<div class="meta">'+specLabel+' · '+encName+' Heroic 10 · '+n+' players from '+totalFights+' fights · '+elapsedSec+'s</div>';
+
+  // Glyphs
+  html += '<div class="section"><h2>Major Glyphs</h2><table><tr><th>Glyph</th><th>Usage</th><th></th></tr>';
+  var glyphsSorted = Object.entries(majorCounter).sort((a,b)=>b[1]-a[1]);
+  for (var [name, count] of glyphsSorted) {
+    var pct = (count/n*100);
+    var barW = Math.round(pct*1.5);
+    html += '<tr><td>'+name+'</td><td class="pct">'+pct.toFixed(1)+'%</td>';
+    html += '<td><span class="bar" style="width:'+barW+'px"></span><span class="dim">'+count+'/'+n+'</span></td></tr>';
+  }
+  html += '</table></div>';
+
+  // Talents
+  var tierInfo = TALENT_TIERS[Object.keys(TALENT_TIERS)[0]]; // fallback
+  var specKey = document.getElementById('specSelect').value;
+  tierInfo = TALENT_TIERS[specKey] || [];
+
+  html += '<div class="section"><h2>Talents</h2><table><tr><th>Tier</th><th>Choices</th></tr>';
+  for (var tier=0; tier<6; tier++) {
+    var level = tierInfo[tier]?.level || ('T'+(tier+1));
+    var entries = Object.entries(talentCounters[tier]).sort((a,b)=>b[1]-a[1]);
+    if (!entries.length) continue;
+    var cells = entries.map(([name, count]) => {
+      var pct = (count/n*100).toFixed(1);
+      var barW = Math.round(count/n*100);
+      return '<span class="pct">'+pct+'%</span> '+name;
+    }).join('<span class="dim"> &nbsp;|&nbsp; </span>');
+    html += '<tr><td style="color:#888;white-space:nowrap">L'+level+'</td><td>'+cells+'</td></tr>';
+  }
+  html += '</table></div>';
+
+  document.getElementById('results').innerHTML = html;
+}
+
+// ── main fetch ────────────────────────────────────────────────────────────────
+async function doFetch() {
+  var bossSelect = document.getElementById('bossSelect');
+  var specVal    = document.getElementById('specSelect').value;
+  var encId      = parseInt(bossSelect.value);
+  var encName    = bossSelect.options[bossSelect.selectedIndex].text;
+  if (!encId || !specVal) return;
+
+  var [specClass, specName] = specVal.split('|');
+  var specLabel = specName + ' ' + specClass;
+
+  var btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  document.getElementById('results').innerHTML = '';
+
+  var t0 = Date.now();
+  var prog = document.getElementById('progress');
+
+  try {
+    prog.textContent = 'Fetching fight rankings...';
+    var fights = await getFightRankings(encId, 100);
+    prog.textContent = 'Processing '+fights.length+' fights ('+CONCURRENCY+' at a time)...';
+
+    var done = 0;
+    var results = await runPool(fights, async (fight) => {
+      var r = await processFight(fight, specClass, specName);
+      done++;
+      prog.textContent = 'Processing... '+done+'/'+fights.length;
+      return r;
+    }, CONCURRENCY);
+
+    var allPlayers = [];
+    for (var r of results) {
+      if (r?.players) allPlayers.push(...r.players);
+    }
+
+    var elapsed = ((Date.now()-t0)/1000).toFixed(1);
+    prog.textContent = 'Done in '+elapsed+'s — '+allPlayers.length+' '+specLabel+' found';
+    renderResults(encName, specLabel, allPlayers, fights.length, elapsed);
+  } catch(e) {
+    prog.textContent = 'Error: '+e.message;
+    console.error(e);
+  }
+
+  btn.disabled = false;
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  // Handle OAuth callback
+  if (location.search.includes('code=')) {
+    document.getElementById('auth-status').textContent = 'Logging in...';
+    var ok = await handleCallback();
+    if (!ok) { document.getElementById('auth-status').textContent = 'Login failed'; return; }
+  }
+
+  if (!isAuthed()) {
+    document.getElementById('auth-status').textContent = 'Not logged in';
+    return;
+  }
+
+  // Authed — show controls
+  document.getElementById('auth-btn').textContent = 'Logged in ✓';
+  document.getElementById('auth-btn').disabled = true;
+  document.getElementById('auth-status').textContent = '';
+  document.getElementById('controls').style.display = 'flex';
+
+  // Load boss list
+  try {
+    var d = await wclQuery('query{worldData{zone(id:'+CLASSIC_ZONE+'){encounters{id name}}}}', {});
+    var encs = d?.worldData?.zone?.encounters || [];
+    var sel = document.getElementById('bossSelect');
+    sel.innerHTML = encs.map(e => '<option value="'+e.id+'">'+e.name+'</option>').join('');
+    // default to Sha of Pride
+    for (var opt of sel.options) { if (opt.text.includes('Sha of Pride')) { sel.value = opt.value; break; } }
+  } catch(e) {
+    document.getElementById('progress').textContent = 'Failed to load bosses: '+e.message;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
