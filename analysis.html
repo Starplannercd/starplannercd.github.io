@@ -53,6 +53,7 @@
     <optgroup label="Priest">
       <option value="Priest|Discipline">Disc Priest</option>
       <option value="Priest|Holy">Holy Priest</option>
+      <option value="Priest|Shadow">Shadow Priest</option>
     </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
@@ -155,6 +156,14 @@ const TALENT_TIERS = {
     {level:90, choices:{120517:'Halo', 110744:'Divine Star', 121135:'Cascade'}},
   ],
   'Priest|Holy': [
+    {level:15, choices:{108920:'Void Tendrils', 108921:'Psyfiend', 114870:'Dominate Mind'}},
+    {level:30, choices:{64129:'Body and Soul', 121536:'Angelic Feather', 114239:'Phantasm'}},
+    {level:45, choices:{109186:'From Darkness, Comes Light', 123040:'Mindbender', 81700:'Archangel'}},
+    {level:60, choices:{19236:'Desperate Prayer', 112833:'Spectral Guise', 108945:'Angelic Bulwark'}},
+    {level:75, choices:{10060:'Power Infusion', 123266:'Divine Insight', 109142:'Twist of Fate'}},
+    {level:90, choices:{120517:'Halo', 110744:'Divine Star', 121135:'Cascade'}},
+  ],
+  'Priest|Shadow': [
     {level:15, choices:{108920:'Void Tendrils', 108921:'Psyfiend', 114870:'Dominate Mind'}},
     {level:30, choices:{64129:'Body and Soul', 121536:'Angelic Feather', 114239:'Phantasm'}},
     {level:45, choices:{109186:'From Darkness, Comes Light', 123040:'Mindbender', 81700:'Archangel'}},
