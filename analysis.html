@@ -158,12 +158,12 @@ const GLYPH_NAMES = {
   63223:'Light of Dawn', 54940:'Divine Favor', 63224:'Cleansing',
   // Resto Shaman
   63273:'Riptide', 55456:'Healing Stream Totem', 57243:'Healing Wave',
-  57251:'Water Shield', 55453:'Telluric Currents', 63279:'Deluge',
+  57251:'Water Shield', 55453:'Telluric Currents',
   58333:'Totemic Encirclement', 57244:'Totemic Recall', 55446:"Spiritwalker's Grace",
   147781:'Eternal Earth', 55440:'Healing Wave',
 };
 
-const MINOR_GLYPHS = new Set([55448]);
+const MINOR_GLYPHS = new Set([55448, 63279]);
 
 function glyphLabel(id, icon) {
   if (MINOR_GLYPHS.has(id)) return null;
