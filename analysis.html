@@ -594,7 +594,7 @@ function pickOptimal(bossPlayers) {
     topTalents.push({id:topId, name:topName});
   }
   var topGlyphs = Object.entries(glyphCount).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>parseInt(id));
-  var specDist = Object.entries(specCount).sort((a,b)=>b[1]-a[1]).map(([s,c])=>s+' '+(c/bossPlayers.length*100).toFixed(0)+'%').join(', ');
+  var specDist = Object.entries(specCount).sort((a,b)=>b[1]-a[1]).map(([s,c])=>s+' '+(c/bossPlayers.length*100).toFixed(0)+'pct').join(', ');
   return {spec:dominantSpec, specDist, talents:topTalents, glyphs:topGlyphs, n};
 }
 
@@ -617,7 +617,7 @@ function toLua(bossResults) {
       lines.push('      {["linkType"]="talent",["id"]='+t.id+',["name"]="'+t.name+'",["icon"]=0},');
     }
     lines.push('    },');
-    lines.push('    ["notes"] = "'+data.spec+' · '+data.specDist+' ('+data.n+' players)",');
+    lines.push('    ["notes"] = "'+data.spec+' - '+data.specDist+' ('+data.n+' players)",');
     lines.push('    ["gearSet"] = "",');
     lines.push('  },');
   }
