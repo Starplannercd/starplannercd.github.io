@@ -163,7 +163,10 @@ const GLYPH_NAMES = {
   147781:'Eternal Earth', 55440:'Healing Wave',
 };
 
+const MINOR_GLYPHS = new Set([55448]);
+
 function glyphLabel(id, icon) {
+  if (MINOR_GLYPHS.has(id)) return null;
   if (GLYPH_NAMES[id]) return GLYPH_NAMES[id];
   return 'Glyph #'+id;
 }
@@ -221,7 +224,7 @@ async function processFight(fight, specClass, specName) {
   for (var player of targets) {
     var ev = ciByActor[player.id];
     if (!ev) continue;
-    var glyphs  = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>glyphLabel(g.spellID, g.icon));
+    var glyphs  = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>glyphLabel(g.spellID, g.icon)).filter(Boolean);
     var talents = [];
     var tl = ev.talents||[];
     for (var tier=0; tier<6; tier++) {
