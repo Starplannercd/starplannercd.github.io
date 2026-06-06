@@ -166,7 +166,7 @@ const GLYPH_NAMES = {
 
 function glyphLabel(id, icon) {
   if (GLYPH_NAMES[id]) return GLYPH_NAMES[id];
-  return (icon||'').replace(/\.jpg$/,'').split('_').slice(-2).join(' ') + ' ('+id+')';
+  return 'Glyph #'+id;
 }
 
 function talentName(specKey, tier, id) {
