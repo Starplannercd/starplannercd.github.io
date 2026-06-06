@@ -129,12 +129,25 @@
 
 
   /* Controls button & dropdown */
-  .controls-wrap { margin-left: auto; position: relative; flex-shrink: 0; }
+  .controls-wrap {
+    position: fixed;
+    top: 26px;
+    right: 12px;
+    z-index: 10000;
+    text-align: right;
+  }
+  #controlsBtn {
+    background: none; border: none; cursor: pointer;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #7a6050; padding: 3px 0;
+    transition: color 0.15s;
+  }
+  #controlsBtn:hover { color: #c8a070; }
 
   .controls-dropdown {
     display: none;
     position: absolute;
-    top: calc(100% + 7px);
+    top: calc(100% + 4px);
     right: 0;
     background: #141210;
     border: 1px solid #3a2e20;
@@ -1187,6 +1200,21 @@
   </div>
 </div>
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
+<div class="controls-wrap" id="controlsWrap" style="display:none;">
+  <button id="controlsBtn">Controls</button>
+  <div class="controls-dropdown" id="controlsDropdown">
+    <div class="controls-section-label">Mouse</div>
+    <div class="controls-row"><kbd>Drag</kbd><span>Place cooldown on timeline</span></div>
+    <div class="controls-row"><kbd>Right-click</kbd><span>Edit placed cooldown</span></div>
+    <div class="controls-row"><kbd>Middle-click</kbd><span>Remove placed cooldown</span></div>
+    <div class="controls-section-label">Keyboard</div>
+    <div class="controls-row"><kbd>Ctrl + C</kbd><span>Copy hovered cooldown</span></div>
+    <div class="controls-row"><kbd>Ctrl + V</kbd><span>Paste at cursor position</span></div>
+    <div class="controls-row"><kbd>Ctrl + Z</kbd><span>Undo last action</span></div>
+    <div class="controls-row"><kbd>Shift + M</kbd><span>Holy Paladin view</span></div>
+    <div class="controls-row"><kbd>Shift + S</kbd><span>Shaman view</span></div>
+  </div>
+</div>
 <div id="app" style="display:none;">
   <div class="topbar">
   <span class="topbar-title">
@@ -1202,21 +1230,6 @@
     <button class="btn btn-wcl" id="wclBtn">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
-    <div class="controls-wrap">
-      <button id="controlsBtn" style="background:none;border:none;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;padding:4px 2px;transition:color 0.15s;" onmouseover="this.style.color='#a08060'" onmouseout="this.style.color='#5a4838'">Controls</button>
-      <div class="controls-dropdown" id="controlsDropdown">
-        <div class="controls-section-label">Mouse</div>
-        <div class="controls-row"><kbd>Drag</kbd><span>Place cooldown on timeline</span></div>
-        <div class="controls-row"><kbd>Right-click</kbd><span>Edit placed cooldown</span></div>
-        <div class="controls-row"><kbd>Middle-click</kbd><span>Remove placed cooldown</span></div>
-        <div class="controls-section-label">Keyboard</div>
-        <div class="controls-row"><kbd>Ctrl + C</kbd><span>Copy hovered cooldown</span></div>
-        <div class="controls-row"><kbd>Ctrl + V</kbd><span>Paste at cursor position</span></div>
-        <div class="controls-row"><kbd>Ctrl + Z</kbd><span>Undo last action</span></div>
-        <div class="controls-row"><kbd>Shift + M</kbd><span>Holy Paladin view</span></div>
-        <div class="controls-row"><kbd>Shift + S</kbd><span>Shaman view</span></div>
-      </div>
-    </div>
   </div>
   <div class="main">
     <div class="main-top">
@@ -4646,9 +4659,11 @@ function showAuthScreen(show) {
   const auth = document.getElementById('authScreen');
   const app  = document.getElementById('app');
   const out  = document.getElementById('authSignOut');
+  const cw = document.getElementById('controlsWrap');
   if (auth) auth.style.display = show ? 'flex' : 'none';
   if (app)  app.style.display  = show ? 'none' : 'flex';
   if (out)  out.style.display  = show ? 'none' : 'block';
+  if (cw)   cw.style.display   = show ? 'none' : 'block';
 }
 
 function setAuthStatus(msg, isError) {
