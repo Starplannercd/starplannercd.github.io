@@ -250,14 +250,14 @@ const GLYPH_NAMES = {
   55684:'Fade', 55692:'Smite', 119872:'Renew',
   55673:'Deep Wells', 120584:'Vampiric Embrace',
   // Rogue
-  56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb',
+  56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb', 63269:'Cloak of Shadows',
   // Mage
   56368:'Combustion', 89926:'Inferno Blast', 146659:'Rapid Displacement',
   56377:'Splitting Ice', 63090:'Water Elemental', 56383:'Mana Gem',
   56364:'Icy Veins', 62210:'Arcane Power',
 };
 
-const MINOR_GLYPHS = new Set([55448, 63279, 147707, 55452, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384]);
+const MINOR_GLYPHS = new Set([55448, 63279, 147707, 55452, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256]);
 
 function glyphLabel(id, icon) {
   if (MINOR_GLYPHS.has(id)) return null;
