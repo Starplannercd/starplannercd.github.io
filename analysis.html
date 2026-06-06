@@ -54,16 +54,19 @@
       <option value="Priest|Discipline">Disc Priest</option>
       <option value="Priest|Holy">Holy Priest</option>
       <option value="Priest|Shadow">Shadow Priest</option>
+      <option value="Priest|*">Priest — spec split</option>
     </optgroup>
     <optgroup label="Rogue">
       <option value="Rogue|Assassination">Assassination Rogue</option>
       <option value="Rogue|Combat">Combat Rogue</option>
       <option value="Rogue|Subtlety">Subtlety Rogue</option>
+      <option value="Rogue|*">Rogue — spec split</option>
     </optgroup>
     <optgroup label="Mage">
       <option value="Mage|Fire">Fire Mage</option>
       <option value="Mage|Frost">Frost Mage</option>
       <option value="Mage|Arcane">Arcane Mage</option>
+      <option value="Mage|*">Mage — spec split</option>
     </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
@@ -294,14 +297,19 @@ async function processFight(fight, specClass, specName) {
   var code = fight.report?.code, fightId = fight.report?.fightID;
   if (!code || fightId == null) return null;
   var fightStart = fight.startTime - fight.report.startTime;
+  var specSplit = specName === '*';
 
-  var d = await wclQuery(
-    `query($c:String!,$fid:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){
-      playerDetails(fightIDs:[$fid])
-      events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$s,endTime:$e){data}
-    }}}`,
-    {c:code, fid:fightId, s:fightStart, e:fightStart+10000}
-  );
+  var query = specSplit
+    ? `query($c:String!,$fid:Int!){reportData{report(code:$c){playerDetails(fightIDs:[$fid])}}}`
+    : `query($c:String!,$fid:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){
+        playerDetails(fightIDs:[$fid])
+        events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$s,endTime:$e){data}
+      }}}`;
+  var vars = specSplit
+    ? {c:code, fid:fightId}
+    : {c:code, fid:fightId, s:fightStart, e:fightStart+10000};
+
+  var d = await wclQuery(query, vars);
 
   var pd = d?.reportData?.report?.playerDetails;
   var pdp = typeof pd === 'string' ? JSON.parse(pd) : pd;
@@ -310,6 +318,13 @@ async function processFight(fight, specClass, specName) {
     ...(pdp?.data?.playerDetails?.dps || []),
     ...(pdp?.data?.playerDetails?.tanks || []),
   ];
+
+  if (specSplit) {
+    var targets = allPlayers.filter(p => p.type === specClass);
+    var players = targets.map(p => ({name:p.name, spec:p.specs?.[0]?.spec || 'Unknown', glyphs:[], talents:[]}));
+    return {players};
+  }
+
   var targets = allPlayers.filter(p => p.type === specClass && p.specs?.some(s => s.spec === specName));
   if (!targets.length) return {players:[]};
 
@@ -346,6 +361,29 @@ async function runPool(items, fn, concurrency) {
   }
   await Promise.all(Array.from({length:concurrency}, worker));
   return results;
+}
+
+// ── render spec split ─────────────────────────────────────────────────────────
+function renderSpecSplit(encName, specClass, players, totalFights, elapsedSec) {
+  if (!players.length) {
+    document.getElementById('results').innerHTML = '<p style="color:#888">No '+specClass+' found in these logs.</p>';
+    return;
+  }
+  var specCounter = {};
+  for (var p of players) specCounter[p.spec] = (specCounter[p.spec]||0)+1;
+  var n = players.length;
+  var sorted = Object.entries(specCounter).sort((a,b)=>b[1]-a[1]);
+
+  var html = '<div class="meta">'+specClass+' spec distribution · '+encName+' Heroic 10 · '+n+' players from '+totalFights+' fights · '+elapsedSec+'s</div>';
+  html += '<div class="section"><h2>Spec Distribution</h2><table><tr><th>Spec</th><th>Usage</th><th></th></tr>';
+  for (var [spec, count] of sorted) {
+    var pct = (count/n*100);
+    var barW = Math.round(pct*1.5);
+    html += '<tr><td>'+spec+'</td><td class="pct">'+pct.toFixed(1)+'%</td>';
+    html += '<td><span class="bar" style="width:'+barW+'px"></span><span class="dim">'+count+'/'+n+'</span></td></tr>';
+  }
+  html += '</table></div>';
+  document.getElementById('results').innerHTML = html;
 }
 
 // ── render results ────────────────────────────────────────────────────────────
@@ -406,7 +444,8 @@ async function doFetch() {
   if (!encId || !specVal) return;
 
   var [specClass, specName] = specVal.split('|');
-  var specLabel = specName + ' ' + specClass;
+  var specSplit = specName === '*';
+  var specLabel = specSplit ? specClass : specName + ' ' + specClass;
 
   var btn = document.getElementById('fetchBtn');
   btn.disabled = true;
@@ -435,7 +474,8 @@ async function doFetch() {
 
     var elapsed = ((Date.now()-t0)/1000).toFixed(1);
     prog.textContent = 'Done in '+elapsed+'s — '+allPlayers.length+' '+specLabel+' found';
-    renderResults(encName, specLabel, allPlayers, fights.length, elapsed);
+    if (specSplit) renderSpecSplit(encName, specClass, allPlayers, fights.length, elapsed);
+    else renderResults(encName, specLabel, allPlayers, fights.length, elapsed);
   } catch(e) {
     prog.textContent = 'Error: '+e.message;
     console.error(e);
