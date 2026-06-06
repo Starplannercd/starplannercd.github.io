@@ -273,6 +273,7 @@ const GLYPH_NAMES = {
   // Elemental Shaman
   55449:'Chain Lightning', 55447:'Flame Shock', 63270:'Thunder',
   55442:'Capacitor Totem', 101052:'Lightning Shield', 63280:'Shamanistic Rage',
+  55452:'Chaining', 55455:'Fire Elemental Totem',
   // Rogue
   56804:'Feint', 146629:'Redirect', 56799:'Evasion', 63249:'Vendetta', 56819:'Smoke Bomb', 63269:'Cloak of Shadows', 56811:'Sprint', 146628:'Sharpened Knives',
   // Mage
@@ -281,7 +282,7 @@ const GLYPH_NAMES = {
   56364:'Icy Veins', 62210:'Arcane Power', 115705:'Cone of Cold', 98397:'Armors', 56380:'Evocation', 115718:'Arcane Explosion',
 };
 
-const MINOR_GLYPHS = new Set([55448, 63279, 147707, 55452, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254]);
+const MINOR_GLYPHS = new Set([55448, 63279, 147707, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254]);
 
 function glyphLabel(id, icon) {
   if (MINOR_GLYPHS.has(id)) return null;
