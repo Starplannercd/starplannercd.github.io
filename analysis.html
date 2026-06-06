@@ -75,6 +75,14 @@
 <div id="progress"></div>
 <div id="results"></div>
 
+<div id="export-section" style="display:none;margin-top:36px;border-top:1px solid #333;padding-top:20px;">
+  <h2 style="color:#c89830;font-size:14px;margin:0 0 6px">BossReminder Profile Generator — Mage (Flubba)</h2>
+  <p style="color:#666;font-size:12px;margin:0 0 12px">Scans top 25 logs per boss · picks dominant spec + optimal talents/glyphs · outputs Lua to paste into SavedVariables</p>
+  <button id="export-btn" onclick="generateProfile()">Generate Mage Profile (all 14 bosses)</button>
+  <div id="export-progress" style="color:#888;font-size:12px;margin:10px 0;min-height:16px;"></div>
+  <textarea id="export-output" style="display:none;width:100%;height:400px;background:#0a0a0a;color:#aaa;border:1px solid #333;font-family:monospace;font-size:11px;padding:10px;box-sizing:border-box;" readonly></textarea>
+</div>
+
 <script>
 // ── WCL OAuth (reuses token from RCD planner on same domain) ──────────────────
 const WCL_CLIENT_ID   = 'a181f533-c14e-4f52-9b17-252b64aa1585';
@@ -503,6 +511,7 @@ async function init() {
   document.getElementById('auth-btn').disabled = true;
   document.getElementById('auth-status').textContent = '';
   document.getElementById('controls').style.display = 'flex';
+  document.getElementById('export-section').style.display = 'block';
 
   // Load boss list
   try {
@@ -518,6 +527,140 @@ async function init() {
 }
 
 init();
+
+// ── BossReminder export ───────────────────────────────────────────────────────
+const GLYPH_ICONS = {
+  56368:135824, 89926:610633, 146659:135736, 56377:135844,
+  63090:135862, 56383:237193, 56364:135838, 62210:136048,
+  63218:236247, 54937:135948, 54939:135928, 54936:135973,
+  54924:135926, 93466:460690, 146957:135966, 63223:135920,
+};
+
+async function processFightMageAll(fight) {
+  var code = fight.report?.code, fightId = fight.report?.fightID;
+  if (!code || fightId == null) return null;
+  var fightStart = fight.startTime - fight.report.startTime;
+  var d = await wclQuery(
+    `query($c:String!,$fid:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){
+      playerDetails(fightIDs:[$fid])
+      events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$s,endTime:$e){data}
+    }}}`,
+    {c:code, fid:fightId, s:fightStart, e:fightStart+10000}
+  );
+  var pd = d?.reportData?.report?.playerDetails;
+  var pdp = typeof pd === 'string' ? JSON.parse(pd) : pd;
+  var allP = [...(pdp?.data?.playerDetails?.dps||[]), ...(pdp?.data?.playerDetails?.healers||[]), ...(pdp?.data?.playerDetails?.tanks||[])];
+  var mages = allP.filter(p => p.type === 'Mage');
+  if (!mages.length) return {players:[]};
+  var ciByActor = {};
+  for (var ev of (d?.reportData?.report?.events?.data||[])) ciByActor[ev.sourceID] = ev;
+  var players = [];
+  for (var player of mages) {
+    var ev = ciByActor[player.id];
+    if (!ev) continue;
+    var spec = player.specs?.[0]?.spec || 'Unknown';
+    var glyphs = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>g.spellID).filter(id=>!MINOR_GLYPHS.has(id));
+    var talents = [];
+    for (var tier=0; tier<6; tier++) {
+      var t = (ev.talents||[])[tier];
+      if (t && t.id && t.id !== -1) talents.push({tier, id:t.id});
+    }
+    players.push({spec, glyphs, talents});
+  }
+  return {players};
+}
+
+function pickOptimal(bossPlayers) {
+  if (!bossPlayers.length) return null;
+  var specCount = {};
+  for (var p of bossPlayers) specCount[p.spec] = (specCount[p.spec]||0)+1;
+  var dominantSpec = Object.entries(specCount).sort((a,b)=>b[1]-a[1])[0][0];
+  var specPlayers = bossPlayers.filter(p => p.spec === dominantSpec);
+  var n = specPlayers.length;
+  var talentCounters = [{},{},{},{},{},{}];
+  var glyphCount = {};
+  for (var p of specPlayers) {
+    for (var t of p.talents) talentCounters[t.tier][t.id] = (talentCounters[t.tier][t.id]||0)+1;
+    for (var id of p.glyphs) glyphCount[id] = (glyphCount[id]||0)+1;
+  }
+  var specKey = 'Mage|'+dominantSpec;
+  var tiers = TALENT_TIERS[specKey] || [];
+  var topTalents = [];
+  for (var tier=0; tier<6; tier++) {
+    var entries = Object.entries(talentCounters[tier]).sort((a,b)=>b[1]-a[1]);
+    if (!entries.length) continue;
+    var topId = parseInt(entries[0][0]);
+    var topName = tiers[tier]?.choices[topId] || ('id:'+topId);
+    topTalents.push({id:topId, name:topName});
+  }
+  var topGlyphs = Object.entries(glyphCount).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>parseInt(id));
+  var specDist = Object.entries(specCount).sort((a,b)=>b[1]-a[1]).map(([s,c])=>s+' '+(c/bossPlayers.length*100).toFixed(0)+'%').join(', ');
+  return {spec:dominantSpec, specDist, talents:topTalents, glyphs:topGlyphs, n};
+}
+
+function toLua(bossResults) {
+  var lines = [];
+  lines.push('-- Paste this inside BossReminderDB["profiles"]["Flubba"] = { ... }');
+  lines.push('-- (replace the existing Flubba block, or merge boss by boss)');
+  lines.push('-- Generated from WCL top-25 execution logs per boss');
+  lines.push('');
+  for (var [bossName, data] of Object.entries(bossResults)) {
+    if (!data) { lines.push('-- '+bossName+': no data found'); continue; }
+    lines.push('["'+bossName+'"] = {');
+    lines.push('  ["items"] = {');
+    for (var id of data.glyphs) {
+      var rawName = GLYPH_NAMES[id] || ('Glyph #'+id);
+      var glyphName = rawName.startsWith('Glyph') ? rawName : 'Glyph of '+rawName;
+      var icon = GLYPH_ICONS[id] || 0;
+      lines.push('    {["linkType"]="spell",["id"]='+id+',["name"]="'+glyphName+'",["icon"]='+icon+'},');
+    }
+    for (var t of data.talents) {
+      lines.push('    {["linkType"]="talent",["id"]='+t.id+',["name"]="'+t.name+'",["icon"]=0},');
+    }
+    lines.push('  },');
+    lines.push('  ["notes"] = "'+data.spec+' · '+data.specDist+' ('+data.n+' players)",');
+    lines.push('  ["gearSet"] = "",');
+    lines.push('},');
+    lines.push('');
+  }
+  return lines.join('\n');
+}
+
+async function generateProfile() {
+  if (!isAuthed()) { alert('Please log in first'); return; }
+  var btn = document.getElementById('export-btn');
+  btn.disabled = true;
+  var prog = document.getElementById('export-progress');
+  var out  = document.getElementById('export-output');
+  out.style.display = 'none';
+  var sel = document.getElementById('bossSelect');
+  var bosses = Array.from(sel.options).filter(o=>o.value).map(o=>({id:parseInt(o.value), name:o.text}));
+  if (!bosses.length) { prog.textContent = 'Boss list not loaded yet — wait for login to complete.'; btn.disabled=false; return; }
+  var bossResults = {};
+  for (var boss of bosses) {
+    try {
+      prog.textContent = 'Fetching '+boss.name+'...';
+      var fights = await getFightRankings(boss.id, 25);
+      var done = 0;
+      var results = await runPool(fights, async (fight) => {
+        var r = await processFightMageAll(fight);
+        done++;
+        prog.textContent = boss.name+' '+done+'/'+fights.length;
+        return r;
+      }, CONCURRENCY);
+      var allPlayers = [];
+      for (var r of results) if (r?.players) allPlayers.push(...r.players);
+      bossResults[boss.name] = pickOptimal(allPlayers);
+    } catch(e) {
+      bossResults[boss.name] = null;
+      prog.textContent = 'Error on '+boss.name+': '+e.message.slice(0,60);
+    }
+  }
+  prog.textContent = 'Done! Copy the Lua below. Paste it into the Flubba block in BossReminderDB["profiles"] (close WoW first).';
+  out.value = toLua(bossResults);
+  out.style.display = 'block';
+  btn.disabled = false;
+}
 </script>
 </body>
 </html>
