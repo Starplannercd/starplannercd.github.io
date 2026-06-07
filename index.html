@@ -1274,6 +1274,7 @@
 // Full pool of all possible raid CDs
 const CD_POOL = [
   { id:'pwb',   name:'Power Word: Barrier', short:'PW:B',      cd:180, dur:10, color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:true  },
+  { id:'ss',    name:'Spirit Shell',         short:'SS',       cd:60,  dur:15, color:'#d0e8ff', textColor:'#ffffff',  who:'DISC1',     core:true  },
   { id:'dh',    name:'Divine Hymn',          short:'Hymn',  cd:180, dur:8,  color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:false },
   { id:'dem',   name:'Demoralizing Banner',  short:'Demo',cd:180,dur:15, color:'#8b5e3c', textColor:'#d4956a', who:'DPSWARR1',  core:true  },
   { id:'devo1', name:'Holy Devotion Aura',   short:'HDevo', cd:180, dur:6,  color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:true  },
@@ -1313,7 +1314,7 @@ const DEFAULT_ROSTER = [
   { name:'Vyngeance',   spec:'Brewmaster',    who:'BREWMAST1',  cds:['ah'],        color:'#00ff96', role:'tank'   },
   { name:'Johnholyman', spec:'Protection Pal',who:'PROTPALA1',  cds:['devo2'],     color:'#f58cba', role:'tank'   },
   // Healers
-  { name:'Starship',    spec:'Discipline',    who:'DISC1',      cds:['pwb','dh'],  color:'#ffffff', role:'healer' },
+  { name:'Starship',    spec:'Discipline',    who:'DISC1',      cds:['pwb','ss','dh'],  color:'#ffffff', role:'healer' },
   { name:'Merphlight',  spec:'Holy Paladin',  who:'HPALA1',     cds:['devo1'],     color:'#f58cba', role:'healer' },
   // Ranged DPS
   { name:'Ixiom',       spec:'Shadow Priest', who:'SPRIEST1',   cds:['ve'],        color:'#ffffff', role:'ranged' },
@@ -1328,7 +1329,7 @@ const DEFAULT_ROSTER = [
 const SPEC_CD_MAP = {
   // Healers
   'Holy Paladin':     { who:'HPALA1',    cds:['devo1'] },
-  'Discipline':       { who:'DISC1',     cds:['pwb','dh'] },
+  'Discipline':       { who:'DISC1',     cds:['pwb','ss','dh'] },
   'Holy Priest':      { who:'HPRIEST1',  cds:['dh'] },
   'Restoration Sham': { who:'RSHAM1',    cds:['htt'] },
   'Restoration Dru':  { who:'RDRUID1',   cds:['tranq'] },
@@ -1468,7 +1469,28 @@ const BOSSES = [
     id:'galakras', name:'Galakras',
     desc:'Heroic · Gates of Retribution',
     duration: 600,
-    sections: [{ label: null, abilities: [] }]
+    sections: [
+      {
+        label: null,
+        abilities: [
+          { name:'Encounter Start',       time:0,   color:'#ffffff', encounterStart:true },
+          { name:'Pulsing Flames 1',      time:60,  color:'#e07820' },
+          { name:'Flames of Galakrond 1', time:75,  color:'#c83a20' },
+          { name:'Flames of Galakrond 2', time:135, color:'#c83a20' },
+          { name:'Pulsing Flames 2',      time:180, color:'#e07820' },
+          { name:'Flames of Galakrond 3', time:195, color:'#c83a20' },
+          { name:'Flames of Galakrond 4', time:255, color:'#c83a20' },
+          { name:'Pulsing Flames 3',      time:300, color:'#e07820' },
+          { name:'Flames of Galakrond 5', time:315, color:'#c83a20' },
+          { name:'Flames of Galakrond 6', time:375, color:'#c83a20' },
+          { name:'Pulsing Flames 4',      time:420, color:'#e07820' },
+          { name:'Flames of Galakrond 7', time:435, color:'#c83a20' },
+          { name:'Flames of Galakrond 8', time:495, color:'#c83a20' },
+          { name:'Pulsing Flames 5',      time:540, color:'#e07820' },
+          { name:'Flames of Galakrond 9', time:555, color:'#c83a20' },
+        ]
+      }
+    ]
   },
   {
     id:'ironjuggernaut', name:'Iron Juggernaut',
@@ -2282,6 +2304,7 @@ const CD_ICON_URLS = {
   've':          'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unsummonbuilding.jpg',
   'smoke':       'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_smoke.jpg',
   'amz':         'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_antimagiczone.jpg',
+  'ss':          'https://wow.zamimg.com/images/wow/icons/large/spell_priest_spiritshell.jpg',
   'dh':          'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
   'personals':   'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
   'lhammer':     'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
@@ -3315,7 +3338,7 @@ function showManageModal() {
   overlay.className = 'modal-overlay';
 
   // Ordered flat list — similar CDs grouped together
-  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
+  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','ss','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
