@@ -40,6 +40,7 @@
   <select id="specSelect">
     <optgroup label="Paladin">
       <option value="Paladin|Holy">Holy Paladin</option>
+      <option value="Paladin|Retribution">Ret Paladin</option>
     </optgroup>
     <optgroup label="Druid">
       <option value="Druid|Restoration">Resto Druid</option>
@@ -162,6 +163,14 @@ const TALENT_TIERS = {
     {level:75, choices:{105809:'Holy Avenger', 53376:'Sanctified Wrath', 86172:'Divine Purpose'}},
     {level:90, choices:{114165:'Holy Prism', 114158:"Light's Hammer", 114157:'Execution Sentence'}},
   ],
+  'Paladin|Retribution': [
+    {level:15, choices:{85499:'Speed of Light', 87172:'Long Arm of the Law', 26023:'Pursuit of Justice'}},
+    {level:30, choices:{105593:'Fist of Justice', 20066:'Repentance', 105727:'Seal of Justice'}},
+    {level:45, choices:{85804:'Selfless Healer', 114163:'Eternal Flame', 20925:'Sacred Shield'}},
+    {level:60, choices:{114039:'Hand of Purity', 114400:'Unbreakable Spirit', 105622:'Clemency'}},
+    {level:75, choices:{105809:'Holy Avenger', 53376:'Sanctified Wrath', 86172:'Divine Purpose'}},
+    {level:90, choices:{114165:'Holy Prism', 114158:"Light's Hammer", 114157:'Execution Sentence'}},
+  ],
   'Shaman|Restoration': [
     {level:15, choices:{108270:'Stone Bulwark Totem', 108271:'Astral Shift', 30884:"Nature's Guardian"}},
     {level:30, choices:{63374:'Frozen Power', 51485:'Earthgrab Totem', 108273:'Windwalk Totem'}},
@@ -260,6 +269,8 @@ const GLYPH_NAMES = {
   115933:'Righteous Retreat', 115931:'Falling Avenger', 57979:'Winged Vengeance',
   57958:'Blessed Life', 57954:'Insight', 125043:'Contemplation', 89420:'Merciful Wrath',
   63223:'Light of Dawn', 54940:'Divine Favor', 63224:'Cleansing',
+  // Ret Paladin
+  54926:"Templar's Verdict", 121027:'Double Jeopardy', 122028:'Mass Exorcism',
   // Resto Shaman
   63273:'Riptide', 55456:'Healing Stream Totem', 57243:'Healing Wave',
   57251:'Water Shield', 55453:'Telluric Currents',
