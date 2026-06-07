@@ -1445,7 +1445,15 @@ const BOSSES = [
     id:'norushen', name:'Norushen',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 360,
-    sections: [{ label: null, abilities: [] }]
+    sections: [
+      {
+        label: null,
+        abilities: [
+          { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
+          { name:'HP Assign',       time:0,   color:'#c8a84b', hpAssign:true },
+        ]
+      }
+    ]
   },
   {
     id:'sha', name:'Sha of Pride',
@@ -5852,21 +5860,7 @@ function showWclModal() {
               }
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
-          if (processed === 0) {
-            console.log('[WCL] bossEvtTimes for first log:', JSON.stringify(bossEvtTimes));
-            console.log('[WCL] bossSpells:', JSON.stringify(bossSpells));
-            // Also log unique spell IDs from the enemy casts to help identify the right ID
-            if (castSpells.length) {
-              try {
-                var debugQ = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
-                var debugD = await wclQuery(debugQ, {c:code, fid:fid});
-                var debugEvts = (debugD&&debugD.reportData&&debugD.reportData.report&&debugD.reportData.report.events&&debugD.reportData.report.events.data)||[];
-                var uniqueSids = {};
-                debugEvts.forEach(function(ev){ uniqueSids[ev.abilityGameID] = (uniqueSids[ev.abilityGameID]||0)+1; });
-                console.log('[WCL] Enemy cast spell IDs (id:count):', JSON.stringify(uniqueSids));
-              } catch(de) {}
-            }
-          }
+
 
           // Build lookup of all spell IDs cast in this log
           var allCastSids = {};
