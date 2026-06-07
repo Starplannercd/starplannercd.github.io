@@ -103,79 +103,114 @@
   .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,58,32,0.20); }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    height: 26px;
-    padding: 0 12px;
-    background: radial-gradient(ellipse at 50% 0%, #2a2420 0%, #141008 100%);
-    border: 1px solid #4a3828;
-    border-radius: 4px;
-    color: #b09870;
+    background: #181410;
+    border: 1px solid #2e2620;
+    border-radius: 3px;
+    color: var(--text2);
+    padding: 6px 14px;
     font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     cursor: pointer;
     white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,58,32,0.10); }
+  .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(200,72,72,0.06); }
+
+  /* ── Button Style Themes ── */
+
+  /* 1: Iron Plate (default) — already set above */
+
+  /* 2: Parchment Stamp */
+  body.btnstyle-2 .btn {
+    background: #2a1e08; border: 1px solid #c8840044; border-radius: 0;
+    color: #c88440; font-family: 'Cinzel', Georgia, serif; font-size: 10px; letter-spacing: 0.12em;
+    padding: 6px 16px; text-transform: uppercase;
+  }
+  body.btnstyle-2 .btn:hover { background: #c8840022; border-color: #c88440; color: #e0a040; }
+
+  /* 3: Blood Seal */
+  body.btnstyle-3 .btn {
+    background: linear-gradient(180deg, #2a0e08 0%, #1a0804 100%);
+    border: 1px solid #c83a20; border-radius: 2px;
+    color: #e87060; font-size: 11px; letter-spacing: 0.08em;
+    box-shadow: inset 0 1px 0 rgba(255,100,60,0.15), 0 1px 4px rgba(200,58,32,0.3);
+  }
+  body.btnstyle-3 .btn:hover { background: linear-gradient(180deg,#3a1208 0%,#2a0c04 100%); color: #ff8870; box-shadow: inset 0 1px 0 rgba(255,100,60,0.2), 0 2px 8px rgba(200,58,32,0.5); }
+
+  /* 4: Forge Chip */
+  body.btnstyle-4 .btn {
+    background: #1c1810; border: none; border-radius: 0;
+    border-left: 3px solid #c83a20;
+    color: #d8c8b0; font-size: 11px; letter-spacing: 0.05em;
+    padding: 6px 14px 6px 11px;
+  }
+  body.btnstyle-4 .btn:hover { border-left-color: #e07820; color: #e07820; background: #241e14; }
+
+  /* 5: Horde Banner */
+  body.btnstyle-5 .btn {
+    background: transparent; border: none; border-radius: 0;
+    border-bottom: 2px solid #3a2e20;
+    color: #8a7060; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 12px 4px;
+  }
+  body.btnstyle-5 .btn:hover { border-bottom-color: #c83a20; color: #c83a20; }
+
+  /* 6: Iron Rivet */
+  body.btnstyle-6 .btn {
+    background: radial-gradient(ellipse at 50% 0%, #2a2420 0%, #141008 100%);
+    border: 1px solid #4a3828; border-radius: 4px;
+    color: #b09870; font-size: 12px; letter-spacing: 0.04em;
     box-shadow: 0 2px 0 #0a0804, inset 0 1px 0 rgba(255,200,100,0.08);
-    transition: border-color 0.14s, color 0.14s, background 0.14s, box-shadow 0.14s, transform 0.1s;
   }
-  .btn:hover {
-    background: radial-gradient(ellipse at 50% 0%, #382e24 0%, #1c1408 100%);
-    color: #e09820; border-color: #705028;
-    transform: translateY(-1px); box-shadow: 0 3px 0 #0a0804;
-  }
-  .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #0a0804; }
-  .btn-danger:hover { border-color: var(--red); color: var(--red); }
+  body.btnstyle-6 .btn:hover { background: radial-gradient(ellipse at 50% 0%,#382e24 0%,#1c1408 100%); color: #e09820; border-color: #705028; transform: translateY(-1px); box-shadow: 0 3px 0 #0a0804; }
+  body.btnstyle-6 .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #0a0804; }
 
+  /* 7: Ember Glow */
+  body.btnstyle-7 .btn {
+    background: #100c08; border: 1px solid #e0782033; border-radius: 4px;
+    color: #c87838; font-size: 11px; letter-spacing: 0.06em;
+    box-shadow: 0 0 6px rgba(224,120,32,0.12), inset 0 0 12px rgba(224,120,32,0.04);
+  }
+  body.btnstyle-7 .btn:hover { border-color: #e07820; color: #f09030; box-shadow: 0 0 12px rgba(224,120,32,0.3), inset 0 0 16px rgba(224,120,32,0.08); }
 
-  /* Controls button & dropdown */
-  .controls-wrap {
-    position: fixed;
-    top: 26px;
-    right: 12px;
-    z-index: 10000;
-    text-align: right;
+  /* 8: Kor'kron Tag */
+  body.btnstyle-8 .btn {
+    background: #181410; border: 1px solid #3a2e20; border-radius: 0;
+    color: #8a7060; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 5px 12px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
   }
-  #controlsBtn {
-    background: none; border: none; cursor: pointer;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #7a6050; padding: 3px 0;
-    transition: color 0.15s;
-  }
-  #controlsBtn:hover { color: #c8a070; }
+  body.btnstyle-8 .btn:hover { background: #c83a2018; border-color: #c83a20; color: #c83a20; }
 
-  .controls-dropdown {
-    display: none;
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 0;
-    background: #141210;
-    border: 1px solid #3a2e20;
-    border-radius: 5px;
-    padding: 8px 0 10px;
-    min-width: 258px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
-    z-index: 1000;
+  /* Style picker widget */
+  #btnStylePicker {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 6px; border-left: 1px solid #2e2620; margin-left: 4px;
+    flex-shrink: 0;
   }
-  .controls-dropdown.open { display: block; }
+  #btnStylePicker span {
+    font-size: 9px; color: #5a4838; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  }
+  #btnStylePrev, #btnStyleNext {
+    width: 18px; height: 18px; background: #181410; border: 1px solid #2e2620;
+    border-radius: 2px; color: #8a7060; font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  #btnStylePrev:hover, #btnStyleNext:hover { border-color: #c83a20; color: #c83a20; }
+  #btnStyleLabel {
+    font-size: 9px; color: #8a7060; white-space: nowrap; min-width: 80px; text-align: center;
+    letter-spacing: 0.06em;
+  }
 
-  .controls-section-label {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-    color: #483828; padding: 8px 14px 3px;
+  .hint {
+    font-size: 10px;
+    color: var(--text3);
+    margin-left: auto;
+    letter-spacing: 0.03em;
   }
-  .controls-section-label:first-child { padding-top: 4px; }
-
-  .controls-row {
-    display: flex; align-items: center; gap: 10px; padding: 3px 14px;
-  }
-  .controls-row kbd {
-    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
-    color: #c8b090; background: #1e1a14; border: 1px solid #3a2e1e;
-    border-radius: 3px; padding: 2px 7px; white-space: nowrap;
-    min-width: 88px; text-align: center;
-    box-shadow: 0 1px 0 #080604; flex-shrink: 0;
-  }
-  .controls-row span { font-size: 11px; color: #7a6850; }
 
   /* MAIN LAYOUT */
   .main { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
@@ -185,7 +220,7 @@
   .bottom-panel {
     flex-shrink: 0;
     height: 320px;
-    min-height: 14px;
+    min-height: 38px;
     max-height: 90vh;
     background: var(--bg2);
     border-top: 1px solid var(--border);
@@ -241,7 +276,7 @@
     width: 100%;
     height: 14px;
     background: var(--bg3);
-    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -252,7 +287,6 @@
     text-transform: uppercase;
     user-select: none;
     flex-shrink: 0;
-    margin-top: auto;
     transition: background 0.15s, color 0.15s;
   }
   .expand-fullbar:hover { background: var(--border); color: var(--accent); }
@@ -414,7 +448,7 @@
   .timeline-area {
     flex: 1;
     overflow: auto;
-    padding: 8px 16px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -424,7 +458,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 6px;
+    margin-bottom: 14px;
     flex-wrap: wrap;
     padding: 2px 0;
   }
@@ -693,21 +727,15 @@
   }
   .offset-popup button:hover { opacity: 0.8; }
 
-  /* ── Topbar button role colours ── */
-  .btn-manage  { border-color: #26483a; color: #3a7868; }
-  .btn-manage:hover  { border-color: #3a9878; color: #4ab898; background: linear-gradient(180deg,#111e18 0%,#0a1410 100%); box-shadow: 0 0 8px rgba(58,152,120,0.14), 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(100,200,160,0.05); }
+  .btn-manage { border-color: #4a8878 !important; color: #4a8878 !important; }
+  .btn-manage:hover { background: #4a887818 !important; }
+  .btn-save { border-color: #48a868 !important; color: #48a868 !important; }
+  .btn-save:hover { background: #48a86822 !important; }
+  .btn-manage:hover { background: #4a887818 !important; }
+  .btn-export { border-color: #c83a20 !important; color: #c83a20 !important; }
+  .btn-screenshot { border-color: #c8cae0 !important; color: #c8cae0 !important; }
 
-  .btn-export  { border-color: #581a0c; color: #b83820; }
-  .btn-export:hover  { border-color: #c83a20; color: #e84828; background: linear-gradient(180deg,#1c0e08 0%,#100804 100%); box-shadow: 0 0 10px rgba(200,58,32,0.2), 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,90,50,0.06); }
-
-  .btn-wcl     { border-color: #48380c; color: #907028; }
-  .btn-wcl:hover     { border-color: #c89830; color: #c89830; background: linear-gradient(180deg,#1c1608 0%,#100e04 100%); box-shadow: 0 0 8px rgba(200,152,48,0.14), 0 1px 3px rgba(0,0,0,0.5); }
-
-  .btn-screenshot { border-color: #283040; color: #486080; }
-  .btn-screenshot:hover { border-color: #4878a8; color: #6898c8; background: linear-gradient(180deg,#111620 0%,#0a0e18 100%); box-shadow: 0 0 8px rgba(72,120,168,0.14), 0 1px 3px rgba(0,0,0,0.5); }
-
-  .btn-save { border-color: #26503a; color: #38a868; }
-  .btn-save:hover { border-color: #48a868; color: #58c878; background: linear-gradient(180deg,#101e14 0%,#0a1410 100%); }
+  .btn-screenshot:hover { background: #c8cae022 !important; }
 
   /* SCREENSHOT MODAL */
   .ss-modal {
@@ -926,6 +954,7 @@
   .ss-icon { width:46px; height:46px; border-radius:6px; border:none; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; letter-spacing:0.03em; }
   .ss-real-icon { width:46px; height:46px; border-radius:6px; border:none; flex-shrink:0; object-fit:cover; }
   .ss-empty { font-size:11px; color:#4a3828; font-style:italic; }
+  .btn-export:hover { background: #c83a2022 !important; }
 
   /* EXPORT MODAL */
   .modal-overlay {
@@ -1002,10 +1031,9 @@
   .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #4a3828; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
   .manage-item.active .manage-check { background:#38a8b8; border-color:#38a8b8; color:#fff; }
 
-  .btn-roster { border-color: #362848; color: #604888; }
-  .btn-roster:hover { border-color: #6848a8; color: #8868c8; background: linear-gradient(180deg,#130f1c 0%,#0d0a14 100%); box-shadow: 0 0 8px rgba(104,72,168,0.14), 0 1px 3px rgba(0,0,0,0.5); }
-
   /* ROSTER CONFIGS */
+  .btn-roster { border-color: #8868c8; color: #8868c8; }
+  .btn-roster:hover { background: #8868c822 !important; }
   .roster-config-item {
     display: flex; align-items: center; gap: 8px;
     padding: 7px 10px; border-radius: 4px;
@@ -1200,21 +1228,6 @@
   </div>
 </div>
 <button class="auth-signout" id="authSignOut" style="display:none;">Sign out</button>
-<div class="controls-wrap" id="controlsWrap" style="display:none;">
-  <button id="controlsBtn">Controls</button>
-  <div class="controls-dropdown" id="controlsDropdown">
-    <div class="controls-section-label">Mouse</div>
-    <div class="controls-row"><kbd>Drag</kbd><span>Place cooldown on timeline</span></div>
-    <div class="controls-row"><kbd>Right-click</kbd><span>Edit placed cooldown</span></div>
-    <div class="controls-row"><kbd>Middle-click</kbd><span>Remove placed cooldown</span></div>
-    <div class="controls-section-label">Keyboard</div>
-    <div class="controls-row"><kbd>Ctrl + C</kbd><span>Copy hovered cooldown</span></div>
-    <div class="controls-row"><kbd>Ctrl + V</kbd><span>Paste at cursor position</span></div>
-    <div class="controls-row"><kbd>Ctrl + Z</kbd><span>Undo last action</span></div>
-    <div class="controls-row"><kbd>Shift + M</kbd><span>Holy Paladin view</span></div>
-    <div class="controls-row"><kbd>Shift + S</kbd><span>Shaman view</span></div>
-  </div>
-</div>
 <div id="app" style="display:none;">
   <div class="topbar">
   <span class="topbar-title">
@@ -1227,9 +1240,16 @@
     <button class="btn btn-roster" id="rosterBtn">Sub</button>
     <button class="btn btn-export" id="exportBtn">Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn">Import Foji</button>
-    <button class="btn btn-wcl" id="wclBtn">WCL</button>
+    <button class="btn" id="wclBtn">WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn">Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
+    <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
+    <div id="btnStylePicker">
+      <span>BTN</span>
+      <button id="btnStylePrev">&#8249;</button>
+      <span id="btnStyleLabel">Iron Plate</span>
+      <button id="btnStyleNext">&#8250;</button>
+    </div>
   </div>
   <div class="main">
     <div class="main-top">
@@ -1238,12 +1258,13 @@
     </div>
     <div class="bottom-panel" id="bottomPanel">
       <div class="resize-handle" id="resizeHandle"></div>
+      <!-- Option A: full-width bar -->
+      <div class="expand-fullbar" id="expandFullbar">▲ Expand</div>
       <div class="bottom-tabs">
         <div class="bottom-tab active" data-tab="sheet">Sheet Preview</div>
         <div class="bottom-tab" data-tab="notes"><span id="notesTabLabel">Notes</span></div>
       </div>
       <div class="bottom-content" id="bottomContent"></div>
-      <div class="expand-fullbar" id="expandFullbar">▲ Expand</div>
     </div>
   </div>
 </div>
@@ -1381,17 +1402,16 @@ const BOSSES = [
         abilities: [
           { name:'Encounter Start',          time:0,   color:'#ffffff', encounterStart:true },
           { name:'Swelling Corruption 1',    time:30,  color:'#4888c8' },
-          { name:'Swelling Corruption 2',    time:135, color:'#4888c8' },
-          { name:'Swelling Corruption 3',    time:235, color:'#4888c8' },
-          { name:'Swelling Corruption 4',    time:315, color:'#4888c8' },
-          { name:'Swelling Corruption 5',    time:385, color:'#4888c8' },
-          { name:'Swelling Corruption 6',    time:455, color:'#4888c8' },
           { name:'Split 1',                  time:75,  color:'#8868c8' },
+          { name:'Swelling Corruption 2',    time:135, color:'#4888c8' },
           { name:'Split 2',                  time:175, color:'#8868c8' },
+          { name:'Swelling Corruption 3',    time:235, color:'#4888c8' },
           { name:'Split 3',                  time:275, color:'#8868c8' },
+          { name:'Swelling Corruption 4',    time:315, color:'#4888c8' },
           { name:'Split 4',                  time:355, color:'#8868c8' },
+          { name:'Swelling Corruption 5',    time:385, color:'#4888c8' },
           { name:'Split 5',                  time:425, color:'#8868c8' },
-          { name:'Split 6',                  time:495, color:'#8868c8' },
+          { name:'Swelling Corruption 6',    time:455, color:'#4888c8' },
         ]
       }
     ]
@@ -1407,20 +1427,15 @@ const BOSSES = [
           { name:'Encounter Start',   time:0,   color:'#ffffff', encounterStart:true },
           { name:'Calamity 1',        time:45,  color:'#8868c8' },
           { name:'Calamity 2',        time:90,  color:'#8868c8' },
+          { name:'Inferno Strike 1',  time:115, color:'#c84848' },
           { name:'Calamity 3',        time:140, color:'#8868c8' },
           { name:'Calamity 4',        time:185, color:'#8868c8' },
+          { name:'Inferno Strike 2',  time:210, color:'#c84848' },
           { name:'Calamity 5',        time:235, color:'#8868c8' },
           { name:'Calamity 6',        time:285, color:'#8868c8' },
           { name:'Calamity 7',        time:335, color:'#8868c8' },
-          { name:'Calamity 8',        time:385, color:'#8868c8' },
-          { name:'Calamity 9',        time:435, color:'#8868c8' },
-          { name:'Calamity 10',       time:485, color:'#8868c8' },
-          { name:'Inferno Strike 1',  time:115, color:'#c84848' },
-          { name:'Inferno Strike 2',  time:210, color:'#c84848' },
-          { name:'Inferno Strike 3',  time:305, color:'#c84848' },
-          { name:'Inferno Strike 4',  time:400, color:'#c84848' },
-          { name:'Desperate Measures Sun 1',   time:390, color:'#c83a20' },
-          { name:'Desperate Measures Sun 2',   time:440, color:'#c83a20' },
+          { name:'Dark Calamity 1',   time:390, color:'#c83a20' },
+          { name:'Dark Calamity 2',   time:440, color:'#c83a20' },
         ]
       }
     ]
@@ -1429,16 +1444,25 @@ const BOSSES = [
     id:'norushen', name:'Norushen',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 360,
-    sections: [{ label: null, abilities: [
-      { name:'Encounter Start', time:0, color:'#ffffff', encounterStart:true },
-      { name:'Health Assign',   time:0, color:'#c8a838', hpAssign:true },
-    ]}]
+    sections: [{ label: null, abilities: [] }]
   },
   {
     id:'sha', name:'Sha of Pride',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 480,
-    sections: [{ label: null, abilities: [] }]
+    sections: [
+      {
+        label: null,
+        abilities: [
+          { name:'Encounter Start',      time:0,   color:'#ffffff', encounterStart:true },
+          { name:'Swelling Pride 1',     time:60,  color:'#8868c8' },
+          { name:'Swelling Pride 2',     time:120, color:'#8868c8' },
+          { name:'Swelling Pride 3',     time:180, color:'#8868c8' },
+          { name:'Phase 2',              time:240, color:'#c83a20' },
+          { name:'Swelling Pride 4',     time:300, color:'#8868c8' },
+        ]
+      }
+    ]
   },
   {
     id:'galakras', name:'Galakras',
@@ -2406,9 +2430,19 @@ function renderTimeline() {
 
   const PX_PER_SEC = 2.8;
   const LABEL_W = 160;
-  const totalW = 3200;
+  const totalW = Math.max(boss.duration * PX_PER_SEC, 1600);
 
-  // Ruler removed — no tick marks above timeline
+  // Ruler — tick marks only, no time labels
+  const ruler = document.createElement('div');
+  ruler.className = 'ruler';
+  ruler.style.paddingLeft = LABEL_W + 'px';
+  for (let t = 0; t <= boss.duration; t += 30) {
+    const tick = document.createElement('div');
+    tick.className = 'ruler-tick';
+    tick.style.left = (LABEL_W + t * PX_PER_SEC) + 'px';
+    ruler.appendChild(tick);
+  }
+  grid.appendChild(ruler);
 
   // Collect all abilities flat per section
   const bossData = getPlacedKey(boss.id);
@@ -2447,7 +2481,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   if (ab.encounterStart) {
     label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a7060;font-style:italic;">${ab.name}</div>`;
   } else if (ab.hpAssign) {
-    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">${ab.name}</span></div>`;
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
   } else {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.name}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
@@ -2456,10 +2490,10 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   const track = document.createElement('div');
   track.className = 'track';
   const isEncStart = !!(ab && ab.encounterStart);
-  track.style.width = Math.max(totalW + 400, 3200) + 'px';
+  track.style.width = (isEncStart ? Math.max(totalW + 400, 3200) : Math.max(totalW + 400, 1600)) + 'px';
 
   // Grid lines every 30s — extend to cover full track width
-  const gridEnd = Math.max(boss.duration, 3200 / pps);
+  const gridEnd = isEncStart ? Math.max(boss.duration, 3200 / pps) : boss.duration;
   for (let t = 30; t < gridEnd; t += 30) {
     const gl = document.createElement('div');
     gl.className = 'track-gridline';
@@ -2689,8 +2723,6 @@ function onDragUp(e) {
   // If barely moved, treat as click (no-op for move drags)
   if (!dragMoved && drag.isMove) return;
 
-  pushUndo();
-
   // Find drop target — temporarily hide ghost so elementFromPoint works
   dragGhostEl.style.display = 'none';
   const hit = document.elementFromPoint(e.clientX, e.clientY);
@@ -2709,7 +2741,7 @@ function onDragUp(e) {
     const cellIndex = Math.floor(relX / (cellSize * pps));
     // Store cell center as time — icon will be centered on this
     let time = (cellIndex * cellSize) + (cellSize / 2);
-    time = Math.max(0, time);
+    time = Math.max(0, Math.min(boss.duration, time));
 
     if (drag.isMove) {
       // Check if target cell is occupied — if so, swap displaced CD to source cell
@@ -2886,7 +2918,7 @@ let activePopup = null;
 const FOJI_BOSS_ABILITIES = {
   immerseus:       ['Encounter Start','Health %'],
   fallenprotectors:['Encounter Start','Health %'],
-  norushen:        ['Encounter Start','Health Assign'],
+  norushen:        ['Encounter Start','Health %'],
   sha:             ['Encounter Start','Health %'],
   galakras:        ['Encounter Start','Health %'],
   ironjuggernaut:  ['Encounter Start','Health %'],
@@ -2904,7 +2936,6 @@ const FOJI_BOSS_ABILITIES = {
 const FOJI_ABILITY_KEYS = {
   'Encounter Start': 'ENC_START',
   'Health %': 'HEALTH',
-  'Health Assign': 'NORUSHEN_HEALTH',
   'Phase 2': 'PHASE_2',
   'Phase 3': 'PHASE_3',
   'Intermission 1': 'INT_1',
@@ -2923,52 +2954,13 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
   const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
 
-    if (isHpAssign && !isCustom) {
+    if (isHpAssign) {
       const hpVal = p.hpPct != null ? p.hpPct : 40;
       popup.innerHTML = '<label style="font-size:12px;color:#c83a20;">HP Assign — set health %</label>'
         + '<label>Health % trigger</label>'
         + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="8" max="40" step="1"'
         + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
-    } else if (isHpAssign && isCustom) {
-      const hpVal = p.hpPct != null ? p.hpPct : 40;
-      popup.innerHTML = `
-    <label style="font-size:12px;color:#c83a20;">Custom Assign — Health Assign row</label>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Health % trigger</label>
-      <input type="number" id="hpPctInput" value="${hpVal}" min="8" max="40" step="1"
-        style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:13px;font-weight:700;text-align:center;width:100%;box-sizing:border-box;" />
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Boss Ability</label>
-      <select id="customBossAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-        ${_bossAbOpts}
-      </select>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Ability</label>
-      <select id="customAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-        ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
-      </select>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>WHO</label>
-      <select id="customWho" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-        ${['ALL', ...CD_POOL.filter(c => c.who && c.who !== 'ALL').map(c => c.who).filter((v,i,a) => a.indexOf(v) === i).sort()].map(w => `<option value="${w}" ${(p.customWho || 'ALL') === w ? 'selected' : ''}>${w}</option>`).join('')}
-      </select>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Overwrite TTS (optional)</label>
-      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Custom Name (display on sheet)</label>
-      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
-    </div>
-    <div class="popup-btns">
-      <button class="confirm" id="offsetConfirm">Save</button>
-      <button id="offsetCancel">Cancel</button>
-    </div>`;
     } else {
     popup.innerHTML = isCustom ? `
     <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
@@ -3030,31 +3022,11 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   activePopup = popup;
 
   popup.querySelector('#offsetConfirm').addEventListener('click', () => {
-    if (isHpAssign && !isCustom) {
+    if (isHpAssign) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
       if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
-      closeOffsetPopup();
-      return;
-    }
-    if (isHpAssign && isCustom) {
-      const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
-      const who = popup.querySelector('#customWho').value.trim().toUpperCase() || 'ALL';
-      const ability = popup.querySelector('#customAbility')?.value || '';
-      const bossAbility = popup.querySelector('#customBossAbility')?.value || '';
-      let customName = popup.querySelector('#customName').value.trim();
-      let tts = popup.querySelector('#customTts').value.trim();
-      if (ability && !customName) customName = ability;
-      if (ability && !tts) tts = ability;
-      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
-      const placedItem = placedRow.find(x => x.id === p.id);
-      if (placedItem) {
-        placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct));
-        if (ability) placedItem.customAbility = ability;
-        placedItem.customBossAbility = bossAbility || null;
-      }
-      setCustomPlacementMeta(bossId, rowKey, p.id, who, 'nil', tts, customName, null);
       closeOffsetPopup();
       return;
     }
@@ -3217,7 +3189,7 @@ const CD_SPELL_IDS = {
 
 // Determine which boss ability key to use for a row
 function getBossAbilityKey(boss, rowKey, abName) {
-  if (abName && (abName.startsWith('HP Assign') || abName.startsWith('Health Assign'))) return boss.id.toUpperCase() + '_HEALTH';
+  if (abName && abName.startsWith('HP Assign')) return boss.id.toUpperCase() + '_HEALTH';
   return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
 }
 
@@ -4659,11 +4631,9 @@ function showAuthScreen(show) {
   const auth = document.getElementById('authScreen');
   const app  = document.getElementById('app');
   const out  = document.getElementById('authSignOut');
-  const cw = document.getElementById('controlsWrap');
   if (auth) auth.style.display = show ? 'flex' : 'none';
   if (app)  app.style.display  = show ? 'none' : 'flex';
   if (out)  out.style.display  = show ? 'none' : 'block';
-  if (cw)   cw.style.display   = show ? 'none' : 'block';
 }
 
 function setAuthStatus(msg, isError) {
@@ -4805,7 +4775,7 @@ window.renderTimeline = function() {
   const bar = document.getElementById('expandFullbar');
   if (!panel || !bar) return;
   const DEFAULT_H = 320;
-  const COLLAPSED_H = 14; // just the bar itself
+  const COLLAPSED_H = 38; // just the bar itself
   const COLLAPSE_THRESHOLD = 60; // drag down this many px to collapse
   let dragStartY = null, dragStartH = null, isDragging = false;
   let isCollapsed = true;
@@ -4816,10 +4786,6 @@ window.renderTimeline = function() {
     panel.style.height = (v ? COLLAPSED_H : DEFAULT_H) + 'px';
     panel.style.minHeight = (v ? COLLAPSED_H : 110) + 'px';
     bar.textContent = v ? '▲ Expand' : '▼ Collapse';
-    const tabs = panel.querySelector('.bottom-tabs');
-    const content = document.getElementById('bottomContent');
-    if (tabs) tabs.style.display = v ? 'none' : '';
-    if (content) content.style.display = v ? 'none' : '';
   }
 
   bar.style.cursor = 'ns-resize';
@@ -4872,36 +4838,6 @@ window.renderTimeline = function() {
 buildPalette();
 buildBossSelect();
 updatePlansBtn();
-
-// Controls dropdown toggle
-(function() {
-  const btn = document.getElementById('controlsBtn');
-  const dd  = document.getElementById('controlsDropdown');
-  if (!btn || !dd) return;
-  btn.addEventListener('click', e => { e.stopPropagation(); dd.classList.toggle('open'); });
-  document.addEventListener('click', () => dd.classList.remove('open'));
-})();
-// One-time migration: FP Calamity 10 moved from row 0-16 → 0-10, Infernos/DMS shifted down
-(function() {
-  const MIG_KEY = 'tot_rcd_fp_c10_v1';
-  if (localStorage.getItem(MIG_KEY)) return;
-  const remap = {'0-10':'0-11','0-11':'0-12','0-12':'0-13','0-13':'0-14','0-14':'0-15','0-15':'0-16','0-16':'0-10'};
-  function remapFP(pcd) {
-    if (!pcd || !pcd.fallenprotectors) return;
-    const fp = pcd.fallenprotectors, out = {};
-    Object.keys(fp).forEach(k => { out[remap[k] || k] = fp[k]; });
-    pcd.fallenprotectors = out;
-  }
-  [LS_KEY, FULL_RAID_SNAPSHOT_KEY].forEach(key => {
-    try { const r = localStorage.getItem(key); if (r) { const d = JSON.parse(r); if (d.placedCDs) { remapFP(d.placedCDs); localStorage.setItem(key, JSON.stringify(d)); } } } catch(e) {}
-  });
-  try {
-    const r = localStorage.getItem(PLANS_KEY);
-    if (r) { const plans = JSON.parse(r); Object.values(plans).forEach(p => { if (p && p.placedCDs) remapFP(p.placedCDs); }); localStorage.setItem(PLANS_KEY, JSON.stringify(plans)); }
-  } catch(e) {}
-  localStorage.setItem(MIG_KEY, '1');
-})();
-
 const _didRestore = autoLoad();
 refreshBossSelectLabels();
 renderTimeline();
@@ -5064,13 +5000,6 @@ function getBossSpellsForName(bossName) {
     'Garrosh Hellscream': 'garrosh',
   };
   var key = map[bossName];
-  // Tolerant fallback: match ignoring a leading "The " and casing (WCL names can vary slightly)
-  if (!key && bossName) {
-    var norm = bossName.toLowerCase().replace(/^the\s+/, '').trim();
-    Object.keys(map).forEach(function(k){
-      if (k.toLowerCase().replace(/^the\s+/, '').trim() === norm) key = map[k];
-    });
-  }
   return key ? (WCL_BOSS_SPELLS[key] || []) : [];
 }
 
@@ -5771,7 +5700,6 @@ function showWclModal() {
       var fightDurations = [];
       var logsHpsData = [];
       var processed = 0;
-      var logErrors = [];
       var limit = pageRankings.length;
 
       // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
@@ -5879,10 +5807,9 @@ function showWclModal() {
 
           // Fetch boss ability events — separate queries per dataType
           var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 25s window)
-          // Declared here (not inside the if) so the diagnostic block below never references an undefined var
-          var dmgSpells = [], castSpells = [];
           if (bossSpells.length) {
             // Group spells by dataType
+            var dmgSpells = [], castSpells = [];
             bossSpells.forEach(function(spell, gi) {
               if (spell.dataType === 'Casts') castSpells.push({spell:spell, gi:gi});
               else dmgSpells.push({spell:spell, gi:gi});
@@ -5979,12 +5906,11 @@ function showWclModal() {
           processed++;
           results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
           if (processed >= 40) break;
-        } catch(le){ logErrors.push(le && le.message ? le.message : String(le)); console.warn('WCL log error ri='+ri+':', le); }
+        } catch(le){ console.warn('WCL log error ri='+ri+':', le); }
       }
 
       if (!processed) {
-        var firstErr = logErrors.length ? (' &middot; First error: ' + logErrors[0]) : '';
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs could be processed.'+firstErr+'</div>';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No logs could be processed.</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
@@ -7305,69 +7231,6 @@ document.addEventListener('keydown', e => {
   if (e.shiftKey && e.key === 'S') showShamanView();
 });
 
-// ── Ctrl+C / Ctrl+V copy-paste and Ctrl+Z undo for placed cooldowns ──
-let _cdClipboard = null;
-let _mouseX = 0, _mouseY = 0;
-document.addEventListener('mousemove', e => { _mouseX = e.clientX; _mouseY = e.clientY; });
-
-let _undoStack = [];
-function pushUndo() {
-  _undoStack.push(JSON.parse(JSON.stringify(placedCDs)));
-  if (_undoStack.length > 50) _undoStack.shift();
-}
-
-document.addEventListener('keydown', e => {
-  if (!(e.ctrlKey || e.metaKey)) return;
-
-  if (e.key === 'z') {
-    if (!_undoStack.length) return;
-    e.preventDefault();
-    const prev = _undoStack.pop();
-    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-    Object.assign(placedCDs, prev);
-    isDirty = true;
-    renderTimeline();
-    return;
-  }
-
-  if (e.key === 'c') {
-    const el = document.elementFromPoint(_mouseX, _mouseY);
-    const placedEl = el && el.closest('.placed-cd');
-    if (!placedEl) return;
-    e.preventDefault();
-    const rowKey = placedEl.dataset.rowKey;
-    const boss = getBoss();
-    const row = (placedCDs[boss.id] || {})[rowKey] || [];
-    const p = row.find(p => String(p.id) === placedEl.dataset.placedId);
-    if (!p) return;
-    _cdClipboard = { cdId: p.cdId, offset: p.offset, hpPct: p.hpPct,
-      customWho: p.customWho, customTts: p.customTts, customName: p.customName,
-      customAbility: p.customAbility, customSpellId: p.customSpellId, customBossAbility: p.customBossAbility };
-    placedEl.style.outline = '2px solid #fff8';
-    setTimeout(() => { if (placedEl.isConnected) placedEl.style.outline = ''; }, 350);
-  }
-
-  if (e.key === 'v') {
-    if (!_cdClipboard) return;
-    const hit = document.elementFromPoint(_mouseX, _mouseY);
-    const track = hit && hit.closest('.drop-target');
-    if (!track) return;
-    e.preventDefault();
-    pushUndo();
-    const boss = getBoss();
-    const rowKey = track.dataset.rowKey;
-    const bossId = track.dataset.bossId;
-    const rect = track.getBoundingClientRect();
-    const cellIndex = Math.floor((_mouseX - rect.left) / (30 * 2.8));
-    const time = (cellIndex * 30) + 15;
-    const meta = { customWho: _cdClipboard.customWho, customTts: _cdClipboard.customTts,
-      customName: _cdClipboard.customName, customAbility: _cdClipboard.customAbility,
-      customSpellId: _cdClipboard.customSpellId, customBossAbility: _cdClipboard.customBossAbility,
-      hpPct: _cdClipboard.hpPct };
-    placeCdWithOffset(bossId, rowKey, _cdClipboard.cdId, time, _cdClipboard.offset, cellIndex, meta);
-  }
-});
-
 
 
 
@@ -7403,7 +7266,6 @@ window.placeCd = function(bossId, rowKey, cdId, time, cell) {
 const __origRemovePlaced = removePlaced;
 function __rawRemove(bossId, rowKey, placedId) { __origRemovePlaced(bossId, rowKey, placedId); }
 window.removePlaced = function(bossId, rowKey, placedId) {
-  pushUndo();
   if (anim('remove')) {
     const el = document.querySelector(`[data-placed-id="${placedId}"]`);
     if (el) {
@@ -7452,6 +7314,40 @@ document.addEventListener('change', e => {
 
 
 
+</script>
+<script>
+(function() {
+  var BTN_STYLES = [
+    { cls: '',           label: 'Iron Plate'    },
+    { cls: 'btnstyle-2', label: 'Parchment'     },
+    { cls: 'btnstyle-3', label: 'Blood Seal'    },
+    { cls: 'btnstyle-4', label: 'Forge Chip'    },
+    { cls: 'btnstyle-5', label: 'Horde Banner'  },
+    { cls: 'btnstyle-6', label: 'Iron Rivet'    },
+    { cls: 'btnstyle-7', label: 'Ember Glow'    },
+    { cls: 'btnstyle-8', label: "Kor'kron Tag"  },
+  ];
+  var cur = 0;
+  var STORAGE_KEY = 'rcd_btn_style';
+  try { var saved = parseInt(localStorage.getItem(STORAGE_KEY)); if (!isNaN(saved) && saved >= 0 && saved < BTN_STYLES.length) cur = saved; } catch(e){}
+
+  function apply() {
+    var body = document.body;
+    BTN_STYLES.forEach(function(s) { if (s.cls) body.classList.remove(s.cls); });
+    if (BTN_STYLES[cur].cls) body.classList.add(BTN_STYLES[cur].cls);
+    var lbl = document.getElementById('btnStyleLabel');
+    if (lbl) lbl.textContent = BTN_STYLES[cur].label;
+    try { localStorage.setItem(STORAGE_KEY, cur); } catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    apply();
+    var prev = document.getElementById('btnStylePrev');
+    var next = document.getElementById('btnStyleNext');
+    if (prev) prev.addEventListener('click', function() { cur = (cur - 1 + BTN_STYLES.length) % BTN_STYLES.length; apply(); });
+    if (next) next.addEventListener('click', function() { cur = (cur + 1) % BTN_STYLES.length; apply(); });
+  });
+})();
 </script>
 </body>
 </html>
