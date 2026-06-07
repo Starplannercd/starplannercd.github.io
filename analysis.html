@@ -10,6 +10,12 @@
   select, button { background:#1a1a1a; color:#ccc; border:1px solid #444; padding:6px 10px; font-family:monospace; font-size:13px; cursor:pointer; }
   button:hover   { border-color:#c89830; color:#c89830; }
   button:disabled{ opacity:0.4; cursor:default; }
+  @media print {
+    #auth-section, #controls, #progress, #results, #export-section, .no-print { display:none !important; }
+    #all-bosses-results { display:block !important; }
+    body { background:#fff; color:#000; padding:0; }
+    #all-bosses-card { border:none !important; padding:0 !important; }
+  }
   #controls      { margin:16px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   #progress      { color:#888; font-size:12px; margin:10px 0; min-height:16px; }
   #auth-btn      { background:#1a1a1a; color:#c89830; border:1px solid #c89830; padding:8px 16px; font-family:monospace; cursor:pointer; }
@@ -73,10 +79,12 @@
     </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
+  <button id="allBossesBtn" onclick="doFetchAllBosses()" style="border-color:#555;">Scan All Bosses</button>
 </div>
 
 <div id="progress"></div>
 <div id="results"></div>
+<div id="all-bosses-results" style="display:none;"></div>
 
 <div id="export-section" style="display:none;margin-top:36px;border-top:1px solid #333;padding-top:20px;">
   <h2 style="color:#c89830;font-size:14px;margin:0 0 6px">BossReminder Profile Generator — Mage (Flubba)</h2>
@@ -552,6 +560,137 @@ async function init() {
 }
 
 init();
+
+// ── all-bosses scan ───────────────────────────────────────────────────────────
+async function doFetchAllBosses() {
+  var specVal = document.getElementById('specSelect').value;
+  if (!specVal) return;
+  var [specClass, specName] = specVal.split('|');
+  if (specName === '*') { alert('Pick a specific spec, not a spec split.'); return; }
+
+  var btn = document.getElementById('allBossesBtn');
+  btn.disabled = true;
+  document.getElementById('all-bosses-results').style.display = 'none';
+
+  var bossSelect = document.getElementById('bossSelect');
+  var bosses = Array.from(bossSelect.options).filter(o => o.value).map(o => ({id:parseInt(o.value), name:o.text}));
+  var prog = document.getElementById('progress');
+  var allData = {};
+
+  for (var boss of bosses) {
+    prog.textContent = 'Scanning ' + boss.name + '...';
+    try {
+      var fights = await getFightRankings(boss.id, 100);
+      var done = 0;
+      var results = await runPool(fights, async fight => {
+        var r = await processFight(fight, specClass, specName);
+        done++;
+        prog.textContent = boss.name + ' — ' + done + '/' + fights.length;
+        return r;
+      }, CONCURRENCY);
+      var allPlayers = [];
+      for (var r of results) if (r?.players) allPlayers.push(...r.players);
+      allData[boss.name] = summarizeBoss(allPlayers, specClass+'|'+specName);
+    } catch(e) {
+      allData[boss.name] = null;
+    }
+  }
+
+  prog.textContent = 'Done!';
+  renderAllBosses(specName+' '+specClass, allData, specClass+'|'+specName);
+  btn.disabled = false;
+}
+
+function summarizeBoss(players, specKey) {
+  if (!players.length) return null;
+  var n = players.length;
+  var majorCounter = {}, talentCounters = [{},{},{},{},{},{}];
+  for (var p of players) {
+    for (var g of p.glyphs)  majorCounter[g]                       = (majorCounter[g]||0)+1;
+    for (var t of p.talents) talentCounters[t.tier][t.name]        = (talentCounters[t.tier][t.name]||0)+1;
+  }
+  var topGlyphs = Object.entries(majorCounter).sort((a,b)=>b[1]-a[1]).slice(0,3)
+    .map(([name,count]) => ({name, pct:Math.round(count/n*100)}));
+  var tiers = TALENT_TIERS[specKey] || [];
+  var topTalents = [];
+  for (var tier=0; tier<6; tier++) {
+    var entries = Object.entries(talentCounters[tier]).sort((a,b)=>b[1]-a[1]);
+    topTalents.push(entries.length ? {level:tiers[tier]?.level||(tier+1), name:entries[0][0], pct:Math.round(entries[0][1]/n*100)} : null);
+  }
+  return {n, topGlyphs, topTalents};
+}
+
+function renderAllBosses(specLabel, allData, specKey) {
+  var tiers = TALENT_TIERS[specKey] || [];
+
+  var html = '<div id="all-bosses-card" style="background:#0d0d0d;border:1px solid #2a2a2a;padding:24px;margin-top:20px;">';
+
+  // header row
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">';
+  html += '<div>';
+  html += '<div style="color:#c89830;font-size:17px;font-weight:bold;letter-spacing:1px;">'+specLabel+'</div>';
+  html += '<div style="color:#555;font-size:11px;margin-top:3px;">SoO Heroic 10 &nbsp;·&nbsp; top 100 logs per boss &nbsp;·&nbsp; '+new Date().toLocaleDateString()+'</div>';
+  html += '</div>';
+  html += '<button class="no-print" onclick="window.print()" style="background:#1a1a1a;color:#c89830;border:1px solid #c89830;padding:6px 14px;font-family:monospace;font-size:12px;cursor:pointer;">Export / Print</button>';
+  html += '</div>';
+
+  // table
+  html += '<table style="border-collapse:collapse;width:100%;font-size:12px;">';
+
+  // thead
+  html += '<thead><tr style="border-bottom:2px solid #333;">';
+  html += '<th style="color:#777;text-align:left;padding:6px 12px 8px 0;width:160px;">Boss</th>';
+  html += '<th style="color:#777;text-align:left;padding:6px 12px 8px;">Glyphs</th>';
+  for (var t of tiers) html += '<th style="color:#777;text-align:center;padding:6px 8px 8px;white-space:nowrap;">L'+t.level+'</th>';
+  html += '</tr></thead><tbody>';
+
+  // rows
+  var keys = Object.keys(allData);
+  for (var i=0; i<keys.length; i++) {
+    var bossName = keys[i];
+    var d = allData[bossName];
+    var bg = i%2===0 ? '' : 'background:#111111;';
+    html += '<tr style="'+bg+'border-bottom:1px solid #1c1c1c;">';
+    html += '<td style="color:#ddd;padding:10px 12px 10px 0;font-weight:bold;white-space:nowrap;">'+bossName+'</td>';
+
+    if (!d) {
+      html += '<td colspan="'+(tiers.length+1)+'" style="color:#444;padding:10px 12px;font-style:italic;">no data</td>';
+    } else {
+      // glyphs
+      var glyphParts = d.topGlyphs.map(g => {
+        var col = g.pct>=75 ? '#c89830' : g.pct>=50 ? '#bbb' : '#777';
+        return '<span style="color:'+col+'">'+g.name+'</span><span style="color:#3a3a3a;font-size:10px"> '+g.pct+'%</span>';
+      });
+      html += '<td style="padding:10px 12px;">'+glyphParts.join('<span style="color:#2a2a2a"> &nbsp;·&nbsp; </span>')+'</td>';
+
+      // talents
+      for (var talent of d.topTalents) {
+        if (!talent) { html += '<td style="color:#444;text-align:center;padding:10px 8px;">—</td>'; continue; }
+        var col = talent.pct>=75 ? '#c89830' : talent.pct>=50 ? '#bbb' : '#888';
+        html += '<td style="text-align:center;padding:10px 8px;">';
+        html += '<div style="color:'+col+';white-space:nowrap;">'+talent.name+'</div>';
+        html += '<div style="color:#3a3a3a;font-size:10px;">'+talent.pct+'%</div>';
+        html += '</td>';
+      }
+    }
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+
+  // legend
+  html += '<div style="margin-top:14px;display:flex;gap:16px;font-size:11px;">';
+  html += '<span style="color:#555">Usage color: </span>';
+  html += '<span style="color:#c89830">&#9632; 75%+</span>';
+  html += '<span style="color:#bbb">&#9632; 50–74%</span>';
+  html += '<span style="color:#666">&#9632; &lt;50%</span>';
+  html += '</div>';
+  html += '</div>';
+
+  document.getElementById('all-bosses-results').innerHTML = html;
+  document.getElementById('all-bosses-results').style.display = 'block';
+  document.getElementById('all-bosses-results').scrollIntoView({behavior:'smooth'});
+}
 
 // ── BossReminder export ───────────────────────────────────────────────────────
 const GLYPH_ICONS = {
