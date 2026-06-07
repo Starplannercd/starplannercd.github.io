@@ -3316,7 +3316,7 @@ function showManageModal() {
   overlay.className = 'modal-overlay';
 
   // Ordered flat list — similar CDs grouped together
-  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
+  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','ss','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
