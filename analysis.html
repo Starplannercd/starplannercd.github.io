@@ -175,7 +175,7 @@ const TALENT_TIERS = {
     {level:15, choices:{85499:'Speed of Light', 87172:'Long Arm of the Law', 26023:'Pursuit of Justice'}},
     {level:30, choices:{105593:'Fist of Justice', 20066:'Repentance', 105727:'Seal of Justice'}},
     {level:45, choices:{85804:'Selfless Healer', 114163:'Eternal Flame', 20925:'Sacred Shield'}},
-    {level:60, choices:{114039:'Hand of Purity', 114400:'Unbreakable Spirit', 105622:'Clemency'}},
+    {level:60, choices:{114039:'Hand of Purity', 114400:'Unbreakable Spirit', 114154:'Unbreakable Spirit', 105622:'Clemency'}},
     {level:75, choices:{105809:'Holy Avenger', 53376:'Sanctified Wrath', 86172:'Divine Purpose'}},
     {level:90, choices:{114165:'Holy Prism', 114158:"Light's Hammer", 114157:'Execution Sentence'}},
   ],
@@ -278,7 +278,7 @@ const GLYPH_NAMES = {
   57958:'Blessed Life', 57954:'Insight', 125043:'Contemplation', 89420:'Merciful Wrath',
   63223:'Light of Dawn', 54940:'Divine Favor', 63224:'Cleansing',
   // Ret Paladin
-  54926:"Templar's Verdict", 121027:'Double Jeopardy', 122028:'Mass Exorcism',
+  54926:"Templar's Verdict", 121027:'Double Jeopardy', 54922:'Double Jeopardy', 122028:'Mass Exorcism',
   // Resto Shaman
   63273:'Riptide', 55456:'Healing Stream Totem', 57243:'Healing Wave',
   57251:'Water Shield', 55453:'Telluric Currents',
@@ -440,39 +440,57 @@ function renderResults(encName, specLabel, players, totalFights, elapsedSec) {
     for (var t of p.talents) talentCounters[t.tier][t.name]        = (talentCounters[t.tier][t.name]||0)+1;
   }
   var n = players.length;
+  var specKey = document.getElementById('specSelect').value;
+  var tierInfo = TALENT_TIERS[specKey] || [];
 
-  var html = '<div class="meta">'+specLabel+' · '+encName+' Heroic 10 · '+n+' players from '+totalFights+' fights · '+elapsedSec+'s</div>';
+  var html = '<div style="background:#0d0d0d;border:1px solid #2a2a2a;padding:20px;margin-top:8px;">';
+  html += '<div style="color:#c89830;font-size:15px;font-weight:bold;margin-bottom:2px;">'+specLabel+' — '+encName+'</div>';
+  html += '<div style="color:#555;font-size:11px;margin-bottom:18px;">Heroic 10 &nbsp;·&nbsp; '+n+' players from '+totalFights+' fights &nbsp;·&nbsp; '+elapsedSec+'s</div>';
 
   // Glyphs
-  html += '<div class="section"><h2>Major Glyphs</h2><table><tr><th>Glyph</th><th>Usage</th><th></th></tr>';
-  var glyphsSorted = Object.entries(majorCounter).sort((a,b)=>b[1]-a[1]);
-  for (var [name, count] of glyphsSorted) {
-    var pct = (count/n*100);
-    var barW = Math.round(pct*1.5);
-    html += '<tr><td>'+name+'</td><td class="pct">'+pct.toFixed(1)+'%</td>';
-    html += '<td><span class="bar" style="width:'+barW+'px"></span><span class="dim">'+count+'/'+n+'</span></td></tr>';
+  if (Object.keys(majorCounter).length) {
+    html += '<div style="color:#888;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Major Glyphs</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;">';
+    var glyphsSorted = Object.entries(majorCounter).sort((a,b)=>b[1]-a[1]);
+    for (var [name, count] of glyphsSorted) {
+      var pct = count/n*100;
+      var col = pct>=75?'#c89830':pct>=50?'#bbb':'#777';
+      var barW = Math.round(pct);
+      html += '<div style="background:#161616;border:1px solid #2a2a2a;padding:8px 12px;min-width:140px;">';
+      html += '<div style="color:'+col+';font-size:13px;margin-bottom:6px;">'+name+'</div>';
+      html += '<div style="background:#1e1e1e;height:4px;border-radius:2px;margin-bottom:4px;">';
+      html += '<div style="background:'+col+';height:4px;border-radius:2px;width:'+barW+'%;"></div></div>';
+      html += '<div style="color:#555;font-size:11px;">'+pct.toFixed(1)+'% &nbsp;<span style="color:#3a3a3a">'+count+'/'+n+'</span></div>';
+      html += '</div>';
+    }
+    html += '</div>';
   }
-  html += '</table></div>';
 
   // Talents
-  var tierInfo = TALENT_TIERS[Object.keys(TALENT_TIERS)[0]]; // fallback
-  var specKey = document.getElementById('specSelect').value;
-  tierInfo = TALENT_TIERS[specKey] || [];
-
-  html += '<div class="section"><h2>Talents</h2><table><tr><th>Tier</th><th>Choices</th></tr>';
+  html += '<div style="color:#888;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Talents</div>';
   for (var tier=0; tier<6; tier++) {
     var level = tierInfo[tier]?.level || ('T'+(tier+1));
     var entries = Object.entries(talentCounters[tier]).sort((a,b)=>b[1]-a[1]);
     if (!entries.length) continue;
-    var cells = entries.map(([name, count]) => {
-      var pct = (count/n*100).toFixed(1);
-      var barW = Math.round(count/n*100);
-      return '<span class="pct">'+pct+'%</span> '+name;
-    }).join('<span class="dim"> &nbsp;|&nbsp; </span>');
-    html += '<tr><td style="color:#888;white-space:nowrap">L'+level+'</td><td>'+cells+'</td></tr>';
+    html += '<div style="display:flex;align-items:stretch;margin-bottom:6px;gap:8px;">';
+    html += '<div style="color:#555;font-size:12px;width:32px;min-width:32px;display:flex;align-items:center;justify-content:center;background:#111;border:1px solid #222;">'+level+'</div>';
+    for (var [name, count] of entries) {
+      var pct = count/n*100;
+      var isTop = name===entries[0][0];
+      var col = pct>=75?'#c89830':pct>=50?'#bbb':'#666';
+      var bg = isTop?'#161616':'#111';
+      var border = isTop?'#333':'#1e1e1e';
+      html += '<div style="flex:1;background:'+bg+';border:1px solid '+border+';padding:8px 10px;">';
+      html += '<div style="color:'+col+';font-size:13px;margin-bottom:4px;">'+name+'</div>';
+      html += '<div style="background:#1a1a1a;height:3px;border-radius:2px;margin-bottom:4px;">';
+      html += '<div style="background:'+col+';height:3px;border-radius:2px;width:'+Math.round(pct)+'%;"></div></div>';
+      html += '<div style="color:#444;font-size:11px;">'+pct.toFixed(1)+'%</div>';
+      html += '</div>';
+    }
+    html += '</div>';
   }
-  html += '</table></div>';
 
+  html += '</div>';
   document.getElementById('results').innerHTML = html;
 }
 
