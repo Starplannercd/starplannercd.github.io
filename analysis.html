@@ -80,6 +80,7 @@
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
   <button id="allBossesBtn" onclick="doFetchAllBosses()" style="border-color:#555;">Scan All Bosses</button>
+  <button onclick="clearCache()" style="border-color:#444;color:#666;">Clear Cache</button>
 </div>
 
 <div id="progress"></div>
@@ -494,6 +495,37 @@ function renderResults(encName, specLabel, players, totalFights, elapsedSec) {
   document.getElementById('results').innerHTML = html;
 }
 
+// ── fetch cache (localStorage) ────────────────────────────────────────────────
+var CACHE_PREFIX = 'wcl_fc2_';
+
+function cacheKey(bossId, specVal) { return CACHE_PREFIX + bossId + '_' + specVal; }
+
+function getCached(bossId, specVal) {
+  try {
+    var raw = localStorage.getItem(cacheKey(bossId, specVal));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function setCached(bossId, specVal, players) {
+  try { localStorage.setItem(cacheKey(bossId, specVal), JSON.stringify({ts:Date.now(), players})); }
+  catch(e) {}
+}
+
+function timeAgo(ts) {
+  var mins = Math.round((Date.now()-ts)/60000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return mins+'m ago';
+  return Math.round(mins/60)+'h ago';
+}
+
+function clearCache() {
+  var keys = Object.keys(localStorage).filter(k => k.startsWith(CACHE_PREFIX));
+  keys.forEach(k => localStorage.removeItem(k));
+  document.getElementById('progress').textContent = 'Cache cleared ('+keys.length+' entries removed)';
+}
+
 // ── main fetch ────────────────────────────────────────────────────────────────
 async function doFetch() {
   var bossSelect = document.getElementById('bossSelect');
@@ -514,27 +546,37 @@ async function doFetch() {
   var prog = document.getElementById('progress');
 
   try {
-    prog.textContent = 'Fetching fight rankings...';
-    var fights = await getFightRankings(encId, 100);
-    prog.textContent = 'Processing '+fights.length+' fights ('+CONCURRENCY+' at a time)...';
-
-    var done = 0;
-    var results = await runPool(fights, async (fight) => {
-      var r = await processFight(fight, specClass, specName);
-      done++;
-      prog.textContent = 'Processing... '+done+'/'+fights.length;
-      return r;
-    }, CONCURRENCY);
-
     var allPlayers = [];
-    for (var r of results) {
-      if (r?.players) allPlayers.push(...r.players);
+    var fromCache = false;
+
+    if (!specSplit) {
+      var hit = getCached(encId, specVal);
+      if (hit) {
+        allPlayers = hit.players;
+        fromCache = true;
+        prog.textContent = 'Loaded from cache (' + timeAgo(hit.ts) + ') — ' + allPlayers.length + ' ' + specLabel + ' found';
+      }
     }
 
-    var elapsed = ((Date.now()-t0)/1000).toFixed(1);
-    prog.textContent = 'Done in '+elapsed+'s — '+allPlayers.length+' '+specLabel+' found';
-    if (specSplit) renderSpecSplit(encName, specClass, allPlayers, fights.length, elapsed);
-    else renderResults(encName, specLabel, allPlayers, fights.length, elapsed);
+    if (!fromCache) {
+      prog.textContent = 'Fetching fight rankings...';
+      var fights = await getFightRankings(encId, 100);
+      prog.textContent = 'Processing '+fights.length+' fights ('+CONCURRENCY+' at a time)...';
+      var done = 0;
+      var results = await runPool(fights, async (fight) => {
+        var r = await processFight(fight, specClass, specName);
+        done++;
+        prog.textContent = 'Processing... '+done+'/'+fights.length;
+        return r;
+      }, CONCURRENCY);
+      for (var r of results) if (r?.players) allPlayers.push(...r.players);
+      var elapsed = ((Date.now()-t0)/1000).toFixed(1);
+      prog.textContent = 'Done in '+elapsed+'s — '+allPlayers.length+' '+specLabel+' found';
+      if (!specSplit) setCached(encId, specVal, allPlayers);
+    }
+
+    if (specSplit) renderSpecSplit(encName, specClass, allPlayers, fights?.length||0, ((Date.now()-t0)/1000).toFixed(1));
+    else renderResults(encName, specLabel, allPlayers, '(cached)', fromCache ? timeAgo(getCached(encId,specVal)?.ts||0) : ((Date.now()-t0)/1000).toFixed(1)+'s');
   } catch(e) {
     prog.textContent = 'Error: '+e.message;
     console.error(e);
@@ -596,6 +638,12 @@ async function doFetchAllBosses() {
   var allData = {};
 
   for (var boss of bosses) {
+    var hit = getCached(boss.id, specVal);
+    if (hit) {
+      prog.textContent = boss.name + ' — cached (' + timeAgo(hit.ts) + ')';
+      allData[boss.name] = summarizeBoss(hit.players, specClass+'|'+specName);
+      continue;
+    }
     prog.textContent = 'Scanning ' + boss.name + '...';
     try {
       var fights = await getFightRankings(boss.id, 100);
@@ -608,6 +656,7 @@ async function doFetchAllBosses() {
       }, CONCURRENCY);
       var allPlayers = [];
       for (var r of results) if (r?.players) allPlayers.push(...r.players);
+      setCached(boss.id, specVal, allPlayers);
       allData[boss.name] = summarizeBoss(allPlayers, specClass+'|'+specName);
     } catch(e) {
       allData[boss.name] = null;
