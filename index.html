@@ -5725,8 +5725,8 @@ function showWclModal() {
       var processed = 0;
       var limit = pageRankings.length;
 
-      // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
-      function processBossEvts(bevts, spellGroup, bossEvtTimes, fStart) {
+      // Use var expression to avoid strict-mode function-in-block errors
+      var processBossEvts = function(bevts, spellGroup, bossEvtTimes, fStart) {
         if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
         spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
@@ -5742,7 +5742,7 @@ function showWclModal() {
           var times = bossEvtTimes[gi];
           if (!times.length || rel - times[times.length-1] > 60000) times.push(rel);
         });
-      }
+      };
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
