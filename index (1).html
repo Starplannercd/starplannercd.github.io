@@ -1445,15 +1445,7 @@ const BOSSES = [
     id:'norushen', name:'Norushen',
     desc:'Heroic · Vale of Eternal Sorrows',
     duration: 360,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
-          { name:'HP Assign',       time:0,   color:'#c8a84b', hpAssign:true },
-        ]
-      }
-    ]
+    sections: [{ label: null, abilities: [] }]
   },
   {
     id:'sha', name:'Sha of Pride',
@@ -1477,52 +1469,13 @@ const BOSSES = [
     id:'galakras', name:'Galakras',
     desc:'Heroic · Gates of Retribution',
     duration: 600,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start',       time:0,   color:'#ffffff', encounterStart:true },
-          { name:'Pulsing Flames 1',      time:60,  color:'#e07820' },
-          { name:'Flames of Galakrond 1', time:75,  color:'#c83a20' },
-          { name:'Flames of Galakrond 2', time:135, color:'#c83a20' },
-          { name:'Pulsing Flames 2',      time:180, color:'#e07820' },
-          { name:'Flames of Galakrond 3', time:195, color:'#c83a20' },
-          { name:'Flames of Galakrond 4', time:255, color:'#c83a20' },
-          { name:'Pulsing Flames 3',      time:300, color:'#e07820' },
-          { name:'Flames of Galakrond 5', time:315, color:'#c83a20' },
-          { name:'Flames of Galakrond 6', time:375, color:'#c83a20' },
-          { name:'Pulsing Flames 4',      time:420, color:'#e07820' },
-          { name:'Flames of Galakrond 7', time:435, color:'#c83a20' },
-          { name:'Flames of Galakrond 8', time:495, color:'#c83a20' },
-          { name:'Pulsing Flames 5',      time:540, color:'#e07820' },
-          { name:'Flames of Galakrond 9', time:555, color:'#c83a20' },
-        ]
-      }
-    ]
+    sections: [{ label: null, abilities: [] }]
   },
   {
     id:'ironjuggernaut', name:'Iron Juggernaut',
     desc:'Heroic · Gates of Retribution',
     duration: 420,
-    sections: [
-      {
-        label: 'Phase 1',
-        abilities: [
-          { name:'Encounter Start',   time:0,   color:'#ffffff', encounterStart:true },
-          { name:'Shock Pulse 1',     time:45,  color:'#c8a84b' },
-          { name:'Shock Pulse 2',     time:90,  color:'#c8a84b' },
-          { name:'Shock Pulse 3',     time:135, color:'#c8a84b' },
-        ]
-      },
-      {
-        label: 'Phase 2',
-        abilities: [
-          { name:'Shock Pulse 4',     time:195, color:'#c83a20' },
-          { name:'Shock Pulse 5',     time:255, color:'#c83a20' },
-          { name:'Shock Pulse 6',     time:315, color:'#c83a20' },
-        ]
-      }
-    ]
+    sections: [{ label: null, abilities: [] }]
   },
   {
     id:'darkshaman', name:"Kor'kron Dark Shaman",
@@ -2497,8 +2450,12 @@ function renderTimeline() {
   const bossData = getPlacedKey(boss.id);
 
   boss.sections.forEach((section, si) => {
-    // Only show phase divider between sections (not before the first one)
     if (section.label && si > 0) {
+      const div = document.createElement('div');
+      div.className = 'phase-divider';
+      div.dataset.label = section.label;
+      grid.appendChild(div);
+    } else if (section.label && si === 0) {
       const div = document.createElement('div');
       div.className = 'phase-divider';
       div.dataset.label = section.label;
@@ -5747,8 +5704,8 @@ function showWclModal() {
       var processed = 0;
       var limit = pageRankings.length;
 
-      // Use var expression to avoid strict-mode function-in-block errors
-      var processBossEvts = function(bevts, spellGroup, bossEvtTimes, fStart) {
+      // processBossEvts defined once outside the loop to avoid strict-mode redeclaration errors
+      function processBossEvts(bevts, spellGroup, bossEvtTimes, fStart) {
         if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
         spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
@@ -5764,7 +5721,7 @@ function showWclModal() {
           var times = bossEvtTimes[gi];
           if (!times.length || rel - times[times.length-1] > 60000) times.push(rel);
         });
-      };
+      }
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
@@ -5874,7 +5831,21 @@ function showWclModal() {
               }
             } catch(be) { console.warn('Boss events fetch error:', be); }
           }
-
+          if (processed === 0) {
+            console.log('[WCL] bossEvtTimes for first log:', JSON.stringify(bossEvtTimes));
+            console.log('[WCL] bossSpells:', JSON.stringify(bossSpells));
+            // Also log unique spell IDs from the enemy casts to help identify the right ID
+            if (castSpells.length) {
+              try {
+                var debugQ = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
+                var debugD = await wclQuery(debugQ, {c:code, fid:fid});
+                var debugEvts = (debugD&&debugD.reportData&&debugD.reportData.report&&debugD.reportData.report.events&&debugD.reportData.report.events.data)||[];
+                var uniqueSids = {};
+                debugEvts.forEach(function(ev){ uniqueSids[ev.abilityGameID] = (uniqueSids[ev.abilityGameID]||0)+1; });
+                console.log('[WCL] Enemy cast spell IDs (id:count):', JSON.stringify(uniqueSids));
+              } catch(de) {}
+            }
+          }
 
           // Build lookup of all spell IDs cast in this log
           var allCastSids = {};
