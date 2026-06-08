@@ -77,6 +77,11 @@
       <option value="Mage|Arcane">Arcane Mage</option>
       <option value="Mage|*">Mage — spec split</option>
     </optgroup>
+    <optgroup label="Warlock">
+      <option value="Warlock|Affliction">Affliction Warlock</option>
+      <option value="Warlock|Demonology">Demonology Warlock</option>
+      <option value="Warlock|*">Warlock — spec split</option>
+    </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
   <button id="allBossesBtn" onclick="doFetchAllBosses()" style="border-color:#555;">Scan All Bosses</button>
@@ -268,6 +273,22 @@ const TALENT_TIERS = {
     {level:75, choices:{10060:'Power Infusion', 123266:'Divine Insight', 109142:'Twist of Fate'}},
     {level:90, choices:{120517:'Halo', 110744:'Divine Star', 121135:'Cascade'}},
   ],
+  'Warlock|Affliction': [
+    {level:15, choices:{30283:'Shadowfury', 5782:'Fear', 104773:'Unending Resolve'}},
+    {level:30, choices:{108359:'Demonic Breath', 108366:'Mortal Coil', 104773:'Unending Resolve'}},
+    {level:45, choices:{108370:'Soul Leech', 108378:'Burning Rush', 104773:'Unending Resolve'}},
+    {level:60, choices:{108415:'Soul Link', 108416:'Dark Bargain', 108417:'Dark Deal'}},
+    {level:75, choices:{108505:'Kil\'jaeden\'s Cunning', 108506:'Archimonde\'s Vengeance', 104773:'Unending Resolve'}},
+    {level:90, choices:{108499:'Grimoire of Supremacy', 108500:'Grimoire of Service', 108501:'Grimoire of Sacrifice'}},
+  ],
+  'Warlock|Demonology': [
+    {level:15, choices:{30283:'Shadowfury', 5782:'Fear', 104773:'Unending Resolve'}},
+    {level:30, choices:{108359:'Demonic Breath', 108366:'Mortal Coil', 104773:'Unending Resolve'}},
+    {level:45, choices:{108370:'Soul Leech', 108378:'Burning Rush', 104773:'Unending Resolve'}},
+    {level:60, choices:{108415:'Soul Link', 108416:'Dark Bargain', 108417:'Dark Deal'}},
+    {level:75, choices:{108505:'Kil\'jaeden\'s Cunning', 108506:'Archimonde\'s Vengeance', 104773:'Unending Resolve'}},
+    {level:90, choices:{108499:'Grimoire of Supremacy', 108500:'Grimoire of Service', 108501:'Grimoire of Sacrifice'}},
+  ],
 };
 
 const GLYPH_NAMES = {
@@ -300,6 +321,8 @@ const GLYPH_NAMES = {
   56368:'Combustion', 89926:'Inferno Blast', 146659:'Rapid Displacement',
   56377:'Splitting Ice', 63090:'Water Elemental', 56383:'Mana Gem',
   56364:'Icy Veins', 62210:'Arcane Power', 115705:'Cone of Cold', 98397:'Armors', 56380:'Evocation', 115718:'Arcane Explosion',
+  // Warlock
+  56242:'Imp Swarm', 148683:'Eternal Resolve', 56218:'Siphon Life', 56233:'Unstable Affliction', 146963:'Curse of the Elements',
 };
 
 const MINOR_GLYPHS = new Set([55448, 63279, 147707, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254]);
