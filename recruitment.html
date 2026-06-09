@@ -220,6 +220,7 @@
                 playerKey,
                 name: r.name,
                 realm: r.server?.name || '—',
+                serverSlug: r.server?.slug || '',
                 region: r.server?.region || 'US',
                 classStr: r.class || '',
                 spec: r.spec || '',
@@ -256,8 +257,9 @@
         }
         checked++;
         setStatus(`Verifying ${checked}/${preCandidates.length}: ${c.name}...`, 'loading');
-        const slug = c.realm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const slug = c.serverSlug || c.realm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         const region = c.region || 'US';
+        if (checked === 1) console.log('First char lookup:', c.name, slug, region);
         try {
           const data = await wcl(`{
             characterData {
