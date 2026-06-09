@@ -171,6 +171,7 @@
           }`);
 
           const cr = data?.worldData?.encounter?.characterRankings;
+          if (i === 0 && page === 1) console.log('First encounter cr:', JSON.stringify(cr)?.slice(0, 300));
           if (!cr?.rankings?.length) break;
 
           totalChecked += cr.rankings.length;
