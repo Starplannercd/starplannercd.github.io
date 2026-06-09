@@ -170,6 +170,7 @@
       // Pass 1 — scan SoO normal page 3 per encounter, track guilds seen per player (US only)
       const allPlayers = new Map();
       const guildsSeenBy = new Map();
+      const encCountByPlayer = new Map(); // playerKey -> number of encounters in top 300
       let totalChecked = 0;
 
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
@@ -183,7 +184,6 @@
           }
         }`);
         const cr = data?.worldData?.encounter?.characterRankings;
-        if (i === 0) console.log('characterRankings fields:', Object.keys(cr || {}), 'count:', cr?.count, 'total:', cr?.total);
         if (!cr?.rankings?.length) continue;
 
         totalChecked += cr.rankings.length;
@@ -197,7 +197,11 @@
             guildsSeenBy.get(playerKey).add(guildName);
           }
 
+          // Count unique encounters this player appears in top 300 for
           const encKey = `${playerKey}@${enc.id}`;
+          if (!allPlayers.has(encKey)) {
+            encCountByPlayer.set(playerKey, (encCountByPlayer.get(playerKey) || 0) + 1);
+          }
           if (!allPlayers.has(encKey) || r.amount > (allPlayers.get(encKey).rawAmount || 0)) {
             allPlayers.set(encKey, {
               playerKey,
@@ -237,14 +241,16 @@
         console.log(`Heroic SoO blacklist: ${SOO_HEROIC_BLACKLIST.size} players`);
       }
 
-      // Pass 2 — apply guild filter and heroic blacklist, collect final candidates
+      // Pass 2 — apply guild filter, heroic blacklist, and encounter count (consistency check)
+      const MIN_ENCOUNTERS = 4; // must appear in top 300 on at least this many SoO normal bosses
       allPlayers.forEach((c, encKey) => {
         if (guildsSeenBy.has(c.playerKey)) return;
         if (SOO_HEROIC_BLACKLIST.has(c.playerKey)) return;
+        if ((encCountByPlayer.get(c.playerKey) || 0) < MIN_ENCOUNTERS) return;
         candidates.set(encKey, c);
       });
 
-      console.log(`Scanned ${totalChecked} | heroic blacklist ${SOO_HEROIC_BLACKLIST.size} | passed ${candidates.size}`);
+      console.log(`Scanned ${totalChecked} | heroic blacklist ${SOO_HEROIC_BLACKLIST.size} | min ${MIN_ENCOUNTERS} enc filter | passed ${candidates.size}`);
 
       return Array.from(candidates.values()).sort((a, b) => b.rawAmount - a.rawAmount);
     }
