@@ -242,7 +242,7 @@
       }
 
       // Pass 2 — apply guild filter, heroic blacklist, and encounter count (consistency check)
-      const MIN_ENCOUNTERS = 4; // must appear in top 300 on at least this many SoO normal bosses
+      const MIN_ENCOUNTERS = 3; // must appear in top 300 on at least this many SoO normal bosses
       allPlayers.forEach((c, encKey) => {
         if (guildsSeenBy.has(c.playerKey)) return;
         if (SOO_HEROIC_BLACKLIST.has(c.playerKey)) return;
