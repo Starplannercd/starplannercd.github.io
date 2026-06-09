@@ -269,6 +269,7 @@
             }
           }`);
           const ch = data?.characterData?.character;
+          if (checked === 1) console.log('First char raw data:', JSON.stringify(ch));
 
           // Exclude if any heroic SoO kills
           const hasHeroicSoo = (ch?.sooHeroic?.rankings?.length || 0) > 0;
