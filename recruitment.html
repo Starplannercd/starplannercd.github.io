@@ -227,38 +227,48 @@
         }
       }
 
-      // Pass 2 — build a set of players who appear in ANY heroic ranking (pages 1-2).
-      // If they're doing heroic, they're in an active raid group regardless of guild tag.
-      setStatus('Cross-checking heroic logs...', 'loading');
-      const heroicPlayers = new Set();
-      for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
-        const enc = SOO_ENCOUNTERS[i];
-        for (let page = 1; page <= 2; page++) {
+      // Pass 2 — filter by guild, collect pre-candidates
+      const preCandidates = [];
+      allPlayers.forEach((c, encKey) => {
+        if (guildsSeenBy.has(c.playerKey)) return;
+        preCandidates.push({ encKey, c });
+      });
+      console.log(`${preCandidates.length} pre-candidates after guild filter`);
+
+      // Pass 3 — per-candidate heroic check via characterData.
+      // This definitively checks if a player has ANY heroic SoO kill regardless of ranking position.
+      const heroicChecked = new Map(); // playerKey -> bool (has heroic kill)
+      let checked = 0;
+      for (const { encKey, c } of preCandidates) {
+        if (heroicChecked.has(c.playerKey)) {
+          if (!heroicChecked.get(c.playerKey)) candidates.set(encKey, c);
+          continue;
+        }
+        checked++;
+        setStatus(`Checking heroic history ${checked}/${preCandidates.length}: ${c.name}...`, 'loading');
+        const slug = c.realm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const region = c.region || 'US';
+        try {
           const data = await wcl(`{
-            worldData {
-              encounter(id: ${enc.id}) {
-                characterRankings(difficulty: 4 metric: dps page: ${page})
+            characterData {
+              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}") {
+                zoneRankings(zoneID: 1054 difficulty: 4)
               }
             }
           }`);
-          const cr = data?.worldData?.encounter?.characterRankings;
-          if (!cr?.rankings?.length) break;
-          cr.rankings.forEach(r => heroicPlayers.add(`${r.name}@${r.server?.name}`));
-          if (!cr.hasMorePages) break;
-          await new Promise(r => setTimeout(r, 150));
+          const zr = data?.characterData?.character?.zoneRankings;
+          const hasHeroic = zr && (zr.bestPerformanceAverage > 0 || (zr.rankings && zr.rankings.length > 0));
+          heroicChecked.set(c.playerKey, !!hasHeroic);
+          if (!hasHeroic) candidates.set(encKey, c);
+        } catch(e) {
+          // If check fails, include them (err on the side of showing candidates)
+          heroicChecked.set(c.playerKey, false);
+          candidates.set(encKey, c);
         }
+        await new Promise(r => setTimeout(r, 150));
       }
-      console.log(`Found ${heroicPlayers.size} unique heroic players to exclude`);
 
-      // Pass 3 — only keep players who have NEVER appeared with a real guild name
-      // AND have no heroic kills.
-      allPlayers.forEach((c, encKey) => {
-        if (guildsSeenBy.has(c.playerKey)) return;  // has a real guild somewhere
-        if (heroicPlayers.has(c.playerKey)) return;  // doing heroic — skip
-        if (!candidates.has(encKey)) candidates.set(encKey, c);
-      });
-
-      console.log(`Checked ${totalChecked} players, ${candidates.size} true pug/unguilded candidates`);
+      console.log(`Checked ${totalChecked} normal players, ${preCandidates.length} passed guild filter, ${candidates.size} passed heroic filter`);
 
       return Array.from(candidates.values()).sort((a, b) => b.rawAmount - a.rawAmount);
     }
