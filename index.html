@@ -3238,10 +3238,42 @@ const CD_SPELL_IDS = {
   'revival':   '115310',
 };
 
+// Map ability names to FOJI export keys — handles both exact matches and prefix patterns
+const FOJI_ABILITY_NAME_MAP = {
+  'immerseus': { 'Swelling Corruption': 'IMMERSEUS_SWIRL', 'Split': 'IMMERSEUS_SPLIT' },
+  'fallenprotectors': { 'Calamity': 'FALLEN_CALAMITY', 'Inferno Strike': 'FALLEN_CALAMITY', 'Dark Calamity': 'FALLEN_CALAMITY' },
+  'norushen': { 'Corruption': 'NORUSHEN_CORRUPT' },
+  'sha': { 'Swelling Pride': 'SHAPRIDE_SWELLING_PRIDE', 'Phase 2': 'SHAPRIDE_P2' },
+  'galakras': { 'Flames': 'GALAKRAS_FLAMES', 'Pulsing': 'GALAKRAS_PULSING' },
+  'ironjuggernaut': { 'Shock Pulse': 'JUGGERNAUT_SHOCK_PULSE', 'Electromagnetic': 'JUGGERNAUT_SHOCK_PULSE' },
+  'dark-shaman': { 'Toxic Mist': 'KORKRON_TOXIC_MIST', 'Falling Ash': 'KORKRON_FALLING_ASH' },
+  'general-nazgrim': { 'War Song': 'NAZGRIM_WAR_SONG' },
+  'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
+  'spoils': {},
+  'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH' },
+  'siegecrafter': { 'Overcharge': 'BLACKFUSE_OVERCHARGE_ELECTRO' },
+  'paragons': { 'Insane Calculation': 'PARAGONS_INSANE_CALCULATION', 'Catalyst': 'PARAGONS_CATALYST', 'Mutate': 'PARAGONS_MUTATE', 'Encase': 'PARAGONS_ENCASE_IN_AMBER' },
+  'garrosh': { 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineers': 'GARROSH_ENGINEERS' },
+};
+
 // Determine which boss ability key to use for a row
 function getBossAbilityKey(boss, rowKey, abName) {
   if (abName && abName.startsWith('HP Assign')) return boss.id.toUpperCase() + '_HEALTH';
-  return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
+  if (abName && abName.startsWith('Encounter Start')) return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
+
+  // Check ability name map for this boss
+  const abilityMap = FOJI_ABILITY_NAME_MAP[boss.id];
+  if (abilityMap) {
+    for (const [pattern, fojiKey] of Object.entries(abilityMap)) {
+      if (abName.includes(pattern)) {
+        return fojiKey;
+      }
+    }
+  }
+
+  // Fallback — try generating from ability name itself
+  const nameUpperClean = abName.replace(/\s+\d+.*$/, '').replace(/\s+/g, '_').toUpperCase();
+  return boss.id.replace(/-/g, '').toUpperCase() + '_' + nameUpperClean;
 }
 
 // Extract cast number from ability name (e.g. "Discharge 3" -> 3)
