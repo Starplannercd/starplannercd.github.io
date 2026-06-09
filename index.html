@@ -1569,13 +1569,28 @@ const BOSSES = [
   {
     id:'garrosh', name:'Garrosh Hellscream',
     desc:'Heroic · Pinnacle of Storms',
-    duration: 600,
+    duration: 660,
     sections: [
-      { label: 'Phase 1', abilities: [] },
+      { label: 'Phase 1', abilities: [
+        { name:'Encounter Start',        time:0,   color:'#ffffff', encounterStart:true },
+        { name:'Siege Engineer CD 1',    time:20,  color:'#c8881a' },
+      ]},
       { label: 'Intermission 1', abilities: [] },
-      { label: 'Phase 2', abilities: [] },
+      { label: 'Phase 2', abilities: [
+        { name:'Whirling Corruption P2 1', time:270, color:'#8848c8' },
+        { name:'Whirling Corruption P2 2', time:320, color:'#8848c8' },
+        { name:'Whirling Corruption P2 3', time:370, color:'#8848c8' },
+      ]},
       { label: 'Intermission 2', abilities: [] },
-      { label: 'Phase 3', abilities: [] },
+      { label: 'Phase 3', abilities: [
+        { name:'Power Iron Star 1',        time:490, color:'#c84020' },
+        { name:'Whirling Corruption P3 1', time:505, color:'#c848c8' },
+        { name:'Power Iron Star 2',        time:535, color:'#c84020' },
+        { name:'Whirling Corruption P3 2', time:555, color:'#c848c8' },
+        { name:'Power Iron Star 3',        time:580, color:'#c84020' },
+        { name:'Whirling Corruption P3 3', time:605, color:'#c848c8' },
+        { name:'Power Iron Star 4',        time:625, color:'#c84020' },
+      ]},
     ]
   },
 ];
@@ -3253,7 +3268,7 @@ const FOJI_ABILITY_NAME_MAP = {
   'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH' },
   'siegecrafter': { 'Overcharge': 'BLACKFUSE_OVERCHARGE_ELECTRO' },
   'paragons': { 'Insane Calculation': 'PARAGONS_INSANE_CALCULATION', 'Catalyst': 'PARAGONS_CATALYST', 'Mutate': 'PARAGONS_MUTATE', 'Encase': 'PARAGONS_ENCASE_IN_AMBER' },
-  'garrosh': { 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineers': 'GARROSH_ENGINEERS' },
+  'garrosh': { 'Power Iron Star': 'GARROSH_IRON_STAR', 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling Corruption P3': 'GARROSH_WHIRLING_P3', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineers': 'GARROSH_ENGINEERS' },
 };
 
 // Determine which boss ability key to use for a row
