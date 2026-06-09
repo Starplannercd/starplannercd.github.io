@@ -73,7 +73,7 @@
             <th>Spec</th>
             <th>Guild</th>
             <th>DPS</th>
-            <th>Percentile</th>
+            <th>Rank Range</th>
             <th>Encounter</th>
           </tr>
         </thead>
@@ -144,7 +144,8 @@
     function isPugOrUnguilded(guildName) {
       if (!guildName) return true;
       const lower = guildName.toLowerCase();
-      return lower.includes('pug') || lower.includes('lfr') || lower.includes('pickup') || lower.includes('no guild') || lower.includes('unguild');
+      return lower.includes('pug') || lower.includes('lfr') || lower.includes('pickup')
+          || lower.includes('gdkp') || lower.includes('no guild') || lower.includes('unguild');
     }
 
     async function findPugDps(minPercentile, days) {
@@ -152,50 +153,52 @@
       const endMs = Date.now();
       const startMs = endMs - days * 86400 * 1000;
 
-      // Fetch page 1 of heroic DPS rankings per encounter (page 1 = global top 100)
-      // characterRankings doesn't return rankPercent for Classic, so we use rank position as proxy
+      // Scan pages 1-3 per encounter (top ~300 globally). Classic doesn't return rankPercent,
+      // so anyone in this range is already a high performer.
+      let totalChecked = 0, totalPassed = 0;
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
         const enc = SOO_ENCOUNTERS[i];
-        setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
 
-        const data = await wcl(`{
-          worldData {
-            encounter(id: ${enc.id}) {
-              characterRankings(difficulty: 4 metric: dps page: 1)
+        for (let page = 1; page <= 3; page++) {
+          setStatus(`Scanning ${enc.name} page ${page}/3 (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
+
+          const data = await wcl(`{
+            worldData {
+              encounter(id: ${enc.id}) {
+                characterRankings(difficulty: 4 metric: dps page: ${page})
+              }
             }
-          }
-        }`);
+          }`);
 
-        const cr = data?.worldData?.encounter?.characterRankings;
-        if (!cr?.rankings?.length) continue;
+          const cr = data?.worldData?.encounter?.characterRankings;
+          if (!cr?.rankings?.length) break;
 
-        const total = cr.count || cr.rankings.length;
-        cr.rankings.forEach((r, idx) => {
-          // Estimate percentile from position: rank 1 of 100 = ~99th percentile
-          const estPercentile = Math.round(100 - (idx / total) * 100);
-          if (estPercentile < minPercentile) return;
+          totalChecked += cr.rankings.length;
+          cr.rankings.forEach(r => {
+            const guildName = r.guild?.name || null;
+            if (!isPugOrUnguilded(guildName)) return;
+            totalPassed++;
 
-          const guildName = r.guild?.name || null;
-          if (!isPugOrUnguilded(guildName)) return;
+            const key = `${r.name}@${r.server?.name}@${enc.id}`;
+            if (!candidates.has(key)) {
+              candidates.set(key, {
+                name: r.name,
+                realm: r.server?.name || '—',
+                region: r.server?.region || '',
+                classStr: r.class || '',
+                spec: r.spec || '',
+                guild: guildName || 'Unguilded',
+                dps: Math.round(r.amount || 0).toLocaleString(),
+                encounter: enc.name,
+              });
+            }
+          });
 
-          const key = `${r.name}@${r.server?.name}@${enc.id}`;
-          if (!candidates.has(key)) {
-            candidates.set(key, {
-              name: r.name,
-              realm: r.server?.name || '—',
-              region: r.server?.region || '',
-              classStr: r.class || '',
-              spec: r.spec || '',
-              guild: guildName || 'Unguilded',
-              dps: Math.round(r.amount || 0).toLocaleString(),
-              percentile: estPercentile,
-              encounter: enc.name,
-            });
-          }
-        });
-
-        await new Promise(r => setTimeout(r, 150));
+          if (!cr.hasMorePages) break;
+          await new Promise(r => setTimeout(r, 150));
+        }
       }
+      console.log(`Checked ${totalChecked} players, ${totalPassed} passed guild filter`);
 
       return Array.from(candidates.values()).sort((a, b) => b.dps.replace(/,/g,'') - a.dps.replace(/,/g,''));
     }
@@ -228,7 +231,7 @@
           <td>${c.spec}</td>
           <td>${guildTag}</td>
           <td>${c.dps}</td>
-          <td><strong style="color: #48a868;">${c.percentile}%</strong></td>
+          <td><strong style="color: #48a868;">Top 300</strong></td>
           <td>${c.encounter}</td>
         `;
         body.appendChild(row);
