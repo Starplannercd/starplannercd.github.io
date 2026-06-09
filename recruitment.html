@@ -220,6 +220,7 @@
                 playerKey,
                 name: r.name,
                 realm: r.server?.name || '—',
+                region: r.server?.region || 'US',
                 classStr: r.class || '',
                 spec: r.spec || '',
                 guild: guildName || 'Unguilded',
@@ -271,20 +272,26 @@
 
           // Exclude if any heroic SoO kills
           const hasHeroicSoo = (ch?.sooHeroic?.rankings?.length || 0) > 0;
-          if (hasHeroicSoo) { playerChecked.set(c.playerKey, false); continue; }
+          if (hasHeroicSoo) { console.log(`FAIL ${c.name} — has heroic SoO kills`); playerChecked.set(c.playerKey, false); continue; }
 
           // Require 75+ average parse on SoO normal
           const sooNormalAvg = ch?.sooNormal?.bestPerformanceAverage || 0;
-          if (sooNormalAvg < 75) { playerChecked.set(c.playerKey, false); continue; }
+          if (sooNormalAvg < 75) { console.log(`FAIL ${c.name} — sooNormalAvg=${sooNormalAvg.toFixed(1)}`); playerChecked.set(c.playerKey, false); continue; }
 
-          // Require 6+ heroic ToT bosses killed AND 90+ average parse
+          // Require 6+ heroic ToT bosses killed AND 88+ average parse.
+          // Guild status in ToT is irrelevant — only SoO guild status matters.
           const totBosses = ch?.totHeroic?.rankings?.length || 0;
           const totAvg = ch?.totHeroic?.bestPerformanceAverage || 0;
-          if (totBosses < 6 || totAvg < 90) { playerChecked.set(c.playerKey, false); continue; }
+          if (totBosses < 6 || totAvg < 88) {
+            console.log(`FAIL ${c.name} — totBosses=${totBosses} totAvg=${totAvg.toFixed(1)}`);
+            playerChecked.set(c.playerKey, false); continue;
+          }
 
+          console.log(`PASS ${c.name} — sooAvg=${sooNormalAvg.toFixed(1)} totBosses=${totBosses} totAvg=${totAvg.toFixed(1)}`);
           playerChecked.set(c.playerKey, true);
           candidates.set(encKey, c);
         } catch(e) {
+          console.warn(`ERROR checking ${c.name} (${slug}@${region}):`, e.message);
           playerChecked.set(c.playerKey, false);
         }
         await new Promise(r => setTimeout(r, 150));
