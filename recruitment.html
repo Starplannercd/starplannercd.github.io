@@ -150,8 +150,17 @@
 
     async function findPugDps(minPercentile, days) {
       const candidates = new Map();
-      const endMs = Date.now();
-      const startMs = endMs - days * 86400 * 1000;
+
+      // Fetch encounter list if not already cached
+      if (SOO_ENCOUNTERS.length === 0) {
+        setStatus('Fetching encounter list...', 'loading');
+        const zoneData = await wcl(`{ worldData { zone(id: 1054) { encounters { id name } } } }`);
+        const encounters = zoneData?.worldData?.zone?.encounters || [];
+        console.log('Zone encounters:', encounters.length, JSON.stringify(encounters));
+        SOO_ENCOUNTERS.push(...encounters);
+        if (SOO_ENCOUNTERS.length === 0) throw new Error('Zone 1054 returned no encounters — check zone ID.');
+      }
+      console.log('Scanning', SOO_ENCOUNTERS.length, 'encounters');
 
       // Scan pages 1-3 per encounter (top ~300 globally). Classic doesn't return rankPercent,
       // so anyone in this range is already a high performer.
