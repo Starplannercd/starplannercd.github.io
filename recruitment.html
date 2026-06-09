@@ -179,8 +179,8 @@
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
         const enc = SOO_ENCOUNTERS[i];
 
-        for (let page = 1; page <= 3; page++) {
-          setStatus(`Scanning ${enc.name} page ${page}/3 (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
+        for (let page = 3; page <= 3; page++) {
+          setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
 
           const data = await wcl(`{
             worldData {
@@ -227,12 +227,13 @@
         }
       }
 
-      // Pass 2 — filter by guild, collect pre-candidates
+      // Pass 2 — filter by guild, collect pre-candidates (cap at 100 for heroic check speed)
       const preCandidates = [];
       allPlayers.forEach((c, encKey) => {
         if (guildsSeenBy.has(c.playerKey)) return;
         preCandidates.push({ encKey, c });
       });
+      preCandidates.splice(100);
       console.log(`${preCandidates.length} pre-candidates after guild filter`);
 
       // Pass 3 — per-candidate heroic check via characterData.
