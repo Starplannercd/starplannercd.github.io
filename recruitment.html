@@ -183,6 +183,7 @@
           }
         }`);
         const cr = data?.worldData?.encounter?.characterRankings;
+        if (i === 0) console.log('characterRankings fields:', Object.keys(cr || {}), 'count:', cr?.count, 'total:', cr?.total);
         if (!cr?.rankings?.length) continue;
 
         totalChecked += cr.rankings.length;
