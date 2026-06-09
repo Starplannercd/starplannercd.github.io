@@ -204,6 +204,7 @@
 
           totalChecked += cr.rankings.length;
           cr.rankings.forEach(r => {
+            if ((r.server?.region || '').toUpperCase() !== 'US') return;
             const playerKey = `${r.name}@${r.server?.name}`;
             const guildName = r.guild?.name || null;
 
@@ -258,7 +259,7 @@
         checked++;
         setStatus(`Verifying ${checked}/${preCandidates.length}: ${c.name}...`, 'loading');
         const slug = c.serverSlug || c.realm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        const region = c.region || 'US';
+        const region = (c.region || 'US').toLowerCase();
         if (checked === 1) console.log('First char lookup:', c.name, slug, region);
         try {
           const data = await wcl(`{
