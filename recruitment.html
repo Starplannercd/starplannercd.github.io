@@ -118,13 +118,11 @@
 
       const btn = document.getElementById('scanBtn');
       btn.disabled = true;
-      const minPerc = parseInt(document.getElementById('minPercentile').value);
-      const days = parseInt(document.getElementById('dateRange').value);
 
       setStatus('Scanning logs... this may take 30-60 seconds', 'loading');
 
       try {
-        const candidates = await findPugDps(minPerc, days);
+        const candidates = await findPugDps();
         displayResults(candidates);
       } catch (e) {
         setStatus('Error: ' + e.message, 'error');
@@ -136,8 +134,7 @@
 
     // Fetched dynamically from zone 1054 (MoP Classic SoO)
     let SOO_ENCOUNTERS = [];
-    let TOT_ZONE_ID = null;
-    let TOT_ENCOUNTERS = [];
+    let SOO_HEROIC_BLACKLIST = null; // built once per session
 
     async function wcl(query) {
       const resp = await fetch(WCL_API, {
@@ -158,10 +155,10 @@
           || lower.includes('gdkp') || lower.includes('no guild') || lower.includes('unguild');
     }
 
-    async function findPugDps(minPercentile, days) {
+    async function findPugDps() {
       const candidates = new Map();
 
-      // Fetch encounter list + ToT zone ID if not already cached
+      // Fetch encounter list if not cached
       if (SOO_ENCOUNTERS.length === 0) {
         setStatus('Fetching encounter list...', 'loading');
         const zoneData = await wcl(`{ worldData { zone(id: 1054) { encounters { id name } } } }`);
@@ -169,142 +166,84 @@
         SOO_ENCOUNTERS.push(...encounters);
         if (SOO_ENCOUNTERS.length === 0) throw new Error('Zone 1054 returned no encounters.');
       }
-      if (!TOT_ZONE_ID) {
-        setStatus('Finding Throne of Thunder zone...', 'loading');
-        for (const id of [1053, 1052, 1051, 1055, 1050]) {
-          const d = await wcl(`{ worldData { zone(id: ${id}) { id name } } }`);
-          if (d?.worldData?.zone?.name?.includes('Throne')) { TOT_ZONE_ID = id; break; }
-        }
-        console.log('ToT zone ID:', TOT_ZONE_ID);
-        if (!TOT_ZONE_ID) throw new Error('Could not find Throne of Thunder zone ID.');
-      }
 
-      // Pass 1 — collect all top performers and track every guild name seen per character.
-      // Key: "name@realm", value: { candidate data, guildsSeenSet }
-      const allPlayers = new Map();   // name@realm -> candidate obj
-      const guildsSeenBy = new Map(); // name@realm -> Set of non-null guild names
-
+      // Pass 1 — scan SoO normal page 3 per encounter, track guilds seen per player (US only)
+      const allPlayers = new Map();
+      const guildsSeenBy = new Map();
       let totalChecked = 0;
+
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
         const enc = SOO_ENCOUNTERS[i];
-
-        for (let page = 3; page <= 3; page++) {
-          setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
-
-          const data = await wcl(`{
-            worldData {
-              encounter(id: ${enc.id}) {
-                characterRankings(difficulty: 3 metric: dps page: ${page})
-              }
+        setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
+        const data = await wcl(`{
+          worldData {
+            encounter(id: ${enc.id}) {
+              characterRankings(difficulty: 3 metric: dps page: 3)
             }
-          }`);
+          }
+        }`);
+        const cr = data?.worldData?.encounter?.characterRankings;
+        if (!cr?.rankings?.length) continue;
 
-          const cr = data?.worldData?.encounter?.characterRankings;
-          if (i === 0 && page === 1) console.log('First encounter cr:', JSON.stringify(cr)?.slice(0, 300));
-          if (!cr?.rankings?.length) break;
+        totalChecked += cr.rankings.length;
+        cr.rankings.forEach(r => {
+          if ((r.server?.region || '').toUpperCase() !== 'US') return;
+          const playerKey = `${r.name}@${r.server?.name}`;
+          const guildName = r.guild?.name || null;
 
-          totalChecked += cr.rankings.length;
-          cr.rankings.forEach(r => {
-            if ((r.server?.region || '').toUpperCase() !== 'US') return;
-            const playerKey = `${r.name}@${r.server?.name}`;
-            const guildName = r.guild?.name || null;
+          if (guildName && !isPugOrUnguilded(guildName)) {
+            if (!guildsSeenBy.has(playerKey)) guildsSeenBy.set(playerKey, new Set());
+            guildsSeenBy.get(playerKey).add(guildName);
+          }
 
-            // Track every real guild name this character appears with
-            if (guildName && !isPugOrUnguilded(guildName)) {
-              if (!guildsSeenBy.has(playerKey)) guildsSeenBy.set(playerKey, new Set());
-              guildsSeenBy.get(playerKey).add(guildName);
-            }
-
-            // Store best (highest amount) entry per character per encounter
-            const encKey = `${playerKey}@${enc.id}`;
-            if (!allPlayers.has(encKey) || r.amount > (allPlayers.get(encKey).rawAmount || 0)) {
-              allPlayers.set(encKey, {
-                playerKey,
-                name: r.name,
-                realm: r.server?.name || '—',
-                serverSlug: r.server?.slug || '',
-                region: r.server?.region || 'US',
-                classStr: r.class || '',
-                spec: r.spec || '',
-                guild: guildName || 'Unguilded',
-                dps: Math.round(r.amount || 0).toLocaleString(),
-                rawAmount: r.amount || 0,
-                encounter: enc.name,
-              });
-            }
-          });
-
-          if (!cr.hasMorePages) break;
-          await new Promise(r => setTimeout(r, 150));
-        }
+          const encKey = `${playerKey}@${enc.id}`;
+          if (!allPlayers.has(encKey) || r.amount > (allPlayers.get(encKey).rawAmount || 0)) {
+            allPlayers.set(encKey, {
+              playerKey,
+              name: r.name,
+              realm: r.server?.name || '—',
+              classStr: r.class || '',
+              spec: r.spec || '',
+              guild: guildName || 'Unguilded',
+              dps: Math.round(r.amount || 0).toLocaleString(),
+              rawAmount: r.amount || 0,
+              encounter: enc.name,
+            });
+          }
+        });
+        await new Promise(r => setTimeout(r, 150));
       }
 
       // Pass 1b — batch-scan SoO heroic pages 1-3 to build exclusion blacklist.
-      // Uses GraphQL aliases to fetch all encounters in one request per page.
-      setStatus('Building heroic SoO exclusion list...', 'loading');
-      const heroicBlacklist = new Set();
-      for (let page = 1; page <= 3; page++) {
-        const aliases = SOO_ENCOUNTERS.map((enc, i) =>
-          `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
-        ).join(' ');
-        const hData = await wcl(`{ worldData { ${aliases} } }`);
-        SOO_ENCOUNTERS.forEach((enc, i) => {
-          const cr = hData?.worldData?.[`e${i}`]?.characterRankings;
-          (cr?.rankings || []).forEach(r => {
-            if ((r.server?.region || '').toUpperCase() !== 'US') return;
-            heroicBlacklist.add(`${r.name}@${r.server?.name}`);
+      // Cached per session since it doesn't change between scans.
+      if (!SOO_HEROIC_BLACKLIST) {
+        setStatus('Building heroic SoO exclusion list...', 'loading');
+        SOO_HEROIC_BLACKLIST = new Set();
+        for (let page = 1; page <= 3; page++) {
+          const aliases = SOO_ENCOUNTERS.map((enc, i) =>
+            `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
+          ).join(' ');
+          const hData = await wcl(`{ worldData { ${aliases} } }`);
+          SOO_ENCOUNTERS.forEach((enc, i) => {
+            const cr = hData?.worldData?.[`e${i}`]?.characterRankings;
+            (cr?.rankings || []).forEach(r => {
+              if ((r.server?.region || '').toUpperCase() !== 'US') return;
+              SOO_HEROIC_BLACKLIST.add(`${r.name}@${r.server?.name}`);
+            });
           });
-        });
-        await new Promise(r => setTimeout(r, 200));
+          await new Promise(r => setTimeout(r, 200));
+        }
+        console.log(`Heroic SoO blacklist: ${SOO_HEROIC_BLACKLIST.size} players`);
       }
-      console.log(`Heroic SoO blacklist: ${heroicBlacklist.size} players`);
 
-      // Pass 1c — discover ToT encounters and batch-scan heroic pages 1-2 per encounter.
-      // Track how many unique heroic ToT bosses each player has killed.
-      if (TOT_ENCOUNTERS.length === 0) {
-        setStatus('Fetching Throne of Thunder encounter list...', 'loading');
-        const totZoneData = await wcl(`{ worldData { zone(id: ${TOT_ZONE_ID}) { encounters { id name } } } }`);
-        TOT_ENCOUNTERS.push(...(totZoneData?.worldData?.zone?.encounters || []));
-        if (TOT_ENCOUNTERS.length === 0) throw new Error('ToT zone returned no encounters.');
-      }
-      setStatus('Scanning Throne of Thunder heroic...', 'loading');
-      const totKills = new Map(); // playerKey -> Set of encounter IDs killed
-      for (let page = 1; page <= 2; page++) {
-        const aliases = TOT_ENCOUNTERS.map((enc, i) =>
-          `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
-        ).join(' ');
-        const tData = await wcl(`{ worldData { ${aliases} } }`);
-        TOT_ENCOUNTERS.forEach((enc, i) => {
-          const cr = tData?.worldData?.[`e${i}`]?.characterRankings;
-          (cr?.rankings || []).forEach(r => {
-            if ((r.server?.region || '').toUpperCase() !== 'US') return;
-            const pk = `${r.name}@${r.server?.name}`;
-            if (!totKills.has(pk)) totKills.set(pk, new Set());
-            totKills.get(pk).add(enc.id);
-          });
-        });
-        await new Promise(r => setTimeout(r, 200));
-      }
-      const totQualified = Array.from(totKills.entries()).filter(([, s]) => s.size >= 6).length;
-      console.log(`ToT qualified players (6+ heroic bosses): ${totQualified}`);
-
-      // Pass 2 — guild filter, then apply heroic blacklist + ToT requirement.
+      // Pass 2 — apply guild filter and heroic blacklist, collect final candidates
       allPlayers.forEach((c, encKey) => {
-        if (guildsSeenBy.has(c.playerKey)) return; // guilded in SoO
-        if (heroicBlacklist.has(c.playerKey)) {     // has heroic SoO kills
-          console.log(`FAIL ${c.name} — heroic SoO kill`);
-          return;
-        }
-        const totBosses = totKills.get(c.playerKey)?.size || 0;
-        if (totBosses < 6) {
-          console.log(`FAIL ${c.name} — totBosses=${totBosses}`);
-          return;
-        }
-        console.log(`PASS ${c.name} — totBosses=${totBosses}`);
+        if (guildsSeenBy.has(c.playerKey)) return;
+        if (SOO_HEROIC_BLACKLIST.has(c.playerKey)) return;
         candidates.set(encKey, c);
       });
 
-      console.log(`Scanned ${totalChecked} SoO normal | heroic blacklist ${heroicBlacklist.size} | passed ${candidates.size}`);
+      console.log(`Scanned ${totalChecked} | heroic blacklist ${SOO_HEROIC_BLACKLIST.size} | passed ${candidates.size}`);
 
       return Array.from(candidates.values()).sort((a, b) => b.rawAmount - a.rawAmount);
     }
