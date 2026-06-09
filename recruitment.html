@@ -187,12 +187,11 @@
         `);
 
         const rankings = data?.worldData?.encounter?.characterRankings;
-        if (!rankings || !rankings.rankings) continue;
+        console.log(`[${enc.name}] raw response:`, JSON.stringify(rankings)?.slice(0, 500));
+        if (!rankings || !rankings.rankings) { console.log(`[${enc.name}] no rankings array`); continue; }
+        console.log(`[${enc.name}] got ${rankings.rankings.length} rankings, sample:`, rankings.rankings[0]);
 
         for (const r of rankings.rankings) {
-          // Filter by date
-          if (r.startTime && r.startTime < cutoff) continue;
-
           // Filter by percentile
           if ((r.rankPercent || 0) < minPercentile) continue;
 
