@@ -126,171 +126,97 @@
       }
     }
 
-    async function findPugDps(minPercentile, days) {
-      const endTime = Math.floor(Date.now() / 1000);
-      const startTime = endTime - (days * 86400);
+    // SoO heroic encounter IDs on WarcraftLogs MoP Classic (zone 1054)
+    const SOO_ENCOUNTERS = [
+      { id: 784, name: 'Immerseus' },
+      { id: 785, name: 'The Fallen Protectors' },
+      { id: 786, name: 'Norushen' },
+      { id: 787, name: 'Sha of Pride' },
+      { id: 788, name: 'Galakras' },
+      { id: 789, name: 'Iron Juggernaut' },
+      { id: 790, name: "Kor'kron Dark Shaman" },
+      { id: 791, name: 'General Nazgrim' },
+      { id: 792, name: 'Malkorok' },
+      { id: 793, name: 'Spoils of Pandaria' },
+      { id: 794, name: 'Thok the Bloodthirsty' },
+      { id: 795, name: 'Siegecrafter Blackfuse' },
+      { id: 796, name: 'Paragons of the Klaxxi' },
+      { id: 797, name: 'Garrosh Hellscream' },
+    ];
 
-      // Siege of Orgrimmar = 14
-      const query = `
-        query {
-          reportData {
-            reports(
-              guildID: 0
-              raidAscension: false
-              startDate: ${startTime}
-              endDate: ${endTime}
-              limit: 100
-            ) {
-              data {
-                code
-                title
-              }
-            }
-          }
-        }
-      `;
-
+    async function wcl(query) {
       const resp = await fetch(WCL_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${WCL_TOKEN}` },
         body: JSON.stringify({ query })
       });
-
       if (!resp.ok) throw new Error(`WCL API error: ${resp.status}`);
       const json = await resp.json();
       if (json.errors) throw new Error(json.errors[0].message);
+      return json.data;
+    }
 
-      const reports = json.data.reportData.reports.data || [];
-      const candidates = new Map(); // unique character + encounter combo
+    function isPugOrUnguilded(guildName) {
+      if (!guildName) return true;
+      const lower = guildName.toLowerCase();
+      return lower.includes('pug') || lower.includes('lfr') || lower.includes('pickup') || lower.includes('no guild') || lower.includes('unguild');
+    }
 
-      for (let i = 0; i < reports.length; i++) {
-        setStatus(`Scanning logs (${i + 1}/${reports.length})...`, 'loading');
+    async function findPugDps(minPercentile, days) {
+      const candidates = new Map();
+      const cutoff = Date.now() - days * 86400 * 1000;
 
-        const logCode = reports[i].code;
-        const logTitle = reports[i].title;
+      for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
+        const enc = SOO_ENCOUNTERS[i];
+        setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
 
-        // Query all events in this report for Siege encounters
-        const eventsQuery = `
-          query {
-            reportData {
-              report(code: "${logCode}") {
-                fights(
+        // Fetch page 1 of heroic DPS rankings for this encounter
+        const data = await wcl(`
+          {
+            worldData {
+              encounter(id: ${enc.id}) {
+                characterRankings(
                   difficulty: 4
-                  encounterID: [14, 15, 16, 17, 18, 19, 20, 21]
-                ) {
-                  id
-                  name
-                  difficulty
-                  encounterID
-                  startTime
-                  endTime
-                }
-                masterData {
-                  actors {
-                    id
-                    name
-                    type
-                    server
-                    petOwner
-                  }
-                }
+                  metric: dps
+                  includeCombatantInfo: false
+                  page: 1
+                )
               }
             }
           }
-        `;
+        `);
 
-        const evResp = await fetch(WCL_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${WCL_TOKEN}` },
-          body: JSON.stringify({ query: eventsQuery })
-        });
+        const rankings = data?.worldData?.encounter?.characterRankings;
+        if (!rankings || !rankings.rankings) continue;
 
-        if (!evResp.ok) continue;
-        const evJson = await evResp.json();
-        if (evJson.errors) continue;
+        for (const r of rankings.rankings) {
+          // Filter by date
+          if (r.startTime && r.startTime < cutoff) continue;
 
-        const report = evJson.data.reportData.report;
-        if (!report || !report.fights) continue;
+          // Filter by percentile
+          if ((r.rankPercent || 0) < minPercentile) continue;
 
-        const actors = report.masterData.actors || [];
-        const fightIds = report.fights.map(f => f.id);
+          // Filter for unguilded or pug
+          const guildName = r.guild?.name || null;
+          if (!isPugOrUnguilded(guildName)) continue;
 
-        // Get DPS rankings for each fight
-        for (const fight of report.fights) {
-          setStatus(`Scanning ${logTitle} - ${fight.name}...`, 'loading');
-
-          const rankQuery = `
-            query {
-              reportData {
-                report(code: "${logCode}") {
-                  table(
-                    fightIDs: [${fight.id}]
-                    dataType: DamageDone
-                    className: "DPS"
-                  )
-                }
-              }
-            }
-          `;
-
-          const rankResp = await fetch(WCL_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${WCL_TOKEN}` },
-            body: JSON.stringify({ query: rankQuery })
-          });
-
-          if (!rankResp.ok) continue;
-          const rankJson = await rankResp.json();
-          if (rankJson.errors) continue;
-
-          try {
-            const tableHtml = rankJson.data.reportData.report.table;
-            const rows = tableHtml.split('<tr>').slice(1);
-
-            for (const row of rows) {
-              const cells = row.split('<td>');
-              if (cells.length < 8) continue;
-
-              // Parse cells
-              const nameMatch = cells[1].match(/>([^<]+)<\/a>/);
-              const serverMatch = cells[1].match(/data-realm="([^"]+)"/);
-              const classMatch = cells[1].match(/class="([^"]+)"/);
-              const specMatch = cells[2].match(/>([^<]+)<\/a>/);
-              const guildMatch = cells[3].match(/>([^<]+)<\/a>/);
-              const dpsMatch = cells[4].match(/>([^<,]+)/);
-              const percMatch = cells[5].match(/>([^<]+)%/);
-
-              if (!nameMatch || !percMatch) continue;
-
-              const name = nameMatch[1];
-              const realm = serverMatch ? serverMatch[1] : 'Unknown';
-              const classStr = classMatch ? classMatch[1] : '';
-              const spec = specMatch ? specMatch[1] : 'Unknown';
-              const guild = guildMatch ? guildMatch[1] : null;
-              const dps = dpsMatch ? dpsMatch[1].trim() : '0';
-              const percentile = parseInt(percMatch[1]);
-
-              if (percentile < minPercentile) continue;
-
-              // Check if unguilded or pug
-              const isPug = !guild || guild.toLowerCase().includes('pug') || guild.toLowerCase().includes('lfr');
-              if (!isPug) continue;
-
-              const key = `${name}@${realm}@${fight.encounterID}`;
-              if (!candidates.has(key)) {
-                candidates.set(key, {
-                  name, realm, classStr, spec, guild: guild || 'Unguilded', dps, percentile,
-                  encounter: fight.name, encounterID: fight.encounterID
-                });
-              }
-            }
-          } catch (e) {
-            console.log('Parse error on fight', fight.name, e);
+          const key = `${r.name}@${r.server?.name}@${enc.id}`;
+          if (!candidates.has(key)) {
+            candidates.set(key, {
+              name: r.name,
+              realm: r.server?.name || 'Unknown',
+              region: r.server?.region?.name || '',
+              classStr: r.class || '',
+              spec: r.spec || '',
+              guild: guildName || 'Unguilded',
+              dps: Math.round(r.amount || 0).toLocaleString(),
+              percentile: Math.round(r.rankPercent || 0),
+              encounter: enc.name,
+            });
           }
-
-          // Rate limit
-          await new Promise(r => setTimeout(r, 200));
         }
+
+        await new Promise(r => setTimeout(r, 150));
       }
 
       return Array.from(candidates.values()).sort((a, b) => b.percentile - a.percentile);
@@ -375,18 +301,20 @@
     }
 
     // Check auth on load
-    window.addEventListener('load', async () => {
-      // Try to handle callback if coming from WCL OAuth
+    window.addEventListener('DOMContentLoaded', async () => {
       if (location.search.includes('code=')) {
         await handleCallback();
       }
       WCL_TOKEN = localStorage.getItem(WCL_TOKEN_KEY);
+      console.log('WCL_TOKEN on load:', WCL_TOKEN ? 'found' : 'missing');
+      const scanBtn = document.getElementById('scanBtn');
+      const loginSection = document.getElementById('loginSection');
       if (!WCL_TOKEN) {
-        document.getElementById('loginSection').style.display = 'block';
-        document.getElementById('scanBtn').disabled = true;
+        if (loginSection) loginSection.style.display = 'block';
+        if (scanBtn) scanBtn.disabled = true;
       } else {
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('scanBtn').disabled = false;
+        if (loginSection) loginSection.style.display = 'none';
+        if (scanBtn) scanBtn.disabled = false;
       }
     });
   </script>
