@@ -126,23 +126,8 @@
       }
     }
 
-    // SoO heroic encounter IDs on WarcraftLogs MoP Classic (zone 1054)
-    const SOO_ENCOUNTERS = [
-      { id: 784, name: 'Immerseus' },
-      { id: 785, name: 'The Fallen Protectors' },
-      { id: 786, name: 'Norushen' },
-      { id: 787, name: 'Sha of Pride' },
-      { id: 788, name: 'Galakras' },
-      { id: 789, name: 'Iron Juggernaut' },
-      { id: 790, name: "Kor'kron Dark Shaman" },
-      { id: 791, name: 'General Nazgrim' },
-      { id: 792, name: 'Malkorok' },
-      { id: 793, name: 'Spoils of Pandaria' },
-      { id: 794, name: 'Thok the Bloodthirsty' },
-      { id: 795, name: 'Siegecrafter Blackfuse' },
-      { id: 796, name: 'Paragons of the Klaxxi' },
-      { id: 797, name: 'Garrosh Hellscream' },
-    ];
+    // Fetched dynamically from zone 1054 (MoP Classic SoO)
+    let SOO_ENCOUNTERS = [];
 
     async function wcl(query) {
       const resp = await fetch(WCL_API, {
@@ -164,7 +149,16 @@
 
     async function findPugDps(minPercentile, days) {
       const candidates = new Map();
-      const cutoff = Date.now() - days * 86400 * 1000;
+
+      // Discover real encounter IDs for MoP Classic SoO (zone 1054)
+      if (SOO_ENCOUNTERS.length === 0) {
+        setStatus('Fetching encounter list...', 'loading');
+        const zoneData = await wcl(`{ worldData { zone(id: 1054) { encounters { id name } } } }`);
+        const encounters = zoneData?.worldData?.zone?.encounters || [];
+        console.log('Zone encounters:', encounters);
+        SOO_ENCOUNTERS = encounters;
+        if (SOO_ENCOUNTERS.length === 0) throw new Error('Could not find SoO encounters. Zone ID may be wrong.');
+      }
 
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
         const enc = SOO_ENCOUNTERS[i];
