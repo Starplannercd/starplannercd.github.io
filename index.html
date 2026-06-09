@@ -1572,8 +1572,10 @@ const BOSSES = [
     duration: 660,
     sections: [
       { label: 'Phase 1', abilities: [
-        { name:'Encounter Start',        time:0,   color:'#ffffff', encounterStart:true },
-        { name:'Siege Engineer CD 1',    time:20,  color:'#c8881a' },
+        { name:'Encounter Start',     time:0,  color:'#ffffff', encounterStart:true },
+        { name:'Power Iron Star 1',   time:20, color:'#c84020' },
+        { name:'Siege Engineer CD 1', time:20, color:'#c8881a' },
+        { name:'Power Iron Star 2',   time:60, color:'#c84020' },
       ]},
       { label: 'Intermission 1', abilities: [] },
       { label: 'Phase 2', abilities: [
@@ -1583,13 +1585,9 @@ const BOSSES = [
       ]},
       { label: 'Intermission 2', abilities: [] },
       { label: 'Phase 3', abilities: [
-        { name:'Power Iron Star 1',        time:490, color:'#c84020' },
         { name:'Whirling Corruption P3 1', time:505, color:'#c848c8' },
-        { name:'Power Iron Star 2',        time:535, color:'#c84020' },
         { name:'Whirling Corruption P3 2', time:555, color:'#c848c8' },
-        { name:'Power Iron Star 3',        time:580, color:'#c84020' },
         { name:'Whirling Corruption P3 3', time:605, color:'#c848c8' },
-        { name:'Power Iron Star 4',        time:625, color:'#c84020' },
       ]},
     ]
   },
@@ -5152,6 +5150,14 @@ function doWclImport() {
   alert('Imported ' + _wclImport.abilities.length + ' abilities to ' + _wclImport.bossName + ' timeline.');
 }
 
+// Per-boss ability config: { difficulty: 3|4, abilityNames: ['Iron Star','Whirling Corruption',...] }
+function getBossCfg(encId) {
+  try { return JSON.parse(localStorage.getItem('wcl_boss_cfg_'+encId)||'{}'); } catch(e) { return {}; }
+}
+function saveBossCfg(encId, cfg) {
+  try { localStorage.setItem('wcl_boss_cfg_'+encId, JSON.stringify(cfg)); } catch(e) {}
+}
+
 // Personal defensive spell IDs by class/spec
 var WCL_PERSONAL_SPELLS = {
   // Disc / Holy Paladin healer
@@ -5769,6 +5775,16 @@ function showWclModal() {
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
+      + '<div id="wclBossCfg" style="margin-bottom:12px;display:none;background:#0a0c18;border:1px solid #1a2030;border-radius:8px;padding:10px 12px;">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+      + '<span style="font-size:10px;font-weight:700;color:#5a6080;text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;">Difficulty</span>'
+      + '<button id="wclDiffNormal" style="padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Normal</button>'
+      + '<button id="wclDiffHeroic" style="padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Heroic</button>'
+      + '<span style="font-size:10px;color:#3a4060;margin-left:4px;">· clears cache on change</span>'
+      + '</div>'
+      + '<div style="font-size:10px;font-weight:700;color:#5a6080;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Track these boss abilities (one per line)</div>'
+      + '<textarea id="wclAbilityNames" rows="4" placeholder="e.g.&#10;Power Iron Star&#10;Whirling Corruption&#10;Siege Engineer" style="width:100%;box-sizing:border-box;background:#060810;border:1px solid #1a2030;color:#c0ccf0;font-family:monospace;font-size:11px;padding:6px 8px;border-radius:4px;resize:vertical;"></textarea>'
+      + '</div>'
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);"><span style="font-size:18px;line-height:1;">⚔</span>&nbsp;RCD Heatmap</button>'
       + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;"><span style="font-size:18px;line-height:1;">🛡</span>&nbsp;DEF Heatmap</button>'
@@ -5836,7 +5852,49 @@ function showWclModal() {
     } catch(e) { results3.innerHTML = ''; }
   }
 
+  // ── Boss config panel logic ──────────────────────────────────────────────────
+  var cfgPanel = box.querySelector('#wclBossCfg');
+  var cfgTextarea = box.querySelector('#wclAbilityNames');
+  var diffNormalBtn = box.querySelector('#wclDiffNormal');
+  var diffHeroicBtn = box.querySelector('#wclDiffHeroic');
+  var _cfgEncId = null;
+
+  function setCfgDiff(diff) {
+    var on = 'padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
+    var off = 'padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
+    diffNormalBtn.style.cssText = diff===3 ? on : off;
+    diffHeroicBtn.style.cssText = diff===4 ? on : off;
+  }
+
+  function loadCfgPanel(encId) {
+    _cfgEncId = encId;
+    if (!encId) { cfgPanel.style.display='none'; return; }
+    cfgPanel.style.display='block';
+    var cfg = getBossCfg(encId);
+    var diff = cfg.difficulty || 4;
+    setCfgDiff(diff);
+    cfgTextarea.value = (cfg.abilityNames || []).join('\n');
+  }
+
+  function saveCurrentCfg() {
+    if (!_cfgEncId) return;
+    var diff = diffNormalBtn.style.color === 'rgb(160, 184, 232)' ? 3 : 4;
+    var names = cfgTextarea.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    saveBossCfg(_cfgEncId, { difficulty: diff, abilityNames: names });
+  }
+
+  diffNormalBtn.addEventListener('click', function(){
+    setCfgDiff(3); saveCurrentCfg();
+    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
+  });
+  diffHeroicBtn.addEventListener('click', function(){
+    setCfgDiff(4); saveCurrentCfg();
+    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
+  });
+  cfgTextarea.addEventListener('input', saveCurrentCfg);
+
   bossEl.addEventListener('change', function() {
+    loadCfgPanel(parseInt(bossEl.value));
     loadCachedOrBlank(parseInt(bossEl.value), wclMode);
   });
   box.querySelector('#wclFetch').addEventListener('click', async function(){
@@ -5846,18 +5904,22 @@ function showWclModal() {
     btn.textContent = 'Fetching...'; btn.disabled = true;
     results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
-      // Ranks 26-45: page 2 of execution rankings, 20 logs max
       var bossName = bossEl.options[bossEl.selectedIndex].text;
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Heroic 10-man execution rankings, ranks 1-100
+      // Load per-boss config: difficulty + ability names to track
+      var bossCfg = getBossCfg(encId);
+      var fetchDifficulty = bossCfg.difficulty || 4;
+      var cfgAbilityNames = (bossCfg.abilityNames || []).map(function(s){return s.trim();}).filter(Boolean);
+      var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
+
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching heroic 10-man rankings...</div>';
+      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching '+diffLabel+' 10-man rankings...</div>';
 
       var allRankEntries = [];
       var crawlPage = 1;
-      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
+      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:'+fetchDifficulty+',size:10,metric:execution,page:$pg)}}}';
       while (allRankEntries.length < 100 && crawlPage <= 10) {
         var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
         var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
@@ -5868,7 +5930,7 @@ function showWclModal() {
       var pageRankings = allRankEntries.slice(0, 100);
 
       if (!pageRankings.length) {
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No heroic 10-man logs found for this boss.</div>';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No '+diffLabel+' 10-man logs found for this boss.</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
@@ -5897,7 +5959,7 @@ function showWclModal() {
         });
       };
 
-      // Auto-discover boss spells from WCL table API if none defined
+      // Discover boss spells from WCL table API (always runs — uses cfgAbilityNames to filter if set)
       var BOSS_DISC_COLORS = ['#e8a040','#e84060','#60a8e8','#a860e8','#60e8a0','#e8d040','#c84060','#48a888'];
       if (!bossSpells.length && pageRankings.length) {
         try {
@@ -5910,11 +5972,30 @@ function showWclModal() {
             var rawDisc = discD&&discD.reportData&&discD.reportData.report&&discD.reportData.report.table;
             var discTbl = typeof rawDisc==='string' ? JSON.parse(rawDisc) : rawDisc;
             var discEntries = (discTbl&&discTbl.entries)||[];
-            // Boss mechanics: 2-25 casts per fight
-            var mechSpells = discEntries
-              .filter(function(e){ return e.id&&e.name&&e.total>=2&&e.total<=25; })
-              .sort(function(a,b){ return b.total-a.total; })
-              .slice(0,8);
+            var mechSpells;
+            if (cfgAbilityNames.length) {
+              // Match each configured name against the table entries (case-insensitive partial match)
+              // Use the configured name as display label, table entry for spell ID
+              mechSpells = cfgAbilityNames.map(function(cfgName) {
+                var lower = cfgName.toLowerCase();
+                return discEntries.find(function(e){ return e.id && e.name && e.name.toLowerCase().includes(lower); }) || null;
+              }).filter(Boolean);
+              // Remove duplicates by id
+              var seenIds = {};
+              mechSpells = mechSpells.filter(function(e){ if(seenIds[e.id]) return false; seenIds[e.id]=true; return true; });
+              // Remap: use cfgAbilityName as display label so the import uses the user's name
+              mechSpells = mechSpells.map(function(e) {
+                var cfgName = cfgAbilityNames.find(function(n){ return e.name.toLowerCase().includes(n.toLowerCase()); }) || e.name;
+                return { id: e.id, name: cfgName, total: e.total };
+              });
+            } else {
+              // No config — auto-pick most common mechanics (2-25 casts, top 8)
+              mechSpells = discEntries
+                .filter(function(e){ return e.id&&e.name&&e.total>=2&&e.total<=25; })
+                .sort(function(a,b){ return b.total-a.total; })
+                .slice(0,8)
+                .map(function(e){ return { id:e.id, name:e.name, total:e.total }; });
+            }
             if (mechSpells.length) {
               bossSpells = mechSpells.map(function(e,i){
                 var short = e.name.length>12 ? e.name.slice(0,11)+'…' : e.name;
