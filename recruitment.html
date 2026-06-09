@@ -262,30 +262,40 @@
         const region = (c.region || 'US').toLowerCase();
         if (checked === 1) console.log('First char lookup:', c.name, slug, region);
         try {
-          const data = await wcl(`{
+          // Query 1: SoO checks (split from ToT to prevent field errors cross-contaminating)
+          const sooData = await wcl(`{
             characterData {
               character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}") {
                 sooHeroic: zoneRankings(zoneID: 1054 difficulty: 4)
                 sooNormal: zoneRankings(zoneID: 1054 difficulty: 3)
+              }
+            }
+          }`);
+          const sooChar = sooData?.characterData?.character;
+          if (checked === 1) console.log('First char SoO data:', JSON.stringify(sooChar));
+
+          // Exclude if any heroic SoO kills
+          const hasHeroicSoo = (sooChar?.sooHeroic?.rankings?.length || 0) > 0;
+          if (hasHeroicSoo) { console.log(`FAIL ${c.name} — has heroic SoO kills`); playerChecked.set(c.playerKey, false); continue; }
+
+          // Require 75+ average parse on SoO normal
+          const sooNormalAvg = sooChar?.sooNormal?.bestPerformanceAverage || 0;
+          if (sooNormalAvg < 75) { console.log(`FAIL ${c.name} — sooNormalAvg=${sooNormalAvg.toFixed(1)}`); playerChecked.set(c.playerKey, false); continue; }
+
+          // Query 2: ToT heroic check (separate query so errors don't null out SoO data)
+          // Guild status in ToT is irrelevant — only SoO guild status matters.
+          const totData = await wcl(`{
+            characterData {
+              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}") {
                 totHeroic: zoneRankings(zoneID: ${TOT_ZONE_ID} difficulty: 4)
               }
             }
           }`);
-          const ch = data?.characterData?.character;
-          if (checked === 1) console.log('First char raw data:', JSON.stringify(ch));
+          const totChar = totData?.characterData?.character;
+          if (checked === 1) console.log('First char ToT data:', JSON.stringify(totChar));
 
-          // Exclude if any heroic SoO kills
-          const hasHeroicSoo = (ch?.sooHeroic?.rankings?.length || 0) > 0;
-          if (hasHeroicSoo) { console.log(`FAIL ${c.name} — has heroic SoO kills`); playerChecked.set(c.playerKey, false); continue; }
-
-          // Require 75+ average parse on SoO normal
-          const sooNormalAvg = ch?.sooNormal?.bestPerformanceAverage || 0;
-          if (sooNormalAvg < 75) { console.log(`FAIL ${c.name} — sooNormalAvg=${sooNormalAvg.toFixed(1)}`); playerChecked.set(c.playerKey, false); continue; }
-
-          // Require 6+ heroic ToT bosses killed AND 88+ average parse.
-          // Guild status in ToT is irrelevant — only SoO guild status matters.
-          const totBosses = ch?.totHeroic?.rankings?.length || 0;
-          const totAvg = ch?.totHeroic?.bestPerformanceAverage || 0;
+          const totBosses = totChar?.totHeroic?.rankings?.length || 0;
+          const totAvg = totChar?.totHeroic?.bestPerformanceAverage || 0;
           if (totBosses < 6 || totAvg < 88) {
             console.log(`FAIL ${c.name} — totBosses=${totBosses} totAvg=${totAvg.toFixed(1)}`);
             playerChecked.set(c.playerKey, false); continue;
