@@ -162,9 +162,12 @@
       }
       console.log('Scanning', SOO_ENCOUNTERS.length, 'encounters');
 
-      // Scan pages 1-3 per encounter (top ~300 globally). Classic doesn't return rankPercent,
-      // so anyone in this range is already a high performer.
-      let totalChecked = 0, totalPassed = 0;
+      // Pass 1 — collect all top performers and track every guild name seen per character.
+      // Key: "name@realm", value: { candidate data, guildsSeenSet }
+      const allPlayers = new Map();   // name@realm -> candidate obj
+      const guildsSeenBy = new Map(); // name@realm -> Set of non-null guild names
+
+      let totalChecked = 0;
       for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
         const enc = SOO_ENCOUNTERS[i];
 
@@ -185,20 +188,27 @@
 
           totalChecked += cr.rankings.length;
           cr.rankings.forEach(r => {
+            const playerKey = `${r.name}@${r.server?.name}`;
             const guildName = r.guild?.name || null;
-            if (!isPugOrUnguilded(guildName)) return;
-            totalPassed++;
 
-            const key = `${r.name}@${r.server?.name}@${enc.id}`;
-            if (!candidates.has(key)) {
-              candidates.set(key, {
+            // Track every real guild name this character appears with
+            if (guildName && !isPugOrUnguilded(guildName)) {
+              if (!guildsSeenBy.has(playerKey)) guildsSeenBy.set(playerKey, new Set());
+              guildsSeenBy.get(playerKey).add(guildName);
+            }
+
+            // Store best (highest amount) entry per character per encounter
+            const encKey = `${playerKey}@${enc.id}`;
+            if (!allPlayers.has(encKey) || r.amount > (allPlayers.get(encKey).rawAmount || 0)) {
+              allPlayers.set(encKey, {
+                playerKey,
                 name: r.name,
                 realm: r.server?.name || '—',
-                region: r.server?.region || '',
                 classStr: r.class || '',
                 spec: r.spec || '',
                 guild: guildName || 'Unguilded',
                 dps: Math.round(r.amount || 0).toLocaleString(),
+                rawAmount: r.amount || 0,
                 encounter: enc.name,
               });
             }
@@ -208,9 +218,17 @@
           await new Promise(r => setTimeout(r, 150));
         }
       }
-      console.log(`Checked ${totalChecked} players, ${totalPassed} passed guild filter`);
 
-      return Array.from(candidates.values()).sort((a, b) => b.dps.replace(/,/g,'') - a.dps.replace(/,/g,''));
+      // Pass 2 — only keep players who have NEVER appeared with a real guild name.
+      // This prevents guilded players slipping through on logs where guild was missing.
+      allPlayers.forEach((c, encKey) => {
+        if (guildsSeenBy.has(c.playerKey)) return; // has a real guild somewhere — skip
+        if (!candidates.has(encKey)) candidates.set(encKey, c);
+      });
+
+      console.log(`Checked ${totalChecked} players, ${candidates.size} true pug/unguilded candidates`);
+
+      return Array.from(candidates.values()).sort((a, b) => b.rawAmount - a.rawAmount);
     }
 
     function displayResults(candidates) {
