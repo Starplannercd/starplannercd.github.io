@@ -219,10 +219,34 @@
         }
       }
 
-      // Pass 2 — only keep players who have NEVER appeared with a real guild name.
-      // This prevents guilded players slipping through on logs where guild was missing.
+      // Pass 2 — build a set of players who appear in ANY heroic ranking (pages 1-2).
+      // If they're doing heroic, they're in an active raid group regardless of guild tag.
+      setStatus('Cross-checking heroic logs...', 'loading');
+      const heroicPlayers = new Set();
+      for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
+        const enc = SOO_ENCOUNTERS[i];
+        for (let page = 1; page <= 2; page++) {
+          const data = await wcl(`{
+            worldData {
+              encounter(id: ${enc.id}) {
+                characterRankings(difficulty: 4 metric: dps page: ${page})
+              }
+            }
+          }`);
+          const cr = data?.worldData?.encounter?.characterRankings;
+          if (!cr?.rankings?.length) break;
+          cr.rankings.forEach(r => heroicPlayers.add(`${r.name}@${r.server?.name}`));
+          if (!cr.hasMorePages) break;
+          await new Promise(r => setTimeout(r, 150));
+        }
+      }
+      console.log(`Found ${heroicPlayers.size} unique heroic players to exclude`);
+
+      // Pass 3 — only keep players who have NEVER appeared with a real guild name
+      // AND have no heroic kills.
       allPlayers.forEach((c, encKey) => {
-        if (guildsSeenBy.has(c.playerKey)) return; // has a real guild somewhere — skip
+        if (guildsSeenBy.has(c.playerKey)) return;  // has a real guild somewhere
+        if (heroicPlayers.has(c.playerKey)) return;  // doing heroic — skip
         if (!candidates.has(encKey)) candidates.set(encKey, c);
       });
 
