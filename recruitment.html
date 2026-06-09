@@ -265,7 +265,7 @@
           // Query 1: SoO checks (split from ToT to prevent field errors cross-contaminating)
           const sooData = await wcl(`{
             characterData {
-              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}") {
+              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}" gameSlug: "wow-classic") {
                 sooHeroic: zoneRankings(zoneID: 1054 difficulty: 4)
                 sooNormal: zoneRankings(zoneID: 1054 difficulty: 3)
               }
@@ -286,7 +286,7 @@
           // Guild status in ToT is irrelevant — only SoO guild status matters.
           const totData = await wcl(`{
             characterData {
-              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}") {
+              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}" gameSlug: "wow-classic") {
                 totHeroic: zoneRankings(zoneID: ${TOT_ZONE_ID} difficulty: 4)
               }
             }
