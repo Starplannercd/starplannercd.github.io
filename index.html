@@ -2506,7 +2506,7 @@ function renderTimeline() {
     }
 
     section.abilities.forEach((ab, ai) => {
-      const rowKey = `${si}-${ai}`;
+      const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const row = buildAbilityRow(boss, rowKey, ab, totalW, PX_PER_SEC, LABEL_W, bossData);
       grid.appendChild(row);
     });
@@ -2566,8 +2566,10 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
 function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
   // Look up the ability object for this row so we can pass it to popups
-  const [_si, _ai] = rowKey.split('-').map(Number);
-  const _ab = boss.sections[_si]?.abilities[_ai] || null;
+  const parts = rowKey.split('-');
+  const _si = Number(parts[0]);
+  const _abName = decodeURIComponent(parts.slice(1).join('-'));
+  const _ab = boss.sections[_si]?.abilities.find(ab => ab.name === _abName) || null;
   const placed = (bossData[rowKey] || []);
   placed.forEach(p => {
     const cd = CDS.find(c => c.id === p.cdId);
@@ -2734,9 +2736,11 @@ function moveDragGhost(e) {
       const rowPlacements = (placedCDs[bossId] || {})[rowKey] || [];
       // For moves, exclude the dragged item itself from the check
       const _ghostCd = CD_POOL.find(c => c.id === cdId);
-      const _ghostAbParts = rowKey.split('-').map(Number);
+      const _ghostParts = rowKey.split('-');
+      const _ghostSi = Number(_ghostParts[0]);
+      const _ghostAbName = decodeURIComponent(_ghostParts.slice(1).join('-'));
       const _ghostBoss = BOSSES.find(b => b.id === bossId);
-      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostAbParts[0]]?.abilities[_ghostAbParts[1]];
+      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostSi]?.abilities.find(ab => ab.name === _ghostAbName);
       const isDuplicate = (_ghostAb && _ghostAb.hpAssign) ? false : (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
         ? rowPlacements.some(p => p.cdId === cdId && p.id !== activeDrag.movePlacedId && !(rowKey === activeDrag.moveRowKey))
         : rowPlacements.some(p => p.cdId === cdId));
@@ -2845,9 +2849,11 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
   const cd = CD_POOL.find(c => c.id === cdId);
   // Also allow multiple placements on HP assign rows
-  const _rowAbParts = rowKey.split('-').map(Number);
+  const _rowParts = rowKey.split('-');
+  const _rowSi = Number(_rowParts[0]);
+  const _rowAbName = decodeURIComponent(_rowParts.slice(1).join('-'));
   const _rowBoss = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
-  const _rowAb = _rowBoss && _rowBoss.sections[_rowAbParts[0]]?.abilities[_rowAbParts[1]];
+  const _rowAb = _rowBoss && _rowBoss.sections[_rowSi]?.abilities.find(ab => ab.name === _rowAbName);
   if (!(_rowAb && _rowAb.hpAssign) && !(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
@@ -3258,7 +3264,7 @@ function buildFojiExport() {
     // Iterate in canonical section → ability order so export is always sorted earliest to latest
     boss.sections.forEach((section, si) => {
       section.abilities.forEach((ab, ai) => {
-        const rowKey = `${si}-${ai}`;
+        const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
         const placements = bossData[rowKey];
         if (!placements || placements.length === 0) return;
 
@@ -4617,9 +4623,36 @@ function fbGetData() {
   };
 }
 
+// Migrate old index-based rowKeys (e.g. "0-1") to ability-name-based (e.g. "0-Swelling%20Corruption%201")
+function migrateRowKeys(cds) {
+  const migrated = {};
+  Object.entries(cds).forEach(([bossId, bossData]) => {
+    const boss = BOSSES.find(b => b.id === bossId);
+    if (!boss) { migrated[bossId] = bossData; return; }
+    migrated[bossId] = {};
+    Object.entries(bossData).forEach(([rowKey, placements]) => {
+      const parts = rowKey.split('-');
+      const si = Number(parts[0]);
+      const aiOrName = parts.slice(1).join('-');
+      // Check if it's the old format (numeric ability index)
+      const ai = Number(aiOrName);
+      if (!isNaN(ai) && boss.sections[si]?.abilities[ai]) {
+        // Old format — convert to ability name
+        const abilityName = boss.sections[si].abilities[ai].name;
+        const newRowKey = `${si}-${encodeURIComponent(abilityName)}`;
+        migrated[bossId][newRowKey] = placements;
+      } else {
+        // Already new format
+        migrated[bossId][rowKey] = placements;
+      }
+    });
+  });
+  return migrated;
+}
+
 function fbApplyData(data) {
   if (!data) return false;
-  if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+  if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
   if (data.activeSetIds) activeSetIds = new Set(data.activeSetIds);
