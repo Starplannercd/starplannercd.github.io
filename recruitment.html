@@ -41,7 +41,7 @@
 <body>
   <div class="container">
     <h1>⚔️ Siege Recruitment Scanner</h1>
-    <p class="desc">Find unguilded/pug DPS performing well in Heroic Siege of Orgrimmar</p>
+    <p class="desc">Find unguilded/pug DPS performing well in Normal Siege of Orgrimmar</p>
 
     <div id="loginSection" class="login-section" style="display: none;">
       <div style="font-size: 13px; margin-bottom: 10px;">You need to authenticate with WarcraftLogs to scan logs.</div>
@@ -165,7 +165,7 @@
           const data = await wcl(`{
             worldData {
               encounter(id: ${enc.id}) {
-                characterRankings(difficulty: 4 metric: dps page: ${page})
+                characterRankings(difficulty: 3 metric: dps page: ${page})
               }
             }
           }`);
