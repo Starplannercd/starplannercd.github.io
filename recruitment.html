@@ -137,6 +137,7 @@
     // Fetched dynamically from zone 1054 (MoP Classic SoO)
     let SOO_ENCOUNTERS = [];
     let TOT_ZONE_ID = null;
+    let TOT_ENCOUNTERS = [];
 
     async function wcl(query) {
       const resp = await fetch(WCL_API, {
@@ -238,80 +239,72 @@
         }
       }
 
-      // Pass 2 — filter by guild, collect pre-candidates (cap at 100 for heroic check speed)
-      const preCandidates = [];
-      allPlayers.forEach((c, encKey) => {
-        if (guildsSeenBy.has(c.playerKey)) return;
-        preCandidates.push({ encKey, c });
-      });
-      preCandidates.splice(100);
-      console.log(`${preCandidates.length} pre-candidates after guild filter`);
-
-      // Pass 3 — single API call per unique player: check SoO heroic exclusion,
-      // SoO normal average parse (>=75), and ToT heroic (>=6 bosses, >=90 avg parse).
-      const playerChecked = new Map(); // playerKey -> bool (passes all checks)
-      let checked = 0;
-      for (const { encKey, c } of preCandidates) {
-        if (playerChecked.has(c.playerKey)) {
-          if (playerChecked.get(c.playerKey)) candidates.set(encKey, c);
-          continue;
-        }
-        checked++;
-        setStatus(`Verifying ${checked}/${preCandidates.length}: ${c.name}...`, 'loading');
-        const slug = c.serverSlug || c.realm.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        const region = (c.region || 'US').toLowerCase();
-        if (checked === 1) console.log('First char lookup:', c.name, slug, region);
-        try {
-          // Query 1: SoO checks (split from ToT to prevent field errors cross-contaminating)
-          const sooData = await wcl(`{
-            characterData {
-              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}" gameSlug: "wow-classic") {
-                sooHeroic: zoneRankings(zoneID: 1054 difficulty: 4)
-                sooNormal: zoneRankings(zoneID: 1054 difficulty: 3)
-              }
-            }
-          }`);
-          const sooChar = sooData?.characterData?.character;
-          if (checked === 1) console.log('First char SoO data:', JSON.stringify(sooChar));
-
-          // Exclude if any heroic SoO kills
-          const hasHeroicSoo = (sooChar?.sooHeroic?.rankings?.length || 0) > 0;
-          if (hasHeroicSoo) { console.log(`FAIL ${c.name} — has heroic SoO kills`); playerChecked.set(c.playerKey, false); continue; }
-
-          // Require 75+ average parse on SoO normal
-          const sooNormalAvg = sooChar?.sooNormal?.bestPerformanceAverage || 0;
-          if (sooNormalAvg < 75) { console.log(`FAIL ${c.name} — sooNormalAvg=${sooNormalAvg.toFixed(1)}`); playerChecked.set(c.playerKey, false); continue; }
-
-          // Query 2: ToT heroic check (separate query so errors don't null out SoO data)
-          // Guild status in ToT is irrelevant — only SoO guild status matters.
-          const totData = await wcl(`{
-            characterData {
-              character(name: "${c.name}" serverSlug: "${slug}" serverRegion: "${region}" gameSlug: "wow-classic") {
-                totHeroic: zoneRankings(zoneID: ${TOT_ZONE_ID} difficulty: 4)
-              }
-            }
-          }`);
-          const totChar = totData?.characterData?.character;
-          if (checked === 1) console.log('First char ToT data:', JSON.stringify(totChar));
-
-          const totBosses = totChar?.totHeroic?.rankings?.length || 0;
-          const totAvg = totChar?.totHeroic?.bestPerformanceAverage || 0;
-          if (totBosses < 6 || totAvg < 88) {
-            console.log(`FAIL ${c.name} — totBosses=${totBosses} totAvg=${totAvg.toFixed(1)}`);
-            playerChecked.set(c.playerKey, false); continue;
-          }
-
-          console.log(`PASS ${c.name} — sooAvg=${sooNormalAvg.toFixed(1)} totBosses=${totBosses} totAvg=${totAvg.toFixed(1)}`);
-          playerChecked.set(c.playerKey, true);
-          candidates.set(encKey, c);
-        } catch(e) {
-          console.warn(`ERROR checking ${c.name} (${slug}@${region}):`, e.message);
-          playerChecked.set(c.playerKey, false);
-        }
-        await new Promise(r => setTimeout(r, 150));
+      // Pass 1b — batch-scan SoO heroic pages 1-3 to build exclusion blacklist.
+      // Uses GraphQL aliases to fetch all encounters in one request per page.
+      setStatus('Building heroic SoO exclusion list...', 'loading');
+      const heroicBlacklist = new Set();
+      for (let page = 1; page <= 3; page++) {
+        const aliases = SOO_ENCOUNTERS.map((enc, i) =>
+          `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
+        ).join(' ');
+        const hData = await wcl(`{ worldData { ${aliases} } }`);
+        SOO_ENCOUNTERS.forEach((enc, i) => {
+          const cr = hData?.worldData?.[`e${i}`]?.characterRankings;
+          (cr?.rankings || []).forEach(r => {
+            if ((r.server?.region || '').toUpperCase() !== 'US') return;
+            heroicBlacklist.add(`${r.name}@${r.server?.name}`);
+          });
+        });
+        await new Promise(r => setTimeout(r, 200));
       }
+      console.log(`Heroic SoO blacklist: ${heroicBlacklist.size} players`);
 
-      console.log(`Scanned ${totalChecked} | guild-filtered ${preCandidates.length} | passed all checks ${candidates.size}`);
+      // Pass 1c — discover ToT encounters and batch-scan heroic pages 1-2 per encounter.
+      // Track how many unique heroic ToT bosses each player has killed.
+      if (TOT_ENCOUNTERS.length === 0) {
+        setStatus('Fetching Throne of Thunder encounter list...', 'loading');
+        const totZoneData = await wcl(`{ worldData { zone(id: ${TOT_ZONE_ID}) { encounters { id name } } } }`);
+        TOT_ENCOUNTERS.push(...(totZoneData?.worldData?.zone?.encounters || []));
+        if (TOT_ENCOUNTERS.length === 0) throw new Error('ToT zone returned no encounters.');
+      }
+      setStatus('Scanning Throne of Thunder heroic...', 'loading');
+      const totKills = new Map(); // playerKey -> Set of encounter IDs killed
+      for (let page = 1; page <= 2; page++) {
+        const aliases = TOT_ENCOUNTERS.map((enc, i) =>
+          `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
+        ).join(' ');
+        const tData = await wcl(`{ worldData { ${aliases} } }`);
+        TOT_ENCOUNTERS.forEach((enc, i) => {
+          const cr = tData?.worldData?.[`e${i}`]?.characterRankings;
+          (cr?.rankings || []).forEach(r => {
+            if ((r.server?.region || '').toUpperCase() !== 'US') return;
+            const pk = `${r.name}@${r.server?.name}`;
+            if (!totKills.has(pk)) totKills.set(pk, new Set());
+            totKills.get(pk).add(enc.id);
+          });
+        });
+        await new Promise(r => setTimeout(r, 200));
+      }
+      const totQualified = Array.from(totKills.entries()).filter(([, s]) => s.size >= 6).length;
+      console.log(`ToT qualified players (6+ heroic bosses): ${totQualified}`);
+
+      // Pass 2 — guild filter, then apply heroic blacklist + ToT requirement.
+      allPlayers.forEach((c, encKey) => {
+        if (guildsSeenBy.has(c.playerKey)) return; // guilded in SoO
+        if (heroicBlacklist.has(c.playerKey)) {     // has heroic SoO kills
+          console.log(`FAIL ${c.name} — heroic SoO kill`);
+          return;
+        }
+        const totBosses = totKills.get(c.playerKey)?.size || 0;
+        if (totBosses < 6) {
+          console.log(`FAIL ${c.name} — totBosses=${totBosses}`);
+          return;
+        }
+        console.log(`PASS ${c.name} — totBosses=${totBosses}`);
+        candidates.set(encKey, c);
+      });
+
+      console.log(`Scanned ${totalChecked} SoO normal | heroic blacklist ${heroicBlacklist.size} | passed ${candidates.size}`);
 
       return Array.from(candidates.values()).sort((a, b) => b.rawAmount - a.rawAmount);
     }
