@@ -219,7 +219,7 @@
       if (!SOO_HEROIC_BLACKLIST) {
         setStatus('Building heroic SoO exclusion list...', 'loading');
         SOO_HEROIC_BLACKLIST = new Set();
-        for (let page = 1; page <= 3; page++) {
+        for (let page = 1; page <= 5; page++) {
           const aliases = SOO_ENCOUNTERS.map((enc, i) =>
             `e${i}: encounter(id: ${enc.id}) { characterRankings(difficulty: 4 metric: dps page: ${page}) }`
           ).join(' ');
