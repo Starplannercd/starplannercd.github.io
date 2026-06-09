@@ -152,80 +152,52 @@
       const endMs = Date.now();
       const startMs = endMs - days * 86400 * 1000;
 
-      // Step 1: fetch recent SoO reports
-      setStatus('Fetching recent SoO logs...', 'loading');
-      const reportsData = await wcl(`{
-        reportData {
-          reports(zoneID: 1054 startTime: ${startMs} endTime: ${endMs} limit: 50) {
-            data { code title }
-          }
-        }
-      }`);
+      // Fetch page 1 of heroic DPS rankings per encounter (page 1 = global top 100)
+      // characterRankings doesn't return rankPercent for Classic, so we use rank position as proxy
+      for (let i = 0; i < SOO_ENCOUNTERS.length; i++) {
+        const enc = SOO_ENCOUNTERS[i];
+        setStatus(`Scanning ${enc.name} (${i + 1}/${SOO_ENCOUNTERS.length})...`, 'loading');
 
-      const reports = reportsData?.reportData?.reports?.data || [];
-      console.log(`Found ${reports.length} recent SoO reports`);
-      if (reports.length === 0) throw new Error('No recent SoO logs found in that date range.');
-
-      // Step 2: for each report, scan heroic kills and per-player rankings
-      for (let i = 0; i < reports.length; i++) {
-        const report = reports[i];
-        setStatus(`Scanning report ${i + 1}/${reports.length}: ${report.title || report.code}...`, 'loading');
-
-        const reportData = await wcl(`{
-          reportData {
-            report(code: "${report.code}") {
-              fights { id name encounterID difficulty kill }
-              rankings(difficulty: 4)
+        const data = await wcl(`{
+          worldData {
+            encounter(id: ${enc.id}) {
+              characterRankings(difficulty: 4 metric: dps page: 1)
             }
           }
         }`);
 
-        const rpt = reportData?.reportData?.report;
-        if (!rpt) continue;
+        const cr = data?.worldData?.encounter?.characterRankings;
+        if (!cr?.rankings?.length) continue;
 
-        // Only heroic kills
-        const heroicKills = (rpt.fights || []).filter(f => f.difficulty === 4 && f.kill === true);
-        if (heroicKills.length === 0) continue;
-        console.log(`${report.code}: ${heroicKills.length} heroic kills`);
+        const total = cr.count || cr.rankings.length;
+        cr.rankings.forEach((r, idx) => {
+          // Estimate percentile from position: rank 1 of 100 = ~99th percentile
+          const estPercentile = Math.round(100 - (idx / total) * 100);
+          if (estPercentile < minPercentile) return;
 
-        let rankData;
-        try {
-          rankData = typeof rpt.rankings === 'string' ? JSON.parse(rpt.rankings) : rpt.rankings;
-        } catch(e) { continue; }
-        if (!rankData?.data) continue;
+          const guildName = r.guild?.name || null;
+          if (!isPugOrUnguilded(guildName)) return;
 
-        for (const fightRanking of rankData.data) {
-          const fight = heroicKills.find(f => f.id === fightRanking.fightID);
-          if (!fight) continue;
-
-          const dpsChars = fightRanking.roles?.dps?.characters || [];
-          for (const char of dpsChars) {
-            const percentile = char.ranking?.rankPercent || 0;
-            if (percentile < minPercentile) continue;
-
-            const guildName = char.ranking?.guild?.name || null;
-            if (!isPugOrUnguilded(guildName)) continue;
-
-            const key = `${char.name}@${fight.encounterID}`;
-            if (!candidates.has(key)) {
-              candidates.set(key, {
-                name: char.name,
-                realm: '—',
-                classStr: char.type || '',
-                spec: char.spec || '',
-                guild: guildName || 'Unguilded',
-                dps: Math.round(char.ranking?.amount || 0).toLocaleString(),
-                percentile: Math.round(percentile),
-                encounter: fight.name,
-              });
-            }
+          const key = `${r.name}@${r.server?.name}@${enc.id}`;
+          if (!candidates.has(key)) {
+            candidates.set(key, {
+              name: r.name,
+              realm: r.server?.name || '—',
+              region: r.server?.region || '',
+              classStr: r.class || '',
+              spec: r.spec || '',
+              guild: guildName || 'Unguilded',
+              dps: Math.round(r.amount || 0).toLocaleString(),
+              percentile: estPercentile,
+              encounter: enc.name,
+            });
           }
-        }
+        });
 
         await new Promise(r => setTimeout(r, 150));
       }
 
-      return Array.from(candidates.values()).sort((a, b) => b.percentile - a.percentile);
+      return Array.from(candidates.values()).sort((a, b) => b.dps.replace(/,/g,'') - a.dps.replace(/,/g,''));
     }
 
     function displayResults(candidates) {
