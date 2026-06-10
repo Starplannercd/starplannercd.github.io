@@ -82,6 +82,11 @@
       <option value="Warlock|Demonology">Demonology Warlock</option>
       <option value="Warlock|*">Warlock — spec split</option>
     </optgroup>
+    <optgroup label="Warrior">
+      <option value="Warrior|Arms">Arms Warrior</option>
+      <option value="Warrior|Fury">Fury Warrior</option>
+      <option value="Warrior|*">Warrior — spec split</option>
+    </optgroup>
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
   <button id="allBossesBtn" onclick="doFetchAllBosses()" style="border-color:#555;">Scan All Bosses</button>
@@ -289,6 +294,22 @@ const TALENT_TIERS = {
     {level:75, choices:{108505:'Kil\'jaeden\'s Cunning', 108506:'Archimonde\'s Vengeance', 104773:'Unending Resolve'}},
     {level:90, choices:{108499:'Grimoire of Supremacy', 108500:'Grimoire of Service', 108501:'Grimoire of Sacrifice'}},
   ],
+  'Warrior|Arms': [
+    {level:15, choices:{46916:'Juggernaut',            103827:'Double Time',          103828:'Warbringer'}},
+    {level:30, choices:{55694:'Enraged Regeneration',   29838:'Second Wind',           103840:'Impending Victory'}},
+    {level:45, choices:{107566:'Staggering Shout',       12323:'Piercing Howl',         102060:'Disrupting Shout'}},
+    {level:60, choices:{46924:'Bladestorm',              46968:'Shockwave',             118000:'Dragon Roar'}},
+    {level:75, choices:{114028:'Mass Spell Reflection', 114029:'Safeguard',            114030:'Vigilance'}},
+    {level:90, choices:{107574:'Avatar',               113344:'Bloodbath',             107570:'Storm Bolt'}},
+  ],
+  'Warrior|Fury': [
+    {level:15, choices:{46916:'Juggernaut',            103827:'Double Time',          103828:'Warbringer'}},
+    {level:30, choices:{55694:'Enraged Regeneration',   29838:'Second Wind',           103840:'Impending Victory'}},
+    {level:45, choices:{107566:'Staggering Shout',       12323:'Piercing Howl',         102060:'Disrupting Shout'}},
+    {level:60, choices:{46924:'Bladestorm',              46968:'Shockwave',             118000:'Dragon Roar'}},
+    {level:75, choices:{114028:'Mass Spell Reflection', 114029:'Safeguard',            114030:'Vigilance'}},
+    {level:90, choices:{107574:'Avatar',               113344:'Bloodbath',             107570:'Storm Bolt'}},
+  ],
 };
 
 const GLYPH_NAMES = {
@@ -323,9 +344,14 @@ const GLYPH_NAMES = {
   56364:'Icy Veins', 62210:'Arcane Power', 115705:'Cone of Cold', 98397:'Armors', 56380:'Evocation', 115718:'Arcane Explosion',
   // Warlock
   56242:'Imp Swarm', 148683:'Eternal Resolve', 56218:'Siphon Life', 56233:'Unstable Affliction', 146963:'Curse of the Elements',
+  // Warrior
+  58098:'Unending Rage', 58355:'Enraged Speed', 94372:'Bull Rush', 89003:'Colossus Smash',
+  58372:'Rude Interruption', 63325:'Death from Above', 58370:'Raging Wind', 58384:'Sweeping Strikes',
 };
 
-const MINOR_GLYPHS = new Set([55448, 63279, 147707, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254]);
+const MINOR_GLYPHS = new Set([55448, 63279, 147707, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254,
+  63327, // Glyph of Intimidating Shout — minor
+]);
 
 function glyphLabel(id, icon) {
   if (MINOR_GLYPHS.has(id)) return null;
@@ -404,10 +430,16 @@ async function processFight(fight, specClass, specName) {
     if (!ev) continue;
     var glyphs  = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>glyphLabel(g.spellID, g.icon)).filter(Boolean);
     var talents = [];
-    var tl = ev.talents||[];
+    var rawTl = (ev.talents||[]).filter(function(t){ return t && t.id && t.id !== -1; });
+    var specTiers = TALENT_TIERS[specKey];
+    if (specTiers) {
+      var knownIds = new Set();
+      specTiers.forEach(function(t){ Object.keys(t.choices).forEach(function(id){ knownIds.add(parseInt(id)); }); });
+      rawTl = rawTl.filter(function(t){ return knownIds.has(t.id); });
+    }
     for (var tier=0; tier<6; tier++) {
-      var t = tl[tier];
-      if (t && t.id && t.id !== -1) talents.push({tier, name:talentName(specKey, tier, t.id)});
+      var t = rawTl[tier];
+      if (t) talents.push({tier:tier, name:talentName(specKey, tier, t.id)});
     }
     players.push({name:player.name, glyphs, talents});
   }
