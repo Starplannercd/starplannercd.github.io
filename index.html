@@ -5095,8 +5095,8 @@ var WCL_BOSS_SPELLS = {
   'norushen':         [],
   'sha':              [{ids:[144400], name:'Swelling Pride', color:'#c878e8', dataType:'Casts'}],
   'galakras':         [
-    {ids:[147029], name:'Flames of Galakrond', color:'#e86020', dataType:'DamageTaken'},
-    {ids:[147042], name:'Pulsing Flames',       color:'#e8a030', dataType:'Casts'},
+    {ids:[147029], name:'Flames of Galakrond', color:'#e86020', dataType:'DamageTaken', eventType:'applydebuff'},
+    {ids:[147042], name:'Pulsing Flames',       color:'#e8a030', dataType:'DamageTaken', eventType:'damage'},
   ],
   'ironjuggernaut':   [{ids:[144485], name:'Shock Pulse', color:'#60c8e8', dataType:'Casts'}],
   'darkshaman':       [],
@@ -5994,16 +5994,23 @@ function showWclModal() {
       var processBossEvts = function(bevts, spellGroup, bossEvtTimes, fStart) {
         if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
-        spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
-        var isDmgStream = spellGroup.length && spellGroup[0].spell && spellGroup[0].spell.dataType !== 'Casts';
+        // Per-group accepted event type:
+        //   Casts stream      → 'cast'
+        //   DamageTaken, DoT  → 'applydebuff' (one per application, avoids periodic tick false-positives)
+        //   DamageTaken, AoE  → 'damage' (direct hit, dedup collapses simultaneous player hits)
+        // Spells can override by setting eventType explicitly.
+        var groupAcceptType = {};
+        spellGroup.forEach(function(sg) {
+          sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; });
+          var def = sg.spell.dataType === 'Casts' ? 'cast' : 'applydebuff';
+          groupAcceptType[sg.gi] = sg.spell.eventType || def;
+        });
         bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
         bevts.forEach(function(ev){
-          // DamageTaken spells: only track applydebuff (one per actual cast, avoids DoT tick false-positives)
-          // Cast spells: only track cast events
-          if (isDmgStream ? ev.type !== 'applydebuff' : ev.type !== 'cast') return;
           var sid = ev.abilityGameID;
           var gi = idToGroup[sid];
           if (gi === undefined) return;
+          if (ev.type !== groupAcceptType[gi]) return;
           var rel = ev.timestamp - fStart;
           if (rel<0||rel>900000) return;
           if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
