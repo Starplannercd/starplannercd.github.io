@@ -351,6 +351,7 @@ const GLYPH_NAMES = {
 
 const MINOR_GLYPHS = new Set([55448, 63279, 147707, 147788, 147772, 55436, 55441, 147784, 55445, 147787, 147770, 89749, 56363, 63092, 56384, 56800, 63256, 56382, 63252, 63254,
   63327, // Glyph of Intimidating Shout — minor
+  58369, // minor warrior glyph
 ]);
 
 function glyphLabel(id, icon) {
@@ -433,13 +434,18 @@ async function processFight(fight, specClass, specName) {
     var rawTl = (ev.talents||[]).filter(function(t){ return t && t.id && t.id !== -1; });
     var specTiers = TALENT_TIERS[specKey];
     if (specTiers) {
-      var knownIds = new Set();
-      specTiers.forEach(function(t){ Object.keys(t.choices).forEach(function(id){ knownIds.add(parseInt(id)); }); });
-      rawTl = rawTl.filter(function(t){ return knownIds.has(t.id); });
-    }
-    for (var tier=0; tier<6; tier++) {
-      var t = rawTl[tier];
-      if (t) talents.push({tier:tier, name:talentName(specKey, tier, t.id)});
+      var idToTier = {};
+      specTiers.forEach(function(tier, idx){ Object.keys(tier.choices).forEach(function(id){ idToTier[parseInt(id)] = idx; }); });
+      for (var i = 0; i < rawTl.length; i++) {
+        var t = rawTl[i];
+        var tierIdx = idToTier[t.id];
+        if (tierIdx !== undefined) talents.push({tier:tierIdx, name:specTiers[tierIdx].choices[t.id]});
+      }
+    } else {
+      for (var tier=0; tier<6; tier++) {
+        var t = rawTl[tier];
+        if (t) talents.push({tier:tier, name:talentName(specKey, tier, t.id)});
+      }
     }
     players.push({name:player.name, glyphs, talents});
   }
