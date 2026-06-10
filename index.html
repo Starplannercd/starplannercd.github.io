@@ -6015,7 +6015,7 @@ function showWclModal() {
           if (rel<0||rel>900000) return;
           if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
           var times = bossEvtTimes[gi];
-          if (!times.length || rel - times[times.length-1] > 8000) times.push(rel);
+          if (!times.length || rel - times[times.length-1] > 2000) times.push(rel);
         });
       };
 
