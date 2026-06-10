@@ -5133,21 +5133,41 @@ function getBossSpellsForName(bossName) {
 
 var _wclImport = null;
 function doWclImport() {
-  if (!_wclImport || !_wclImport.abilities.length) { alert('No boss ability data to import.'); return; }
+  if (!_wclImport || !_wclImport.groups || !_wclImport.groups.length) { alert('No boss ability data to import.'); return; }
   var boss = BOSSES.find(function(b){ return b.name === _wclImport.bossName; });
   if (!boss) { alert('Boss "'+_wclImport.bossName+'" not found in planner.'); return; }
-  if (!boss.sections || !boss.sections.length) boss.sections = [{ label: null, abilities: [] }];
-  var section = boss.sections[0];
-  var preserved = section.abilities.filter(function(a){ return a.encounterStart || a.hpAssign; });
-  section.abilities = preserved.concat(_wclImport.abilities);
-  section.abilities.sort(function(a,b){
-    if (a.encounterStart && !b.encounterStart) return -1;
-    if (!a.encounterStart && b.encounterStart) return 1;
-    return a.time - b.time;
+  if (!boss.sections || !boss.sections.length) { alert('No timeline set up for '+_wclImport.bossName+'. Add abilities to the timeline first.'); return; }
+
+  // Collect every ability across all sections (flat, with reference to the original object)
+  var allAbilities = [];
+  boss.sections.forEach(function(sec) {
+    (sec.abilities || []).forEach(function(ab) { allAbilities.push(ab); });
   });
+
+  var totalUpdated = 0;
+  var missed = [];
+
+  _wclImport.groups.forEach(function(group) {
+    var lower = group.spellName.toLowerCase();
+    // Find timeline abilities whose name contains this spell name (across all sections/phases)
+    var matches = allAbilities.filter(function(ab) {
+      if (ab.encounterStart || ab.hpAssign) return false;
+      return ab.name && ab.name.toLowerCase().includes(lower);
+    });
+    // Sort by current time to preserve the user's intended ordering
+    matches.sort(function(a, b) { return a.time - b.time; });
+    if (!matches.length) { missed.push(group.spellName); return; }
+    // Patch times in order — only as many as we have averaged data for
+    matches.forEach(function(ab, i) {
+      if (i < group.times.length) { ab.time = group.times[i]; totalUpdated++; }
+    });
+  });
+
   currentBossId = boss.id;
   renderTimeline();
-  alert('Imported ' + _wclImport.abilities.length + ' abilities to ' + _wclImport.bossName + ' timeline.');
+  var msg = 'Updated ' + totalUpdated + ' ability timings on ' + _wclImport.bossName + '.';
+  if (missed.length) msg += '\nNo timeline entries matched: ' + missed.join(', ');
+  alert(msg);
 }
 
 // Per-boss ability config: { difficulty: 3|4, abilityNames: ['Iron Star','Whirling Corruption',...] }
@@ -5751,20 +5771,19 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       bodyHtml += '</div>';
     }
 
-    // Import to Planner button — only when we have averaged boss event data
+    // Update Planner Timings button — only when we have averaged boss event data
     var hasImportData = bossSpells && bossSpells.length && bossSpells.some(function(sp,gi){ return avgBossEvts[gi]&&avgBossEvts[gi].length; });
     if (hasImportData) {
-      var importAbilities = [];
+      var importGroups = [];
       bossSpells.forEach(function(spell, gi) {
-        (avgBossEvts[gi]||[]).forEach(function(t, idx) {
-          importAbilities.push({ name:(spell.fullName||spell.name)+' '+(idx+1), time:Math.round(t/1000), color:spell.color });
-        });
+        var times = (avgBossEvts[gi]||[]).map(function(t){ return Math.round(t/1000); });
+        if (times.length) importGroups.push({ spellName: spell.fullName||spell.name, times: times, color: spell.color });
       });
-      importAbilities.sort(function(a,b){ return a.time-b.time; });
-      _wclImport = { bossName:bossName, abilities:importAbilities };
+      var totalTimes = importGroups.reduce(function(s,g){ return s+g.times.length; }, 0);
+      _wclImport = { bossName: bossName, groups: importGroups };
       bodyHtml += '<div style="margin-top:10px;padding:10px 14px;background:#0a0b14;border:1px solid #1a1c2a;border-radius:8px;display:flex;align-items:center;gap:12px;">';
-      bodyHtml += '<span style="font-size:10px;color:#5a6080;">'+importAbilities.length+' boss abilities averaged across '+logCount+' logs</span>';
-      bodyHtml += '<button onclick="doWclImport()" style="background:#1a2030;border:1px solid #3a4060;color:#a0b8e8;font-family:monospace;font-size:11px;font-weight:700;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.04em;">Import to Planner Timeline</button>';
+      bodyHtml += '<span style="font-size:10px;color:#5a6080;">'+totalTimes+' averaged timings across '+logCount+' logs — updates existing timeline abilities in place</span>';
+      bodyHtml += '<button onclick="doWclImport()" style="background:#1a2030;border:1px solid #3a4060;color:#a0b8e8;font-family:monospace;font-size:11px;font-weight:700;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.04em;">Update Planner Timings</button>';
       bodyHtml += '</div>';
     }
 
