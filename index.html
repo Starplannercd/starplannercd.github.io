@@ -5836,8 +5836,6 @@ function showWclModal() {
       + '<button id="wclDiffHeroic" style="padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Heroic</button>'
       + '<span style="font-size:10px;color:#3a4060;margin-left:4px;">· clears cache on change</span>'
       + '</div>'
-      + '<div style="font-size:10px;font-weight:700;color:#5a6080;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Track these boss abilities (one per line)</div>'
-      + '<textarea id="wclAbilityNames" rows="4" placeholder="e.g.&#10;Power Iron Star&#10;Whirling Corruption&#10;Siege Engineer" style="width:100%;box-sizing:border-box;background:#060810;border:1px solid #1a2030;color:#c0ccf0;font-family:monospace;font-size:11px;padding:6px 8px;border-radius:4px;resize:vertical;"></textarea>'
       + '</div>'
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);"><span style="font-size:18px;line-height:1;">⚔</span>&nbsp;RCD Heatmap</button>'
@@ -5908,7 +5906,6 @@ function showWclModal() {
 
   // ── Boss config panel logic ──────────────────────────────────────────────────
   var cfgPanel = box.querySelector('#wclBossCfg');
-  var cfgTextarea = box.querySelector('#wclAbilityNames');
   var diffNormalBtn = box.querySelector('#wclDiffNormal');
   var diffHeroicBtn = box.querySelector('#wclDiffHeroic');
   var _cfgEncId = null;
@@ -5927,14 +5924,12 @@ function showWclModal() {
     var cfg = getBossCfg(encId);
     var diff = cfg.difficulty || 4;
     setCfgDiff(diff);
-    cfgTextarea.value = (cfg.abilityNames || []).join('\n');
   }
 
   function saveCurrentCfg() {
     if (!_cfgEncId) return;
     var diff = diffNormalBtn.style.color === 'rgb(160, 184, 232)' ? 3 : 4;
-    var names = cfgTextarea.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
-    saveBossCfg(_cfgEncId, { difficulty: diff, abilityNames: names });
+    saveBossCfg(_cfgEncId, { difficulty: diff });
   }
 
   diffNormalBtn.addEventListener('click', function(){
@@ -5945,8 +5940,6 @@ function showWclModal() {
     setCfgDiff(4); saveCurrentCfg();
     if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
   });
-  cfgTextarea.addEventListener('input', saveCurrentCfg);
-
   bossEl.addEventListener('change', function() {
     loadCfgPanel(parseInt(bossEl.value));
     loadCachedOrBlank(parseInt(bossEl.value), wclMode);
@@ -5962,10 +5955,10 @@ function showWclModal() {
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Load per-boss config: difficulty + ability names to track
+      // Load per-boss config: difficulty
       var bossCfg = getBossCfg(encId);
       var fetchDifficulty = bossCfg.difficulty || 4;
-      var cfgAbilityNames = (bossCfg.abilityNames || []).map(function(s){return s.trim();}).filter(Boolean);
+      var cfgAbilityNames = [];
       var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
 
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
