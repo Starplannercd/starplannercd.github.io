@@ -5740,6 +5740,14 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       discoveryInfo.notFound.forEach(function(n) {
         bodyHtml += '<div style="color:#c84848;margin-bottom:2px;">✗ Not found in logs: "'+n+'"</div>';
       });
+      if (discoveryInfo.notFound.length && discoveryInfo.suggestions && discoveryInfo.suggestions.length) {
+        bodyHtml += '<div style="color:#404860;margin-top:6px;margin-bottom:3px;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">Available in this log — try one of these names:</div>';
+        discoveryInfo.suggestions.forEach(function(s) {
+          bodyHtml += '<div style="color:#586878;margin-bottom:1px;">&nbsp;&nbsp;<span style="color:#708898;">'+s.name+'</span>'
+            + '<span style="color:#2a3040;margin-left:8px;">['+s.dataType+']</span>'
+            + '<span style="color:#283040;margin-left:4px;">x'+s.total+'</span></div>';
+        });
+      }
       bodyHtml += '</div>';
     }
 
@@ -5965,9 +5973,10 @@ function showWclModal() {
         if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
         spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
+        var isDmgStream = spellGroup.length && spellGroup[0].spell && spellGroup[0].spell.dataType !== 'Casts';
         bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
         bevts.forEach(function(ev){
-          if (ev.type !== 'cast') return;
+          if (isDmgStream ? (ev.type !== 'damage' && ev.type !== 'applydebuff') : ev.type !== 'cast') return;
           var sid = ev.abilityGameID;
           var gi = idToGroup[sid];
           if (gi === undefined) return;
@@ -5982,6 +5991,7 @@ function showWclModal() {
       // Discover boss spells from WCL table API — queries both Casts and DamageTaken tables
       var BOSS_DISC_COLORS = ['#e8a040','#e84060','#60a8e8','#a860e8','#60e8a0','#e8d040','#c84060','#48a888'];
       var discNotFound = []; // cfgNames that had no match
+      var discTableSuggestions = []; // top table entries for user reference when names don't match
       if (!bossSpells.length && pageRankings.length) {
         try {
           var dr0 = pageRankings[0];
@@ -6015,6 +6025,16 @@ function showWclModal() {
               // Dedupe by id
               var seenIds={};
               mechSpells = mechSpells.filter(function(e){ if(seenIds[e.id])return false; seenIds[e.id]=true; return true; });
+              // Build suggestions list so user can see what names ARE in the log when theirs don't match
+              if (discNotFound.length && allDiscEntries.length) {
+                var matchedIds = {};
+                mechSpells.forEach(function(m){ matchedIds[m.id]=true; });
+                discTableSuggestions = allDiscEntries
+                  .filter(function(e){ return e.id && e.name && !matchedIds[e.id]; })
+                  .sort(function(a,b){ return b.total-a.total; })
+                  .slice(0, 20)
+                  .map(function(e){ return { name:e.name, id:e.id, dataType:e._dt, total:e.total }; });
+              }
             } else {
               mechSpells = castEntries
                 .filter(function(e){ return e.id&&e.name&&e.total>=2&&e.total<=25; })
@@ -6130,9 +6150,16 @@ function showWclModal() {
             });
             try {
               if (dmgSpells.length) {
-                var bq1 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
-                var bd1 = await wclQuery(bq1, {c:code, fid:fid});
-                var bevts1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events&&bd1.reportData.report.events.data)||[];
+                var dmgIds = dmgSpells.reduce(function(acc,sg){ return acc.concat(sg.spell.ids||[]); }, []);
+                var dmgFilter = dmgIds.map(function(id){ return 'ability.id='+id; }).join(' or ');
+                var bevts1 = [], nxt1 = 0, pg1 = 0;
+                do {
+                  var bq1 = 'query($c:String!,$fid:Int!,$f:String!,$s:Float!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:$s,endTime:9999999,hostilityType:Friendlies,filterExpression:$f){data nextPageTimestamp}}}}';
+                  var bd1 = await wclQuery(bq1, {c:code, fid:fid, f:dmgFilter, s:nxt1});
+                  var evR1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events)||{};
+                  bevts1 = bevts1.concat(evR1.data||[]);
+                  nxt1 = evR1.nextPageTimestamp||0;
+                } while (nxt1 && ++pg1 < 5);
                 processBossEvts(bevts1, dmgSpells, bossEvtTimes, fStart);
               }
               if (castSpells.length) {
@@ -6247,6 +6274,7 @@ function showWclModal() {
         discoveryInfo = {
           cfgNames: cfgAbilityNames,
           notFound: discNotFound,
+          suggestions: discTableSuggestions,
           found: bossSpells.map(function(s, gi) {
             var logsWithData = logsData.filter(function(l){ return l.bossEvts&&l.bossEvts[gi]&&l.bossEvts[gi].length; }).length;
             var avgCount = logsData.reduce(function(sum,l){ return sum+((l.bossEvts&&l.bossEvts[gi])||[]).length; },0) / Math.max(processed,1);
