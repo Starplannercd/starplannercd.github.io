@@ -345,7 +345,7 @@ const GLYPH_NAMES = {
   // Warlock
   56242:'Imp Swarm', 148683:'Eternal Resolve', 56218:'Siphon Life', 56233:'Unstable Affliction', 146963:'Curse of the Elements',
   // Warrior
-  94374:'Unending Rage', 58355:'Enraged Speed', 94372:'Bull Rush', 89003:'Colossus Smash',
+  58098:'Unending Rage', 94374:'Glyph of Recklessness', 58355:'Enraged Speed', 94372:'Bull Rush', 89003:'Colossus Smash',
   58372:'Rude Interruption', 63325:'Death from Above', 58370:'Raging Wind', 58384:'Sweeping Strikes',
 };
 
@@ -429,7 +429,7 @@ async function processFight(fight, specClass, specName) {
   for (var player of targets) {
     var ev = ciByActor[player.id];
     if (!ev) continue;
-    var glyphs  = (ev.customPowerSet||[]).filter(g=>g.slot===0).map(g=>glyphLabel(g.spellID, g.icon)).filter(Boolean);
+    var glyphs  = (ev.customPowerSet||[]).filter(g=>(g.slot===0||GLYPH_NAMES[g.spellID])&&!MINOR_GLYPHS.has(g.spellID)).map(g=>glyphLabel(g.spellID,g.icon)).filter(Boolean);
     var talents = [];
     var rawTl = (ev.talents||[]).filter(function(t){ return t && t.id && t.id !== -1; });
     var specTiers = TALENT_TIERS[specKey];
