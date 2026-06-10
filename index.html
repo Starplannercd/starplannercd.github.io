@@ -5094,7 +5094,10 @@ var WCL_BOSS_SPELLS = {
   'fallenprotectors': [{ids:[143491,124845], name:'Calamity', color:'#8868c8', dataType:'Casts'}],
   'norushen':         [],
   'sha':              [{ids:[144400], name:'Swelling Pride', color:'#c878e8', dataType:'Casts'}],
-  'galakras':         [],
+  'galakras':         [
+    {ids:[147029], name:'Flames of Galakrond', color:'#e86020', dataType:'DamageTaken'},
+    {ids:[147042], name:'Pulsing Flames',       color:'#e8a030', dataType:'Casts'},
+  ],
   'ironjuggernaut':   [{ids:[144485], name:'Shock Pulse', color:'#60c8e8', dataType:'Casts'}],
   'darkshaman':       [],
   'generalnazmak':    [],
@@ -5995,7 +5998,9 @@ function showWclModal() {
         var isDmgStream = spellGroup.length && spellGroup[0].spell && spellGroup[0].spell.dataType !== 'Casts';
         bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
         bevts.forEach(function(ev){
-          if (isDmgStream ? (ev.type !== 'damage' && ev.type !== 'applydebuff') : ev.type !== 'cast') return;
+          // DamageTaken spells: only track applydebuff (one per actual cast, avoids DoT tick false-positives)
+          // Cast spells: only track cast events
+          if (isDmgStream ? ev.type !== 'applydebuff' : ev.type !== 'cast') return;
           var sid = ev.abilityGameID;
           var gi = idToGroup[sid];
           if (gi === undefined) return;
