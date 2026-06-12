@@ -1396,7 +1396,7 @@ const BOSSES = [
   {
     id:'immerseus', name:'Immerseus',
     desc:'Heroic · Vale of Eternal Sorrows',
-    duration: 360,
+    duration: 720,
     sections: [
       {
         label: null,
@@ -1413,6 +1413,10 @@ const BOSSES = [
           { name:'Swelling Corruption 5',    time:385, color:'#4888c8' },
           { name:'Split 5',                  time:425, color:'#8868c8' },
           { name:'Swelling Corruption 6',    time:455, color:'#4888c8' },
+          { name:'Swelling Corruption 7',    time:495, color:'#4888c8' },
+          { name:'Swelling Corruption 8',    time:535, color:'#4888c8' },
+          { name:'Swelling Corruption 9',    time:575, color:'#4888c8' },
+          { name:'Swelling Corruption 10',   time:615, color:'#4888c8' },
         ]
       }
     ]
@@ -1435,8 +1439,8 @@ const BOSSES = [
           { name:'Calamity 5',        time:235, color:'#8868c8' },
           { name:'Calamity 6',        time:285, color:'#8868c8' },
           { name:'Calamity 7',        time:335, color:'#8868c8' },
-          { name:'Dark Calamity 1',   time:390, color:'#c83a20' },
-          { name:'Dark Calamity 2',   time:440, color:'#c83a20' },
+          { name:'Desperate Measures Sun 1',   time:390, color:'#c83a20' },
+          { name:'Desperate Measures Sun 2',   time:440, color:'#c83a20' },
         ]
       }
     ]
@@ -1569,13 +1573,26 @@ const BOSSES = [
   {
     id:'garrosh', name:'Garrosh Hellscream',
     desc:'Heroic · Pinnacle of Storms',
-    duration: 600,
+    duration: 660,
     sections: [
-      { label: 'Phase 1', abilities: [] },
+      { label: 'Phase 1', abilities: [
+        { name:'Encounter Start',     time:0,  color:'#ffffff', encounterStart:true },
+        { name:'Power Iron Star 1',   time:20, color:'#c84020' },
+        { name:'Siege Engineer CD 1', time:20, color:'#c8881a' },
+        { name:'Power Iron Star 2',   time:60, color:'#c84020' },
+      ]},
       { label: 'Intermission 1', abilities: [] },
-      { label: 'Phase 2', abilities: [] },
+      { label: 'Phase 2', abilities: [
+        { name:'Whirling Corruption P2 1', time:270, color:'#8848c8' },
+        { name:'Whirling Corruption P2 2', time:320, color:'#8848c8' },
+        { name:'Whirling Corruption P2 3', time:370, color:'#8848c8' },
+      ]},
       { label: 'Intermission 2', abilities: [] },
-      { label: 'Phase 3', abilities: [] },
+      { label: 'Phase 3', abilities: [
+        { name:'Whirling Corruption P3 1', time:505, color:'#c848c8' },
+        { name:'Whirling Corruption P3 2', time:555, color:'#c848c8' },
+        { name:'Whirling Corruption P3 3', time:605, color:'#c848c8' },
+      ]},
     ]
   },
 ];
@@ -2506,7 +2523,7 @@ function renderTimeline() {
     }
 
     section.abilities.forEach((ab, ai) => {
-      const rowKey = `${si}-${ai}`;
+      const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const row = buildAbilityRow(boss, rowKey, ab, totalW, PX_PER_SEC, LABEL_W, bossData);
       grid.appendChild(row);
     });
@@ -2566,8 +2583,10 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
 function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
   // Look up the ability object for this row so we can pass it to popups
-  const [_si, _ai] = rowKey.split('-').map(Number);
-  const _ab = boss.sections[_si]?.abilities[_ai] || null;
+  const parts = rowKey.split('-');
+  const _si = Number(parts[0]);
+  const _abName = decodeURIComponent(parts.slice(1).join('-'));
+  const _ab = boss.sections[_si]?.abilities.find(ab => ab.name === _abName) || null;
   const placed = (bossData[rowKey] || []);
   placed.forEach(p => {
     const cd = CDS.find(c => c.id === p.cdId);
@@ -2734,9 +2753,11 @@ function moveDragGhost(e) {
       const rowPlacements = (placedCDs[bossId] || {})[rowKey] || [];
       // For moves, exclude the dragged item itself from the check
       const _ghostCd = CD_POOL.find(c => c.id === cdId);
-      const _ghostAbParts = rowKey.split('-').map(Number);
+      const _ghostParts = rowKey.split('-');
+      const _ghostSi = Number(_ghostParts[0]);
+      const _ghostAbName = decodeURIComponent(_ghostParts.slice(1).join('-'));
       const _ghostBoss = BOSSES.find(b => b.id === bossId);
-      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostAbParts[0]]?.abilities[_ghostAbParts[1]];
+      const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostSi]?.abilities.find(ab => ab.name === _ghostAbName);
       const isDuplicate = (_ghostAb && _ghostAb.hpAssign) ? false : (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
         ? rowPlacements.some(p => p.cdId === cdId && p.id !== activeDrag.movePlacedId && !(rowKey === activeDrag.moveRowKey))
         : rowPlacements.some(p => p.cdId === cdId));
@@ -2845,9 +2866,11 @@ function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMe
   // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
   const cd = CD_POOL.find(c => c.id === cdId);
   // Also allow multiple placements on HP assign rows
-  const _rowAbParts = rowKey.split('-').map(Number);
+  const _rowParts = rowKey.split('-');
+  const _rowSi = Number(_rowParts[0]);
+  const _rowAbName = decodeURIComponent(_rowParts.slice(1).join('-'));
   const _rowBoss = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
-  const _rowAb = _rowBoss && _rowBoss.sections[_rowAbParts[0]]?.abilities[_rowAbParts[1]];
+  const _rowAb = _rowBoss && _rowBoss.sections[_rowSi]?.abilities.find(ab => ab.name === _rowAbName);
   if (!(_rowAb && _rowAb.hpAssign) && !(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
@@ -3232,14 +3255,48 @@ const CD_SPELL_IDS = {
   'revival':   '115310',
 };
 
+// Map ability names to FOJI export keys — handles both exact matches and prefix patterns
+const FOJI_ABILITY_NAME_MAP = {
+  'immerseus': { 'Swelling Corruption': 'IMMERSEUS_SWIRL', 'Split': 'IMMERSEUS_SPLIT' },
+  'fallenprotectors': { 'Desperate Measures Sun': 'FALLEN_DESPERATE_MEASURES_SUN', 'Inferno Strike': 'FALLEN_INFERNO_STRIKE', 'Calamity': 'FALLEN_CALAMITY' },
+  'norushen': { 'Corruption': 'NORUSHEN_CORRUPT' },
+  'sha': { 'Swelling Pride': 'SHAPRIDE_SWELLING_PRIDE', 'Phase 2': 'SHAPRIDE_P2' },
+  'galakras': { 'Flames': 'GALAKRAS_FLAMES', 'Pulsing': 'GALAKRAS_PULSING' },
+  'ironjuggernaut': { 'Shock Pulse': 'JUGGERNAUT_SHOCK_PULSE', 'Electromagnetic': 'JUGGERNAUT_SHOCK_PULSE' },
+  'dark-shaman': { 'Toxic Mist': 'KORKRON_TOXIC_MIST', 'Falling Ash': 'KORKRON_FALLING_ASH' },
+  'general-nazgrim': { 'War Song': 'NAZGRIM_WAR_SONG' },
+  'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
+  'spoils': {},
+  'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH' },
+  'siegecrafter': { 'Overcharge': 'BLACKFUSE_OVERCHARGE_ELECTRO' },
+  'paragons': { 'Insane Calculation': 'PARAGONS_INSANE_CALCULATION', 'Catalyst': 'PARAGONS_CATALYST', 'Mutate': 'PARAGONS_MUTATE', 'Encase': 'PARAGONS_ENCASE_IN_AMBER' },
+  'garrosh': { 'Power Iron Star': 'GARROSH_IRON_STAR', 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling Corruption P3': 'GARROSH_WHIRLING_P3', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineer': 'GARROSH_ENGINEERS' },
+};
+
 // Determine which boss ability key to use for a row
 function getBossAbilityKey(boss, rowKey, abName) {
   if (abName && abName.startsWith('HP Assign')) return boss.id.toUpperCase() + '_HEALTH';
-  return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
+  if (abName && abName.startsWith('Encounter Start')) return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
+
+  // Check ability name map for this boss
+  const abilityMap = FOJI_ABILITY_NAME_MAP[boss.id];
+  if (abilityMap) {
+    for (const [pattern, fojiKey] of Object.entries(abilityMap)) {
+      if (abName.includes(pattern)) {
+        return fojiKey;
+      }
+    }
+  }
+
+  // Fallback — try generating from ability name itself
+  const nameUpperClean = abName.replace(/\s+\d+.*$/, '').replace(/\s+/g, '_').toUpperCase();
+  return boss.id.replace(/-/g, '').toUpperCase() + '_' + nameUpperClean;
 }
 
 // Extract cast number from ability name (e.g. "Discharge 3" -> 3)
 function getCastNumber(abName) {
+  // Phase/intermission transitions fire exactly once — always cast 1
+  if (/^(Phase|Intermission)\s+\d+/i.test(abName)) return 1;
   // Handle "Ball Lightning-P2 (1)" style — number in parens at end
   const mp = abName.match(/\((\d+)\)\s*$/);
   if (mp) return parseInt(mp[1]);
@@ -3258,7 +3315,7 @@ function buildFojiExport() {
     // Iterate in canonical section → ability order so export is always sorted earliest to latest
     boss.sections.forEach((section, si) => {
       section.abilities.forEach((ab, ai) => {
-        const rowKey = `${si}-${ai}`;
+        const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
         const placements = bossData[rowKey];
         if (!placements || placements.length === 0) return;
 
@@ -4586,36 +4643,6 @@ const PLANS_KEY = 'tot_rcd_plans';
 const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
 const FULL_RAID_ID = '__full_raid__';
 const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
-const BOSS_TIMING_KEY = 'tot_rcd_boss_timings';
-
-function saveBossTimingOverride(boss) {
-  try {
-    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
-    var abTimes = [];
-    (boss.sections || []).forEach(function(sec, si) {
-      (sec.abilities || []).forEach(function(ab, ai) {
-        abTimes.push([si, ai, ab.time]);
-      });
-    });
-    all[boss.id] = { duration: boss.duration, abTimes: abTimes };
-    localStorage.setItem(BOSS_TIMING_KEY, JSON.stringify(all));
-  } catch(e) {}
-}
-
-function applyBossTimingOverrides() {
-  try {
-    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
-    BOSSES.forEach(function(boss) {
-      var ov = all[boss.id];
-      if (!ov) return;
-      if (ov.duration) boss.duration = ov.duration;
-      (ov.abTimes || []).forEach(function(entry) {
-        var sec = boss.sections[entry[0]];
-        if (sec && sec.abilities[entry[1]]) sec.abilities[entry[1]].time = entry[2];
-      });
-    });
-  } catch(e) {}
-}
 
 // ── Firebase config ──
 const firebaseConfig = {
@@ -4647,9 +4674,36 @@ function fbGetData() {
   };
 }
 
+// Migrate old index-based rowKeys (e.g. "0-1") to ability-name-based (e.g. "0-Swelling%20Corruption%201")
+function migrateRowKeys(cds) {
+  const migrated = {};
+  Object.entries(cds).forEach(([bossId, bossData]) => {
+    const boss = BOSSES.find(b => b.id === bossId);
+    if (!boss) { migrated[bossId] = bossData; return; }
+    migrated[bossId] = {};
+    Object.entries(bossData).forEach(([rowKey, placements]) => {
+      const parts = rowKey.split('-');
+      const si = Number(parts[0]);
+      const aiOrName = parts.slice(1).join('-');
+      // Check if it's the old format (numeric ability index)
+      const ai = Number(aiOrName);
+      if (!isNaN(ai) && boss.sections[si]?.abilities[ai]) {
+        // Old format — convert to ability name
+        const abilityName = boss.sections[si].abilities[ai].name;
+        const newRowKey = `${si}-${encodeURIComponent(abilityName)}`;
+        migrated[bossId][newRowKey] = placements;
+      } else {
+        // Already new format
+        migrated[bossId][rowKey] = placements;
+      }
+    });
+  });
+  return migrated;
+}
+
 function fbApplyData(data) {
   if (!data) return false;
-  if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+  if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
   if (data.activeSetIds) activeSetIds = new Set(data.activeSetIds);
@@ -4914,7 +4968,6 @@ buildPalette();
 buildBossSelect();
 updatePlansBtn();
 const _didRestore = autoLoad();
-applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
 renderBottomPanel();
@@ -5041,12 +5094,15 @@ var WCL_SPELLS = {
 // Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
 // dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
 var WCL_BOSS_SPELLS = {
-  'immerseus':        [{ids:[143436], name:'SW Corr', color:'#8868c8', dataType:'Casts'}],
+  'immerseus':        [{ids:[143436], name:'SW Corr', fullName:'Swelling Corruption', color:'#8868c8', dataType:'Casts'}],
   'fallenprotectors': [{ids:[143491,124845], name:'Calamity', color:'#8868c8', dataType:'Casts'}],
   'norushen':         [],
-  'sha':              [],
-  'galakras':         [],
-  'ironjuggernaut':   [],
+  'sha':              [{ids:[144400], name:'Swelling Pride', color:'#c878e8', dataType:'Casts'}],
+  'galakras':         [
+    {ids:[146992], name:'Flames of Galakrond', color:'#e86020', dataType:'DamageTaken', eventType:'applydebuff'},
+    {ids:[147043], name:'Pulsing Flames',       color:'#e8a030', dataType:'DamageTaken', eventType:'damage'},
+  ],
+  'ironjuggernaut':   [{ids:[144485], name:'Shock Pulse', color:'#60c8e8', dataType:'Casts'}],
   'darkshaman':       [],
   'generalnazmak':    [],
   'malkorok':         [],
@@ -5056,6 +5112,7 @@ var WCL_BOSS_SPELLS = {
   'paragons':         [],
   'garrosh':          [],
 };
+var WCL_DISCOVERED_BOSS_SPELLS = {}; // session cache: auto-discovered spells per boss name
 
 // Map WCL encounter names to boss spell keys
 function getBossSpellsForName(bossName) {
@@ -5076,9 +5133,57 @@ function getBossSpellsForName(bossName) {
     'Garrosh Hellscream': 'garrosh',
   };
   var key = map[bossName];
-  return key ? (WCL_BOSS_SPELLS[key] || []) : [];
+  var base = key ? (WCL_BOSS_SPELLS[key] || []) : [];
+  if (base.length) return base;
+  return WCL_DISCOVERED_BOSS_SPELLS[bossName] || [];
 }
 
+var _wclImport = null;
+function doWclImport() {
+  if (!_wclImport || !_wclImport.groups || !_wclImport.groups.length) { alert('No boss ability data to import.'); return; }
+  var boss = BOSSES.find(function(b){ return b.name === _wclImport.bossName; });
+  if (!boss) { alert('Boss "'+_wclImport.bossName+'" not found in planner.'); return; }
+  if (!boss.sections || !boss.sections.length) { alert('No timeline set up for '+_wclImport.bossName+'. Add abilities to the timeline first.'); return; }
+
+  // Collect every ability across all sections (flat, with reference to the original object)
+  var allAbilities = [];
+  boss.sections.forEach(function(sec) {
+    (sec.abilities || []).forEach(function(ab) { allAbilities.push(ab); });
+  });
+
+  var totalUpdated = 0;
+  var missed = [];
+
+  _wclImport.groups.forEach(function(group) {
+    var lower = group.spellName.toLowerCase();
+    // Find timeline abilities whose name contains this spell name (across all sections/phases)
+    var matches = allAbilities.filter(function(ab) {
+      if (ab.encounterStart || ab.hpAssign) return false;
+      return ab.name && ab.name.toLowerCase().includes(lower);
+    });
+    // Sort by current time to preserve the user's intended ordering
+    matches.sort(function(a, b) { return a.time - b.time; });
+    if (!matches.length) { missed.push(group.spellName); return; }
+    // Patch times in order — only as many as we have averaged data for
+    matches.forEach(function(ab, i) {
+      if (i < group.times.length) { ab.time = group.times[i]; totalUpdated++; }
+    });
+  });
+
+  currentBossId = boss.id;
+  renderTimeline();
+  var msg = 'Updated ' + totalUpdated + ' ability timings on ' + _wclImport.bossName + '.';
+  if (missed.length) msg += '\nNo timeline entries matched: ' + missed.join(', ');
+  alert(msg);
+}
+
+// Per-boss ability config: { difficulty: 3|4, abilityNames: ['Iron Star','Whirling Corruption',...] }
+function getBossCfg(encId) {
+  try { return JSON.parse(localStorage.getItem('wcl_boss_cfg_'+encId)||'{}'); } catch(e) { return {}; }
+}
+function saveBossCfg(encId, cfg) {
+  try { localStorage.setItem('wcl_boss_cfg_'+encId, JSON.stringify(cfg)); } catch(e) {}
+}
 
 // Personal defensive spell IDs by class/spec
 var WCL_PERSONAL_SPELLS = {
@@ -5133,13 +5238,15 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode, logsHpsData) {
+function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode, logsHpsData, discoveryInfo) {
   if (!spellMap) spellMap = WCL_SPELLS;
   if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
     container.innerHTML = '<div style="color:#5a4838;font-size:12px;padding:20px 0;">No data found.</div>';
     return;
   }
+
+  var currentAvgBossXs = []; // shared between renderAll and buildHeatmapRow
 
   var CD_DURATIONS = {
     62618:10, 31821:8, 86150:8, 105809:20, 31884:20,
@@ -5457,6 +5564,10 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     for (var gti=1; gti*rTick2*1000<=maxDuration; gti++) {
       html += '<div style="position:absolute;left:'+Math.round(gti*rTick2*sharedPps)+'px;top:0;bottom:0;width:1px;background:rgba(80,100,160,0.18);pointer-events:none;"></div>';
     }
+    // Boss ability markers (set in renderAll before buildHeatmapRow is called)
+    currentAvgBossXs.forEach(function(ev) {
+      html += '<div title="'+ev.label+'" style="position:absolute;left:'+ev.x+'px;top:0;bottom:0;width:1px;background:'+ev.color+';opacity:0.22;transform:translateX(-50%);pointer-events:none;"></div>';
+    });
     html += '</div></div>';
     return html;
   }
@@ -5564,7 +5675,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       return html;
     }
 
-    // ── Collect avg boss event x positions for HPS overlay ──
+    // ── Collect avg boss event x positions for HPS overlay and heatmap overlays ──
     var avgBossXs = []; // [{x, color, label}]
     if (bossSpells) {
       bossSpells.forEach(function(spell, gi) {
@@ -5573,6 +5684,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         });
       });
     }
+    currentAvgBossXs = avgBossXs; // expose to buildHeatmapRow via closure scope
 
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
@@ -5638,6 +5750,50 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       bodyHtml += '</svg></div></div></div>';
     }
 
+    // Boss ability discovery feedback
+    if (discoveryInfo && (discoveryInfo.found.length || discoveryInfo.notFound.length)) {
+      bodyHtml += '<div style="margin-top:10px;padding:8px 12px;background:#070810;border:1px solid #1a1c2a;border-radius:6px;font-size:10px;font-family:monospace;">';
+      bodyHtml += '<div style="color:#5a6080;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;">Boss Abilities Discovered</div>';
+      discoveryInfo.found.forEach(function(f) {
+        var hitColor = f.logsWithData > 0 ? '#a0c878' : '#c87878';
+        bodyHtml += '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">';
+        bodyHtml += '<span style="color:'+hitColor+';min-width:140px;">'+f.name+'</span>';
+        bodyHtml += '<span style="color:#3a4060;">ID:'+f.id+'</span>';
+        bodyHtml += '<span style="color:#4a5060;">['+f.dataType+']</span>';
+        bodyHtml += '<span style="color:'+hitColor+';">'+f.logsWithData+'/'+logCount+' logs · avg '+f.avgCount+' casts</span>';
+        if (f.wclName && f.wclName !== f.name) bodyHtml += '<span style="color:#3a4860;">(WCL: "'+f.wclName+'")</span>';
+        bodyHtml += '</div>';
+      });
+      discoveryInfo.notFound.forEach(function(n) {
+        bodyHtml += '<div style="color:#c84848;margin-bottom:2px;">✗ Not found in logs: "'+n+'"</div>';
+      });
+      if (discoveryInfo.notFound.length && discoveryInfo.suggestions && discoveryInfo.suggestions.length) {
+        bodyHtml += '<div style="color:#404860;margin-top:6px;margin-bottom:3px;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">Available in this log — try one of these names:</div>';
+        discoveryInfo.suggestions.forEach(function(s) {
+          bodyHtml += '<div style="color:#586878;margin-bottom:1px;">&nbsp;&nbsp;<span style="color:#708898;">'+s.name+'</span>'
+            + '<span style="color:#2a3040;margin-left:8px;">['+s.dataType+']</span>'
+            + '<span style="color:#283040;margin-left:4px;">x'+s.total+'</span></div>';
+        });
+      }
+      bodyHtml += '</div>';
+    }
+
+    // Update Planner Timings button — only when we have averaged boss event data
+    var hasImportData = bossSpells && bossSpells.length && bossSpells.some(function(sp,gi){ return avgBossEvts[gi]&&avgBossEvts[gi].length; });
+    if (hasImportData) {
+      var importGroups = [];
+      bossSpells.forEach(function(spell, gi) {
+        var times = (avgBossEvts[gi]||[]).map(function(t){ return Math.round(t/1000); });
+        if (times.length) importGroups.push({ spellName: spell.fullName||spell.name, times: times, color: spell.color });
+      });
+      var totalTimes = importGroups.reduce(function(s,g){ return s+g.times.length; }, 0);
+      _wclImport = { bossName: bossName, groups: importGroups };
+      bodyHtml += '<div style="margin-top:10px;padding:10px 14px;background:#0a0b14;border:1px solid #1a1c2a;border-radius:8px;display:flex;align-items:center;gap:12px;">';
+      bodyHtml += '<span style="font-size:10px;color:#5a6080;">'+totalTimes+' averaged timings across '+logCount+' logs — updates existing timeline abilities in place</span>';
+      bodyHtml += '<button onclick="doWclImport()" style="background:#1a2030;border:1px solid #3a4060;color:#a0b8e8;font-family:monospace;font-size:11px;font-weight:700;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.04em;">Update Planner Timings</button>';
+      bodyHtml += '</div>';
+    }
+
     container.innerHTML = toggleHtml + bodyHtml;
     container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
       btn.addEventListener('click', function(){ viewMode=btn.dataset.view; renderAll(); });
@@ -5673,6 +5829,14 @@ function showWclModal() {
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
+      + '<div id="wclBossCfg" style="margin-bottom:12px;display:none;background:#0a0c18;border:1px solid #1a2030;border-radius:8px;padding:10px 12px;">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+      + '<span style="font-size:10px;font-weight:700;color:#5a6080;text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;">Difficulty</span>'
+      + '<button id="wclDiffNormal" style="padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Normal</button>'
+      + '<button id="wclDiffHeroic" style="padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Heroic</button>'
+      + '<span style="font-size:10px;color:#3a4060;margin-left:4px;">· clears cache on change</span>'
+      + '</div>'
+      + '</div>'
       + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.5);background:linear-gradient(135deg,rgba(255,140,0,0.18),rgba(255,140,0,0.06));color:#ffaa33;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 2px 8px rgba(255,140,0,0.12);"><span style="font-size:18px;line-height:1;">⚔</span>&nbsp;RCD Heatmap</button>'
       + '<button id="wclModePersonal" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid rgba(80,100,160,0.4);background:transparent;color:#4a5a7a;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;"><span style="font-size:18px;line-height:1;">🛡</span>&nbsp;DEF Heatmap</button>'
@@ -5728,6 +5892,10 @@ function showWclModal() {
       if (cached3) {
         var cd4 = JSON.parse(cached3);
         var bs4 = getBossSpellsForName(cd4.bossName);
+        if (!bs4.length && cd4.discoveredSpells && cd4.discoveredSpells.length) {
+          bs4 = cd4.discoveredSpells;
+          WCL_DISCOVERED_BOSS_SPELLS[cd4.bossName] = bs4;
+        }
         var sm4 = mode3==='personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
         renderWclDisplay(results3, cd4.logsData, cd4.processed, cd4.bossName, cd4.avgDuration, bs4, sm4, mode3, cd4.hpsData||[]);
       } else {
@@ -5736,7 +5904,44 @@ function showWclModal() {
     } catch(e) { results3.innerHTML = ''; }
   }
 
+  // ── Boss config panel logic ──────────────────────────────────────────────────
+  var cfgPanel = box.querySelector('#wclBossCfg');
+  var diffNormalBtn = box.querySelector('#wclDiffNormal');
+  var diffHeroicBtn = box.querySelector('#wclDiffHeroic');
+  var _cfgEncId = null;
+
+  function setCfgDiff(diff) {
+    var on = 'padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
+    var off = 'padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
+    diffNormalBtn.style.cssText = diff===3 ? on : off;
+    diffHeroicBtn.style.cssText = diff===4 ? on : off;
+  }
+
+  function loadCfgPanel(encId) {
+    _cfgEncId = encId;
+    if (!encId) { cfgPanel.style.display='none'; return; }
+    cfgPanel.style.display='block';
+    var cfg = getBossCfg(encId);
+    var diff = cfg.difficulty || 4;
+    setCfgDiff(diff);
+  }
+
+  function saveCurrentCfg() {
+    if (!_cfgEncId) return;
+    var diff = diffNormalBtn.style.color === 'rgb(160, 184, 232)' ? 3 : 4;
+    saveBossCfg(_cfgEncId, { difficulty: diff });
+  }
+
+  diffNormalBtn.addEventListener('click', function(){
+    setCfgDiff(3); saveCurrentCfg();
+    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
+  });
+  diffHeroicBtn.addEventListener('click', function(){
+    setCfgDiff(4); saveCurrentCfg();
+    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
+  });
   bossEl.addEventListener('change', function() {
+    loadCfgPanel(parseInt(bossEl.value));
     loadCachedOrBlank(parseInt(bossEl.value), wclMode);
   });
   box.querySelector('#wclFetch').addEventListener('click', async function(){
@@ -5746,18 +5951,22 @@ function showWclModal() {
     btn.textContent = 'Fetching...'; btn.disabled = true;
     results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
-      // Ranks 26-45: page 2 of execution rankings, 20 logs max
       var bossName = bossEl.options[bossEl.selectedIndex].text;
       var bossSpells = getBossSpellsForName(bossName);
       var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
-      // Heroic 10-man execution rankings, ranks 1-100
+      // Load per-boss config: difficulty
+      var bossCfg = getBossCfg(encId);
+      var fetchDifficulty = bossCfg.difficulty || 4;
+      var cfgAbilityNames = [];
+      var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
+
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching heroic 10-man rankings...</div>';
+      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching '+diffLabel+' 10-man rankings...</div>';
 
       var allRankEntries = [];
       var crawlPage = 1;
-      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:4,size:10,metric:execution,page:$pg)}}}';
+      var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:'+fetchDifficulty+',size:10,metric:execution,page:$pg)}}}';
       while (allRankEntries.length < 100 && crawlPage <= 10) {
         var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
         var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
@@ -5768,7 +5977,7 @@ function showWclModal() {
       var pageRankings = allRankEntries.slice(0, 100);
 
       if (!pageRankings.length) {
-        results.innerHTML='<div style="color:#c84848;font-size:12px;">No heroic 10-man logs found for this boss.</div>';
+        results.innerHTML='<div style="color:#c84848;font-size:12px;">No '+diffLabel+' 10-man logs found for this boss.</div>';
         btn.textContent='Fetch CD Timing Data'; btn.disabled=false; return;
       }
 
@@ -5782,20 +5991,97 @@ function showWclModal() {
       var processBossEvts = function(bevts, spellGroup, bossEvtTimes, fStart) {
         if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
         var idToGroup = {};
-        spellGroup.forEach(function(sg) { sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; }); });
+        // Per-group accepted event type:
+        //   Casts stream      → 'cast'
+        //   DamageTaken, DoT  → 'applydebuff' (one per application, avoids periodic tick false-positives)
+        //   DamageTaken, AoE  → 'damage' (direct hit, dedup collapses simultaneous player hits)
+        // Spells can override by setting eventType explicitly.
+        var groupAcceptType = {};
+        spellGroup.forEach(function(sg) {
+          sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; });
+          var def = sg.spell.dataType === 'Casts' ? 'cast' : 'applydebuff';
+          groupAcceptType[sg.gi] = sg.spell.eventType || def;
+        });
         bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
         bevts.forEach(function(ev){
-          if (ev.type !== 'cast' && ev.type !== 'begincast') return;
           var sid = ev.abilityGameID;
           var gi = idToGroup[sid];
           if (gi === undefined) return;
+          if (ev.type !== groupAcceptType[gi]) return;
           var rel = ev.timestamp - fStart;
           if (rel<0||rel>900000) return;
           if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
           var times = bossEvtTimes[gi];
-          if (!times.length || rel - times[times.length-1] > 60000) times.push(rel);
+          if (!times.length || rel - times[times.length-1] > 2000) times.push(rel);
         });
       };
+
+      // Discover boss spells from WCL table API — queries both Casts and DamageTaken tables
+      var BOSS_DISC_COLORS = ['#e8a040','#e84060','#60a8e8','#a860e8','#60e8a0','#e8d040','#c84060','#48a888'];
+      var discNotFound = []; // cfgNames that had no match
+      var discTableSuggestions = []; // top table entries for user reference when names don't match
+      if (!bossSpells.length && pageRankings.length) {
+        try {
+          var dr0 = pageRankings[0];
+          var dc0 = dr0.report&&dr0.report.code, df0 = dr0.report&&dr0.report.fightID;
+          if (dc0 && df0) {
+            results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Discovering boss abilities from logs...</div>';
+            // Fetch both cast (boss) and damage-taken (player) tables in one query
+            var discQ = 'query($c:String!,$fid:Int!){reportData{report(code:$c){' +
+              'castTable:table(dataType:Casts,hostilityType:Enemies,startTime:0,endTime:9999999,fightIDs:[$fid])' +
+              'dmgTable:table(dataType:DamageTaken,hostilityType:Friendlies,startTime:0,endTime:9999999,fightIDs:[$fid])' +
+              '}}}';
+            var discD = await wclQuery(discQ, {c:dc0, fid:df0});
+            var drep = discD&&discD.reportData&&discD.reportData.report;
+            var rawCast = drep&&drep.castTable; var rawDmg = drep&&drep.dmgTable;
+            var castEntries = ((typeof rawCast==='string'?JSON.parse(rawCast):rawCast)||{}).entries||[];
+            var dmgEntries  = ((typeof rawDmg==='string' ?JSON.parse(rawDmg) :rawDmg )||{}).entries||[];
+            // Tag each entry with its source dataType
+            castEntries.forEach(function(e){e._dt='Casts';});
+            dmgEntries.forEach(function(e){e._dt='DamageTaken';});
+            var allDiscEntries = castEntries.concat(dmgEntries);
+            var mechSpells;
+            if (cfgAbilityNames.length) {
+              mechSpells = cfgAbilityNames.map(function(cfgName) {
+                var lower = cfgName.toLowerCase();
+                // Prefer cast table match; fall back to damage table
+                var match = castEntries.find(function(e){ return e.id&&e.name&&e.name.toLowerCase().includes(lower); })
+                         || dmgEntries.find(function(e){ return e.id&&e.name&&e.name.toLowerCase().includes(lower); });
+                if (!match) { discNotFound.push(cfgName); return null; }
+                return { id:match.id, name:cfgName, wclName:match.name, total:match.total, dataType:match._dt };
+              }).filter(Boolean);
+              // Dedupe by id
+              var seenIds={};
+              mechSpells = mechSpells.filter(function(e){ if(seenIds[e.id])return false; seenIds[e.id]=true; return true; });
+              // Build suggestions list so user can see what names ARE in the log when theirs don't match
+              if (discNotFound.length && allDiscEntries.length) {
+                var matchedIds = {};
+                mechSpells.forEach(function(m){ matchedIds[m.id]=true; });
+                discTableSuggestions = allDiscEntries
+                  .filter(function(e){ return e.id && e.name && !matchedIds[e.id]; })
+                  .sort(function(a,b){ return b.total-a.total; })
+                  .slice(0, 20)
+                  .map(function(e){ return { name:e.name, id:e.id, dataType:e._dt, total:e.total }; });
+              }
+            } else {
+              mechSpells = castEntries
+                .filter(function(e){ return e.id&&e.name&&e.total>=2&&e.total<=25; })
+                .sort(function(a,b){ return b.total-a.total; })
+                .slice(0,8)
+                .map(function(e){ return {id:e.id,name:e.name,wclName:e.name,total:e.total,dataType:'Casts'}; });
+            }
+            if (mechSpells.length) {
+              bossSpells = mechSpells.map(function(e,i){
+                var short = e.name.length>12 ? e.name.slice(0,11)+'…' : e.name;
+                return {ids:[e.id], name:short, fullName:e.name, wclName:e.wclName, color:BOSS_DISC_COLORS[i%BOSS_DISC_COLORS.length], dataType:e.dataType};
+              });
+              bossSpellIds=[];
+              bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
+              WCL_DISCOVERED_BOSS_SPELLS[bossName] = bossSpells;
+            }
+          }
+        } catch(discErr){ console.warn('Boss ability discovery failed:', discErr); }
+      }
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
@@ -5892,9 +6178,16 @@ function showWclModal() {
             });
             try {
               if (dmgSpells.length) {
-                var bq1 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:0,endTime:9999999,hostilityType:Friendlies){data}}}}';
-                var bd1 = await wclQuery(bq1, {c:code, fid:fid});
-                var bevts1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events&&bd1.reportData.report.events.data)||[];
+                var dmgIds = dmgSpells.reduce(function(acc,sg){ return acc.concat(sg.spell.ids||[]); }, []);
+                var dmgFilter = dmgIds.map(function(id){ return 'ability.id='+id; }).join(' or ');
+                var bevts1 = [], nxt1 = 0, pg1 = 0;
+                do {
+                  var bq1 = 'query($c:String!,$fid:Int!,$f:String!,$s:Float!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:$s,endTime:9999999,hostilityType:Friendlies,filterExpression:$f){data nextPageTimestamp}}}}';
+                  var bd1 = await wclQuery(bq1, {c:code, fid:fid, f:dmgFilter, s:nxt1});
+                  var evR1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events)||{};
+                  bevts1 = bevts1.concat(evR1.data||[]);
+                  nxt1 = evR1.nextPageTimestamp||0;
+                } while (nxt1 && ++pg1 < 5);
                 processBossEvts(bevts1, dmgSpells, bossEvtTimes, fStart);
               }
               if (castSpells.length) {
@@ -5995,16 +6288,29 @@ function showWclModal() {
         }
         curBoss.duration = newDurSec;
         renderTimeline();
-        saveBossTimingOverride(curBoss);
       }
       var bossName2 = bossEl.options[bossEl.selectedIndex].text;
       var spellMap = wclMode === 'personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
       // Cache results for this encounter
       try {
         var cacheKey = 'wcl_soo_cache_'+encId+'_'+wclMode;
-        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,hpsData:logsHpsData,ts:Date.now()}));
+        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,hpsData:logsHpsData,discoveredSpells:bossSpells,ts:Date.now()}));
       } catch(e) {}
-      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode, logsHpsData);
+      // Build discovery info for display feedback
+      var discoveryInfo = null;
+      if (cfgAbilityNames.length || bossSpells.length) {
+        discoveryInfo = {
+          cfgNames: cfgAbilityNames,
+          notFound: discNotFound,
+          suggestions: discTableSuggestions,
+          found: bossSpells.map(function(s, gi) {
+            var logsWithData = logsData.filter(function(l){ return l.bossEvts&&l.bossEvts[gi]&&l.bossEvts[gi].length; }).length;
+            var avgCount = logsData.reduce(function(sum,l){ return sum+((l.bossEvts&&l.bossEvts[gi])||[]).length; },0) / Math.max(processed,1);
+            return { name:s.fullName||s.name, wclName:s.wclName, id:s.ids[0], dataType:s.dataType, logsWithData:logsWithData, avgCount:avgCount.toFixed(1) };
+          })
+        };
+      }
+      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode, logsHpsData, discoveryInfo);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent = wclMode==='personal' ? 'Fetch Personal Defensives' : 'Fetch Raid CDs'; btn.disabled=false;
   });
