@@ -1303,6 +1303,7 @@ const CD_POOL = [
 
 // Active set — IDs of CDs currently shown on timeline and palette
 let activeSetIds = new Set(CD_POOL.filter(c => c.core).map(c => c.id));
+let bossDisabledIds = {}; // bossId -> Set of cdIds disabled for that boss only
 let fadeModeByBoss = {}; // bossId -> bool: fade placed CDs in palette
 
 // ---- Roster Configs ----
@@ -1376,7 +1377,8 @@ let baseWhoLabels = {}; // cdId -> original who
 let paletteOrder = null; // null = use CD_POOL order
 
 function getCDS() {
-  const active = CD_POOL.filter(c => activeSetIds.has(c.id));
+  const disabled = bossDisabledIds[currentBossId] || new Set();
+  const active = CD_POOL.filter(c => activeSetIds.has(c.id) && !disabled.has(c.id));
   if (!paletteOrder) return active;
   // Sort by paletteOrder, appending any new ones at the end
   return [...active].sort((a, b) => {
@@ -3414,6 +3416,10 @@ function showExportModal() {
 
 // ---- Manage CDs modal ----
 function showManageModal() {
+  const bossId = currentBossId;
+  const boss = BOSSES.find(b => b.id === bossId);
+  if (!bossDisabledIds[bossId]) bossDisabledIds[bossId] = new Set();
+
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
 
@@ -3424,8 +3430,12 @@ function showManageModal() {
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
   ];
 
+  function isBossActive(cd) {
+    return activeSetIds.has(cd.id) && !bossDisabledIds[bossId].has(cd.id);
+  }
+
   function makeCdItem(cd) {
-    const isActive = activeSetIds.has(cd.id);
+    const isActive = isBossActive(cd);
     return `<div class="manage-item ${isActive ? 'active' : ''}" data-cdid="${cd.id}">
       <div class="manage-item-dot" style="background:${cd.color}"></div>
       <div style="flex:1;">
@@ -3436,8 +3446,8 @@ function showManageModal() {
     </div>`;
   }
 
-  const activeCDs = orderedCDs.filter(c => activeSetIds.has(c.id));
-  const inactiveCDs = orderedCDs.filter(c => !activeSetIds.has(c.id));
+  const activeCDs   = orderedCDs.filter(c => activeSetIds.has(c.id) && isBossActive(c));
+  const inactiveCDs = orderedCDs.filter(c => activeSetIds.has(c.id) && !isBossActive(c));
 
   const itemsHtml = `
     <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #241e14;margin-bottom:4px;">● Active</div>
@@ -3449,7 +3459,7 @@ function showManageModal() {
   overlay.innerHTML = `
     <div class="modal-box" style="width:520px;">
       <h3>Manage Raid Cooldowns</h3>
-      <div class="modal-sub">Toggle which cooldowns appear on the timeline and palette. Use this when your roster changes or you have fills.</div>
+      <div class="modal-sub">Showing CDs for <strong>${boss?.name ?? bossId}</strong>. Changes apply to this boss only — all CDs are on by default for every boss.</div>
       <div class="manage-grid" id="manageGrid">${itemsHtml}</div>
       <div class="modal-footer">
         <button id="manageDone" class="copy-btn">Done</button>
@@ -3459,21 +3469,21 @@ function showManageModal() {
 
   document.body.appendChild(overlay);
 
-  // Snapshot current state for cancel
-  const snapshot = new Set(activeSetIds);
+  // Snapshot per-boss disabled set for cancel
+  const snapshot = new Set(bossDisabledIds[bossId]);
 
   overlay.querySelector('#manageGrid').addEventListener('click', e => {
     const item = e.target.closest('.manage-item');
     if (!item) return;
     const cdId = item.dataset.cdid;
-    if (activeSetIds.has(cdId)) {
-      activeSetIds.delete(cdId);
-      item.classList.remove('active');
-      item.querySelector('.manage-check').textContent = '';
-    } else {
-      activeSetIds.add(cdId);
+    if (bossDisabledIds[bossId].has(cdId)) {
+      bossDisabledIds[bossId].delete(cdId);
       item.classList.add('active');
       item.querySelector('.manage-check').textContent = '✓';
+    } else {
+      bossDisabledIds[bossId].add(cdId);
+      item.classList.remove('active');
+      item.querySelector('.manage-check').textContent = '';
     }
   });
 
@@ -3484,13 +3494,13 @@ function showManageModal() {
   });
 
   overlay.querySelector('#manageCancel').addEventListener('click', () => {
-    activeSetIds = snapshot;
+    bossDisabledIds[bossId] = snapshot;
     overlay.remove();
   });
 
   overlay.addEventListener('mousedown', e => {
     if (e.target === overlay) {
-      activeSetIds = snapshot;
+      bossDisabledIds[bossId] = snapshot;
       overlay.remove();
     }
   });
@@ -4702,6 +4712,7 @@ function fbGetData() {
     paletteOrder,
     fadeModeByBoss,
     activeRosterFills,
+    bossDisabledIds: Object.fromEntries(Object.entries(bossDisabledIds).map(([k, v]) => [k, [...v]])),
   };
 }
 
@@ -4742,6 +4753,10 @@ function fbApplyData(data) {
   if (data.paletteOrder) paletteOrder = data.paletteOrder;
   if (data.fadeModeByBoss) Object.assign(fadeModeByBoss, data.fadeModeByBoss);
   if (data.activeRosterFills) activeRosterFills = data.activeRosterFills;
+  if (data.bossDisabledIds) {
+    bossDisabledIds = {};
+    Object.entries(data.bossDisabledIds).forEach(([k, v]) => { bossDisabledIds[k] = new Set(v); });
+  }
   return true;
 }
 
