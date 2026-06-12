@@ -90,6 +90,7 @@
   </select>
   <button id="fetchBtn" onclick="doFetch()">Fetch</button>
   <button id="allBossesBtn" onclick="doFetchAllBosses()" style="border-color:#555;">Scan All Bosses</button>
+  <button id="allSplitBtn" onclick="doFetchAllSplit()" style="border-color:#555;">Scan All (Split)</button>
   <button onclick="clearCache()" style="border-color:#444;color:#666;">Clear Cache</button>
 </div>
 
@@ -727,6 +728,113 @@ async function doFetchAllBosses() {
   prog.textContent = 'Done!';
   renderAllBosses(specName+' '+specClass, allData, specClass+'|'+specName);
   btn.disabled = false;
+}
+
+// ── all-bosses spec split scan ────────────────────────────────────────────────
+async function doFetchAllSplit() {
+  var specVal = document.getElementById('specSelect').value;
+  if (!specVal) return;
+  var [specClass, specName] = specVal.split('|');
+  if (specName !== '*') { alert('Pick a spec split option (e.g. "Warrior — spec split").'); return; }
+
+  var btn = document.getElementById('allSplitBtn');
+  btn.disabled = true;
+  document.getElementById('all-bosses-results').style.display = 'none';
+
+  var bossSelect = document.getElementById('bossSelect');
+  var bosses = Array.from(bossSelect.options).filter(o => o.value).map(o => ({id:parseInt(o.value), name:o.text}));
+  var prog = document.getElementById('progress');
+  var bossSpecData = {};
+
+  for (var boss of bosses) {
+    var hit = getCached(boss.id, specVal);
+    if (hit) {
+      prog.textContent = boss.name + ' — cached (' + timeAgo(hit.ts) + ')';
+      bossSpecData[boss.name] = buildSpecDist(hit.players);
+      continue;
+    }
+    prog.textContent = 'Scanning ' + boss.name + '...';
+    try {
+      var fights = await getFightRankings(boss.id, 100);
+      var done = 0;
+      var results = await runPool(fights, async fight => {
+        var r = await processFight(fight, specClass, '*');
+        done++;
+        prog.textContent = boss.name + ' — ' + done + '/' + fights.length;
+        return r;
+      }, CONCURRENCY);
+      var allPlayers = [];
+      for (var r of results) if (r?.players) allPlayers.push(...r.players);
+      setCached(boss.id, specVal, allPlayers);
+      bossSpecData[boss.name] = buildSpecDist(allPlayers);
+    } catch(e) {
+      bossSpecData[boss.name] = null;
+    }
+  }
+
+  prog.textContent = 'Done!';
+  renderAllBossesSplit(specClass, bossSpecData);
+  btn.disabled = false;
+}
+
+function buildSpecDist(players) {
+  if (!players || !players.length) return null;
+  var counter = {};
+  for (var p of players) counter[p.spec] = (counter[p.spec]||0)+1;
+  return { total: players.length, specs: counter };
+}
+
+function renderAllBossesSplit(specClass, bossData) {
+  var allSpecs = new Set();
+  Object.values(bossData).forEach(d => { if (d) Object.keys(d.specs).forEach(s => allSpecs.add(s)); });
+  var specs = [...allSpecs].sort();
+
+  var html = '<div id="all-bosses-card" style="background:#0d0d0d;border:1px solid #2a2a2a;padding:24px;margin-top:20px;">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">';
+  html += '<div>';
+  html += '<div style="color:#c89830;font-size:17px;font-weight:bold;letter-spacing:1px;">'+specClass+' — Spec Split by Boss</div>';
+  html += '<div style="color:#555;font-size:11px;margin-top:3px;">SoO Heroic 10 &nbsp;·&nbsp; top 100 logs per boss &nbsp;·&nbsp; '+new Date().toLocaleDateString()+'</div>';
+  html += '</div>';
+  html += '<button class="no-print" onclick="window.print()" style="background:#1a1a1a;color:#c89830;border:1px solid #c89830;padding:6px 14px;font-family:monospace;font-size:12px;cursor:pointer;">Export / Print</button>';
+  html += '</div>';
+
+  html += '<table style="border-collapse:collapse;width:100%;font-size:12px;">';
+  html += '<thead><tr style="border-bottom:2px solid #333;">';
+  html += '<th style="color:#777;text-align:left;padding:6px 12px 8px 0;width:160px;">Boss</th>';
+  html += '<th style="color:#777;text-align:right;padding:6px 8px 8px;">N</th>';
+  for (var spec of specs) {
+    html += '<th style="color:#777;text-align:center;padding:6px 8px 8px;white-space:nowrap;">'+spec+'</th>';
+  }
+  html += '</tr></thead><tbody>';
+
+  var keys = Object.keys(bossData);
+  for (var i = 0; i < keys.length; i++) {
+    var bossName = keys[i];
+    var d = bossData[bossName];
+    var bg = i%2===0 ? '' : 'background:#111111;';
+    html += '<tr style="'+bg+'border-bottom:1px solid #1c1c1c;">';
+    html += '<td style="color:#ddd;padding:10px 12px 10px 0;font-weight:bold;white-space:nowrap;">'+bossName+'</td>';
+    if (!d) {
+      html += '<td colspan="'+(specs.length+1)+'" style="color:#444;padding:10px 12px;font-style:italic;">no data</td>';
+    } else {
+      html += '<td style="color:#555;text-align:right;padding:10px 8px;">'+d.total+'</td>';
+      for (var spec of specs) {
+        var count = d.specs[spec] || 0;
+        var pct = d.total > 0 ? (count/d.total*100) : 0;
+        var col = pct>=50?'#c89830':pct>=25?'#bbb':'#555';
+        html += '<td style="text-align:center;padding:10px 8px;color:'+col+';">';
+        if (count > 0) html += pct.toFixed(0)+'%<br><span style="color:#3a3a3a;font-size:10px;">'+count+'</span>';
+        else html += '<span style="color:#2a2a2a;">—</span>';
+        html += '</td>';
+      }
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table></div>';
+
+  var container = document.getElementById('all-bosses-results');
+  container.innerHTML = html;
+  container.style.display = 'block';
 }
 
 function summarizeBoss(players, specKey) {
