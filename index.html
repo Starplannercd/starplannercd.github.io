@@ -4643,6 +4643,36 @@ const PLANS_KEY = 'tot_rcd_plans';
 const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
 const FULL_RAID_ID = '__full_raid__';
 const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
+const BOSS_TIMING_KEY = 'tot_rcd_boss_timings';
+
+function saveBossTimingOverride(boss) {
+  try {
+    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
+    var abTimes = [];
+    (boss.sections || []).forEach(function(sec, si) {
+      (sec.abilities || []).forEach(function(ab, ai) {
+        abTimes.push([si, ai, ab.time]);
+      });
+    });
+    all[boss.id] = { duration: boss.duration, abTimes: abTimes };
+    localStorage.setItem(BOSS_TIMING_KEY, JSON.stringify(all));
+  } catch(e) {}
+}
+
+function applyBossTimingOverrides() {
+  try {
+    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
+    BOSSES.forEach(function(boss) {
+      var ov = all[boss.id];
+      if (!ov) return;
+      if (ov.duration) boss.duration = ov.duration;
+      (ov.abTimes || []).forEach(function(entry) {
+        var sec = boss.sections[entry[0]];
+        if (sec && sec.abilities[entry[1]]) sec.abilities[entry[1]].time = entry[2];
+      });
+    });
+  } catch(e) {}
+}
 
 // ── Firebase config ──
 const firebaseConfig = {
@@ -4968,6 +4998,7 @@ buildPalette();
 buildBossSelect();
 updatePlansBtn();
 const _didRestore = autoLoad();
+applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
 renderBottomPanel();
@@ -6288,6 +6319,7 @@ function showWclModal() {
         }
         curBoss.duration = newDurSec;
         renderTimeline();
+        saveBossTimingOverride(curBoss);
       }
       var bossName2 = bossEl.options[bossEl.selectedIndex].text;
       var spellMap = wclMode === 'personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
