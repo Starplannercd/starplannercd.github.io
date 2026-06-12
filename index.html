@@ -5203,6 +5203,7 @@ function doWclImport() {
 
   currentBossId = boss.id;
   renderTimeline();
+  saveBossTimingOverride(boss);
   var msg = 'Updated ' + totalUpdated + ' ability timings on ' + _wclImport.bossName + '.';
   if (missed.length) msg += '\nNo timeline entries matched: ' + missed.join(', ');
   alert(msg);
