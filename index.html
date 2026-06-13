@@ -4040,8 +4040,22 @@ function buildSsRow(ab, iconsHtml) {
 
 
 function buildSsBossHeader(boss, portraitUrl) {
-  const p = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" ` : null;
   const name = boss.name;
+
+  if (boss.id === 'immerseus') {
+    return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%);border-bottom:1px solid #1a3a5a;">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;position:relative;z-index:1;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#2878d855;margin-bottom:5px;">Cooldowns</div>
+        <div style="font-size:19px;font-weight:800;color:#b8d8f8;letter-spacing:0.02em;text-shadow:0 0 18px #2878d855;">Immerseus</div>
+      </div>
+      <img src="immer.png" onerror="this.style.display='none'"
+        style="position:absolute;right:-8px;bottom:-28px;height:148px;pointer-events:none;
+               filter:drop-shadow(0 0 10px #1a60c8bb) drop-shadow(0 0 28px #0a3a8866);
+               opacity:0.92;" />
+    </div>`;
+  }
+
+  const p = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" ` : null;
   return `<div style="display:flex;overflow:hidden;height:90px;background:#100e0a;border-bottom:1px solid #3a2e20;">
     ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;" />` : ''}
     <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;background:#0e0c0a;">
