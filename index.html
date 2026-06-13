@@ -3588,7 +3588,10 @@ function loadFromFile(file) {
       if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
       if (data.bossReady) Object.assign(bossReady, data.bossReady);
       if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
-      if (data.activeSetIds) activeSetIds = new Set(data.activeSetIds);
+      if (data.activeSetIds) {
+        const coreIds = CD_POOL.filter(c => c.core).map(c => c.id);
+        activeSetIds = new Set([...data.activeSetIds, ...coreIds]);
+      }
       if (data.paletteOrder) paletteOrder = data.paletteOrder;
       if (data.fadeModeByBoss) Object.assign(fadeModeByBoss, data.fadeModeByBoss);
       if (data.activeRosterFills) { activeRosterFills = data.activeRosterFills; refreshActiveSetFromFills(); }
@@ -4743,7 +4746,10 @@ function fbApplyData(data) {
   if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
-  if (data.activeSetIds) activeSetIds = new Set(data.activeSetIds);
+  if (data.activeSetIds) {
+    const coreIds = CD_POOL.filter(c => c.core).map(c => c.id);
+    activeSetIds = new Set([...data.activeSetIds, ...coreIds]);
+  }
   if (data.cdWho) CD_POOL.forEach(c => { if (data.cdWho[c.id]) c.who = data.cdWho[c.id]; });
   if (data.paletteOrder) paletteOrder = data.paletteOrder;
   if (data.fadeModeByBoss) Object.assign(fadeModeByBoss, data.fadeModeByBoss);
