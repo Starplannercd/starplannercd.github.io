@@ -2392,7 +2392,7 @@ function buildPalette() {
       <div class="cd-dot" style="background:${cd.color}"></div>
       <div style="flex:1;">
         <div class="cd-name">${cd.name}</div>
-        ${cd.cd > 0 ? `<div class="cd-cooldown">${cd.cd/60}M CD</div>` : (cd.id === 'personals' ? `<div class="cd-cooldown">No CD</div>` : '')}
+        ${cd.cd > 0 ? `<div class="cd-cooldown">${cd.cd/60}M CD</div>` : ''}
       </div>
     `;
 
