@@ -1285,7 +1285,7 @@ const CD_POOL = [
   { id:'ag',    name:'Ancestral Guidance',   short:'AG',        cd:120, dur:10, color:'#2878d8', textColor:'#88c8ff', who:'ELE1',      core:true  },
   { id:'htt',   name:'Healing Tide Totem',   short:'HTT',       cd:180, dur:10, color:'#2878d8', textColor:'#88c8ff', who:'ELE1',    core:true  },
   { id:'amz',   name:'Anti-Magic Zone',      short:'AMZ',       cd:180, dur:10, color:'#c41e3a', textColor:'#ff6680', who:'UHDK1',      core:false },
-  { id:'smoke',     name:'Smoke Bomb', short:'SB',  cd:180, dur:15, color:'#c8a800', textColor:'#ffe040', who:'ROGUE1', core:true  },
+  { id:'smoke',     name:'Smoke Bomb', short:'SB',  cd:180, dur:15, color:'#c8a800', textColor:'#ffe040', who:'ROGUE1', core:false },
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
   { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',  core:false },
@@ -1322,7 +1322,6 @@ const DEFAULT_ROSTER = [
   { name:'Beantotem',   spec:'Elemental',     who:'ELE1',       cds:['htt','ag'],  color:'#0070de', role:'ranged' },
   // Melee DPS
   { name:'Skullhammer', spec:'Arms Warrior',  who:'DPSWARR1',   cds:['dem','rc'],  color:'#c79c6e', role:'melee'  },
-  { name:'Durbanpoison',     spec:'Assassination', who:'ROGUE1',     cds:['smoke'],     color:'#fff569', role:'melee'  },
   { name:'Heratlittv',  spec:'Retribution',   who:'RETPALA1',   cds:[],            color:'#f58cba', role:'melee'  },
 ];
 
@@ -7302,8 +7301,8 @@ async function initViewMode(viewId) {
         el.style.position = 'relative';
         el.style.zIndex = '2';
       } else {
-        el.style.opacity = '0.1';
-        el.style.filter = 'grayscale(1) brightness(0.3)';
+        el.style.opacity = '0.3';
+        el.style.filter = 'grayscale(0.6) brightness(0.55)';
         el.style.transform = '';
         el.style.position = '';
         el.style.zIndex = '';
