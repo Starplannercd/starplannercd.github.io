@@ -5043,6 +5043,11 @@ buildPalette();
 buildBossSelect();
 updatePlansBtn();
 const _didRestore = autoLoad();
+// v2: clear timing overrides that were written by the old auto-scale-on-fetch (now removed)
+if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
+  localStorage.removeItem(BOSS_TIMING_KEY);
+  localStorage.setItem('tot_rcd_timing_ver', '2');
+}
 applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
@@ -6413,26 +6418,6 @@ function showWclModal() {
       }
 
       var avgDuration = fightDurations.length ? Math.round(wclMedian(fightDurations)) : 300000;
-      // Update boss duration and scale all ability times proportionally to the new avg
-      var curBoss = getBoss();
-      if (curBoss && avgDuration > 0) {
-        var newDurSec = Math.round(avgDuration / 1000);
-        var oldDurSec = curBoss.duration;
-        var scale = oldDurSec > 0 ? newDurSec / oldDurSec : 1;
-        // Scale each ability time proportionally (skip encounter start at time 0)
-        if (Math.abs(scale - 1) > 0.05) { // only rescale if >5% difference
-          curBoss.sections.forEach(function(sec) {
-            (sec.abilities || []).forEach(function(ab) {
-              if (!ab.encounterStart && ab.time > 0) {
-                ab.time = Math.round(ab.time * scale);
-              }
-            });
-          });
-        }
-        curBoss.duration = newDurSec;
-        renderTimeline();
-        saveBossTimingOverride(curBoss);
-      }
       var bossName2 = bossEl.options[bossEl.selectedIndex].text;
       var spellMap = wclMode === 'personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
       // Cache results for this encounter
