@@ -3092,7 +3092,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
-      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(8, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(1, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
       closeOffsetPopup();
       return;
     }
@@ -3135,7 +3135,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     hpInputEl.addEventListener('mouseenter', () => hpInputEl.focus());
     hpInputEl.addEventListener('wheel', e => {
       e.preventDefault();
-      hpInputEl.value = Math.max(8, Math.min(40, (parseInt(hpInputEl.value) || 40) - Math.sign(e.deltaY)));
+      hpInputEl.value = Math.max(1, Math.min(40, (parseInt(hpInputEl.value) || 40) - Math.sign(e.deltaY)));
     }, { passive: false });
     hpInputEl.addEventListener('keydown', ev => {
       if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
