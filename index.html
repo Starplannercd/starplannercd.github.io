@@ -7274,26 +7274,26 @@ async function initViewMode(viewId) {
 
   const viewEl = document.createElement('div');
   viewEl.id = 'viewPage';
-  viewEl.style.cssText = 'min-height:100vh;background:#0a0804;font-family:var(--app-font, Inter, system-ui, sans-serif);';
+  viewEl.style.cssText = 'min-height:100vh;background:#080604;font-family:var(--app-font, Inter, system-ui, sans-serif);';
 
-  // Header + roster bar + content area
+  // Single combined top bar + content
   viewEl.innerHTML = `
-    <div style="background:linear-gradient(180deg,#1e1a16 0%,#0c0a08 100%);border-top:3px solid #c83a20;border-bottom:3px solid #c83a20;padding:8px 28px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 12px rgba(200,58,32,0.25);">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e07820" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
-        <div style="font-family:Cinzel,Georgia,serif;font-size:11px;font-weight:700;color:#e07820;letter-spacing:0.38em;text-transform:uppercase;text-shadow:0 0 8px #e0782066;line-height:1;">Professional</div>
+    <div style="background:linear-gradient(180deg,#181410 0%,#0c0a08 100%);border-bottom:2px solid #c83a2044;padding:0 32px;display:flex;align-items:center;gap:20px;height:48px;box-shadow:0 2px 16px rgba(0,0,0,0.5);">
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+        <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#c83a20;letter-spacing:0.3em;text-transform:uppercase;opacity:0.8;">Raid CDs</span>
       </div>
-      <div style="margin-left:auto;font-size:10px;color:#5a4838;letter-spacing:0.03em;text-align:right;line-height:1.5;">Icon numbers:<br><span style="color:#ff8888;">− before cast</span> · <span style="color:#88ff88;">+ after cast</span></div>
+      <div style="width:1px;height:20px;background:#2a2218;flex-shrink:0;"></div>
+      <div id="viewRosterBar" style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;flex:1;overflow:hidden;"></div>
     </div>
-    <div id="viewRosterBar" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 28px;border-bottom:1px solid #1e1a12;background:#0c0a08;align-items:center;"></div>
-    <div id="viewContent" style="padding:20px 28px;"></div>`;
+    <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
 
   document.body.appendChild(viewEl);
 
   // ── Roster bar: "I AM" player selector ──
   const rosterBar = viewEl.querySelector('#viewRosterBar');
   const label = document.createElement('span');
-  label.style.cssText = 'font-size:10px;color:#3a2e20;text-transform:uppercase;letter-spacing:0.1em;margin-right:4px;flex-shrink:0;';
+  label.style.cssText = 'font-size:9px;color:#3a2e20;text-transform:uppercase;letter-spacing:0.12em;flex-shrink:0;';
   label.textContent = 'I am:';
   rosterBar.appendChild(label);
 
