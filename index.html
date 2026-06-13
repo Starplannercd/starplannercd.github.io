@@ -3680,7 +3680,9 @@ function getSsInfoLabel(cd, p, ab) {
 
 function buildSsIconEl(cd, p, ab) {
   const iconUrl = getCdIconUrl(cd.id);
-  const info = getSsInfoLabel(cd, p, ab);
+  let info = getSsInfoLabel(cd, p, ab);
+  // In share view mode, always label icons so identical-art abilities (e.g. two Devos) are distinguishable
+  if (!info && ssIconInfoStyle === 'pill-corner-tr') info = cd.short;
   const c = cd.color;
   const fallbackDiv = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
   const imgHtml = iconUrl
