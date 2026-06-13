@@ -5764,10 +5764,53 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         });
       });
     }
+
+    // ── Timeline ability markers (from RCD planner timeline, no log data needed) ──
+    var WCL_HEATMAP_EXCLUDE = { 'The Fallen Protectors': /desperate\s+measures/i };
+    var tlBoss = BOSSES.find(function(b){ return b.name === bossName; });
+    var tlMarkers = []; // [{x, color, label, baseName}] used for the timeline row
+    if (tlBoss) {
+      var tlExclude = WCL_HEATMAP_EXCLUDE[bossName];
+      tlBoss.sections.forEach(function(sec) {
+        (sec.abilities || []).forEach(function(ab) {
+          if (ab.encounterStart) return;
+          if (/health\s*%/i.test(ab.name)) return;
+          if (tlExclude && tlExclude.test(ab.name)) return;
+          var tSec = ab.time || 0;
+          var xPx = Math.round(tSec * sharedPps);
+          var baseName = ab.name.replace(/\s+\d+$/, '');
+          var marker = { x: xPx, color: ab.color || '#c83a20', label: ab.name, baseName: baseName };
+          tlMarkers.push(marker);
+          avgBossXs.push(marker);
+        });
+      });
+    }
     currentAvgBossXs = avgBossXs; // expose to buildHeatmapRow via closure scope
+
+    function buildTimelineRow() {
+      if (!tlMarkers.length) return '';
+      var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
+      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#8888bb;text-align:right;padding-right:7px;white-space:nowrap;">Timeline</div>';
+      html += '<div style="position:relative;width:'+W+'px;height:28px;background:#07080d;border-radius:2px;overflow:hidden;">';
+      // Group by baseName to track index per group
+      var groupCount = {};
+      tlMarkers.forEach(function(m) {
+        var idx = (groupCount[m.baseName] = (groupCount[m.baseName] || 0) + 1);
+        var tSec = Math.round(m.x / sharedPps);
+        var timeStr = Math.floor(tSec/60)+':'+(tSec%60<10?'0':'')+tSec%60;
+        html += '<div title="'+m.label+' ('+timeStr+')" style="position:absolute;left:'+m.x+'px;top:0;bottom:0;width:2px;background:'+m.color+';opacity:0.85;transform:translateX(-50%);"></div>';
+        // Only label first instance of each group to avoid clutter
+        if (idx === 1) {
+          html += '<div style="position:absolute;left:'+m.x+'px;top:3px;font-size:8px;font-weight:700;color:'+m.color+';transform:translateX(-50%);white-space:nowrap;pointer-events:none;text-shadow:0 0 4px #000;">'+m.baseName+'</div>';
+        }
+      });
+      html += '</div></div>';
+      return html;
+    }
 
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
+    bodyHtml += buildTimelineRow();
     bodyHtml += buildAvgBossRow();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
     bodyHtml += '</div>';
@@ -5906,6 +5949,11 @@ function showWclModal() {
       + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
       + '<select id="wclBoss" style="flex:1;background:#100e0c;border:1px solid #3a2e20;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
       + '<span style="font-size:10px;color:#7a6050;font-weight:600;white-space:nowrap;">Old SoO · ranks 125–165 · execution</span>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:10px;">'
+      + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Avg Duration</span>'
+      + '<input id="wclAvgDur" type="text" placeholder="e.g. 7:45  —  leave blank to include all" style="flex:1;background:#100e0c;border:1px solid #3a2e20;color:#e8ecf8;padding:6px 10px;border-radius:6px;font-size:12px;font-family:inherit;" />'
+      + '<span style="font-size:9px;color:#5a4838;white-space:nowrap;">± 30s filter</span>'
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
@@ -6177,6 +6225,20 @@ function showWclModal() {
           if (!fight) continue;
           var fStart = fight.startTime;
           var fDur = fight.endTime - fight.startTime;
+
+          // ── Avg duration filter ──
+          var _durEl = document.getElementById('wclAvgDur');
+          var _durVal = _durEl ? _durEl.value.trim() : '';
+          if (_durVal) {
+            var _dp = _durVal.split(':');
+            if (_dp.length === 2) {
+              var _targetMs = (parseInt(_dp[0]||0)*60 + parseInt(_dp[1]||0))*1000;
+              if (_targetMs > 0 && (fDur < _targetMs - 30000 || fDur > _targetMs + 30000)) {
+                processed++; continue;
+              }
+            }
+          }
+
           fightDurations.push(fDur);
 
           // Infer roles from unique sourceIDs casting known role-signature spells
