@@ -5218,45 +5218,6 @@ function getBossSpellsForName(bossName) {
   return WCL_DISCOVERED_BOSS_SPELLS[bossName] || [];
 }
 
-var _wclImport = null;
-function doWclImport() {
-  if (!_wclImport || !_wclImport.groups || !_wclImport.groups.length) { alert('No boss ability data to import.'); return; }
-  var boss = BOSSES.find(function(b){ return b.name === _wclImport.bossName; });
-  if (!boss) { alert('Boss "'+_wclImport.bossName+'" not found in planner.'); return; }
-  if (!boss.sections || !boss.sections.length) { alert('No timeline set up for '+_wclImport.bossName+'. Add abilities to the timeline first.'); return; }
-
-  // Collect every ability across all sections (flat, with reference to the original object)
-  var allAbilities = [];
-  boss.sections.forEach(function(sec) {
-    (sec.abilities || []).forEach(function(ab) { allAbilities.push(ab); });
-  });
-
-  var totalUpdated = 0;
-  var missed = [];
-
-  _wclImport.groups.forEach(function(group) {
-    var lower = group.spellName.toLowerCase();
-    // Find timeline abilities whose name contains this spell name (across all sections/phases)
-    var matches = allAbilities.filter(function(ab) {
-      if (ab.encounterStart || ab.hpAssign) return false;
-      return ab.name && ab.name.toLowerCase().includes(lower);
-    });
-    // Sort by current time to preserve the user's intended ordering
-    matches.sort(function(a, b) { return a.time - b.time; });
-    if (!matches.length) { missed.push(group.spellName); return; }
-    // Patch times in order — only as many as we have averaged data for
-    matches.forEach(function(ab, i) {
-      if (i < group.times.length) { ab.time = group.times[i]; totalUpdated++; }
-    });
-  });
-
-  currentBossId = boss.id;
-  renderTimeline();
-  saveBossTimingOverride(boss);
-  var msg = 'Updated ' + totalUpdated + ' ability timings on ' + _wclImport.bossName + '.';
-  if (missed.length) msg += '\nNo timeline entries matched: ' + missed.join(', ');
-  alert(msg);
-}
 
 // Per-boss ability config: { difficulty: 3|4, abilityNames: ['Iron Star','Whirling Corruption',...] }
 function getBossCfg(encId) {
@@ -5412,35 +5373,23 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         (sec.abilities||[]).forEach(function(ab){bossAbilities.push(ab);});
       });
     }
-    var hasBossEvts = bossSpells && bossSpells.length && log.bossEvts && Object.keys(log.bossEvts).length > 0;
-    if (!hasBossEvts && !bossAbilities.length) return '';
+    if (!bossAbilities.length) return '';
 
     var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
     html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#3a4060;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.07em;">Boss</div>';
     html += '<div style="position:relative;width:'+W+'px;height:20px;background:#05060a;border-radius:2px;overflow:hidden;">';
 
-    if (hasBossEvts) {
-      bossSpells.forEach(function(spell, gi) {
-        var times = log.bossEvts[gi] || [];
-        times.forEach(function(t) {
-          var x = Math.round((t/1000)*sharedPps);
-          html += '<div title="'+spell.name+' '+fmtT(t)+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+spell.color+';transform:translateX(-50%);"></div>';
-          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+spell.color+';white-space:nowrap;text-shadow:0 1px 2px #000;">'+spell.name+' '+fmtT(t)+'</span>';
-        });
-      });
-    } else {
-      var seen = {};
-      bossAbilities.forEach(function(ab) {
-        if (ab.time*1000 > log.duration+15000) return;
-        var x = Math.min(Math.round(ab.time*sharedPps), W-2);
-        var shortName = ab.name.replace(/\s+\d+$/,'');
-        html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
-        if (!seen[shortName] || x-seen[shortName] > 50) {
-          html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
-          seen[shortName] = x;
-        }
-      });
-    }
+    var seen = {};
+    bossAbilities.forEach(function(ab) {
+      if (ab.time*1000 > log.duration+15000) return;
+      var x = Math.min(Math.round(ab.time*sharedPps), W-2);
+      var shortName = ab.name.replace(/\s+\d+$/,'');
+      html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
+      if (!seen[shortName] || x-seen[shortName] > 50) {
+        html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
+        seen[shortName] = x;
+      }
+    });
     html += '</div></div>';
     html += '<div style="display:flex;margin-bottom:5px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #111320;"></div></div>';
     return html;
@@ -5708,57 +5657,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
         + '</span>';
     }
     var toggleHtml = '<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;padding:10px 14px;background:#0a0b14;border-radius:6px;border:1px solid #1a1c2a;"><span style="font-size:13px;font-weight:800;color:#d8e0f0;letter-spacing:0.03em;">'+bossName+'</span><span style="font-size:10px;color:#5a6080;font-weight:600;">'+logCount+' logs</span><span style="font-size:10px;color:#5a6080;">avg kill &nbsp;&nbsp;<strong style="color:#9aa0b8;font-size:12px;">'+avgStr+'</strong></span>'+roleStr+'</div>';
-    // ── Compute avg (median) boss spell cast times across all logs ──
-    var avgBossEvts = {}; // gi -> median time in ms
-    if (bossSpells && bossSpells.length) {
-      bossSpells.forEach(function(spell, gi) {
-        var allTimes = [];
-        logsData.forEach(function(log) {
-          var evts = log.bossEvts && log.bossEvts[gi];
-          if (!evts || !evts.length) return;
-          // Match by cast index — 1st cast across logs, 2nd cast across logs, etc.
-          evts.forEach(function(t, idx) {
-            if (!allTimes[idx]) allTimes[idx] = [];
-            allTimes[idx].push(t);
-          });
-        });
-        // Median per cast index — only keep positions present in ≥50% of logs
-        var minPresence = Math.max(1, Math.ceil(logsData.length * 0.5));
-        avgBossEvts[gi] = allTimes
-          .filter(function(arr) { return arr.length >= minPresence; })
-          .map(function(arr) { return wclMedian(arr); });
-      });
-    }
-
-    // ── Build avg boss events row ──
-    function buildAvgBossRow() {
-      if (!bossSpells || !bossSpells.length) return '';
-      var hasAny = bossSpells.some(function(sp, gi){ return avgBossEvts[gi] && avgBossEvts[gi].length; });
-      if (!hasAny) return '';
-
-      var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
-      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#5a4838;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.06em;">avg</div>';
-      html += '<div style="position:relative;width:'+W+'px;height:28px;background:#08090e;border-radius:2px;overflow:hidden;">';
-
-      bossSpells.forEach(function(spell, gi) {
-        var times = avgBossEvts[gi] || [];
-        times.forEach(function(t, idx) {
-          var x = Math.round((t/1000)*sharedPps);
-          var label = spell.name + ' ' + (idx+1) + ' @ ' + fmtT(t);
-          // Hairline
-          html += '<div title="'+label+'" style="position:absolute;left:'+x+'px;top:0;bottom:0;width:1px;background:'+spell.color+';opacity:0.85;transform:translateX(-50%);"></div>';
-          // Cast number — centered on line, top
-          html += '<span style="position:absolute;left:'+x+'px;top:1px;transform:translateX(-50%);font-size:9px;font-weight:800;color:'+spell.color+';text-shadow:0 1px 3px #000;line-height:1;">'+(idx+1)+'</span>';
-          // Time — below the number, slightly offset right so it clears the line
-          html += '<span style="position:absolute;left:'+(x+4)+'px;bottom:2px;font-size:8px;font-weight:600;color:'+spell.color+';opacity:0.75;white-space:nowrap;text-shadow:0 1px 2px #000;">'+fmtT(t)+'</span>';
-        });
-      });
-      html += '</div></div>';
-
-      // Thin separator line
-      html += '<div style="display:flex;margin-bottom:6px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #1e1a12;"></div></div>';
-      return html;
-    }
 
     // ── Timeline ability markers (from manually-set BOSSES timings, no WCL data) ──
     var tlBoss = BOSSES.find(function(b){ return b.name === bossName; })
@@ -5807,7 +5705,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
     bodyHtml += buildBossTimelineRow();
-    bodyHtml += buildAvgBossRow();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
     bodyHtml += '</div>';
 
@@ -5886,22 +5783,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
             + '<span style="color:#283040;margin-left:4px;">x'+s.total+'</span></div>';
         });
       }
-      bodyHtml += '</div>';
-    }
-
-    // Update Planner Timings button — only when we have averaged boss event data
-    var hasImportData = bossSpells && bossSpells.length && bossSpells.some(function(sp,gi){ return avgBossEvts[gi]&&avgBossEvts[gi].length; });
-    if (hasImportData) {
-      var importGroups = [];
-      bossSpells.forEach(function(spell, gi) {
-        var times = (avgBossEvts[gi]||[]).map(function(t){ return Math.round(t/1000); });
-        if (times.length) importGroups.push({ spellName: spell.fullName||spell.name, times: times, color: spell.color });
-      });
-      var totalTimes = importGroups.reduce(function(s,g){ return s+g.times.length; }, 0);
-      _wclImport = { bossName: bossName, groups: importGroups };
-      bodyHtml += '<div style="margin-top:10px;padding:10px 14px;background:#0a0b14;border:1px solid #1a1c2a;border-radius:8px;display:flex;align-items:center;gap:12px;">';
-      bodyHtml += '<span style="font-size:10px;color:#5a6080;">'+totalTimes+' averaged timings across '+logCount+' logs — updates existing timeline abilities in place</span>';
-      bodyHtml += '<button onclick="doWclImport()" style="background:#1a2030;border:1px solid #3a4060;color:#a0b8e8;font-family:monospace;font-size:11px;font-weight:700;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.04em;">Update Planner Timings</button>';
       bodyHtml += '</div>';
     }
 
