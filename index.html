@@ -3661,7 +3661,7 @@ function buildSummaryForBoss(boss) {
   const rows = [];
   boss.sections.forEach((sec, si) => {
     sec.abilities.forEach((ab, ai) => {
-      const rowKey = `${si}-${ai}`;
+      const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const sorted = [...placements]
@@ -4266,7 +4266,7 @@ function getSummaryRows() {
   const rows = [];
   boss.sections.forEach((sec, si) => {
     sec.abilities.forEach((ab, ai) => {
-      const rowKey = `${si}-${ai}`;
+      const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const sorted = [...placements].sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
@@ -4413,7 +4413,7 @@ function renderSheetPreview(el) {
   const rows = [];
   boss.sections.forEach((sec, si) => {
     sec.abilities.forEach((ab, ai) => {
-      const rowKey = `${si}-${ai}`;
+      const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const castNum = getCastNumber(ab.name);
@@ -7352,7 +7352,7 @@ async function initViewMode(viewId) {
 
     // Apply data into state — clear first to avoid stale data bleeding in
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-    if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+    if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
     if (data.bossReady) Object.assign(bossReady, data.bossReady);
 
     // Force corner-tr style for view page
@@ -7551,7 +7551,7 @@ function buildHPalaContent() {
     const rows = [];
     boss.sections.forEach((sec, si) => {
       sec.abilities.forEach((ab, ai) => {
-        const rowKey = `${si}-${ai}`;
+        const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
         const placements = (bossData[rowKey] || []).filter(p => HPALA_CDS.includes(p.cdId));
         if (!placements.length) return;
         const sorted = [...placements].sort((a,b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
@@ -7638,7 +7638,7 @@ function buildShamanContent() {
     const rows = [];
     boss.sections.forEach((sec, si) => {
       sec.abilities.forEach((ab, ai) => {
-        const rowKey = `${si}-${ai}`;
+        const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
         const placements = (bossData[rowKey] || []).filter(p => SHAMAN_CDS.includes(p.cdId));
         if (!placements.length) return;
         const sorted = [...placements].sort((a,b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
