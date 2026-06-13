@@ -1321,7 +1321,6 @@ const DEFAULT_ROSTER = [
   { name:'Beantotem',   spec:'Elemental',     who:'ELE1',       cds:['htt','ag'],  color:'#0070de', role:'ranged' },
   // Melee DPS
   { name:'Skullhammer', spec:'Arms Warrior',  who:'DPSWARR1',   cds:['dem','rc'],  color:'#c79c6e', role:'melee'  },
-  { name:'Heratlittv',  spec:'Retribution',   who:'RETPALA1',   cds:[],            color:'#f58cba', role:'melee'  },
 ];
 
 // All MoP specs and their notable raid CDs (id -> [cdIds], who label)
@@ -2345,7 +2344,7 @@ const CD_ICON_URLS = {
   've':          'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_unsummonbuilding.jpg',
   'smoke':       'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_smoke.jpg',
   'amz':         'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_antimagiczone.jpg',
-  'ss':          'https://wow.zamimg.com/images/wow/icons/large/spell_priest_spiritshell.jpg',
+  'ss':          'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_astralshift.jpg',
   'dh':          'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
   'personals':   'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
   'lhammer':     'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
@@ -7222,9 +7221,26 @@ function generateShareId() {
 }
 
 function buildShareData() {
+  const currentId = getActivePlanId();
+  const plans = getPlans();
+  const plan = currentId !== FULL_RAID_ID ? plans[currentId] : null;
+  const subbedOut = new Set(plan?.subbedOut || []);
+
+  const effectiveRoster = DEFAULT_ROSTER
+    .filter(p => !subbedOut.has(p.who))
+    .map(p => {
+      const fill = activeRosterFills[p.who];
+      if (fill) {
+        const color = SPEC_CLASS_COLORS[fill.fillSpec] || p.color;
+        return { ...p, spec: fill.fillSpec, who: fill.fillWho || p.who, cds: fill.fillCds || [], color };
+      }
+      return p;
+    });
+
   return {
     placedCDs: JSON.parse(JSON.stringify(placedCDs)),
     bossReady: JSON.parse(JSON.stringify(bossReady)),
+    roster: effectiveRoster,
     createdAt: Date.now(),
   };
 }
@@ -7323,35 +7339,42 @@ async function initViewMode(viewId) {
     });
   }
 
-  DEFAULT_ROSTER.forEach(player => {
-    const btn = document.createElement('button');
-    btn.dataset.who = player.who;
-    btn.style.cssText = `display:inline-flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:4px;border:1px solid ${player.color}33;background:#0e0c0a;color:${player.color};font-size:11px;font-family:inherit;cursor:pointer;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s;white-space:nowrap;`;
-    btn.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${player.color};flex-shrink:0;display:inline-block;box-shadow:0 0 4px ${player.color}88;"></span><span style="font-weight:600;">${player.name}</span><span style="font-size:9px;opacity:0.55;margin-left:1px;">${player.spec}</span>`;
+  let viewRoster = DEFAULT_ROSTER;
 
-    btn.addEventListener('mouseover', () => { if (selectedWho !== player.who) btn.style.background = player.color + '18'; });
-    btn.addEventListener('mouseout',  () => { if (selectedWho !== player.who) btn.style.background = '#0e0c0a'; });
+  // Placeholder — replaced after Firebase load so roster reflects the shared plan
+  function buildRosterButtons() {
+    rosterBar.querySelectorAll('button').forEach(b => b.remove());
+    viewRoster.forEach(player => {
+      const btn = document.createElement('button');
+      btn.dataset.who = player.who;
+      btn.style.cssText = `display:inline-flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:4px;border:1px solid ${player.color}33;background:#0e0c0a;color:${player.color};font-size:11px;font-family:inherit;cursor:pointer;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s;white-space:nowrap;`;
+      btn.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${player.color};flex-shrink:0;display:inline-block;box-shadow:0 0 4px ${player.color}88;"></span><span style="font-weight:600;">${player.name}</span><span style="font-size:9px;opacity:0.55;margin-left:1px;">${player.spec}</span>`;
 
-    btn.addEventListener('click', () => {
-      // Deselect all buttons first
-      rosterBar.querySelectorAll('button').forEach(b => {
-        const p = DEFAULT_ROSTER.find(r => r.who === b.dataset.who);
-        if (p) { b.style.background = '#0e0c0a'; b.style.borderColor = p.color + '33'; b.style.boxShadow = 'none'; }
+      btn.addEventListener('mouseover', () => { if (selectedWho !== player.who) btn.style.background = player.color + '18'; });
+      btn.addEventListener('mouseout',  () => { if (selectedWho !== player.who) btn.style.background = '#0e0c0a'; });
+
+      btn.addEventListener('click', () => {
+        rosterBar.querySelectorAll('button').forEach(b => {
+          const p = viewRoster.find(r => r.who === b.dataset.who);
+          if (p) { b.style.background = '#0e0c0a'; b.style.borderColor = p.color + '33'; b.style.boxShadow = 'none'; }
+        });
+        if (selectedWho === player.who) {
+          selectedWho = null;
+          applyHighlight(null);
+        } else {
+          selectedWho = player.who;
+          btn.style.background = player.color + '28';
+          btn.style.borderColor = player.color + 'aa';
+          btn.style.boxShadow = `0 0 10px ${player.color}55, inset 0 0 8px ${player.color}18`;
+          applyHighlight(player.who);
+        }
       });
-      if (selectedWho === player.who) {
-        selectedWho = null;
-        applyHighlight(null);
-      } else {
-        selectedWho = player.who;
-        btn.style.background = player.color + '28';
-        btn.style.borderColor = player.color + 'aa';
-        btn.style.boxShadow = `0 0 10px ${player.color}55, inset 0 0 8px ${player.color}18`;
-        applyHighlight(player.who);
-      }
-    });
 
-    rosterBar.appendChild(btn);
-  });
+      rosterBar.appendChild(btn);
+    });
+  }
+
+  buildRosterButtons();
 
   const viewContent = viewEl.querySelector('#viewContent');
   viewContent.innerHTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">Loading…</div>';
@@ -7366,6 +7389,12 @@ async function initViewMode(viewId) {
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
     if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
     if (data.bossReady) Object.assign(bossReady, data.bossReady);
+
+    // Use the roster that was active when the share was created
+    if (data.roster && Array.isArray(data.roster) && data.roster.length) {
+      viewRoster = data.roster;
+      buildRosterButtons();
+    }
 
     // Force corner-tr style for view page
     const _prevStyle = ssIconInfoStyle;
