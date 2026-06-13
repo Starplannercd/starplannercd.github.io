@@ -3662,7 +3662,7 @@ function buildSummaryForBoss(boss) {
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const sorted = [...placements]
-        .filter(p => p.cdId !== 'custom' && !['goak','holyavenger','avwrath','lhammer','lhammer2','divfavor'].includes(p.cdId))
+        .filter(p => p.cdId !== 'custom' && !['goak','holyavenger','avwrath','lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId))
         .sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       if (sorted.length) rows.push({ ab, sorted });
     });
@@ -3681,8 +3681,8 @@ function getSsInfoLabel(cd, p, ab) {
 function buildSsIconEl(cd, p, ab) {
   const iconUrl = getCdIconUrl(cd.id);
   let info = getSsInfoLabel(cd, p, ab);
-  // In share view mode, always label icons so identical-art abilities (e.g. two Devos) are distinguishable
-  if (!info && ssIconInfoStyle === 'pill-corner-tr') info = cd.short;
+  // Label devo icons so HDevo/PDevo can be told apart (they share the same icon art)
+  if (!info && ssIconInfoStyle === 'pill-corner-tr' && /^devo/.test(cd.id)) info = cd.short;
   const c = cd.color;
   const fallbackDiv = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
   const imgHtml = iconUrl
@@ -7243,6 +7243,7 @@ function buildShareData() {
     placedCDs: JSON.parse(JSON.stringify(placedCDs)),
     bossReady: JSON.parse(JSON.stringify(bossReady)),
     roster: effectiveRoster,
+    activeSetIds: [...activeSetIds],
     createdAt: Date.now(),
   };
 }
@@ -7391,6 +7392,11 @@ async function initViewMode(viewId) {
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
     if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
     if (data.bossReady) Object.assign(bossReady, data.bossReady);
+    if (data.activeSetIds) {
+      activeSetIds = new Set(data.activeSetIds);
+    } else {
+      activeSetIds = new Set(CD_POOL.filter(c => c.core).map(c => c.id));
+    }
 
     // Use the roster that was active when the share was created
     if (data.roster && Array.isArray(data.roster) && data.roster.length) {
