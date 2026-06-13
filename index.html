@@ -1279,7 +1279,7 @@ const CD_POOL = [
   { id:'dem',   name:'Demoralizing Banner',  short:'Demo',cd:180,dur:15, color:'#8b5e3c', textColor:'#d4956a', who:'DPSWARR1',  core:true  },
   { id:'devo1', name:'Holy Devotion Aura',   short:'HDevo', cd:180, dur:6,  color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:true  },
   { id:'devo2', name:'Prot Devotion Aura',   short:'PDevo', cd:180, dur:6,  color:'#a83888', textColor:'#ff99cc', who:'PROTPALA1', core:true  },
-  { id:'ah',    name:'Avert Harm',           short:'Avert',cd:180,  dur:6,  color:'#00c97a', textColor:'#00ff96', who:'BREWMAST1', core:true  },
+  { id:'ah',    name:'Avert Harm',           short:'Avert',cd:180,  dur:6,  color:'#00c97a', textColor:'#00ff96', who:'BREWMAST1', core:false },
   { id:'rc',    name:'Rallying Cry',         short:'Rally',     cd:180, dur:10, color:'#7a4f2e', textColor:'#c89060', who:'DPSWARR1',  core:true  },
   { id:'ve',    name:'Vampiric Embrace',     short:'VE',        cd:180,   dur:15, color:'#c8c8c8', textColor:'#ffffff', who:'SPRIEST1',  core:true  },
   { id:'ag',    name:'Ancestral Guidance',   short:'AG',        cd:120, dur:10, color:'#2878d8', textColor:'#88c8ff', who:'ELE1',      core:true  },
@@ -1312,7 +1312,6 @@ let fadeModeByBoss = {}; // bossId -> bool: fade placed CDs in palette
 // ---- Default Roster ----
 const DEFAULT_ROSTER = [
   // Tanks
-  { name:'Vyngeance',   spec:'Brewmaster',    who:'BREWMAST1',  cds:['ah'],        color:'#00ff96', role:'tank'   },
   { name:'Johnholyman', spec:'Protection Pal',who:'PROTPALA1',  cds:['devo2'],     color:'#f58cba', role:'tank'   },
   // Healers
   { name:'Starship',    spec:'Discipline',    who:'DISC1',      cds:['pwb','ss','dh'],  color:'#ffffff', role:'healer' },
