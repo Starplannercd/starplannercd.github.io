@@ -6014,14 +6014,14 @@ function showWclModal() {
       var allRankEntries = [];
       var crawlPage = 1;
       var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:'+fetchDifficulty+',size:10,metric:execution,page:$pg)}}}';
-      while (allRankEntries.length < 100 && crawlPage <= 10) {
+      while (allRankEntries.length < 140 && crawlPage <= 14) {
         var crd = await wclQuery(crawlQuery, {id:encId, pg:crawlPage});
         var cpage = (crd&&crd.worldData&&crd.worldData.encounter&&crd.worldData.encounter.fightRankings&&crd.worldData.encounter.fightRankings.rankings)||[];
         if (!cpage.length) break;
         allRankEntries = allRankEntries.concat(cpage);
         crawlPage++;
       }
-      var pageRankings = allRankEntries.slice(0, 100);
+      var pageRankings = allRankEntries.slice(39, 140);
 
       if (!pageRankings.length) {
         results.innerHTML='<div style="color:#c84848;font-size:12px;">No '+diffLabel+' 10-man logs found for this boss.</div>';
