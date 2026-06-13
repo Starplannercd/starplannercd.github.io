@@ -5328,6 +5328,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     return;
   }
 
+  var currentBossTimelineXs = []; // markers from BOSSES timeline, shared with buildHeatmapRow
+
   var CD_DURATIONS = {
     62618:10, 31821:8, 86150:8, 105809:20, 31884:20,
     108280:10, 108281:10, 115213:3, 15286:30,
@@ -5644,6 +5646,10 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     for (var gti=1; gti*rTick2*1000<=maxDuration; gti++) {
       html += '<div style="position:absolute;left:'+Math.round(gti*rTick2*sharedPps)+'px;top:0;bottom:0;width:1px;background:rgba(80,100,160,0.18);pointer-events:none;"></div>';
     }
+    // Timeline ability markers from BOSSES array (manually-set timings)
+    currentBossTimelineXs.forEach(function(ev) {
+      html += '<div title="'+ev.label+'" style="position:absolute;left:'+ev.x+'px;top:0;bottom:0;width:2px;background:'+ev.color+';opacity:0.5;transform:translateX(-50%);pointer-events:none;"></div>';
+    });
     html += '</div></div>';
     return html;
   }
@@ -5754,8 +5760,47 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       return html;
     }
 
+    // ── Timeline ability markers (from manually-set BOSSES timings, no WCL data) ──
+    var tlBoss = BOSSES.find(function(b){ return b.name === bossName; })
+              || BOSSES.find(function(b){ return b.name === 'The '+bossName; })
+              || BOSSES.find(function(b){ return b.name.replace(/^The\s+/i,'') === bossName.replace(/^The\s+/i,''); });
+    var tlMarkers = [];
+    if (tlBoss) {
+      tlBoss.sections.forEach(function(sec) {
+        (sec.abilities || []).forEach(function(ab) {
+          if (ab.encounterStart) return;
+          if (/health\s*%/i.test(ab.name)) return;
+          var tSec = ab.time || 0;
+          var xPx = Math.round(tSec * sharedPps);
+          var baseName = ab.name.replace(/\s+\d+$/, '');
+          tlMarkers.push({ x: xPx, color: ab.color || '#c83a20', label: ab.name, baseName: baseName });
+        });
+      });
+    }
+    currentBossTimelineXs = tlMarkers;
+
+    function buildBossTimelineRow() {
+      if (!tlMarkers.length) return '';
+      var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
+      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#9090cc;text-align:right;padding-right:7px;white-space:nowrap;">Timeline</div>';
+      html += '<div style="position:relative;width:'+W+'px;height:32px;background:#07080d;border-radius:2px;overflow:hidden;">';
+      var groupCount = {};
+      tlMarkers.forEach(function(m) {
+        var idx = (groupCount[m.baseName] = (groupCount[m.baseName] || 0) + 1);
+        var tSec = Math.round(m.x / sharedPps);
+        var timeStr = Math.floor(tSec/60)+':'+(tSec%60<10?'0':'')+tSec%60;
+        html += '<div title="'+m.label+' ('+timeStr+')" style="position:absolute;left:'+m.x+'px;top:0;bottom:0;width:2px;background:'+m.color+';opacity:0.9;transform:translateX(-50%);"></div>';
+        if (idx === 1) {
+          html += '<div style="position:absolute;left:'+m.x+'px;top:2px;font-size:8px;font-weight:700;color:'+m.color+';transform:translateX(-50%);white-space:nowrap;pointer-events:none;text-shadow:0 0 5px #000,0 0 2px #000;">'+m.baseName+'</div>';
+        }
+      });
+      html += '</div></div>';
+      return html;
+    }
+
     var bodyHtml = '<div style="background:#08090e;border:1px solid #1a1c2a;border-radius:8px;padding:12px 14px;">';
     bodyHtml += buildRuler();
+    bodyHtml += buildBossTimelineRow();
     bodyHtml += buildAvgBossRow();
     allSids.forEach(function(sid){ bodyHtml += buildHeatmapRow(sid, 'wave'); });
     bodyHtml += '</div>';
