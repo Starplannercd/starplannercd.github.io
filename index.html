@@ -5647,7 +5647,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     }
     // Timeline ability markers from BOSSES array (manually-set timings)
     currentBossTimelineXs.forEach(function(ev) {
-      html += '<div title="'+ev.label+'" style="position:absolute;left:'+ev.x+'px;top:0;bottom:0;width:2px;background:'+ev.color+';opacity:0.5;transform:translateX(-50%);pointer-events:none;"></div>';
+      html += '<div style="position:absolute;left:'+ev.x+'px;top:0;bottom:0;width:7px;background:'+ev.color+';opacity:0.1;transform:translateX(-50%);pointer-events:none;"></div>';
+      html += '<div title="'+ev.label+'" style="position:absolute;left:'+ev.x+'px;top:0;bottom:0;width:1px;background:'+ev.color+';opacity:0.55;transform:translateX(-50%);pointer-events:none;"></div>';
     });
     html += '</div></div>';
     return html;
@@ -5780,17 +5781,23 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
 
     function buildBossTimelineRow() {
       if (!tlMarkers.length) return '';
-      var html = '<div style="display:flex;align-items:center;margin-bottom:4px;">';
-      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:#9090cc;text-align:right;padding-right:7px;white-space:nowrap;">Timeline</div>';
-      html += '<div style="position:relative;width:'+W+'px;height:32px;background:#07080d;border-radius:2px;overflow:hidden;">';
+      var html = '<div style="display:flex;align-items:center;margin-bottom:6px;">';
+      html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#4a4a90;text-align:right;padding-right:7px;white-space:nowrap;text-transform:uppercase;letter-spacing:0.08em;">Timeline</div>';
+      html += '<div style="position:relative;width:'+W+'px;height:42px;background:#060710;border-radius:3px;overflow:hidden;border:1px solid #11122a;">';
       var groupCount = {};
       tlMarkers.forEach(function(m) {
         var idx = (groupCount[m.baseName] = (groupCount[m.baseName] || 0) + 1);
         var tSec = Math.round(m.x / sharedPps);
         var timeStr = Math.floor(tSec/60)+':'+(tSec%60<10?'0':'')+tSec%60;
-        html += '<div title="'+m.label+' ('+timeStr+')" style="position:absolute;left:'+m.x+'px;top:0;bottom:0;width:2px;background:'+m.color+';opacity:0.9;transform:translateX(-50%);"></div>';
+        // Soft glow bloom
+        html += '<div style="position:absolute;left:'+m.x+'px;top:0;bottom:0;width:9px;background:'+m.color+';opacity:0.1;transform:translateX(-50%);pointer-events:none;"></div>';
+        // Crisp line
+        html += '<div title="'+m.label+' ('+timeStr+')" style="position:absolute;left:'+m.x+'px;top:0;bottom:0;width:1px;background:'+m.color+';opacity:0.88;transform:translateX(-50%);pointer-events:none;"></div>';
+        // Diamond cap at top
+        html += '<div style="position:absolute;left:'+m.x+'px;top:3px;width:5px;height:5px;background:'+m.color+';transform:translateX(-50%) rotate(45deg);box-shadow:0 0 5px '+m.color+';pointer-events:none;"></div>';
         if (idx === 1) {
-          html += '<div style="position:absolute;left:'+m.x+'px;top:2px;font-size:8px;font-weight:700;color:'+m.color+';transform:translateX(-50%);white-space:nowrap;pointer-events:none;text-shadow:0 0 5px #000,0 0 2px #000;">'+m.baseName+'</div>';
+          // Glowing label
+          html += '<div style="position:absolute;left:'+m.x+'px;top:13px;transform:translateX(-50%);font-size:8px;font-weight:800;color:'+m.color+';white-space:nowrap;letter-spacing:0.03em;pointer-events:none;text-shadow:0 0 8px '+m.color+',0 1px 4px #000;">'+m.baseName+'</div>';
         }
       });
       html += '</div></div>';
