@@ -5688,8 +5688,11 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
             allTimes[idx].push(t);
           });
         });
-        // Median per cast index
-        avgBossEvts[gi] = allTimes.map(function(arr) { return wclMedian(arr); });
+        // Median per cast index — only keep positions present in ≥50% of logs
+        var minPresence = Math.max(1, Math.ceil(logsData.length * 0.5));
+        avgBossEvts[gi] = allTimes
+          .filter(function(arr) { return arr.length >= minPresence; })
+          .map(function(arr) { return wclMedian(arr); });
       });
     }
 
