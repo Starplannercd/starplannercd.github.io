@@ -1534,7 +1534,13 @@ const BOSSES = [
     id:'generalnazmak', name:'General Nazgrim',
     desc:'Heroic · Gates of Retribution',
     duration: 420,
-    sections: [{ label: null, abilities: [] }]
+    sections: [{ label: null, abilities: [
+      { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
+      { name:'War Song 1',      time:60,  color:'#c8a227' },
+      { name:'War Song 2',      time:150, color:'#c8a227' },
+      { name:'War Song 3',      time:240, color:'#c8a227' },
+      { name:'War Song 4',      time:330, color:'#c8a227' },
+    ]}]
   },
   {
     id:'malkorok', name:'Malkorok',
