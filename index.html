@@ -4061,7 +4061,7 @@ function buildSsBossHeader(boss, portraitUrl) {
         <div style="font-size:19px;font-weight:800;color:#f0d898;letter-spacing:0.02em;text-shadow:0 0 18px #c8901055;">The Fallen Protectors</div>
       </div>
       <img src="fallenprotimage.png" onerror="this.style.display='none'"
-        style="position:absolute;right:-8px;bottom:-24px;height:148px;pointer-events:none;
+        style="position:absolute;right:-8px;bottom:-8px;height:148px;pointer-events:none;
                filter:drop-shadow(0 0 10px #c87820bb) drop-shadow(0 0 28px #80480866);
                opacity:0.92;" />
     </div>`;
@@ -7071,6 +7071,15 @@ async function initViewMode(viewId) {
       viewRoster = data.roster;
       buildRosterButtons();
     }
+
+    // Filter activeSetIds to only CDs whose WHO is in the roster (removes stale/removed players' CDs)
+    const rosterWhos = new Set(viewRoster.map(p => p.who));
+    activeSetIds = new Set([...activeSetIds].filter(id => {
+      const cd = CD_POOL.find(c => c.id === id);
+      if (!cd) return false;
+      if (cd.who === 'ALL') return true;
+      return rosterWhos.has(cd.who);
+    }));
 
     // Force corner-tr style for view page
     const _prevStyle = ssIconInfoStyle;
