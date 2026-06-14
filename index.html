@@ -3662,7 +3662,7 @@ function buildSummaryForBoss(boss) {
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const sorted = [...placements]
-        .filter(p => p.cdId !== 'custom' && !['goak','holyavenger','avwrath','lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId))
+        .filter(p => p.cdId !== 'custom' && !['lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId))
         .sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       if (sorted.length) rows.push({ ab, sorted });
     });
