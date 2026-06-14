@@ -3304,6 +3304,7 @@ function getCastNumber(abName) {
 
 function buildFojiExport() {
   const lines = [];
+  const rosterWhos = new Set(DEFAULT_ROSTER.map(r => r.who));
 
   BOSSES.forEach(boss => {
     const bossData = placedCDs[boss.id];
@@ -3326,6 +3327,7 @@ function buildFojiExport() {
           const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
           const cd = CD_POOL.find(c => c.id === p.cdId);
           if (!cd) return;
+          if (cd.who !== 'ALL' && !rosterWhos.has(cd.who)) return;
           const _exportCd = CD_POOL.find(c => c.id === p.cdId);
           const isCustomPlacement = !!(_exportCd && _exportCd.customType);
           let _bossAbKey = bossAbKey;
