@@ -3680,8 +3680,6 @@ function getSsInfoLabel(cd, p, ab) {
 function buildSsIconEl(cd, p, ab) {
   const iconUrl = getCdIconUrl(cd.id);
   let info = getSsInfoLabel(cd, p, ab);
-  // Label devo icons so HDevo/PDevo can be told apart (they share the same icon art)
-  if (!info && ssIconInfoStyle === 'pill-corner-tr' && /^devo/.test(cd.id)) info = cd.short;
   const c = cd.color;
   const fallbackDiv = `<div class="ss-icon" style="background:transparent;color:${cd.textColor};border:none;">${cd.short}</div>`;
   const imgHtml = iconUrl
@@ -4061,7 +4059,7 @@ function buildSsBossHeader(boss, portraitUrl) {
         <div style="font-size:19px;font-weight:800;color:#f0d898;letter-spacing:0.02em;text-shadow:0 0 18px #c8901055;">The Fallen Protectors</div>
       </div>
       <img src="fallenprotimage.png" onerror="this.style.display='none'"
-        style="position:absolute;right:-8px;bottom:-8px;height:148px;pointer-events:none;
+        style="position:absolute;right:-8px;bottom:-44px;height:148px;pointer-events:none;
                filter:drop-shadow(0 0 10px #c87820bb) drop-shadow(0 0 28px #80480866);
                opacity:0.92;" />
     </div>`;
