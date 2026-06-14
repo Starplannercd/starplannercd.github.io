@@ -5170,54 +5170,6 @@ var WCL_SPELLS = {
   740:{name:'Tranquility',short:'Tranq',color:'#ff7d0a'},
 };
 
-// Boss ability spell IDs for fetching from WCL events
-// Boss ability spell IDs — ids is array so multiple spell IDs can map to one display name
-// dataType: 'Casts' or 'DamageTaken' — which WCL event stream to query
-var WCL_BOSS_SPELLS = {
-  'immerseus':        [{ids:[143436], name:'SW Corr', fullName:'Swelling Corruption', color:'#8868c8', dataType:'Casts', eventType:'begincast'}],
-  'fallenprotectors': [{ids:[143491,124845], name:'Calamity', color:'#8868c8', dataType:'Casts'}],
-  'norushen':         [],
-  'sha':              [{ids:[144400], name:'Swelling Pride', color:'#c878e8', dataType:'Casts'}],
-  'galakras':         [
-    {ids:[146992], name:'Flames of Galakrond', color:'#e86020', dataType:'DamageTaken', eventType:'applydebuff'},
-    {ids:[147043], name:'Pulsing Flames',       color:'#e8a030', dataType:'DamageTaken', eventType:'damage'},
-  ],
-  'ironjuggernaut':   [{ids:[144485], name:'Shock Pulse', color:'#60c8e8', dataType:'Casts'}],
-  'darkshaman':       [],
-  'generalnazmak':    [],
-  'malkorok':         [],
-  'spoils':           [],
-  'thok':             [],
-  'siegecrafter':     [],
-  'paragons':         [],
-  'garrosh':          [],
-};
-var WCL_DISCOVERED_BOSS_SPELLS = {}; // session cache: auto-discovered spells per boss name
-
-// Map WCL encounter names to boss spell keys
-function getBossSpellsForName(bossName) {
-  var map = {
-    'Immerseus': 'immerseus',
-    'The Fallen Protectors': 'fallenprotectors',
-    'Norushen': 'norushen',
-    'Sha of Pride': 'sha',
-    'Galakras': 'galakras',
-    'Iron Juggernaut': 'ironjuggernaut',
-    "Kor'kron Dark Shaman": 'darkshaman',
-    'General Nazgrim': 'generalnazmak',
-    'Malkorok': 'malkorok',
-    'Spoils of Pandaria': 'spoils',
-    'Thok the Bloodthirsty': 'thok',
-    'Siegecrafter Blackfuse': 'siegecrafter',
-    'Paragons of the Klaxxi': 'paragons',
-    'Garrosh Hellscream': 'garrosh',
-  };
-  var key = map[bossName];
-  var base = key ? (WCL_BOSS_SPELLS[key] || []) : [];
-  if (base.length) return base;
-  return WCL_DISCOVERED_BOSS_SPELLS[bossName] || [];
-}
-
 
 // Per-boss ability config: { difficulty: 3|4, abilityNames: ['Iron Star','Whirling Corruption',...] }
 function getBossCfg(encId) {
@@ -5280,7 +5232,7 @@ function wclMedian(arr) {
   return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
 }
 
-function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, bossSpells, spellMap, mode, logsHpsData, discoveryInfo) {
+function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, spellMap, mode, logsHpsData) {
   if (!spellMap) spellMap = WCL_SPELLS;
   if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
@@ -5365,35 +5317,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     return html;
   }
 
-  function buildBossRow(log) {
-    var bossAbilities = [];
-    var bossMatch = BOSSES.find(function(b){return b.name===bossName;});
-    if (bossMatch && bossMatch.sections) {
-      bossMatch.sections.forEach(function(sec){
-        (sec.abilities||[]).forEach(function(ab){bossAbilities.push(ab);});
-      });
-    }
-    if (!bossAbilities.length) return '';
-
-    var html = '<div style="display:flex;align-items:center;margin-bottom:3px;">';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:8px;font-weight:700;color:#3a4060;text-align:right;padding-right:6px;text-transform:uppercase;letter-spacing:0.07em;">Boss</div>';
-    html += '<div style="position:relative;width:'+W+'px;height:20px;background:#05060a;border-radius:2px;overflow:hidden;">';
-
-    var seen = {};
-    bossAbilities.forEach(function(ab) {
-      if (ab.time*1000 > log.duration+15000) return;
-      var x = Math.min(Math.round(ab.time*sharedPps), W-2);
-      var shortName = ab.name.replace(/\s+\d+$/,'');
-      html += '<div style="position:absolute;left:'+x+'px;top:0;bottom:0;width:2px;background:'+ab.color+';opacity:0.7;transform:translateX(-50%);"></div>';
-      if (!seen[shortName] || x-seen[shortName] > 50) {
-        html += '<span style="position:absolute;left:'+(x+3)+'px;bottom:1px;font-size:8px;font-weight:700;color:'+ab.color+';white-space:nowrap;text-shadow:0 1px 2px #000;opacity:0.85;">'+shortName+' '+fmtS(ab.time)+'</span>';
-        seen[shortName] = x;
-      }
-    });
-    html += '</div></div>';
-    html += '<div style="display:flex;margin-bottom:5px;"><div style="width:'+LABEL_W+'px;"></div><div style="width:'+W+'px;border-top:1px solid #111320;"></div></div>';
-    return html;
-  }
 
   // Collect all cast times per spell across all logs for heatmap
   var allCastsBySpell = {};
@@ -5758,34 +5681,6 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       bodyHtml += '</svg></div></div></div>';
     }
 
-    // Boss ability discovery feedback
-    if (discoveryInfo && (discoveryInfo.found.length || discoveryInfo.notFound.length)) {
-      bodyHtml += '<div style="margin-top:10px;padding:8px 12px;background:#070810;border:1px solid #1a1c2a;border-radius:6px;font-size:10px;font-family:monospace;">';
-      bodyHtml += '<div style="color:#5a6080;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;">Boss Abilities Discovered</div>';
-      discoveryInfo.found.forEach(function(f) {
-        var hitColor = f.logsWithData > 0 ? '#a0c878' : '#c87878';
-        bodyHtml += '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px;">';
-        bodyHtml += '<span style="color:'+hitColor+';min-width:140px;">'+f.name+'</span>';
-        bodyHtml += '<span style="color:#3a4060;">ID:'+f.id+'</span>';
-        bodyHtml += '<span style="color:#4a5060;">['+f.dataType+']</span>';
-        bodyHtml += '<span style="color:'+hitColor+';">'+f.logsWithData+'/'+logCount+' logs · avg '+f.avgCount+' casts</span>';
-        if (f.wclName && f.wclName !== f.name) bodyHtml += '<span style="color:#3a4860;">(WCL: "'+f.wclName+'")</span>';
-        bodyHtml += '</div>';
-      });
-      discoveryInfo.notFound.forEach(function(n) {
-        bodyHtml += '<div style="color:#c84848;margin-bottom:2px;">✗ Not found in logs: "'+n+'"</div>';
-      });
-      if (discoveryInfo.notFound.length && discoveryInfo.suggestions && discoveryInfo.suggestions.length) {
-        bodyHtml += '<div style="color:#404860;margin-top:6px;margin-bottom:3px;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">Available in this log — try one of these names:</div>';
-        discoveryInfo.suggestions.forEach(function(s) {
-          bodyHtml += '<div style="color:#586878;margin-bottom:1px;">&nbsp;&nbsp;<span style="color:#708898;">'+s.name+'</span>'
-            + '<span style="color:#2a3040;margin-left:8px;">['+s.dataType+']</span>'
-            + '<span style="color:#283040;margin-left:4px;">x'+s.total+'</span></div>';
-        });
-      }
-      bodyHtml += '</div>';
-    }
-
     container.innerHTML = toggleHtml + bodyHtml;
     container.querySelectorAll('.wcl-view-btn').forEach(function(btn){
       btn.addEventListener('click', function(){ viewMode=btn.dataset.view; renderAll(); });
@@ -5888,13 +5783,8 @@ function showWclModal() {
       var cached3 = localStorage.getItem(ck3);
       if (cached3) {
         var cd4 = JSON.parse(cached3);
-        var bs4 = getBossSpellsForName(cd4.bossName);
-        if (!bs4.length && cd4.discoveredSpells && cd4.discoveredSpells.length) {
-          bs4 = cd4.discoveredSpells;
-          WCL_DISCOVERED_BOSS_SPELLS[cd4.bossName] = bs4;
-        }
         var sm4 = mode3==='personal' ? WCL_PERSONAL_SPELLS : WCL_SPELLS;
-        renderWclDisplay(results3, cd4.logsData, cd4.processed, cd4.bossName, cd4.avgDuration, bs4, sm4, mode3, cd4.hpsData||[]);
+        renderWclDisplay(results3, cd4.logsData, cd4.processed, cd4.bossName, cd4.avgDuration, sm4, mode3, cd4.hpsData||[]);
       } else {
         results3.innerHTML = '<div style="color:#3a4060;font-size:11px;padding:20px 0;text-align:center;">No data cached for this boss · click Fetch Data to load</div>';
       }
@@ -5949,13 +5839,10 @@ function showWclModal() {
     results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
       var bossName = bossEl.options[bossEl.selectedIndex].text;
-      var bossSpells = getBossSpellsForName(bossName);
-      var bossSpellIds = []; bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
 
       // Load per-boss config: difficulty
       var bossCfg = getBossCfg(encId);
       var fetchDifficulty = bossCfg.difficulty || 4;
-      var cfgAbilityNames = [];
       var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
 
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
@@ -5983,102 +5870,6 @@ function showWclModal() {
       var logsHpsData = [];
       var processed = 0;
       var limit = pageRankings.length;
-
-      // Use var expression to avoid strict-mode function-in-block errors
-      var processBossEvts = function(bevts, spellGroup, bossEvtTimes, fStart) {
-        if (!bevts || !bevts.length || !spellGroup || !spellGroup.length) return;
-        var idToGroup = {};
-        // Per-group accepted event type:
-        //   Casts stream      → 'cast'
-        //   DamageTaken, DoT  → 'applydebuff' (one per application, avoids periodic tick false-positives)
-        //   DamageTaken, AoE  → 'damage' (direct hit, dedup collapses simultaneous player hits)
-        // Spells can override by setting eventType explicitly.
-        var groupAcceptType = {};
-        spellGroup.forEach(function(sg) {
-          sg.spell.ids.forEach(function(id){ idToGroup[id] = sg.gi; });
-          var def = sg.spell.dataType === 'Casts' ? 'cast' : 'applydebuff';
-          groupAcceptType[sg.gi] = sg.spell.eventType || def;
-        });
-        bevts.sort(function(a,b){return a.timestamp-b.timestamp;});
-        bevts.forEach(function(ev){
-          var sid = ev.abilityGameID;
-          var gi = idToGroup[sid];
-          if (gi === undefined) return;
-          if (ev.type !== groupAcceptType[gi]) return;
-          var rel = ev.timestamp - fStart;
-          if (rel<0||rel>900000) return;
-          if (!bossEvtTimes[gi]) bossEvtTimes[gi]=[];
-          var times = bossEvtTimes[gi];
-          if (!times.length || rel - times[times.length-1] > 2000) times.push(rel);
-        });
-      };
-
-      // Discover boss spells from WCL table API — queries both Casts and DamageTaken tables
-      var BOSS_DISC_COLORS = ['#e8a040','#e84060','#60a8e8','#a860e8','#60e8a0','#e8d040','#c84060','#48a888'];
-      var discNotFound = []; // cfgNames that had no match
-      var discTableSuggestions = []; // top table entries for user reference when names don't match
-      if (!bossSpells.length && pageRankings.length) {
-        try {
-          var dr0 = pageRankings[0];
-          var dc0 = dr0.report&&dr0.report.code, df0 = dr0.report&&dr0.report.fightID;
-          if (dc0 && df0) {
-            results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Discovering boss abilities from logs...</div>';
-            // Fetch both cast (boss) and damage-taken (player) tables in one query
-            var discQ = 'query($c:String!,$fid:Int!){reportData{report(code:$c){' +
-              'castTable:table(dataType:Casts,hostilityType:Enemies,startTime:0,endTime:9999999,fightIDs:[$fid])' +
-              'dmgTable:table(dataType:DamageTaken,hostilityType:Friendlies,startTime:0,endTime:9999999,fightIDs:[$fid])' +
-              '}}}';
-            var discD = await wclQuery(discQ, {c:dc0, fid:df0});
-            var drep = discD&&discD.reportData&&discD.reportData.report;
-            var rawCast = drep&&drep.castTable; var rawDmg = drep&&drep.dmgTable;
-            var castEntries = ((typeof rawCast==='string'?JSON.parse(rawCast):rawCast)||{}).entries||[];
-            var dmgEntries  = ((typeof rawDmg==='string' ?JSON.parse(rawDmg) :rawDmg )||{}).entries||[];
-            // Tag each entry with its source dataType
-            castEntries.forEach(function(e){e._dt='Casts';});
-            dmgEntries.forEach(function(e){e._dt='DamageTaken';});
-            var allDiscEntries = castEntries.concat(dmgEntries);
-            var mechSpells;
-            if (cfgAbilityNames.length) {
-              mechSpells = cfgAbilityNames.map(function(cfgName) {
-                var lower = cfgName.toLowerCase();
-                // Prefer cast table match; fall back to damage table
-                var match = castEntries.find(function(e){ return e.id&&e.name&&e.name.toLowerCase().includes(lower); })
-                         || dmgEntries.find(function(e){ return e.id&&e.name&&e.name.toLowerCase().includes(lower); });
-                if (!match) { discNotFound.push(cfgName); return null; }
-                return { id:match.id, name:cfgName, wclName:match.name, total:match.total, dataType:match._dt };
-              }).filter(Boolean);
-              // Dedupe by id
-              var seenIds={};
-              mechSpells = mechSpells.filter(function(e){ if(seenIds[e.id])return false; seenIds[e.id]=true; return true; });
-              // Build suggestions list so user can see what names ARE in the log when theirs don't match
-              if (discNotFound.length && allDiscEntries.length) {
-                var matchedIds = {};
-                mechSpells.forEach(function(m){ matchedIds[m.id]=true; });
-                discTableSuggestions = allDiscEntries
-                  .filter(function(e){ return e.id && e.name && !matchedIds[e.id]; })
-                  .sort(function(a,b){ return b.total-a.total; })
-                  .slice(0, 20)
-                  .map(function(e){ return { name:e.name, id:e.id, dataType:e._dt, total:e.total }; });
-              }
-            } else {
-              mechSpells = castEntries
-                .filter(function(e){ return e.id&&e.name&&e.total>=2&&e.total<=25; })
-                .sort(function(a,b){ return b.total-a.total; })
-                .slice(0,8)
-                .map(function(e){ return {id:e.id,name:e.name,wclName:e.name,total:e.total,dataType:'Casts'}; });
-            }
-            if (mechSpells.length) {
-              bossSpells = mechSpells.map(function(e,i){
-                var short = e.name.length>12 ? e.name.slice(0,11)+'…' : e.name;
-                return {ids:[e.id], name:short, fullName:e.name, wclName:e.wclName, color:BOSS_DISC_COLORS[i%BOSS_DISC_COLORS.length], dataType:e.dataType};
-              });
-              bossSpellIds=[];
-              bossSpells.forEach(function(s){(s.ids||[]).forEach(function(id){bossSpellIds.push(id);});});
-              WCL_DISCOVERED_BOSS_SPELLS[bossName] = bossSpells;
-            }
-          }
-        } catch(discErr){ console.warn('Boss ability discovery failed:', discErr); }
-      }
 
       for (var ri=0; ri<limit; ri++) {
         var r = pageRankings[ri];
@@ -6178,39 +5969,6 @@ function showWclModal() {
           if (!logsHpsData) logsHpsData = [];
           logsHpsData.push({ buckets: healBuckets, duration: fDur });
 
-          // Fetch boss ability events — separate queries per dataType
-          var bossEvtTimes = {}; // groupIndex -> [relTime, ...] (deduplicated per 25s window)
-          if (bossSpells.length) {
-            // Group spells by dataType
-            var dmgSpells = [], castSpells = [];
-            bossSpells.forEach(function(spell, gi) {
-              if (spell.dataType === 'Casts') castSpells.push({spell:spell, gi:gi});
-              else dmgSpells.push({spell:spell, gi:gi});
-            });
-            try {
-              if (dmgSpells.length) {
-                var dmgIds = dmgSpells.reduce(function(acc,sg){ return acc.concat(sg.spell.ids||[]); }, []);
-                var dmgFilter = dmgIds.map(function(id){ return 'ability.id='+id; }).join(' or ');
-                var bevts1 = [], nxt1 = 0, pg1 = 0;
-                do {
-                  var bq1 = 'query($c:String!,$fid:Int!,$f:String!,$s:Float!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:DamageTaken,startTime:$s,endTime:9999999,hostilityType:Friendlies,filterExpression:$f){data nextPageTimestamp}}}}';
-                  var bd1 = await wclQuery(bq1, {c:code, fid:fid, f:dmgFilter, s:nxt1});
-                  var evR1 = (bd1&&bd1.reportData&&bd1.reportData.report&&bd1.reportData.report.events)||{};
-                  bevts1 = bevts1.concat(evR1.data||[]);
-                  nxt1 = evR1.nextPageTimestamp||0;
-                } while (nxt1 && ++pg1 < 5);
-                processBossEvts(bevts1, dmgSpells, bossEvtTimes, fStart);
-              }
-              if (castSpells.length) {
-                var bq2 = 'query($c:String!,$fid:Int!){reportData{report(code:$c){events(fightIDs:[$fid],dataType:Casts,startTime:0,endTime:9999999,hostilityType:Enemies){data}}}}';
-                var bd2 = await wclQuery(bq2, {c:code, fid:fid});
-                var bevts2 = (bd2&&bd2.reportData&&bd2.reportData.report&&bd2.reportData.report.events&&bd2.reportData.report.events.data)||[];
-                processBossEvts(bevts2, castSpells, bossEvtTimes, fStart);
-              }
-            } catch(be) { console.warn('Boss events fetch error:', be); }
-          }
-
-
           // Build lookup of all spell IDs cast in this log
           var allCastSids = {};
           evts.forEach(function(ev){ if(ev.type==='cast') allCastSids[ev.abilityGameID]=true; });
@@ -6238,7 +5996,7 @@ function showWclModal() {
               srcKeys.sort(function(a,b){ return castsBySrc2[b].length - castsBySrc2[a].length; });
               logCasts[sid2] = castsBySrc2[srcKeys[0]].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes, roles: roleCounts });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, roles: roleCounts });
           } else {
             // Raid CDs mode
             var castsBySrc = {};
@@ -6267,7 +6025,7 @@ function showWclModal() {
               })[0];
               logCasts[sid] = sources[best].sort(function(a,b){return a-b;});
             });
-            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, bossEvts: bossEvtTimes, roles: roleCounts });
+            logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, roles: roleCounts });
           }
           processed++;
           results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
@@ -6286,23 +6044,9 @@ function showWclModal() {
       // Cache results for this encounter
       try {
         var cacheKey = 'wcl_soo_cache_'+encId+'_'+wclMode;
-        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,hpsData:logsHpsData,discoveredSpells:bossSpells,ts:Date.now()}));
+        localStorage.setItem(cacheKey, JSON.stringify({logsData:logsData,processed:processed,bossName:bossName2,avgDuration:avgDuration,hpsData:logsHpsData,ts:Date.now()}));
       } catch(e) {}
-      // Build discovery info for display feedback
-      var discoveryInfo = null;
-      if (cfgAbilityNames.length || bossSpells.length) {
-        discoveryInfo = {
-          cfgNames: cfgAbilityNames,
-          notFound: discNotFound,
-          suggestions: discTableSuggestions,
-          found: bossSpells.map(function(s, gi) {
-            var logsWithData = logsData.filter(function(l){ return l.bossEvts&&l.bossEvts[gi]&&l.bossEvts[gi].length; }).length;
-            var avgCount = logsData.reduce(function(sum,l){ return sum+((l.bossEvts&&l.bossEvts[gi])||[]).length; },0) / Math.max(processed,1);
-            return { name:s.fullName||s.name, wclName:s.wclName, id:s.ids[0], dataType:s.dataType, logsWithData:logsWithData, avgCount:avgCount.toFixed(1) };
-          })
-        };
-      }
-      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, bossSpells, spellMap, wclMode, logsHpsData, discoveryInfo);
+      renderWclDisplay(results, logsData, processed, bossName2, avgDuration, spellMap, wclMode, logsHpsData);
     } catch(e){ results.innerHTML='<div style="color:#c84848;font-size:12px;">Error: '+e.message+'</div>'; }
     btn.textContent = wclMode==='personal' ? 'Fetch Personal Defensives' : 'Fetch Raid CDs'; btn.disabled=false;
   });
