@@ -3658,7 +3658,7 @@ const SS_ICON_INFO_STYLES = [
   { id:'glow-badge',     name:'Glow Badge',        desc:'Coloured glow badge' },
   { id:'time-right',     name:'Time Right',        desc:'Clock + time right' },
 ];
-const ssRowStyle = 'full-color';
+let ssRowStyle = 'full-color';
 const ssLabelStyle = 'badge-left';
 
 function buildSummaryForBoss(boss) {
@@ -4030,6 +4030,18 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'clean-stacked':
+    case 'main-timeline':
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #2e2620;min-height:58px;">
+        <div style="width:180px;flex-shrink:0;display:flex;align-items:center;padding:4px 10px;background:#141210;border:1px solid #2e2620;border-right:none;border-radius:4px 0 0 4px;">
+          <div style="width:3px;align-self:stretch;flex-shrink:0;margin-right:8px;background:${c};"></div>
+          <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden;flex:1;">
+            <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+            <span style="font-size:10px;font-weight:500;color:#d8c8b0;letter-spacing:0.04em;">${abTime}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:#0e0c0a;border:1px solid #2e2620;border-left:none;border-radius:0 4px 4px 0;flex:1;">${icons}</div>
+      </div>`;
+
     default:
       return `<div class="ss-row">
         <div class="ss-label">
@@ -7105,9 +7117,11 @@ async function initViewMode(viewId) {
       return rosterWhos.has(cd.who);
     }));
 
-    // Force corner-tr style for view page
-    const _prevStyle = ssIconInfoStyle;
+    // Force main-timeline row style + corner-tr icon badge for view page
+    const _prevIconStyle = ssIconInfoStyle;
+    const _prevRowStyle  = ssRowStyle;
     ssIconInfoStyle = 'pill-corner-tr';
+    ssRowStyle      = 'main-timeline';
 
     // Build content
     const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
@@ -7115,7 +7129,8 @@ async function initViewMode(viewId) {
     viewContent.innerHTML = html;
     attachSsIconErrors(viewContent);
 
-    ssIconInfoStyle = _prevStyle;
+    ssIconInfoStyle = _prevIconStyle;
+    ssRowStyle      = _prevRowStyle;
   } catch(e) {
     viewContent.innerHTML = `<div style="color:#c84848;padding:20px 0;">Error loading plan: ${e.message}</div>`;
   }
