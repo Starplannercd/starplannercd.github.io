@@ -3661,7 +3661,8 @@ const SS_ICON_INFO_STYLES = [
 let ssRowStyle = 'full-color';
 const ssLabelStyle = 'badge-left';
 let ssShowCdNames = false;
-const VIEW_CD_NAMES = { dem:'DJ', rc:'DJ', devo2:'Max', htt:'Bean', ag:'Bean', ve:'Ix', devo1:'Hpal', goak:'Hpal', holyavenger:'Hpal', avwrath:'Hpal', lhammer:'Hpal' };
+const VIEW_CD_NAMES = { dem:'DJ', rc:'DJ', devo2:'Max', htt:'Bean', ag:'Bean', ve:'Ix', devo1:'Hpal', goak:'Hpal', holyavenger:'Hpal', avwrath:'Hpal', lhammer:'Hpal', personals:'Pers', dh:'Star' };
+const VIEW_EXCLUDE_IDS = new Set(['ss']);
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
@@ -7116,8 +7117,10 @@ async function initViewMode(viewId) {
     }
 
     // Filter activeSetIds to only CDs whose WHO is in the roster (removes stale/removed players' CDs)
+    // Also exclude CDs that should never appear in the share view (VIEW_EXCLUDE_IDS)
     const rosterWhos = new Set(viewRoster.map(p => p.who));
     activeSetIds = new Set([...activeSetIds].filter(id => {
+      if (VIEW_EXCLUDE_IDS.has(id)) return false;
       const cd = CD_POOL.find(c => c.id === id);
       if (!cd) return false;
       if (cd.who === 'ALL') return true;
