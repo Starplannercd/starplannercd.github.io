@@ -3660,6 +3660,8 @@ const SS_ICON_INFO_STYLES = [
 ];
 let ssRowStyle = 'full-color';
 const ssLabelStyle = 'badge-left';
+let ssShowCdNames = false;
+const VIEW_CD_NAMES = { dem:'DJ', rc:'DJ', devo2:'Max', htt:'Bean', ag:'Bean', ve:'Ix' };
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
@@ -4122,7 +4124,12 @@ function renderSsBossBlock(boss) {
     const iconsHtml = sorted.map(p => {
       const cd = CD_POOL.find(c => c.id === p.cdId);
       if (!cd) return '';
-      return `<span class="view-icon-wrap" data-who="${cd.who}" data-color="${cd.color}" style="display:inline-block;transition:opacity 0.2s,filter 0.25s,transform 0.2s;">${buildSsIconEl(cd, p, ab)}</span>`;
+      const iconEl = buildSsIconEl(cd, p, ab);
+      const viewName = ssShowCdNames ? (VIEW_CD_NAMES[cd.id] || null) : null;
+      const innerHtml = viewName
+        ? `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">${iconEl}<span style="font-size:9px;font-weight:700;color:${cd.color};white-space:nowrap;">${viewName}</span></div>`
+        : iconEl;
+      return `<span class="view-icon-wrap" data-who="${cd.who}" data-color="${cd.color}" style="display:inline-block;transition:opacity 0.2s,filter 0.25s,transform 0.2s;">${innerHtml}</span>`;
     }).join('');
     return buildSsRow(ab, iconsHtml);
   }).join('');
@@ -7117,11 +7124,13 @@ async function initViewMode(viewId) {
       return rosterWhos.has(cd.who);
     }));
 
-    // Force main-timeline row style + corner-tr icon badge for view page
-    const _prevIconStyle = ssIconInfoStyle;
-    const _prevRowStyle  = ssRowStyle;
+    // Force main-timeline row style + corner-tr icon badge + cd names for view page
+    const _prevIconStyle  = ssIconInfoStyle;
+    const _prevRowStyle   = ssRowStyle;
+    const _prevShowNames  = ssShowCdNames;
     ssIconInfoStyle = 'pill-corner-tr';
     ssRowStyle      = 'main-timeline';
+    ssShowCdNames   = true;
 
     // Build content
     const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
@@ -7131,6 +7140,7 @@ async function initViewMode(viewId) {
 
     ssIconInfoStyle = _prevIconStyle;
     ssRowStyle      = _prevRowStyle;
+    ssShowCdNames   = _prevShowNames;
   } catch(e) {
     viewContent.innerHTML = `<div style="color:#c84848;padding:20px 0;">Error loading plan: ${e.message}</div>`;
   }
