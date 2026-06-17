@@ -4034,7 +4034,7 @@ function buildSsRow(ab, iconsHtml) {
 
     case 'clean-stacked':
     case 'main-timeline':
-      return `<div style="display:flex;align-items:stretch;border:1px solid #2e2620;border-radius:4px;overflow:hidden;margin-bottom:4px;min-height:58px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #2e2620;min-height:58px;">
         <div style="width:180px;flex-shrink:0;display:flex;align-items:center;padding:4px 10px;background:#141210;border-right:1px solid #2e2620;">
           <div style="width:3px;align-self:stretch;flex-shrink:0;margin-right:8px;background:${c};"></div>
           <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden;flex:1;">
@@ -7108,7 +7108,7 @@ async function initViewMode(viewId) {
         const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
         load(() => {
           btn.textContent = '…';
-          html2canvas(block, { backgroundColor: '#0a0804', scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+          html2canvas(block, { backgroundColor: '#0a0804', scale: 1.5, useCORS: true, allowTaint: true }).then(canvas => {
             canvas.toBlob(blob => {
               navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
                 btn.textContent = 'Copied!';
