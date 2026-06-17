@@ -4193,8 +4193,18 @@ const SPEC_ICONS = {
 };
 let VIEW_ROSTER = DEFAULT_ROSTER; // set by initViewMode so renderers can resolve specs
 
-function getSpecIconUrl(who) {
-  const player = VIEW_ROSTER.find(pl => pl.who === who);
+// Per-CD spec-icon overrides (override the owning player's spec icon for specific abilities)
+const CD_SPEC_ICON = {
+  dh:     'spell_holy_guardianspirit',  // Divine Hymn → Holy Priest
+  ascend: 'spell_nature_magicimmunity', // Ascendance → Resto Shaman
+  slt:    'spell_nature_magicimmunity', // Spirit Link Totem → Resto Shaman
+  dem:    'classicon_warrior',          // Demo Banner → Warrior (base class)
+  rc:     'classicon_warrior',          // Rallying Cry → Warrior (base class)
+};
+
+function getSpecIconUrl(cd) {
+  if (CD_SPEC_ICON[cd.id]) return SPEC_ICON_CDN + CD_SPEC_ICON[cd.id] + '.jpg';
+  const player = VIEW_ROSTER.find(pl => pl.who === cd.who);
   if (!player) return null;
   const name = SPEC_ICONS[player.spec];
   return name ? SPEC_ICON_CDN + name + '.jpg' : null;
@@ -4207,7 +4217,7 @@ function viewCdParts(p, ab) {
   return {
     cd,
     url:      getCdIconUrl(cd.id),
-    specIcon: getSpecIconUrl(cd.who),
+    specIcon: getSpecIconUrl(cd),
     who:      VIEW_CD_NAMES[cd.id] || cd.short,
     info:     getSsInfoLabel(cd, p, ab),
     color:    cd.color,
@@ -4263,13 +4273,16 @@ function viewBlockSpotlight(boss, rows, v, color) {
         ${viewSpecLabel(parts)}
       </div>`;
     }).join('');
-    return `<div style="padding:14px 24px;">
-      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:11px;">
-        <span style="width:3px;height:14px;background:${color};border-radius:2px;display:inline-block;align-self:center;"></span>
-        <span style="font-size:14px;font-weight:700;color:#e8e2d8;">${formatAbilityName(ab.name)}</span>
-        <span style="font-size:11px;font-weight:700;color:${color};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>
+    const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${color};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
+    return `<div style="display:flex;align-items:stretch;min-height:72px;">
+      <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:12px 16px;">
+        <span style="width:3px;align-self:stretch;background:${color};border-radius:2px;flex-shrink:0;"></span>
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+          <span style="font-size:13px;font-weight:700;color:#e8e2d8;line-height:1.25;">${formatAbilityName(ab.name)}</span>
+          ${timeHtml}
+        </div>
       </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap;padding-left:13px;">${cells}</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:12px 18px;flex:1;">${cells}</div>
     </div>`;
   }).join('');
   const hero = v ? `<div style="position:relative;overflow:hidden;height:150px;background:${v.bg};">
