@@ -4212,6 +4212,13 @@ function getSpecIconUrl(cd) {
   return name ? SPEC_ICON_CDN + name + '.jpg' : null;
 }
 
+// Blend two #rrggbb hex colors (t=0 → a, t=1 → b)
+function blendHex(a, b, t) {
+  const parse = h => { h = h.replace('#',''); if (h.length === 3) h = h.split('').map(x => x+x).join(''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; };
+  const A = parse(a), B = parse(b);
+  return '#' + A.map((v,i) => Math.round(v + (B[i]-v)*t).toString(16).padStart(2,'0')).join('');
+}
+
 // Per-placement render parts (cd icon, spec icon, fallback who-label, offset/hp info)
 function viewCdParts(p, ab) {
   const cd = CD_POOL.find(c => c.id === p.cdId);
@@ -4270,12 +4277,15 @@ function viewBlockSpotlight(boss, rows, v, color) {
       const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid ${parts.color};border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
       return `<div style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
     }).join('');
-    const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${color};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
+    // Per-ability accent: blend boss theme with this ability/phase colour (stays on-theme, varies per row)
+    const accent = blendHex(color, ab.color || color, 0.5);
+    const nameColor = blendHex('#e8e2d8', accent, 0.5);
+    const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${accent};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
     return `<div style="display:flex;align-items:stretch;min-height:60px;">
       <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:10px 16px;">
-        <span style="width:3px;align-self:stretch;background:${color};border-radius:2px;flex-shrink:0;"></span>
+        <span style="width:3px;align-self:stretch;background:${accent};border-radius:2px;flex-shrink:0;"></span>
         <div style="display:flex;flex-direction:column;gap:3px;min-width:0;">
-          <span style="font-size:13px;font-weight:700;color:#e8e2d8;line-height:1.25;">${formatAbilityName(ab.name)}</span>
+          <span style="font-size:13px;font-weight:700;color:${nameColor};line-height:1.25;">${formatAbilityName(ab.name)}</span>
           ${timeHtml}
         </div>
       </div>
