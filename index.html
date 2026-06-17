@@ -7287,10 +7287,6 @@ async function initViewMode(viewId) {
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
 
-                // DIAGNOSTIC: magenta stripe to confirm this code path runs
-                ctx.fillStyle = 'rgba(255,0,255,0.6)';
-                ctx.fillRect(bx, by, bw, 8);
-
                 ctx.save();
                 ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.clip();
                 ctx.shadowColor = g1s; ctx.shadowBlur = 12 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
