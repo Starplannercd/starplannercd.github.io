@@ -943,6 +943,7 @@
   .ss-boss-subtitle { font-size: 10px; color: #5a4838; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
   .ss-rows-wrap { padding: 4px 0; }
   .ss-rows-wrap > div:last-child { border-bottom: none !important; }
+  .vrows > * + * { border-top: 1px solid #1f1a14; }
   .ss-boss-name { font-size: 16px; font-weight: 600; color: #c83a20; }
   .ss-boss-ready { font-size: 10px; color: #48a868; border: 1px solid #48a868; border-radius: 3px; padding: 1px 6px; }
   .ss-row { display:flex; align-items:stretch; gap:0; border-bottom:1px solid #1e1a12; min-height:58px; }
@@ -4061,93 +4062,54 @@ function buildSsRow(ab, iconsHtml) {
 }
 
 
+// ── Shared boss visual config (color, image, gradient bg, glow) ──
+// Used by both the screenshot-modal header and the share-view style renderers.
+const BOSS_VIS = {
+  immerseus:        { color:'#3399ff', file:'immer2.png',          bg:'linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%)', border:'#1a3a5a', glow:['#1a60c8bb','#0a3a8866'], offset:'-28px', right:'-8px',  tight:false },
+  fallenprotectors: { color:'#c8a55a', file:'fallenprotimage.png', bg:'linear-gradient(100deg,#120c06 0%,#1c1208 55%,#221608 100%)', border:'#4a3010', glow:['#c87820bb','#80480866'], offset:'-44px', right:'-8px',  tight:true  },
+  norushen:         { color:'#9966cc', file:'norushen.png',        bg:'linear-gradient(100deg,#0e0818 0%,#180c28 55%,#1e1030 100%)', border:'#3a1a5a', glow:['#6633aabb','#3a1a7766'], offset:'-55px', right:'-8px',  tight:true  },
+  sha:              { color:'#cc9933', file:'shaofpride.png',      bg:'linear-gradient(100deg,#120a08 0%,#1e1008 55%,#261408 100%)', border:'#4a2a08', glow:['#cc881abb','#88550866'], offset:'-36px', right:'-20px', tight:true  },
+  galakras:         { color:'#cc5500', file:'galakras.png',        bg:'linear-gradient(100deg,#180a04 0%,#22100a 55%,#281408 100%)', border:'#4a2008', glow:['#cc5500bb','#88330066'], offset:'-36px', right:'-30px', tight:false },
+  ironjuggernaut:   { color:'#8899aa', file:'ironjug.png',         bg:'linear-gradient(100deg,#0c1018 0%,#101620 55%,#141c28 100%)', border:'#2a3848', glow:['#8899aabb','#4a607866'], offset:'-36px', right:'-8px',  tight:false },
+  darkshaman:       { color:'#556633', file:'darkshamans.png',     bg:'linear-gradient(100deg,#080e06 0%,#0e1808 55%,#121e0a 100%)', border:'#283818', glow:['#5a7733bb','#344a1866'], offset:'-36px', right:'-8px',  tight:false },
+  generalnazmak:    { color:'#88aa33', file:'nazgrim.png',         bg:'linear-gradient(100deg,#0e1006 0%,#161808 55%,#1a200a 100%)', border:'#38480a', glow:['#88aa33bb','#4a661866'], offset:'-55px', right:'-8px',  tight:true  },
+  malkorok:         { color:'#8833bb', file:'malk.png',            bg:'linear-gradient(100deg,#100818 0%,#1a0c28 55%,#200e30 100%)', border:'#3a1458', glow:['#8833bbbb','#5a1a8866'], offset:'-36px', right:'-8px',  tight:false },
+  spoils:           { color:'#ccaa33', file:'spoils.png',          bg:'linear-gradient(100deg,#161008 0%,#201808 55%,#261e0a 100%)', border:'#3a2e08', glow:['#ccaa33bb','#887a1866'], offset:'-36px', right:'-8px',  tight:false },
+  thok:             { color:'#cc3300', file:'thok.png',            bg:'linear-gradient(100deg,#180606 0%,#220808 55%,#2a0a08 100%)', border:'#4a1008', glow:['#cc3300bb','#881a0066'], offset:'-36px', right:'-8px',  tight:false },
+  siegecrafter:     { color:'#cc6622', file:'blackfuse.png',       bg:'linear-gradient(100deg,#0e1218 0%,#141a22 55%,#182028 100%)', border:'#2a3848', glow:['#cc6622bb','#884a1466'], offset:'-36px', right:'-8px',  tight:false },
+  paragons:         { color:'#99bb33', file:'paragons.png',        bg:'linear-gradient(100deg,#0e1406 0%,#141e08 55%,#18260a 100%)', border:'#304018', glow:['#99bb33bb','#5a7a1866'], offset:'-36px', right:'-8px',  tight:false },
+  garrosh:          { color:'#bb1111', file:'thrall.png',          bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', glow:['#bb1111bb','#880a0a66'], offset:'-55px', right:'-8px',  tight:false },
+};
+
+// Radial-gradient glow behind boss image (renders in html2canvas; drop-shadow does not)
+function bossGlowHtml(v) {
+  const sz    = v.tight ? 180 : 260;
+  const top   = v.tight ? -55 : -90;
+  const right = v.tight ? -10 : -30;
+  const stops = v.tight ? `${v.glow[0]} 0%, ${v.glow[1]} 16%, transparent 42%` : `${v.glow[0]} 0%, ${v.glow[1]} 25%, transparent 55%`;
+  return `<div style="position:absolute;top:${top}px;right:${right}px;width:${sz}px;height:${sz}px;background:radial-gradient(circle at 50% 50%, ${stops});pointer-events:none;z-index:0;"></div>`;
+}
+function bossImgHtml(v, h) {
+  const ht = h || 148;
+  return `<img src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
+}
+// Shared "Image for Disc" capture button (handler wired after render)
+const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#3a2e20';">Image for Disc</button>`;
+
 function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const name = boss.name;
-  const BOSS_COLORS = {
-    immerseus:      '#3399ff',
-    fallenprotectors: '#c8a55a',
-    norushen:       '#9966cc',
-    sha:            '#cc9933',
-    galakras:       '#cc5500',
-    ironjuggernaut: '#8899aa',
-    darkshaman:     '#556633',
-    generalnazmak:  '#88aa33',
-    malkorok:       '#8833bb',
-    spoils:         '#ccaa33',
-    thok:           '#cc3300',
-    siegecrafter:   '#cc6622',
-    paragons:       '#99bb33',
-    garrosh:        '#bb1111',
-  };
-  const bossColor = BOSS_COLORS[boss.id] || '#c8d0e8';
+  const v = BOSS_VIS[boss.id];
+  const bossColor = (v && v.color) || '#c8d0e8';
+  const imgBtn = showImgBtn ? VIEW_IMG_BTN : '';
 
-  const imgBtn = showImgBtn ? `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410;color:#8a7060;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.06em;flex-shrink:0;" onmouseover="this.style.color='#c8a880';this.style.borderColor='#5a4030';" onmouseout="this.style.color='#8a7060';this.style.borderColor='#3a2e20';">Image for Disc</button>` : '';
-
-  // Radial-gradient glow behind the boss image — renders in html2canvas (drop-shadow does not)
-  const glowDiv = (c1, c2, tight) => {
-    const sz    = tight ? 180 : 260;
-    const top   = tight ? -55 : -90;
-    const right = tight ? -10 : -30;
-    const stops = tight ? `${c1} 0%, ${c2} 16%, transparent 42%` : `${c1} 0%, ${c2} 25%, transparent 55%`;
-    return `<div style="position:absolute;top:${top}px;right:${right}px;width:${sz}px;height:${sz}px;background:radial-gradient(circle at 50% 50%, ${stops});pointer-events:none;z-index:0;"></div>`;
-  };
-  const TIGHT_GLOW = new Set(['sha', 'norushen', 'fallenprotectors', 'generalnazmak']);
-
-  if (boss.id === 'immerseus') {
-    return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%);border-bottom:1px solid #1a3a5a;">
-      ${glowDiv('#1a60c8bb', '#0a3a8866')}
-      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
-        <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">Immerseus</div></div>
-        ${imgBtn}
-      </div>
-      <img src="immer2.png" onerror="this.style.display='none'"
-        style="position:absolute;right:-8px;bottom:-28px;height:148px;pointer-events:none;
-               filter:drop-shadow(0 0 10px #1a60c8bb) drop-shadow(0 0 28px #0a3a8866);
-               opacity:0.92;" />
-    </div>`;
-  }
-
-  if (boss.id === 'fallenprotectors') {
-    return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#120c06 0%,#1c1208 55%,#221608 100%);border-bottom:1px solid #4a3010;">
-      ${glowDiv('#c87820bb', '#80480866', true)}
-      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
-        <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">The Fallen Protectors</div></div>
-        ${imgBtn}
-      </div>
-      <img src="fallenprotimage.png" onerror="this.style.display='none'"
-        style="position:absolute;right:-8px;bottom:-44px;height:148px;pointer-events:none;
-               filter:drop-shadow(0 0 10px #c87820bb) drop-shadow(0 0 28px #80480866);
-               opacity:0.92;" />
-    </div>`;
-  }
-
-  const BOSS_IMAGES = {
-    norushen:       { file:'norushen.png',    bg:'linear-gradient(100deg,#0e0818 0%,#180c28 55%,#1e1030 100%)', border:'#3a1a5a', shadow:'#6633aabb,#3a1a7766', offset:'-55px', right:'-8px' },
-    sha:            { file:'shaofpride.png',  bg:'linear-gradient(100deg,#120a08 0%,#1e1008 55%,#261408 100%)', border:'#4a2a08', shadow:'#cc881abb,#88550866', offset:'-36px', right:'-20px' },
-    galakras:       { file:'galakras.png',    bg:'linear-gradient(100deg,#180a04 0%,#22100a 55%,#281408 100%)', border:'#4a2008', shadow:'#cc5500bb,#88330066', offset:'-36px', right:'-30px' },
-    ironjuggernaut: { file:'ironjug.png',     bg:'linear-gradient(100deg,#0c1018 0%,#101620 55%,#141c28 100%)', border:'#2a3848', shadow:'#8899aabb,#4a607866', offset:'-36px', right:'-8px' },
-    darkshaman:     { file:'darkshamans.png', bg:'linear-gradient(100deg,#080e06 0%,#0e1808 55%,#121e0a 100%)', border:'#283818', shadow:'#5a7733bb,#344a1866', offset:'-36px', right:'-8px' },
-    generalnazmak:  { file:'nazgrim.png',     bg:'linear-gradient(100deg,#0e1006 0%,#161808 55%,#1a200a 100%)', border:'#38480a', shadow:'#88aa33bb,#4a661866', offset:'-55px', right:'-8px' },
-    malkorok:       { file:'malk.png',        bg:'linear-gradient(100deg,#100818 0%,#1a0c28 55%,#200e30 100%)', border:'#3a1458', shadow:'#8833bbbb,#5a1a8866', offset:'-36px', right:'-8px' },
-    spoils:         { file:'spoils.png',      bg:'linear-gradient(100deg,#161008 0%,#201808 55%,#261e0a 100%)', border:'#3a2e08', shadow:'#ccaa33bb,#887a1866', offset:'-36px', right:'-8px' },
-    thok:           { file:'thok.png',        bg:'linear-gradient(100deg,#180606 0%,#220808 55%,#2a0a08 100%)', border:'#4a1008', shadow:'#cc3300bb,#881a0066', offset:'-36px', right:'-8px' },
-    siegecrafter:   { file:'blackfuse.png',   bg:'linear-gradient(100deg,#0e1218 0%,#141a22 55%,#182028 100%)', border:'#2a3848', shadow:'#cc6622bb,#884a1466', offset:'-36px', right:'-8px' },
-    paragons:       { file:'paragons.png',    bg:'linear-gradient(100deg,#0e1406 0%,#141e08 55%,#18260a 100%)', border:'#304018', shadow:'#99bb33bb,#5a7a1866', offset:'-36px', right:'-8px' },
-    garrosh:        { file:'thrall.png',      bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', shadow:'#bb1111bb,#880a0a66', offset:'-55px', right:'-8px' },
-  };
-
-  const bimg = BOSS_IMAGES[boss.id];
-  if (bimg) {
-    return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:${bimg.bg};border-bottom:1px solid ${bimg.border};">
-      ${glowDiv(bimg.shadow.split(',')[0].trim(), bimg.shadow.split(',')[1].trim(), TIGHT_GLOW.has(boss.id))}
-      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
+  if (v) {
+    return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:${v.bg};border-bottom:1px solid ${v.border};">
+      ${bossGlowHtml(v)}
+      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:2;gap:12px;">
         <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">${name}</div></div>
         ${imgBtn}
       </div>
-      <img src="${bimg.file}" onerror="this.style.display='none'"
-        style="position:absolute;right:${bimg.right};bottom:${bimg.offset};height:148px;pointer-events:none;
-               filter:drop-shadow(0 0 10px ${bimg.shadow.split(',')[0].trim()}) drop-shadow(0 0 28px ${bimg.shadow.split(',')[1].trim()});
-               opacity:0.92;" />
+      ${bossImgHtml(v)}
     </div>`;
   }
 
@@ -4183,6 +4145,150 @@ function renderSsBossBlock(boss, showImgBtn) {
   return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #2a2218;">
     ${buildSsBossHeader(boss, portraitUrl, showImgBtn)}
     <div class="ss-rows-wrap">${rowsHtml}</div>
+  </div>`;
+}
+
+// ───────────────────────────────────────────────────────────────
+// Share-view style renderers (selectable via the top-bar switcher)
+// ───────────────────────────────────────────────────────────────
+const VIEW_STYLES = [
+  { id:'timeline',  name:'Timeline' },
+  { id:'cards',     name:'Cards' },
+  { id:'compact',   name:'Compact' },
+  { id:'spotlight', name:'Spotlight' },
+];
+
+// Per-placement render parts (icon url, who-label, offset/hp info)
+function viewCdParts(p, ab) {
+  const cd = CD_POOL.find(c => c.id === p.cdId);
+  if (!cd) return null;
+  return {
+    cd,
+    url:   getCdIconUrl(cd.id),
+    who:   VIEW_CD_NAMES[cd.id] || cd.short,
+    info:  getSsInfoLabel(cd, p, ab),
+    color: cd.color,
+    textColor: cd.textColor,
+  };
+}
+function viewIconImg(parts, size) {
+  const sz = size || 44;
+  const fb = `<div style="width:${sz}px;height:${sz}px;border-radius:6px;background:${parts.color}22;border:1px solid ${parts.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${parts.textColor};">${parts.cd.short}</div>`;
+  return parts.url
+    ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fb)}" src="${parts.url}" style="width:${sz}px;height:${sz}px;border-radius:6px;display:block;" title="${parts.cd.name}" />`
+    : fb;
+}
+// Slim/standard banner (cards + compact)
+function viewBanner(boss, v, color, h, titleSize) {
+  const imgH = h + 46;
+  return `<div style="position:relative;display:flex;align-items:center;overflow:hidden;height:${h}px;background:${v?v.bg:'#100e0a'};border-bottom:1px solid ${v?v.border:'#2a2218'};">
+    ${v ? bossGlowHtml(v) : ''}
+    <div style="flex:1;display:flex;align-items:center;gap:12px;padding:0 22px;position:relative;z-index:2;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:${color}66;margin-bottom:4px;">Cooldowns</div>
+        <div style="font-size:${titleSize}px;font-weight:800;color:${color};letter-spacing:0.02em;text-shadow:0 0 18px ${color}55;">${boss.name}</div>
+      </div>
+      ${VIEW_IMG_BTN}
+    </div>
+    ${v ? bossImgHtml(v, imgH) : ''}
+  </div>`;
+}
+
+function buildViewBossBlock(boss, styleId) {
+  const rows = buildSummaryForBoss(boss);
+  if (!rows.length) return '';
+  const v = BOSS_VIS[boss.id] || null;
+  const color = (v && v.color) || '#c8d0e8';
+  switch (styleId) {
+    case 'cards':     return viewBlockCards(boss, rows, v, color);
+    case 'compact':   return viewBlockCompact(boss, rows, v, color);
+    case 'spotlight': return viewBlockSpotlight(boss, rows, v, color);
+    default:          return '';
+  }
+}
+
+// Style: Cards — airy list, time chip + name on the left, labelled icons on the right
+function viewBlockCards(boss, rows, v, color) {
+  const body = rows.map(({ ab, sorted }) => {
+    const cells = sorted.map(p => {
+      const parts = viewCdParts(p, ab); if (!parts) return '';
+      const badge = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000c;border:1px solid ${parts.color}99;border-radius:6px;padding:1px 4px;white-space:nowrap;">${parts.info}</span>` : '';
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="position:relative;">${viewIconImg(parts, 46)}${badge}</div>
+        <span style="font-size:9px;font-weight:700;color:${parts.color};white-space:nowrap;">${parts.who}</span>
+      </div>`;
+    }).join('');
+    return `<div style="display:flex;align-items:center;gap:16px;padding:13px 22px;">
+      <div style="display:flex;flex-direction:column;align-items:flex-start;width:140px;flex-shrink:0;">
+        <span style="font-size:13px;font-weight:700;color:${color};line-height:1.2;">${formatAbilityName(ab.name)}</span>
+        <span style="margin-top:5px;font-size:10px;font-weight:700;color:#c8b89a;background:${color}1a;border:1px solid ${color}44;border-radius:10px;padding:1px 9px;font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>
+      </div>
+      <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:flex-start;flex:1;">${cells}</div>
+    </div>`;
+  }).join('');
+  return `<div class="ss-boss-block" style="margin-bottom:18px;border-radius:10px;overflow:hidden;border:1px solid #2a2218;background:#0d0b09;box-shadow:0 4px 18px rgba(0,0,0,0.4);">
+    ${viewBanner(boss, v, color, 86, 20)}
+    <div class="vrows">${body}</div>
+  </div>`;
+}
+
+// Style: Compact — dense table, fixed time/name columns, small inline-labelled icons
+function viewBlockCompact(boss, rows, v, color) {
+  const body = rows.map(({ ab, sorted }, i) => {
+    const cells = sorted.map(p => {
+      const parts = viewCdParts(p, ab); if (!parts) return '';
+      const off = parts.info ? `<sup style="font-size:8px;font-weight:700;color:#fff;background:#000a;border-radius:4px;padding:0 3px;margin-left:2px;">${parts.info}</sup>` : '';
+      return `<div style="display:flex;align-items:center;gap:5px;">
+        ${viewIconImg(parts, 32)}
+        <span style="font-size:10px;font-weight:700;color:${parts.color};white-space:nowrap;">${parts.who}${off}</span>
+      </div>`;
+    }).join('');
+    const bg = i % 2 ? '#0e0c0a' : '#121009';
+    return `<div style="display:flex;align-items:stretch;background:${bg};">
+      <div style="width:60px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c8b89a;font-variant-numeric:tabular-nums;border-right:1px solid #1f1a14;">${formatTime(ab.time)}</div>
+      <div style="width:150px;flex-shrink:0;display:flex;align-items:center;font-size:11px;font-weight:600;color:${color};padding:7px 12px;border-right:1px solid #1f1a14;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${formatAbilityName(ab.name)}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:6px 14px;flex:1;">${cells}</div>
+    </div>`;
+  }).join('');
+  return `<div class="ss-boss-block" style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #241d15;">
+    ${viewBanner(boss, v, color, 58, 16)}
+    <div>${body}</div>
+  </div>`;
+}
+
+// Style: Spotlight — hero banner, abilities as bands with large labelled icons
+function viewBlockSpotlight(boss, rows, v, color) {
+  const body = rows.map(({ ab, sorted }) => {
+    const cells = sorted.map(p => {
+      const parts = viewCdParts(p, ab); if (!parts) return '';
+      const badge = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid ${parts.color};border-radius:6px;padding:1px 4px;white-space:nowrap;">${parts.info}</span>` : '';
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+        <div style="position:relative;">${viewIconImg(parts, 52)}${badge}</div>
+        <span style="font-size:10px;font-weight:700;color:#fff;background:${parts.color}cc;border-radius:8px;padding:1px 9px;white-space:nowrap;">${parts.who}</span>
+      </div>`;
+    }).join('');
+    return `<div style="padding:14px 24px;">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:11px;">
+        <span style="width:3px;height:14px;background:${color};border-radius:2px;display:inline-block;align-self:center;"></span>
+        <span style="font-size:14px;font-weight:700;color:#e8e2d8;">${formatAbilityName(ab.name)}</span>
+        <span style="font-size:11px;font-weight:700;color:${color};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;padding-left:13px;">${cells}</div>
+    </div>`;
+  }).join('');
+  const hero = v ? `<div style="position:relative;overflow:hidden;height:150px;background:${v.bg};">
+      ${bossGlowHtml(v)}
+      ${bossImgHtml(v, 230)}
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#000a 0%,#0007 42%,transparent 72%);z-index:1;"></div>
+      <div style="position:absolute;left:0;bottom:0;padding:0 26px 18px;z-index:2;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${color}99;margin-bottom:6px;">Cooldowns</div>
+        <div style="font-size:30px;font-weight:900;color:${color};letter-spacing:0.01em;text-shadow:0 2px 14px #000,0 0 26px ${color}55;">${boss.name}</div>
+      </div>
+      <div style="position:absolute;top:14px;right:18px;z-index:3;">${VIEW_IMG_BTN}</div>
+    </div>` : viewBanner(boss, v, color, 90, 24);
+  return `<div class="ss-boss-block" style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1px solid ${v?v.border:'#2a2218'};background:#0b0908;box-shadow:0 6px 24px rgba(0,0,0,0.5);">
+    ${hero}
+    <div class="vrows">${body}</div>
   </div>`;
 }
 
@@ -7058,6 +7164,7 @@ async function initViewMode(viewId) {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
         <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#c83a20;letter-spacing:0.3em;text-transform:uppercase;opacity:0.8;">Raid CDs</span>
       </div>
+      <div id="viewStyleSel" style="display:flex;align-items:center;gap:2px;margin-left:auto;padding:3px;border:1px solid #2a2218;border-radius:7px;background:#0c0a08;"></div>
     </div>
     <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
 
@@ -7104,49 +7211,80 @@ async function initViewMode(viewId) {
       return rosterWhos.has(cd.who);
     }));
 
-    // Force main-timeline row style + corner-tr icon badge + cd names for view page
-    const _prevIconStyle  = ssIconInfoStyle;
-    const _prevRowStyle   = ssRowStyle;
-    const _prevShowNames  = ssShowCdNames;
-    ssIconInfoStyle = 'pill-corner-tr';
-    ssRowStyle      = 'main-timeline';
-    ssShowCdNames   = true;
+    const EMPTY_HTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
 
-    // Build content
-    const html = BOSSES.map(b => renderSsBossBlock(b, true)).filter(Boolean).join('') ||
-      '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
-    viewContent.innerHTML = html;
-    attachSsIconErrors(viewContent);
+    // Render the chosen style. Timeline reuses the existing pipeline (global flags).
+    function renderStyle(styleId) {
+      if (styleId === 'timeline') {
+        const pi = ssIconInfoStyle, pr = ssRowStyle, pn = ssShowCdNames;
+        ssIconInfoStyle = 'pill-corner-tr';
+        ssRowStyle      = 'main-timeline';
+        ssShowCdNames   = true;
+        const html = BOSSES.map(b => renderSsBossBlock(b, true)).filter(Boolean).join('');
+        ssIconInfoStyle = pi; ssRowStyle = pr; ssShowCdNames = pn;
+        return html;
+      }
+      return BOSSES.map(b => buildViewBossBlock(b, styleId)).filter(Boolean).join('');
+    }
 
-    // Image buttons — capture the parent boss block via html2canvas
-    viewContent.querySelectorAll('.view-img-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const block = btn.closest('.ss-boss-block');
-        if (!block) return;
-        const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
-        load(() => {
-          btn.textContent = '…';
-          html2canvas(block, {
-            backgroundColor: '#0a0804',
-            scale: 1.25,
-            useCORS: true,
-            allowTaint: true,
-            ignoreElements: el => el.classList && el.classList.contains('view-img-btn')
-          }).then(canvas => {
-            canvas.toBlob(blob => {
-              navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
-                btn.textContent = 'Copied!';
-                setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
-              }).catch(() => { btn.textContent = 'Image for Disc'; });
-            }, 'image/png');
-          }).catch(() => { btn.textContent = 'Image for Disc'; });
+    // Wire the html2canvas capture buttons (re-run after every repaint)
+    function attachImgButtons() {
+      viewContent.querySelectorAll('.view-img-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const block = btn.closest('.ss-boss-block');
+          if (!block) return;
+          const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
+          load(() => {
+            btn.textContent = '…';
+            html2canvas(block, {
+              backgroundColor: '#0a0804',
+              scale: 1.25,
+              useCORS: true,
+              allowTaint: true,
+              ignoreElements: el => el.classList && el.classList.contains('view-img-btn')
+            }).then(canvas => {
+              canvas.toBlob(blob => {
+                navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+                  btn.textContent = 'Copied!';
+                  setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
+                }).catch(() => { btn.textContent = 'Image for Disc'; });
+              }, 'image/png');
+            }).catch(() => { btn.textContent = 'Image for Disc'; });
+          });
         });
+      });
+    }
+
+    let currentStyle = 'timeline';
+    try { const saved = localStorage.getItem('rcd_view_style'); if (saved && VIEW_STYLES.some(s => s.id === saved)) currentStyle = saved; } catch(e) {}
+
+    const styleSel = viewEl.querySelector('#viewStyleSel');
+    function updateSelUI() {
+      styleSel.querySelectorAll('button').forEach(b => {
+        const on = b.dataset.style === currentStyle;
+        b.style.background  = on ? '#c83a2026' : 'transparent';
+        b.style.color       = on ? '#e8a070' : '#7a6a58';
+        b.style.borderColor = on ? '#c83a2055' : 'transparent';
+      });
+    }
+    function paint() {
+      viewContent.innerHTML = renderStyle(currentStyle) || EMPTY_HTML;
+      attachSsIconErrors(viewContent);
+      attachImgButtons();
+      updateSelUI();
+    }
+    styleSel.innerHTML = VIEW_STYLES.map(s =>
+      `<button data-style="${s.id}" style="padding:4px 12px;border-radius:5px;border:1px solid transparent;background:transparent;color:#7a6a58;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:0.03em;cursor:pointer;transition:color 0.15s,background 0.15s;">${s.name}</button>`
+    ).join('');
+    styleSel.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        currentStyle = b.dataset.style;
+        try { localStorage.setItem('rcd_view_style', currentStyle); } catch(e) {}
+        paint();
       });
     });
 
-    ssIconInfoStyle = _prevIconStyle;
-    ssRowStyle      = _prevRowStyle;
-    ssShowCdNames   = _prevShowNames;
+    paint();
   } catch(e) {
     viewContent.innerHTML = `<div style="color:#c84848;padding:20px 0;">Error loading plan: ${e.message}</div>`;
   }
