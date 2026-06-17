@@ -7260,10 +7260,17 @@ async function initViewMode(viewId) {
               }
             });
 
-            // Glow pass: draw boss image again with shadowBlur directly on main canvas.
-            // html2canvas already placed the image; this adds the silhouette glow on top.
+            // Copy html2canvas output to a fresh canvas (avoids any residual clip paths
+            // that html2canvas may leave on its own context, which silently swallow draw calls).
+            const out = document.createElement('canvas');
+            out.width = canvas.width; out.height = canvas.height;
+            const ctx = out.getContext('2d');
+            ctx.drawImage(canvas, 0, 0);
+
+            // Glow pass: redraw boss image with canvas shadowBlur to replicate CSS drop-shadow.
             if (imgEl && imgEl.src) {
               const freshImg = new Image();
+              freshImg.crossOrigin = 'anonymous';
               await new Promise(res => { freshImg.onload = res; freshImg.onerror = res; freshImg.src = imgEl.src; });
               if (freshImg.naturalWidth) {
                 const rightVal  = parseFloat(imgEl.getAttribute('data-right'))  || 0;
@@ -7274,24 +7281,28 @@ async function initViewMode(viewId) {
                 const g2 = imgEl.getAttribute('data-glow2');
                 const g1s = (g1 || '#fff').replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
                 const g2s = (g2 || g1s).replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
-                // Derive banner bounds from canvas size (html2canvas uses offsetWidth/Height * scale)
                 const bx = Math.round(1 * SCALE), by = Math.round(1 * SCALE);
-                const bw = canvas.width - 2 * bx, bh = Math.round(150 * SCALE);
-                const ix = bx + bw + (-rightVal)  * SCALE - imgWcss * SCALE;
+                const bw = out.width - 2 * bx, bh = Math.round(150 * SCALE);
+                const ix = bx + bw + (-rightVal) * SCALE - imgWcss * SCALE;
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
-                const ctx = canvas.getContext('2d');
-                // DIAGNOSTIC: paint a visible magenta stripe across the banner + show coords in button
-                ctx.save();
+
+                // DIAGNOSTIC: magenta stripe to confirm this code path runs
                 ctx.fillStyle = 'rgba(255,0,255,0.6)';
                 ctx.fillRect(bx, by, bw, 8);
+
+                ctx.save();
+                ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.clip();
+                ctx.shadowColor = g1s; ctx.shadowBlur = 12 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g1s; ctx.shadowBlur = 12 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g2s; ctx.shadowBlur = 32 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g2s; ctx.shadowBlur = 32 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowBlur = 0;                                  ctx.drawImage(freshImg, ix, iy, iw, ih);
                 ctx.restore();
-                btn.textContent = `bw${Math.round(bw)} bh${Math.round(bh)} ix${Math.round(ix)} iy${Math.round(iy)} nw${freshImg.naturalWidth}`;
-                await new Promise(r => setTimeout(r, 5000));
               }
             }
 
-            const blob = await toBlob(canvas);
+            const blob = await toBlob(out);
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
             btn.textContent = 'Copied!';
             setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
