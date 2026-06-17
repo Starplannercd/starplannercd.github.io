@@ -7261,14 +7261,16 @@ async function initViewMode(viewId) {
               const freshImg = new Image();
               await new Promise(res => { freshImg.onload = res; freshImg.onerror = res; freshImg.src = imgEl.src; });
               if (freshImg.naturalWidth) {
-                const br        = bannerEl.getBoundingClientRect();
                 const rightVal  = parseFloat(imgEl.getAttribute('data-right'))  || 0;
                 const offsetVal = parseFloat(imgEl.getAttribute('data-offset')) || 0;
                 const imgHcss   = parseFloat(imgEl.getAttribute('data-imgh'))   || 148;
                 const imgWcss   = freshImg.naturalWidth * imgHcss / freshImg.naturalHeight;
-                const bw = br.width * SCALE, bh = br.height * SCALE;
-                const bx = (br.left - blockRect.left) * SCALE;
-                const by = (br.top  - blockRect.top)  * SCALE;
+                // Use offset-based positions (block-relative) instead of getBoundingClientRect
+                // so scroll position doesn't affect coordinates.
+                const bx = bannerEl.offsetLeft * SCALE;
+                const by = bannerEl.offsetTop  * SCALE;
+                const bw = bannerEl.offsetWidth  * SCALE;
+                const bh = bannerEl.offsetHeight * SCALE;
                 comp = {
                   img: freshImg,
                   g1: imgEl.getAttribute('data-glow1'), g2: imgEl.getAttribute('data-glow2'),
