@@ -4083,7 +4083,14 @@ function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const imgBtn = showImgBtn ? `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410;color:#8a7060;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.06em;flex-shrink:0;" onmouseover="this.style.color='#c8a880';this.style.borderColor='#5a4030';" onmouseout="this.style.color='#8a7060';this.style.borderColor='#3a2e20';">Image for Disc</button>` : '';
 
   // Radial-gradient glow behind the boss image — renders in html2canvas (drop-shadow does not)
-  const glowDiv = (c1, c2) => `<div style="position:absolute;top:-90px;right:-30px;width:260px;height:260px;background:radial-gradient(circle at 50% 50%, ${c1} 0%, ${c2} 25%, transparent 55%);pointer-events:none;z-index:0;"></div>`;
+  const glowDiv = (c1, c2, tight) => {
+    const sz    = tight ? 180 : 260;
+    const top   = tight ? -55 : -90;
+    const right = tight ? -10 : -30;
+    const stops = tight ? `${c1} 0%, ${c2} 16%, transparent 42%` : `${c1} 0%, ${c2} 25%, transparent 55%`;
+    return `<div style="position:absolute;top:${top}px;right:${right}px;width:${sz}px;height:${sz}px;background:radial-gradient(circle at 50% 50%, ${stops});pointer-events:none;z-index:0;"></div>`;
+  };
+  const TIGHT_GLOW = new Set(['sha', 'norushen', 'fallenprotectors', 'generalnazmak']);
 
   if (boss.id === 'immerseus') {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%);border-bottom:1px solid #1a3a5a;">
@@ -4101,7 +4108,7 @@ function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
 
   if (boss.id === 'fallenprotectors') {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#120c06 0%,#1c1208 55%,#221608 100%);border-bottom:1px solid #4a3010;">
-      ${glowDiv('#c87820bb', '#80480866')}
+      ${glowDiv('#c87820bb', '#80480866', true)}
       <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
         <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">The Fallen Protectors</div></div>
         ${imgBtn}
@@ -4131,7 +4138,7 @@ function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const bimg = BOSS_IMAGES[boss.id];
   if (bimg) {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:${bimg.bg};border-bottom:1px solid ${bimg.border};">
-      ${glowDiv(bimg.shadow.split(',')[0].trim(), bimg.shadow.split(',')[1].trim())}
+      ${glowDiv(bimg.shadow.split(',')[0].trim(), bimg.shadow.split(',')[1].trim(), TIGHT_GLOW.has(boss.id))}
       <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
         <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">${name}</div></div>
         ${imgBtn}
