@@ -4093,7 +4093,7 @@ function bossGlowHtml(v) {
 }
 function bossImgHtml(v, h) {
   const ht = h || 148;
-  return `<img class="boss-banner-img" data-glow1="${v.glow[0]}" data-glow2="${v.glow[1]}" src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
+  return `<img class="boss-banner-img" data-glow1="${v.glow[0]}" data-glow2="${v.glow[1]}" data-right="${v.right}" data-offset="${v.offset}" data-imgh="${ht}" src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
 }
 // Shared "Image for Disc" capture button (handler wired after render)
 const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#3a2e20';">Image for Disc</button>`;
@@ -7257,15 +7257,27 @@ async function initViewMode(viewId) {
             const bannerEl = block.querySelector('.boss-banner');
             let comp = null;
             if (imgEl && bannerEl && imgEl.complete && imgEl.naturalWidth) {
-              const ir = imgEl.getBoundingClientRect();
               const br = bannerEl.getBoundingClientRect();
+              // Compute image canvas position directly from CSS data attributes — more reliable
+              // than getBoundingClientRect on absolutely-positioned elements clipped by overflow:hidden.
+              const rightVal  = parseFloat(imgEl.getAttribute('data-right'))  || 0; // e.g. -8  (from '-8px')
+              const offsetVal = parseFloat(imgEl.getAttribute('data-offset')) || 0; // e.g. -28 (from '-28px')
+              const imgHcss   = parseFloat(imgEl.getAttribute('data-imgh'))   || 148;
+              const imgWcss   = imgEl.naturalWidth * imgHcss / imgEl.naturalHeight;
+              const bw = br.width * SCALE, bh = br.height * SCALE;
+              const bx = (br.left - blockRect.left) * SCALE;
+              const by = (br.top  - blockRect.top)  * SCALE;
+              // right:-8px  → img right edge is 8px past banner right  → imgRight = bw + 8*SCALE
+              // bottom:-28px → img bottom edge is 28px past banner bottom → imgBottom = bh + 28*SCALE
+              const imgRight  = bw + (-rightVal)  * SCALE;
+              const imgBottom = bh + (-offsetVal) * SCALE;
               comp = {
                 img: imgEl,
                 g1: imgEl.getAttribute('data-glow1'), g2: imgEl.getAttribute('data-glow2'),
-                ix: (ir.left - blockRect.left) * SCALE, iy: (ir.top - blockRect.top) * SCALE,
-                iw: ir.width * SCALE, ih: ir.height * SCALE,
-                bx: (br.left - blockRect.left) * SCALE, by: (br.top - blockRect.top) * SCALE,
-                bw: br.width * SCALE, bh: br.height * SCALE,
+                ix: bx + imgRight - imgWcss * SCALE,
+                iy: by + imgBottom - imgHcss * SCALE,
+                iw: imgWcss * SCALE, ih: imgHcss * SCALE,
+                bx, by, bw, bh,
               };
             }
 
