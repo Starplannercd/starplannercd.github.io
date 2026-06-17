@@ -7236,43 +7236,71 @@ async function initViewMode(viewId) {
     viewContent.innerHTML = BOSSES.map(b => buildViewBossBlock(b)).filter(Boolean).join('') || EMPTY_HTML;
     attachSsIconErrors(viewContent);
 
-    // Image buttons — capture the parent boss block via html2canvas (normal mode).
-    // onclone boosts the radial glow to approximate the live drop-shadow (which html2canvas can't render).
+    // Image buttons — capture the parent boss block via html2canvas.
+    // Primary path: inline every image as a data URL, then render with foreignObjectRendering
+    // so the real CSS drop-shadow boss glow renders into the image (matching the live page).
+    // Fallback (if any image can't be inlined): normal mode with a boosted radial glow.
+    const inlineImages = async (block) => {
+      const urls = [...new Set(Array.from(block.querySelectorAll('img')).map(im => im.src).filter(Boolean))];
+      const map = {};
+      await Promise.all(urls.map(async u => {
+        const r = await fetch(u, { mode: 'cors' });
+        if (!r.ok) throw new Error('fetch ' + r.status);
+        const b = await r.blob();
+        map[u] = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(b); });
+      }));
+      return map;
+    };
+    const boostGlow = (doc) => {
+      doc.querySelectorAll('.boss-glow').forEach(el => {
+        const g1 = el.getAttribute('data-g1'), g2 = el.getAttribute('data-g2');
+        const tight = el.getAttribute('data-tight') === '1';
+        const base = tight ? 180 : 260;
+        const sz = Math.round(base * 1.35);
+        const grow = Math.round((sz - base) / 2);
+        el.style.width = sz + 'px';
+        el.style.height = sz + 'px';
+        el.style.top = ((tight ? -55 : -90) - grow) + 'px';
+        el.style.right = ((tight ? -10 : -30) - grow) + 'px';
+        el.style.background = `radial-gradient(circle at 50% 50%, ${g1} 0%, ${g1.slice(0,7)}aa 13%, ${g2} 34%, transparent 64%)`;
+      });
+    };
+    const toBlob = (canvas) => new Promise((res, rej) => { try { canvas.toBlob(b => b ? res(b) : rej(new Error('no blob')), 'image/png'); } catch (err) { rej(err); } });
+
     viewContent.querySelectorAll('.view-img-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const block = btn.closest('.ss-boss-block');
         if (!block) return;
         const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
-        load(() => {
+        load(async () => {
           btn.textContent = '…';
-          html2canvas(block, {
-            backgroundColor: '#0a0804',
-            scale: 1.25,
-            useCORS: true,
-            allowTaint: true,
-            ignoreElements: el => el.classList && el.classList.contains('view-img-btn'),
-            onclone: (doc) => {
-              doc.querySelectorAll('.boss-glow').forEach(el => {
-                const g1 = el.getAttribute('data-g1'), g2 = el.getAttribute('data-g2');
-                const tight = el.getAttribute('data-tight') === '1';
-                const base = tight ? 180 : 260;
-                const sz = Math.round(base * 1.35);
-                const grow = Math.round((sz - base) / 2);
-                el.style.width = sz + 'px';
-                el.style.height = sz + 'px';
-                el.style.top = ((tight ? -55 : -90) - grow) + 'px';
-                el.style.right = ((tight ? -10 : -30) - grow) + 'px';
-                el.style.background = `radial-gradient(circle at 50% 50%, ${g1} 0%, ${g1.slice(0,7)}aa 13%, ${g2} 34%, transparent 64%)`;
+          try {
+            let canvas;
+            try {
+              // Primary: inline images → foreignObject render (real drop-shadow glow)
+              const map = await inlineImages(block);
+              canvas = await html2canvas(block, {
+                backgroundColor: '#0a0804', scale: 1.25, foreignObjectRendering: true,
+                onclone: (doc) => {
+                  doc.querySelectorAll('.view-img-btn').forEach(b => { b.style.display = 'none'; });
+                  doc.querySelectorAll('img').forEach(im => { if (map[im.src]) im.src = map[im.src]; });
+                }
+              });
+            } catch (foErr) {
+              // Fallback: normal mode + boosted radial glow
+              canvas = await html2canvas(block, {
+                backgroundColor: '#0a0804', scale: 1.25, useCORS: true, allowTaint: true,
+                ignoreElements: el => el.classList && el.classList.contains('view-img-btn'),
+                onclone: boostGlow
               });
             }
-          }).then(canvas => {
-            canvas.toBlob(blob => {
-              navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
-                btn.textContent = 'Copied!';
-                setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
-              }).catch(() => { btn.textContent = 'Image for Disc'; });
-            }, 'image/png');
-          }).catch(() => { btn.textContent = 'Image for Disc'; });
+            const blob = await toBlob(canvas);
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
+          } catch (e) {
+            btn.textContent = 'Image for Disc';
+          }
         });
       });
     });
