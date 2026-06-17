@@ -7265,12 +7265,12 @@ async function initViewMode(viewId) {
                 const offsetVal = parseFloat(imgEl.getAttribute('data-offset')) || 0;
                 const imgHcss   = parseFloat(imgEl.getAttribute('data-imgh'))   || 148;
                 const imgWcss   = freshImg.naturalWidth * imgHcss / freshImg.naturalHeight;
-                // Use offset-based positions (block-relative) instead of getBoundingClientRect
-                // so scroll position doesn't affect coordinates.
-                const bx = bannerEl.offsetLeft * SCALE;
-                const by = bannerEl.offsetTop  * SCALE;
-                const bw = bannerEl.offsetWidth  * SCALE;
-                const bh = bannerEl.offsetHeight * SCALE;
+                // Subtract blockRect so scroll position cancels out; result is banner pos relative to block.
+                const br = bannerEl.getBoundingClientRect();
+                const bx = (br.left - blockRect.left) * SCALE;
+                const by = (br.top  - blockRect.top)  * SCALE;
+                const bw = br.width  * SCALE;
+                const bh = br.height * SCALE;
                 comp = {
                   img: freshImg,
                   g1: imgEl.getAttribute('data-glow1'), g2: imgEl.getAttribute('data-glow2'),
