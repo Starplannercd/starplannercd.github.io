@@ -4060,7 +4060,7 @@ function buildSsRow(ab, iconsHtml) {
 }
 
 
-function buildSsBossHeader(boss, portraitUrl) {
+function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const name = boss.name;
   const BOSS_COLORS = {
     immerseus:      '#3399ff',
@@ -4080,7 +4080,7 @@ function buildSsBossHeader(boss, portraitUrl) {
   };
   const bossColor = BOSS_COLORS[boss.id] || '#c8d0e8';
 
-  const imgBtn = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410;color:#8a7060;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.06em;flex-shrink:0;z-index:2;position:relative;" onmouseover="this.style.color='#c8a880';this.style.borderColor='#5a4030';" onmouseout="this.style.color='#8a7060';this.style.borderColor='#3a2e20';">Image</button>`;
+  const imgBtn = showImgBtn ? `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410;color:#8a7060;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.06em;flex-shrink:0;" onmouseover="this.style.color='#c8a880';this.style.borderColor='#5a4030';" onmouseout="this.style.color='#8a7060';this.style.borderColor='#3a2e20';">Image for Disc</button>` : '';
 
   if (boss.id === 'immerseus') {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%);border-bottom:1px solid #1a3a5a;">
@@ -4147,7 +4147,7 @@ function buildSsBossHeader(boss, portraitUrl) {
   </div>`;
 }
 
-function renderSsBossBlock(boss) {
+function renderSsBossBlock(boss, showImgBtn) {
   const rows = buildSummaryForBoss(boss);
   if (!rows.length) return '';
   const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
@@ -4167,7 +4167,7 @@ function renderSsBossBlock(boss) {
   }).join('');
 
   return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #2a2218;">
-    ${buildSsBossHeader(boss, portraitUrl)}
+    ${buildSsBossHeader(boss, portraitUrl, showImgBtn)}
     <div class="ss-rows-wrap">${rowsHtml}</div>
   </div>`;
 }
@@ -7095,7 +7095,7 @@ async function initViewMode(viewId) {
     ssShowCdNames   = true;
 
     // Build content
-    const html = BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
+    const html = BOSSES.map(b => renderSsBossBlock(b, true)).filter(Boolean).join('') ||
       '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
     viewContent.innerHTML = html;
     attachSsIconErrors(viewContent);
