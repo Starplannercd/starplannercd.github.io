@@ -1587,9 +1587,9 @@ const BOSSES = [
       ]},
       { label: 'Intermission 1', abilities: [] },
       { label: 'Phase 2', abilities: [
-        { name:'Whirling Corruption P2 1', time:270, color:'#8848c8' },
-        { name:'Whirling Corruption P2 2', time:320, color:'#8848c8' },
-        { name:'Whirling Corruption P2 3', time:370, color:'#8848c8' },
+        { name:'Whirling Corruption P2 1', time:270, color:'#d83828' },
+        { name:'Whirling Corruption P2 2', time:320, color:'#d83828' },
+        { name:'Whirling Corruption P2 3', time:370, color:'#d83828' },
       ]},
       { label: 'Intermission 2', abilities: [] },
       { label: 'Phase 3', abilities: [
@@ -2549,7 +2549,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   } else if (ab.hpAssign) {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
   } else {
-    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.name}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${formatAbilityName(ab.name)}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
   row.appendChild(label);
 
@@ -4300,7 +4300,7 @@ function viewBlockSpotlight(boss, rows, v, color) {
         <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${color}99;margin-bottom:6px;">Cooldowns</div>
         <div style="font-size:30px;font-weight:900;color:${color};letter-spacing:0.01em;text-shadow:0 2px 14px #000,0 0 26px ${color}55;">${boss.name}</div>
       </div>
-      <div style="position:absolute;top:14px;right:18px;z-index:3;">${VIEW_IMG_BTN}</div>
+      <div style="position:absolute;top:14px;left:18px;z-index:3;">${VIEW_IMG_BTN}</div>
     </div>` : viewBanner(boss, v, color, 90, 24);
   return `<div class="ss-boss-block" style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1px solid ${v?v.border:'#2a2218'};background:#0b0908;box-shadow:0 6px 24px rgba(0,0,0,0.5);">
     ${hero}
@@ -4468,6 +4468,9 @@ const offsetStyle = 'tooltip';
 const blLabelStyle = 'prefix';
 
 function formatAbilityName(name) {
+  // "Whirling Corruption P2 1" → "Whirling Corruption (P2) 1"
+  const w = name.match(/^(.+) P([23]) (\d+)$/);
+  if (w) return `${w[1]} (P${w[2]}) ${w[3]}`;
   // Reformat "Ball Lightning P1-2" based on current style
   const m = name.match(/^Ball Lightning-(P[23]) \((\d+)\)$/);
   if (!m) return name;
