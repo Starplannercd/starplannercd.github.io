@@ -7260,10 +7260,8 @@ async function initViewMode(viewId) {
               }
             });
 
-            // Silhouette glow pass: draw boss image with canvas shadowBlur on a temp canvas,
-            // erase the image body leaving only the glow halo, then screen-blend onto main canvas.
-            // Uses block.clientWidth + fixed banner height (150px) to avoid getBoundingClientRect
-            // scroll-offset issues that plagued earlier approaches.
+            // Glow pass: draw boss image again with shadowBlur directly on main canvas.
+            // html2canvas already placed the image; this adds the silhouette glow on top.
             if (imgEl && imgEl.src) {
               const freshImg = new Image();
               await new Promise(res => { freshImg.onload = res; freshImg.onerror = res; freshImg.src = imgEl.src; });
@@ -7274,38 +7272,24 @@ async function initViewMode(viewId) {
                 const imgWcss   = freshImg.naturalWidth * imgHcss / freshImg.naturalHeight;
                 const g1 = imgEl.getAttribute('data-glow1');
                 const g2 = imgEl.getAttribute('data-glow2');
-                // Banner is first child of block; block has 1px border; banner is 150px tall.
-                const bx = 1 * SCALE, by = 1 * SCALE;
-                const bw = block.clientWidth * SCALE, bh = 150 * SCALE;
+                const g1s = (g1 || '#fff').replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
+                const g2s = (g2 || g1s).replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
+                // Derive banner bounds from canvas size (html2canvas uses offsetWidth/Height * scale)
+                const bx = Math.round(1 * SCALE), by = Math.round(1 * SCALE);
+                const bw = canvas.width - 2 * bx, bh = Math.round(150 * SCALE);
                 const ix = bx + bw + (-rightVal)  * SCALE - imgWcss * SCALE;
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
-                // Strip 8-digit hex alpha so canvas shadowColor runs at full saturation
-                const g1s = (g1 || '#fff').replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
-                const g2s = (g2 || g1s).replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
-                // Build glow on temp canvas then erase image body → pure halo
-                const tmp = document.createElement('canvas');
-                tmp.width = canvas.width; tmp.height = canvas.height;
-                const tc = tmp.getContext('2d');
-                tc.save();
-                tc.beginPath(); tc.rect(bx, by, bw, bh); tc.clip();
-                // Stack multiple tight passes to build up vivid inner glow
-                tc.shadowColor = g1s;
-                tc.shadowBlur = 6 * SCALE;  tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowBlur = 6 * SCALE;  tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowBlur = 10 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowBlur = 10 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowBlur = 16 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                // Soft outer halo
-                tc.shadowColor = g2s;
-                tc.shadowBlur = 28 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowBlur = 28 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                // Erase image body — leaves only the glow halo around the silhouette
-                tc.globalCompositeOperation = 'destination-out';
-                tc.shadowBlur = 0; tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.restore();
                 const ctx = canvas.getContext('2d');
-                ctx.save(); ctx.drawImage(tmp, 0, 0); ctx.restore();
+                ctx.save();
+                ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.clip();
+                // Draw glow passes directly — shadow appears around the image silhouette
+                ctx.shadowColor = g1s; ctx.shadowBlur = 8  * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g1s; ctx.shadowBlur = 8  * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g1s; ctx.shadowBlur = 14 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g2s; ctx.shadowBlur = 28 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.shadowColor = g2s; ctx.shadowBlur = 28 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.restore();
               }
             }
 
