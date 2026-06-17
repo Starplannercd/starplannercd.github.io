@@ -4080,11 +4080,13 @@ function buildSsBossHeader(boss, portraitUrl) {
   };
   const bossColor = BOSS_COLORS[boss.id] || '#c8d0e8';
 
+  const imgBtn = `<button class="view-img-btn" style="margin-left:auto;padding:3px 10px;border-radius:3px;border:1px solid #3a2e20;background:#181410;color:#8a7060;font-size:10px;font-family:inherit;cursor:pointer;letter-spacing:0.06em;flex-shrink:0;z-index:2;position:relative;" onmouseover="this.style.color='#c8a880';this.style.borderColor='#5a4030';" onmouseout="this.style.color='#8a7060';this.style.borderColor='#3a2e20';">Image</button>`;
+
   if (boss.id === 'immerseus') {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#060e18 0%,#0a1624 55%,#0c1e30 100%);border-bottom:1px solid #1a3a5a;">
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;position:relative;z-index:1;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div>
-        <div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">Immerseus</div>
+      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">Immerseus</div></div>
+        ${imgBtn}
       </div>
       <img src="immer2.png" onerror="this.style.display='none'"
         style="position:absolute;right:-8px;bottom:-28px;height:148px;pointer-events:none;
@@ -4095,9 +4097,9 @@ function buildSsBossHeader(boss, portraitUrl) {
 
   if (boss.id === 'fallenprotectors') {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:linear-gradient(100deg,#120c06 0%,#1c1208 55%,#221608 100%);border-bottom:1px solid #4a3010;">
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;position:relative;z-index:1;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div>
-        <div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">The Fallen Protectors</div>
+      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">The Fallen Protectors</div></div>
+        ${imgBtn}
       </div>
       <img src="fallenprotimage.png" onerror="this.style.display='none'"
         style="position:absolute;right:-8px;bottom:-44px;height:148px;pointer-events:none;
@@ -4124,9 +4126,9 @@ function buildSsBossHeader(boss, portraitUrl) {
   const bimg = BOSS_IMAGES[boss.id];
   if (bimg) {
     return `<div style="position:relative;display:flex;overflow:hidden;height:90px;background:${bimg.bg};border-bottom:1px solid ${bimg.border};">
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;position:relative;z-index:1;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div>
-        <div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">${name}</div>
+      <div style="flex:1;display:flex;align-items:center;padding:0 20px;position:relative;z-index:1;gap:12px;">
+        <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}55;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">${name}</div></div>
+        ${imgBtn}
       </div>
       <img src="${bimg.file}" onerror="this.style.display='none'"
         style="position:absolute;right:${bimg.right};bottom:${bimg.offset};height:148px;pointer-events:none;
@@ -4138,9 +4140,9 @@ function buildSsBossHeader(boss, portraitUrl) {
   const p = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" ` : null;
   return `<div style="display:flex;overflow:hidden;height:90px;background:#100e0a;border-bottom:1px solid #3a2e20;">
     ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;" />` : ''}
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;background:#0e0c0a;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}66;margin-bottom:5px;">Cooldowns</div>
-      <div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 14px ${bossColor}55;">${name}</div>
+    <div style="flex:1;display:flex;align-items:center;padding:0 18px;background:#0e0c0a;gap:12px;">
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}66;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 14px ${bossColor}55;">${name}</div></div>
+      ${imgBtn}
     </div>
   </div>`;
 }
@@ -7042,83 +7044,12 @@ async function initViewMode(viewId) {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
         <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#c83a20;letter-spacing:0.3em;text-transform:uppercase;opacity:0.8;">Raid CDs</span>
       </div>
-      <div style="width:1px;height:20px;background:#2a2218;flex-shrink:0;"></div>
-      <div id="viewRosterBar" style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;flex:1;overflow:hidden;"></div>
     </div>
     <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
 
   document.body.appendChild(viewEl);
 
-  // ── Roster bar: "I AM" player selector ──
-  const rosterBar = viewEl.querySelector('#viewRosterBar');
-  const label = document.createElement('span');
-  label.style.cssText = 'font-size:9px;color:#3a2e20;text-transform:uppercase;letter-spacing:0.12em;flex-shrink:0;';
-  label.textContent = 'I am:';
-  rosterBar.appendChild(label);
-
-  let selectedWho = null;
-
-  function applyHighlight(who) {
-    viewEl.querySelectorAll('.view-icon-wrap').forEach(el => {
-      if (!who) {
-        el.style.opacity = '';
-        el.style.filter = '';
-        el.style.transform = '';
-        el.style.position = '';
-        el.style.zIndex = '';
-      } else if (el.dataset.who === who) {
-        const c = el.dataset.color;
-        el.style.opacity = '1';
-        el.style.filter = `brightness(1.25) drop-shadow(0 0 6px ${c}) drop-shadow(0 0 18px ${c}99)`;
-        el.style.transform = 'scale(1.1)';
-        el.style.position = 'relative';
-        el.style.zIndex = '2';
-      } else {
-        el.style.opacity = '0.3';
-        el.style.filter = 'grayscale(0.6) brightness(0.55)';
-        el.style.transform = '';
-        el.style.position = '';
-        el.style.zIndex = '';
-      }
-    });
-  }
-
   let viewRoster = DEFAULT_ROSTER;
-
-  // Placeholder — replaced after Firebase load so roster reflects the shared plan
-  function buildRosterButtons() {
-    rosterBar.querySelectorAll('button').forEach(b => b.remove());
-    viewRoster.forEach(player => {
-      const btn = document.createElement('button');
-      btn.dataset.who = player.who;
-      btn.style.cssText = `display:inline-flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;border-radius:4px;border:1px solid ${player.color}33;background:#0e0c0a;color:${player.color};font-size:11px;font-family:inherit;cursor:pointer;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s;white-space:nowrap;`;
-      btn.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${player.color};flex-shrink:0;display:inline-block;box-shadow:0 0 4px ${player.color}88;"></span><span style="font-weight:600;">${player.name}</span><span style="font-size:9px;opacity:0.55;margin-left:1px;">${player.spec}</span>`;
-
-      btn.addEventListener('mouseover', () => { if (selectedWho !== player.who) btn.style.background = player.color + '18'; });
-      btn.addEventListener('mouseout',  () => { if (selectedWho !== player.who) btn.style.background = '#0e0c0a'; });
-
-      btn.addEventListener('click', () => {
-        rosterBar.querySelectorAll('button').forEach(b => {
-          const p = viewRoster.find(r => r.who === b.dataset.who);
-          if (p) { b.style.background = '#0e0c0a'; b.style.borderColor = p.color + '33'; b.style.boxShadow = 'none'; }
-        });
-        if (selectedWho === player.who) {
-          selectedWho = null;
-          applyHighlight(null);
-        } else {
-          selectedWho = player.who;
-          btn.style.background = player.color + '28';
-          btn.style.borderColor = player.color + 'aa';
-          btn.style.boxShadow = `0 0 10px ${player.color}55, inset 0 0 8px ${player.color}18`;
-          applyHighlight(player.who);
-        }
-      });
-
-      rosterBar.appendChild(btn);
-    });
-  }
-
-  buildRosterButtons();
 
   const viewContent = viewEl.querySelector('#viewContent');
   viewContent.innerHTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">Loading…</div>';
@@ -7142,7 +7073,6 @@ async function initViewMode(viewId) {
     // Use the roster that was active when the share was created
     if (data.roster && Array.isArray(data.roster) && data.roster.length) {
       viewRoster = data.roster;
-      buildRosterButtons();
     }
 
     // Filter activeSetIds to only CDs whose WHO is in the roster (removes stale/removed players' CDs)
@@ -7169,6 +7099,25 @@ async function initViewMode(viewId) {
       '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
     viewContent.innerHTML = html;
     attachSsIconErrors(viewContent);
+
+    // Image buttons — capture the parent boss block via html2canvas
+    viewContent.querySelectorAll('.view-img-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const block = btn.closest('.ss-boss-block');
+        if (!block) return;
+        const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
+        load(() => {
+          btn.textContent = '…';
+          html2canvas(block, { backgroundColor: '#0a0804', scale: 3, useCORS: true, allowTaint: true }).then(canvas => {
+            const a = document.createElement('a');
+            a.download = (block.querySelector('.ss-boss-block') ? 'boss' : btn.closest('[style]')?.textContent?.trim() || 'boss') + '_cds.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            btn.textContent = 'Image';
+          }).catch(() => { btn.textContent = 'Image'; });
+        });
+      });
+    });
 
     ssIconInfoStyle = _prevIconStyle;
     ssRowStyle      = _prevRowStyle;
