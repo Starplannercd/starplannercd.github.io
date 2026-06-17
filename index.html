@@ -7287,6 +7287,7 @@ async function initViewMode(viewId) {
                 ctx.fillRect(bx, by, bw, 8);
                 ctx.restore();
                 btn.textContent = `bw${Math.round(bw)} bh${Math.round(bh)} ix${Math.round(ix)} iy${Math.round(iy)} nw${freshImg.naturalWidth}`;
+                await new Promise(r => setTimeout(r, 5000));
               }
             }
 
