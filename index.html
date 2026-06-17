@@ -4275,7 +4275,7 @@ function viewBlockSpotlight(boss, rows, v, color) {
   const body = rows.map(({ ab, sorted }) => {
     const cells = sorted.map(p => {
       const parts = viewCdParts(p, ab); if (!parts) return '';
-      const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid ${parts.color};border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
+      const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid #fff9;border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
       return `<div style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
     }).join('');
     // Per-ability accent: blend boss theme with this ability/phase colour (stays on-theme, varies per row)
