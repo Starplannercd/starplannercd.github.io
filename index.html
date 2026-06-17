@@ -7281,15 +7281,12 @@ async function initViewMode(viewId) {
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
                 const ctx = canvas.getContext('2d');
+                // DIAGNOSTIC: paint a visible magenta stripe across the banner + show coords in button
                 ctx.save();
-                ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.clip();
-                // Draw glow passes directly — shadow appears around the image silhouette
-                ctx.shadowColor = g1s; ctx.shadowBlur = 8  * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
-                ctx.shadowColor = g1s; ctx.shadowBlur = 8  * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
-                ctx.shadowColor = g1s; ctx.shadowBlur = 14 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
-                ctx.shadowColor = g2s; ctx.shadowBlur = 28 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
-                ctx.shadowColor = g2s; ctx.shadowBlur = 28 * SCALE; ctx.drawImage(freshImg, ix, iy, iw, ih);
+                ctx.fillStyle = 'rgba(255,0,255,0.6)';
+                ctx.fillRect(bx, by, bw, 8);
                 ctx.restore();
+                btn.textContent = `bw${Math.round(bw)} bh${Math.round(bh)} ix${Math.round(ix)} iy${Math.round(iy)} nw${freshImg.naturalWidth}`;
               }
             }
 
