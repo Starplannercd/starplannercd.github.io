@@ -7280,20 +7280,28 @@ async function initViewMode(viewId) {
                 const ix = bx + bw + (-rightVal)  * SCALE - imgWcss * SCALE;
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
+                // Strip alpha suffix from 8-digit hex glow colors so canvas shadowColor is fully saturated
+                const g1s = g1 && g1.length === 9 ? g1.slice(0, 7) : g1;
+                const g2s = g2 && g2.length === 9 ? g2 : g2;
                 // Draw glow + image on temp canvas, then erase image body → halo only
                 const tmp = document.createElement('canvas');
                 tmp.width = canvas.width; tmp.height = canvas.height;
                 const tc = tmp.getContext('2d');
                 tc.save();
                 tc.beginPath(); tc.rect(bx, by, bw, bh); tc.clip();
-                tc.shadowColor = g1; tc.shadowBlur = 12 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
-                tc.shadowColor = g2; tc.shadowBlur = 32 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
+                // Tight inner glow (matches drop-shadow 0 0 10px)
+                tc.shadowColor = g1s; tc.shadowBlur = 10 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
+                // Slightly wider second pass for richness
+                tc.shadowColor = g1s; tc.shadowBlur = 20 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
+                // Wide soft outer glow (matches drop-shadow 0 0 28px)
+                tc.shadowColor = g2s; tc.shadowBlur = 32 * SCALE; tc.drawImage(freshImg, ix, iy, iw, ih);
+                // Erase image body, leaving only glow halo
                 tc.globalCompositeOperation = 'destination-out';
                 tc.shadowBlur = 0; tc.drawImage(freshImg, ix, iy, iw, ih);
                 tc.restore();
-                // Screen-blend the halo onto the main canvas (additive, doesn't cover image)
+                // Composite halo onto main canvas with source-over (full color, sits around silhouette)
                 const ctx = canvas.getContext('2d');
-                ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.drawImage(tmp, 0, 0); ctx.restore();
+                ctx.save(); ctx.drawImage(tmp, 0, 0); ctx.restore();
               }
             }
 
