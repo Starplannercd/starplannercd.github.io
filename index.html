@@ -4202,7 +4202,9 @@ const CD_SPEC_ICON = {
   rc:     'classicon_warrior',          // Rallying Cry → Warrior (base class)
 };
 
+const NO_SPEC_ICON = new Set(['personals']);
 function getSpecIconUrl(cd) {
+  if (NO_SPEC_ICON.has(cd.id)) return null;
   if (CD_SPEC_ICON[cd.id]) return SPEC_ICON_CDN + CD_SPEC_ICON[cd.id] + '.jpg';
   const player = VIEW_ROSTER.find(pl => pl.who === cd.who);
   if (!player) return null;
@@ -4231,12 +4233,10 @@ function viewIconImg(parts, size) {
     ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fb)}" src="${parts.url}" style="width:${sz}px;height:${sz}px;border-radius:6px;display:block;" title="${parts.cd.name}" />`
     : fb;
 }
-// Spec-icon badge that labels who owns the CD (falls back to the text nickname)
-function viewSpecLabel(parts) {
-  if (parts.specIcon) {
-    return `<img class="ss-real-icon" data-fallback="${encodeURIComponent(`<span style="font-size:10px;font-weight:700;color:#fff;background:${parts.color}cc;border-radius:8px;padding:1px 9px;white-space:nowrap;">${parts.who}</span>`)}" src="${parts.specIcon}" title="${parts.who}" style="width:20px;height:20px;border-radius:5px;border:1px solid #00000080;box-shadow:0 1px 3px #000a;display:block;" />`;
-  }
-  return `<span style="font-size:10px;font-weight:700;color:#fff;background:${parts.color}cc;border-radius:8px;padding:1px 9px;white-space:nowrap;">${parts.who}</span>`;
+// Spec-icon badge overlaid on the CD icon's bottom-left corner (nothing if unresolved)
+function viewSpecBadge(parts) {
+  if (!parts.specIcon) return '';
+  return `<img class="ss-real-icon" data-fallback="" src="${parts.specIcon}" title="${parts.who}" style="position:absolute;bottom:-5px;left:-5px;width:22px;height:22px;border-radius:5px;border:1.5px solid #0b0908;box-shadow:0 1px 3px #000b;z-index:1;" />`;
 }
 // Fallback banner (only used if a boss has no image config)
 function viewBanner(boss, v, color, h, titleSize) {
@@ -4267,22 +4267,19 @@ function viewBlockSpotlight(boss, rows, v, color) {
   const body = rows.map(({ ab, sorted }) => {
     const cells = sorted.map(p => {
       const parts = viewCdParts(p, ab); if (!parts) return '';
-      const badge = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid ${parts.color};border-radius:6px;padding:1px 4px;white-space:nowrap;">${parts.info}</span>` : '';
-      return `<div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
-        <div style="position:relative;">${viewIconImg(parts, 52)}${badge}</div>
-        ${viewSpecLabel(parts)}
-      </div>`;
+      const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid ${parts.color};border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
+      return `<div style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
     }).join('');
     const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${color};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
-    return `<div style="display:flex;align-items:stretch;min-height:72px;">
-      <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:12px 16px;">
+    return `<div style="display:flex;align-items:stretch;min-height:60px;">
+      <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:10px 16px;">
         <span style="width:3px;align-self:stretch;background:${color};border-radius:2px;flex-shrink:0;"></span>
-        <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0;">
           <span style="font-size:13px;font-weight:700;color:#e8e2d8;line-height:1.25;">${formatAbilityName(ab.name)}</span>
           ${timeHtml}
         </div>
       </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:12px 18px;flex:1;">${cells}</div>
+      <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:center;padding:10px 18px;flex:1;">${cells}</div>
     </div>`;
   }).join('');
   const hero = v ? `<div style="position:relative;overflow:hidden;height:150px;background:${v.bg};">
