@@ -7251,51 +7251,63 @@ async function initViewMode(viewId) {
         load(async () => {
           btn.textContent = '…';
           try {
-            // Measure the boss image + banner (relative to the block) before capture
             const blockRect = block.getBoundingClientRect();
-            const imgEl = block.querySelector('.boss-banner-img');
+            const imgEl   = block.querySelector('.boss-banner-img');
             const bannerEl = block.querySelector('.boss-banner');
+
+            // Pre-load a fresh Image from the same src — avoids live-DOM element state issues
             let comp = null;
-            if (imgEl && bannerEl && imgEl.complete && imgEl.naturalWidth) {
-              const br = bannerEl.getBoundingClientRect();
-              // Compute image canvas position directly from CSS data attributes — more reliable
-              // than getBoundingClientRect on absolutely-positioned elements clipped by overflow:hidden.
-              const rightVal  = parseFloat(imgEl.getAttribute('data-right'))  || 0; // e.g. -8  (from '-8px')
-              const offsetVal = parseFloat(imgEl.getAttribute('data-offset')) || 0; // e.g. -28 (from '-28px')
-              const imgHcss   = parseFloat(imgEl.getAttribute('data-imgh'))   || 148;
-              const imgWcss   = imgEl.naturalWidth * imgHcss / imgEl.naturalHeight;
-              const bw = br.width * SCALE, bh = br.height * SCALE;
-              const bx = (br.left - blockRect.left) * SCALE;
-              const by = (br.top  - blockRect.top)  * SCALE;
-              // right:-8px  → img right edge is 8px past banner right  → imgRight = bw + 8*SCALE
-              // bottom:-28px → img bottom edge is 28px past banner bottom → imgBottom = bh + 28*SCALE
-              const imgRight  = bw + (-rightVal)  * SCALE;
-              const imgBottom = bh + (-offsetVal) * SCALE;
-              comp = {
-                img: imgEl,
-                g1: imgEl.getAttribute('data-glow1'), g2: imgEl.getAttribute('data-glow2'),
-                ix: bx + imgRight - imgWcss * SCALE,
-                iy: by + imgBottom - imgHcss * SCALE,
-                iw: imgWcss * SCALE, ih: imgHcss * SCALE,
-                bx, by, bw, bh,
-              };
+            if (imgEl && bannerEl && imgEl.src) {
+              const freshImg = new Image();
+              await new Promise(res => { freshImg.onload = res; freshImg.onerror = res; freshImg.src = imgEl.src; });
+              if (freshImg.naturalWidth) {
+                const br        = bannerEl.getBoundingClientRect();
+                const rightVal  = parseFloat(imgEl.getAttribute('data-right'))  || 0;
+                const offsetVal = parseFloat(imgEl.getAttribute('data-offset')) || 0;
+                const imgHcss   = parseFloat(imgEl.getAttribute('data-imgh'))   || 148;
+                const imgWcss   = freshImg.naturalWidth * imgHcss / freshImg.naturalHeight;
+                const bw = br.width * SCALE, bh = br.height * SCALE;
+                const bx = (br.left - blockRect.left) * SCALE;
+                const by = (br.top  - blockRect.top)  * SCALE;
+                comp = {
+                  img: freshImg,
+                  g1: imgEl.getAttribute('data-glow1'), g2: imgEl.getAttribute('data-glow2'),
+                  ix: bx + bw + (-rightVal)  * SCALE - imgWcss * SCALE,
+                  iy: by + bh + (-offsetVal) * SCALE - imgHcss * SCALE,
+                  iw: imgWcss * SCALE, ih: imgHcss * SCALE,
+                  bx, by, bw, bh,
+                };
+              }
             }
 
             const canvas = await html2canvas(block, {
               backgroundColor: '#0a0804', scale: SCALE, useCORS: true, allowTaint: true,
               ignoreElements: el => el.classList && el.classList.contains('view-img-btn'),
-              // Hide the DOM boss image — we composite it with a real glow below
               onclone: (doc) => { doc.querySelectorAll('.boss-banner-img').forEach(im => { im.style.visibility = 'hidden'; }); }
             });
 
             if (comp) {
               const ctx = canvas.getContext('2d');
+              // Temp canvas: draw image+shadow, then erase image body → glow-halo only
+              const tmp = document.createElement('canvas');
+              tmp.width = canvas.width; tmp.height = canvas.height;
+              const tc = tmp.getContext('2d');
+              tc.save();
+              tc.beginPath(); tc.rect(comp.bx, comp.by, comp.bw, comp.bh); tc.clip();
+              tc.shadowColor = comp.g1; tc.shadowBlur = 14 * SCALE;
+              tc.drawImage(comp.img, comp.ix, comp.iy, comp.iw, comp.ih);
+              tc.shadowColor = comp.g2; tc.shadowBlur = 36 * SCALE;
+              tc.drawImage(comp.img, comp.ix, comp.iy, comp.iw, comp.ih);
+              tc.globalCompositeOperation = 'destination-out'; // erase image body, keep glow halo
+              tc.shadowBlur = 0; tc.globalAlpha = 1;
+              tc.drawImage(comp.img, comp.ix, comp.iy, comp.iw, comp.ih);
+              tc.restore();
+              // Composite: glow halo behind, then crisp image on top
               ctx.save();
-              ctx.beginPath(); ctx.rect(comp.bx, comp.by, comp.bw, comp.bh); ctx.clip(); // clip to banner like overflow:hidden
-              const draw = () => ctx.drawImage(comp.img, comp.ix, comp.iy, comp.iw, comp.ih);
-              ctx.shadowColor = comp.g1; ctx.shadowBlur = 12 * SCALE; draw();   // tight inner glow
-              ctx.shadowColor = comp.g2; ctx.shadowBlur = 30 * SCALE; draw();   // soft outer glow
-              ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.globalAlpha = 0.92; draw(); // crisp image on top
+              ctx.beginPath(); ctx.rect(comp.bx, comp.by, comp.bw, comp.bh); ctx.clip();
+              ctx.drawImage(tmp, 0, 0);
+              ctx.globalAlpha = 0.92;
+              ctx.drawImage(comp.img, comp.ix, comp.iy, comp.iw, comp.ih);
               ctx.restore();
             }
 
