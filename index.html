@@ -7083,6 +7083,8 @@ async function initViewMode(viewId) {
     } else {
       activeSetIds = new Set(CD_POOL.filter(c => c.core).map(c => c.id));
     }
+    // Always allow these in the view (only render if actually assigned to a row)
+    ['ascend', 'slt'].forEach(id => activeSetIds.add(id));
 
     // Use the roster that was active when the share was created
     if (data.roster && Array.isArray(data.roster) && data.roster.length) {
