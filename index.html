@@ -4107,18 +4107,18 @@ function buildSsBossHeader(boss, portraitUrl) {
   }
 
   const BOSS_IMAGES = {
-    norushen:       { file:'norushen.png',    bg:'linear-gradient(100deg,#0e0818 0%,#180c28 55%,#1e1030 100%)', border:'#3a1a5a', shadow:'#6633aabb,#3a1a7766', offset:'-36px' },
-    sha:            { file:'shaofpride.png',  bg:'linear-gradient(100deg,#120a08 0%,#1e1008 55%,#261408 100%)', border:'#4a2a08', shadow:'#cc881abb,#88550866', offset:'-36px' },
-    galakras:       { file:'galakras.png',    bg:'linear-gradient(100deg,#180a04 0%,#22100a 55%,#281408 100%)', border:'#4a2008', shadow:'#cc5500bb,#88330066', offset:'-36px' },
-    ironjuggernaut: { file:'ironjug.png',     bg:'linear-gradient(100deg,#0c1018 0%,#101620 55%,#141c28 100%)', border:'#2a3848', shadow:'#8899aabb,#4a607866', offset:'-36px' },
-    darkshaman:     { file:'darkshamans.png', bg:'linear-gradient(100deg,#080e06 0%,#0e1808 55%,#121e0a 100%)', border:'#283818', shadow:'#5a7733bb,#344a1866', offset:'-36px' },
-    generalnazmak:  { file:'nazgrim.png',     bg:'linear-gradient(100deg,#0e1006 0%,#161808 55%,#1a200a 100%)', border:'#38480a', shadow:'#88aa33bb,#4a661866', offset:'-36px' },
-    malkorok:       { file:'malk.png',        bg:'linear-gradient(100deg,#100818 0%,#1a0c28 55%,#200e30 100%)', border:'#3a1458', shadow:'#8833bbbb,#5a1a8866', offset:'-36px' },
-    spoils:         { file:'spoils.png',      bg:'linear-gradient(100deg,#161008 0%,#201808 55%,#261e0a 100%)', border:'#3a2e08', shadow:'#ccaa33bb,#887a1866', offset:'-36px' },
-    thok:           { file:'thok.png',        bg:'linear-gradient(100deg,#180606 0%,#220808 55%,#2a0a08 100%)', border:'#4a1008', shadow:'#cc3300bb,#881a0066', offset:'-36px' },
-    siegecrafter:   { file:'blackfuse.png',   bg:'linear-gradient(100deg,#0e1218 0%,#141a22 55%,#182028 100%)', border:'#2a3848', shadow:'#cc6622bb,#884a1466', offset:'-36px' },
-    paragons:       { file:'paragons.png',    bg:'linear-gradient(100deg,#0e1406 0%,#141e08 55%,#18260a 100%)', border:'#304018', shadow:'#99bb33bb,#5a7a1866', offset:'-36px' },
-    garrosh:        { file:'thrall.png',      bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', shadow:'#bb1111bb,#880a0a66', offset:'-36px' },
+    norushen:       { file:'norushen.png',    bg:'linear-gradient(100deg,#0e0818 0%,#180c28 55%,#1e1030 100%)', border:'#3a1a5a', shadow:'#6633aabb,#3a1a7766', offset:'-70px', right:'-8px' },
+    sha:            { file:'shaofpride.png',  bg:'linear-gradient(100deg,#120a08 0%,#1e1008 55%,#261408 100%)', border:'#4a2a08', shadow:'#cc881abb,#88550866', offset:'-36px', right:'20px' },
+    galakras:       { file:'galakras.png',    bg:'linear-gradient(100deg,#180a04 0%,#22100a 55%,#281408 100%)', border:'#4a2008', shadow:'#cc5500bb,#88330066', offset:'-36px', right:'10px' },
+    ironjuggernaut: { file:'ironjug.png',     bg:'linear-gradient(100deg,#0c1018 0%,#101620 55%,#141c28 100%)', border:'#2a3848', shadow:'#8899aabb,#4a607866', offset:'-36px', right:'-8px' },
+    darkshaman:     { file:'darkshamans.png', bg:'linear-gradient(100deg,#080e06 0%,#0e1808 55%,#121e0a 100%)', border:'#283818', shadow:'#5a7733bb,#344a1866', offset:'-36px', right:'-8px' },
+    generalnazmak:  { file:'nazgrim.png',     bg:'linear-gradient(100deg,#0e1006 0%,#161808 55%,#1a200a 100%)', border:'#38480a', shadow:'#88aa33bb,#4a661866', offset:'-70px', right:'-8px' },
+    malkorok:       { file:'malk.png',        bg:'linear-gradient(100deg,#100818 0%,#1a0c28 55%,#200e30 100%)', border:'#3a1458', shadow:'#8833bbbb,#5a1a8866', offset:'-36px', right:'-8px' },
+    spoils:         { file:'spoils.png',      bg:'linear-gradient(100deg,#161008 0%,#201808 55%,#261e0a 100%)', border:'#3a2e08', shadow:'#ccaa33bb,#887a1866', offset:'-36px', right:'-8px' },
+    thok:           { file:'thok.png',        bg:'linear-gradient(100deg,#180606 0%,#220808 55%,#2a0a08 100%)', border:'#4a1008', shadow:'#cc3300bb,#881a0066', offset:'-36px', right:'-8px' },
+    siegecrafter:   { file:'blackfuse.png',   bg:'linear-gradient(100deg,#0e1218 0%,#141a22 55%,#182028 100%)', border:'#2a3848', shadow:'#cc6622bb,#884a1466', offset:'-36px', right:'-8px' },
+    paragons:       { file:'paragons.png',    bg:'linear-gradient(100deg,#0e1406 0%,#141e08 55%,#18260a 100%)', border:'#304018', shadow:'#99bb33bb,#5a7a1866', offset:'-36px', right:'-8px' },
+    garrosh:        { file:'thrall.png',      bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', shadow:'#bb1111bb,#880a0a66', offset:'-70px', right:'-8px' },
   };
 
   const bimg = BOSS_IMAGES[boss.id];
@@ -4129,7 +4129,7 @@ function buildSsBossHeader(boss, portraitUrl) {
         <div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 18px ${bossColor}55;">${name}</div>
       </div>
       <img src="${bimg.file}" onerror="this.style.display='none'"
-        style="position:absolute;right:-8px;bottom:${bimg.offset};height:148px;pointer-events:none;
+        style="position:absolute;right:${bimg.right};bottom:${bimg.offset};height:148px;pointer-events:none;
                filter:drop-shadow(0 0 10px ${bimg.shadow.split(',')[0].trim()}) drop-shadow(0 0 28px ${bimg.shadow.split(',')[1].trim()});
                opacity:0.92;" />
     </div>`;
