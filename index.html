@@ -7108,14 +7108,20 @@ async function initViewMode(viewId) {
         const load = (cb) => { if (window.html2canvas) { cb(); return; } const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.onload = cb; document.head.appendChild(s); };
         load(() => {
           btn.textContent = '…';
-          html2canvas(block, { backgroundColor: '#0a0804', scale: 1.5, useCORS: true, allowTaint: true }).then(canvas => {
+          html2canvas(block, {
+            backgroundColor: '#0a0804',
+            scale: 1.25,
+            useCORS: true,
+            allowTaint: true,
+            ignoreElements: el => el.classList && el.classList.contains('view-img-btn')
+          }).then(canvas => {
             canvas.toBlob(blob => {
               navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
                 btn.textContent = 'Copied!';
-                setTimeout(() => { btn.textContent = 'Image'; }, 2000);
-              }).catch(() => { btn.textContent = 'Image'; });
+                setTimeout(() => { btn.textContent = 'Image for Disc'; }, 2000);
+              }).catch(() => { btn.textContent = 'Image for Disc'; });
             }, 'image/png');
-          }).catch(() => { btn.textContent = 'Image'; });
+          }).catch(() => { btn.textContent = 'Image for Disc'; });
         });
       });
     });
