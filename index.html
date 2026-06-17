@@ -4081,23 +4081,19 @@ const BOSS_VIS = {
   garrosh:          { color:'#bb1111', file:'thrall.png',          bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', glow:['#bb1111bb','#880a0a66'], offset:'-55px', right:'-8px',  tight:false },
 };
 
-// Boss glow = pure radial gradient (no CSS drop-shadow, which html2canvas can't render),
-// so the live page and the captured image look identical. A brighter inner core stands
-// in for the silhouette glow the drop-shadow used to provide.
+// Radial-gradient glow behind boss image. The image also carries a CSS drop-shadow that
+// hugs the silhouette (looks great live, but html2canvas can't render it) — the capture
+// boosts this radial via onclone to approximate that look. Tagged for that boost.
 function bossGlowHtml(v) {
-  const g1 = v.glow[0], g2 = v.glow[1];
-  const core = g1.slice(0, 7) + 'aa';
-  const sz    = v.tight ? 210 : 300;
-  const top   = v.tight ? -62 : -100;
-  const right = v.tight ? -16 : -40;
-  const stops = v.tight
-    ? `${g1} 0%, ${core} 12%, ${g2} 30%, transparent 55%`
-    : `${g1} 0%, ${core} 12%, ${g2} 32%, transparent 62%`;
-  return `<div class="boss-glow" style="position:absolute;top:${top}px;right:${right}px;width:${sz}px;height:${sz}px;background:radial-gradient(circle at 50% 50%, ${stops});pointer-events:none;z-index:0;"></div>`;
+  const sz    = v.tight ? 180 : 260;
+  const top   = v.tight ? -55 : -90;
+  const right = v.tight ? -10 : -30;
+  const stops = v.tight ? `${v.glow[0]} 0%, ${v.glow[1]} 16%, transparent 42%` : `${v.glow[0]} 0%, ${v.glow[1]} 25%, transparent 55%`;
+  return `<div class="boss-glow" data-g1="${v.glow[0]}" data-g2="${v.glow[1]}" data-tight="${v.tight?1:0}" style="position:absolute;top:${top}px;right:${right}px;width:${sz}px;height:${sz}px;background:radial-gradient(circle at 50% 50%, ${stops});pointer-events:none;z-index:0;"></div>`;
 }
 function bossImgHtml(v, h) {
   const ht = h || 148;
-  return `<img src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;opacity:0.92;z-index:1;" />`;
+  return `<img src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
 }
 // Shared "Image for Disc" capture button (handler wired after render)
 const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#3a2e20';">Image for Disc</button>`;
@@ -7241,8 +7237,7 @@ async function initViewMode(viewId) {
     attachSsIconErrors(viewContent);
 
     // Image buttons — capture the parent boss block via html2canvas (normal mode).
-    // The boss glow is a pure radial gradient (no CSS drop-shadow), so it renders
-    // identically here and on the live page.
+    // onclone boosts the radial glow to approximate the live drop-shadow (which html2canvas can't render).
     viewContent.querySelectorAll('.view-img-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const block = btn.closest('.ss-boss-block');
@@ -7255,7 +7250,21 @@ async function initViewMode(viewId) {
             scale: 1.25,
             useCORS: true,
             allowTaint: true,
-            ignoreElements: el => el.classList && el.classList.contains('view-img-btn')
+            ignoreElements: el => el.classList && el.classList.contains('view-img-btn'),
+            onclone: (doc) => {
+              doc.querySelectorAll('.boss-glow').forEach(el => {
+                const g1 = el.getAttribute('data-g1'), g2 = el.getAttribute('data-g2');
+                const tight = el.getAttribute('data-tight') === '1';
+                const base = tight ? 180 : 260;
+                const sz = Math.round(base * 1.35);
+                const grow = Math.round((sz - base) / 2);
+                el.style.width = sz + 'px';
+                el.style.height = sz + 'px';
+                el.style.top = ((tight ? -55 : -90) - grow) + 'px';
+                el.style.right = ((tight ? -10 : -30) - grow) + 'px';
+                el.style.background = `radial-gradient(circle at 50% 50%, ${g1} 0%, ${g1.slice(0,7)}aa 13%, ${g2} 34%, transparent 64%)`;
+              });
+            }
           }).then(canvas => {
             canvas.toBlob(blob => {
               navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
