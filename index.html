@@ -2089,9 +2089,113 @@ function showSubPlanPrompt(playerWho, specName) {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') ov.querySelector('#subPlanStart').click(); });
 }
 
+function showMultiSubPlanPrompt(subs) {
+  if (!subs || !subs.length) return;
+  const plans = getPlans();
+
+  // Match existing plans whose subs array equals this set
+  const existing = Object.values(plans).filter(p => {
+    const ps = p.subs || (p.subWho ? [{who: p.subWho, spec: p.subSpec}] : []);
+    return ps.length === subs.length && subs.every((s, i) => ps[i]?.who === s.who && ps[i]?.spec === s.spec);
+  });
+
+  const defaultName = 'Sub: ' + subs.map(s => SPEC_SHORT_NAMES[s.spec] || s.spec).join(', ');
+  const summaryLines = subs.map(s => {
+    const player = DEFAULT_ROSTER.find(p => p.who === s.who);
+    const col = SPEC_CLASS_COLORS[s.spec] || '#c83a20';
+    const short = SPEC_SHORT_NAMES[s.spec] || s.spec;
+    return `<div style="font-size:11px;color:#8a7060;margin-bottom:2px;"><span style="color:${player?.color||'#c8d0e8'}">${player?.name||s.who}</span> <span style="color:var(--text3)">→</span> <span style="color:${col}">${short}</span></div>`;
+  }).join('');
+
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+
+  let existingHtml = '';
+  if (existing.length) {
+    existingHtml = `<div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #6a884844;background:#6a884818;color:#88bb66;font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
+      <div style="font-size:10px;color:#3a2e20;text-align:center;margin:8px 0;">— or —</div>
+    </div>`;
+  }
+
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+    <div style="font-size:13px;font-weight:700;color:#88bb66;letter-spacing:0.06em;margin-bottom:4px;">New Sub Plan (${subs.length} player${subs.length>1?'s':''})</div>
+    <div style="margin-bottom:14px;">${summaryLines}</div>
+    ${existingHtml}
+    <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <input id="subPlanName" type="text" placeholder='Plan name' value="${defaultName}"
+      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+    <div style="display:flex;gap:8px;">
+      <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid #6a8848;background:#6a884818;color:#88bb66;font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(ov);
+
+  const input = ov.querySelector('#subPlanName');
+  input.focus(); input.select();
+
+  ov.querySelectorAll('.load-sub-plan-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ov.remove();
+      switchToPlan(btn.dataset.id);
+      subs.forEach(s => applyFill(s.who, s.spec));
+      updatePlansBtn();
+    });
+  });
+
+  ov.querySelector('#subPlanStart').addEventListener('click', () => {
+    const name = input.value.trim() || defaultName;
+    ov.remove();
+    const fullRaidSnapshot = getFullRaidSnapshot();
+    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
+    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    subs.forEach(s => applyFill(s.who, s.spec));
+    const id = saveCurrentAsPlan(name, subs);
+    setActivePlanId(id);
+    renderTimeline();
+    updatePlansBtn();
+  });
+
+  ov.querySelector('#subPlanCancel').addEventListener('click', () => ov.remove());
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') ov.querySelector('#subPlanStart').click(); });
+}
+
 function showRosterModal() {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
+  let pendingSubs = []; // [{who, spec}] queued for a multi-sub plan
+
+  function buildPendingSubsHtml() {
+    if (!pendingSubs.length) return '';
+    const rows = pendingSubs.map(s => {
+      const player = DEFAULT_ROSTER.find(p => p.who === s.who);
+      const col = SPEC_CLASS_COLORS[s.spec] || '#c83a20';
+      const short = SPEC_SHORT_NAMES[s.spec] || s.spec;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+        <span style="font-size:12px;color:${player?.color||'#c8d0e8'};">${player?.name||s.who}</span>
+        <span style="font-size:11px;color:var(--text3);">→</span>
+        <span style="font-size:11px;color:${col};">${short}</span>
+        <button class="remove-pending-btn" data-who="${s.who}" style="margin-left:auto;background:transparent;border:none;color:#5a4838;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:12px;border:1px solid #3a4838;border-radius:6px;overflow:hidden;">
+      <div style="padding:7px 12px;background:#101408;border-bottom:1px solid #3a4838;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:10px;font-weight:700;color:#6a8848;letter-spacing:0.1em;text-transform:uppercase;">Pending Subs (${pendingSubs.length})</span>
+        <button id="create-multi-plan-btn" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #6a8848;background:#6a884818;color:#88bb66;cursor:pointer;font-weight:700;">Create Plan →</button>
+      </div>
+      <div style="padding:6px 12px;">${rows}</div>
+    </div>`;
+  }
+
+  function refreshPendingAndRoster() {
+    overlay.querySelector('#pendingSubsSection').innerHTML = buildPendingSubsHtml();
+    overlay.querySelector('#rosterList').innerHTML = buildRosterHtml();
+    wireRosterButtons();
+  }
 
   function getSpecOpts() {
     const groups = {
@@ -2118,6 +2222,7 @@ function showRosterModal() {
       html += `<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:6px 0 3px;">${roleLabels[role]}</div>`;
       players.forEach(player => {
         const fill = activeRosterFills[player.who];
+        const pending = pendingSubs.find(s => s.who === player.who);
         const hasCds = player.cds.length > 0;
         const cdTags = player.cds.map(id => {
           const cd = CD_POOL.find(c => c.id === id);
@@ -2155,7 +2260,7 @@ function showRosterModal() {
               <span style="font-size:14px;font-weight:600;color:${player.color};">${player.name}</span>
               <span style="font-size:11px;color:var(--text3);">${player.spec}</span>
 
-              ${fill ? `<span class="roster-config-badge">FILL: ${fill.fillSpec}</span>` : ''}
+              ${fill ? `<span class="roster-config-badge">FILL: ${fill.fillSpec}</span>` : pending ? `<span style="font-size:10px;color:#88bb66;border:1px solid #6a8848;border-radius:3px;padding:1px 5px;">QUEUED: ${SPEC_SHORT_NAMES[pending.spec]||pending.spec}</span>` : ''}
             </div>
             <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;">
               ${fill ? fillDisplay : (cdTags || '<span style="font-size:10px;color:var(--text3);">No tracked CDs</span>')}
@@ -2164,6 +2269,8 @@ function showRosterModal() {
           <div style="display:flex;gap:6px;flex-shrink:0;">
             ${fill
               ? `<button class="btn revert-fill-btn" data-who="${player.who}" style="border-color:#c84848;color:#c84848;">Revert</button>`
+              : pending
+              ? `<button class="btn set-fill-btn" data-who="${player.who}" style="border-color:#6a8848;color:#88bb66;">Change</button><button class="remove-pending-btn" data-who="${player.who}" style="border-color:#5a3828;color:#8a6050;padding:6px 10px;">✕</button>`
               : `<button class="btn set-fill-btn" data-who="${player.who}" style="${hasCds ? '' : 'opacity:0.5;'}">Set Sub</button>`
             }
           </div>
@@ -2211,7 +2318,8 @@ function showRosterModal() {
       <div class="modal-box" style="width:560px;max-height:82vh;overflow-y:auto;">
         <h3>Sub</h3>
         <div id="plansSection">${buildPlansSection()}</div>
-        <div class="modal-sub" style="margin-bottom:10px;font-size:13px;">Click "Set Sub" to replace a player with a substitute. Their CDs will be automatically swapped across every boss.</div>
+        <div id="pendingSubsSection">${buildPendingSubsHtml()}</div>
+        <div class="modal-sub" style="margin-bottom:10px;font-size:13px;">Click "Set Sub" on one or more players, then hit "Create Plan" to save them together.</div>
         <div id="rosterList">${buildRosterHtml()}</div>
         <div class="modal-footer" style="margin-top:12px;">
           <button id="rosterClose" class="copy-btn">Done</button>
@@ -2260,6 +2368,17 @@ function showRosterModal() {
         overlay.querySelector('#rosterList').innerHTML = buildRosterHtml();
         wireRosterButtons();
       });
+    });
+    overlay.querySelectorAll('.remove-pending-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pendingSubs = pendingSubs.filter(s => s.who !== btn.dataset.who);
+        refreshPendingAndRoster();
+      });
+    });
+    const createBtn = overlay.querySelector('#create-multi-plan-btn');
+    if (createBtn) createBtn.addEventListener('click', () => {
+      overlay.remove();
+      showMultiSubPlanPrompt([...pendingSubs]);
     });
   }
 
@@ -2320,9 +2439,9 @@ function showRosterModal() {
     picker.querySelector('#confirmFill').addEventListener('click', () => {
       const specName = picker.querySelector('#fillSpecSelect').value;
       picker.remove();
-      overlay.remove(); // close the roster modal
-      // Ask user to name this plan (or load existing)
-      showSubPlanPrompt(playerWho, specName);
+      pendingSubs = pendingSubs.filter(s => s.who !== playerWho);
+      pendingSubs.push({who: playerWho, spec: specName});
+      refreshPendingAndRoster();
     });
 
     picker.querySelector('#cancelFill').addEventListener('click', () => picker.remove());
@@ -6398,16 +6517,19 @@ function applyTimelineSnapshot(snapshot) {
   playPlanSwitchAnim();
 }
 
-function saveCurrentAsPlan(name, subWho, subSpec, subbedOut) {
+function saveCurrentAsPlan(name, subs, subbedOut) {
   const plans = getPlans();
   const id = 'plan_' + Date.now();
   const snapshot = captureCurrentTimeline();
+  const subsArr = Array.isArray(subs) ? subs : (subs ? [{who: subs, spec: subbedOut}] : []);
   plans[id] = {
     id,
     name,
-    subWho: subWho || null,
-    subSpec: subSpec || null,
-    subbedOut: subbedOut || [],
+    subs: subsArr,
+    // legacy single-sub fields for backward compat
+    subWho: subsArr[0]?.who || null,
+    subSpec: subsArr[0]?.spec || null,
+    subbedOut: Array.isArray(subbedOut) ? subbedOut : [],
     placedCDs: snapshot.placedCDs,
     activeSetIds: snapshot.activeSetIds,
     paletteOrder: snapshot.paletteOrder,
