@@ -7155,10 +7155,9 @@ async function createShareLink(btn) {
     const data = buildShareData();
     await _fbDb.ref(FB_SHARES_PATH + '/' + id).set(data);
     const url = window.location.origin + window.location.pathname + '?view=' + id;
-    await navigator.clipboard.writeText(url);
-    btn.textContent = '✓ Copied!';
+    window.open(url, '_blank');
+    btn.textContent = 'Share Link';
     btn.disabled = false;
-    setTimeout(() => { btn.textContent = btn.id === 'screenshotBtn' ? 'Share Link' : '🔗 Share Link'; }, 3000);
   } catch(e) {
     console.error(e);
     btn.textContent = btn.id === 'screenshotBtn' ? 'Share Link' : '🔗 Share Link';
