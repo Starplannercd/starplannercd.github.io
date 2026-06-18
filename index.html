@@ -1049,6 +1049,91 @@
   .roster-cd-remove { cursor:pointer; opacity:0.6; font-size:11px; }
   .roster-cd-remove:hover { opacity:1; }
 
+  /* ── SUB / SWAP MODAL ── */
+  .sub-modal { background:#1c1810; border:1px solid #4a3828; border-radius:10px; width:600px; max-width:95vw; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.55); }
+  .sub-modal-head { padding:17px 20px 14px; border-bottom:1px solid #2a2218; flex-shrink:0; }
+  .sub-modal-title { font-size:15px; font-weight:600; color:#e6dac6; letter-spacing:0.01em; }
+  .sub-modal-sub { font-size:11px; color:#6a5848; margin-top:4px; line-height:1.4; }
+  .sub-modal-body { padding:14px 20px; overflow-y:auto; flex:1; }
+  .sub-modal-foot { padding:12px 20px; border-top:1px solid #2a2218; display:flex; justify-content:flex-end; flex-shrink:0; }
+  .sub-section-label { font-size:10px; font-weight:700; color:#5a4838; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; display:flex; align-items:center; justify-content:space-between; }
+  .sub-section-label:not(:first-child) { margin-top:18px; }
+
+  /* plans */
+  .sub-plans { border:1px solid #2a2218; border-radius:7px; overflow:hidden; }
+  .sub-plan-row { display:flex; align-items:center; gap:9px; padding:8px 11px; cursor:pointer; transition:background 0.12s; border-bottom:1px solid #221c14; }
+  .sub-plan-row:last-child { border-bottom:none; }
+  .sub-plan-row:hover { background:#241e14; }
+  .sub-plan-row.active { background:#c83a2014; }
+  .sub-plan-name { flex:1; font-size:12.5px; color:#c2b6a2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sub-plan-row.active .sub-plan-name { color:#eaa890; font-weight:600; }
+  .sub-plan-dot { width:6px; height:6px; border-radius:50%; background:#c83a20; flex-shrink:0; }
+  .sub-plan-del { background:transparent; border:none; color:#4a3828; font-size:13px; cursor:pointer; padding:2px 5px; border-radius:4px; flex-shrink:0; opacity:0; transition:opacity 0.12s,color 0.12s,background 0.12s; }
+  .sub-plan-row:hover .sub-plan-del { opacity:1; }
+  .sub-plan-del:hover { color:#ff9a8a; background:#c8484818; }
+  .sub-import-btn { font-size:9px; font-weight:600; padding:3px 9px; border-radius:4px; border:1px solid #3a2e20; background:transparent; color:#6a5848; cursor:pointer; letter-spacing:0.04em; text-transform:none; }
+  .sub-import-btn:hover { border-color:#5a4838; color:#a88a70; }
+
+  /* selection tray */
+  .sub-tray { background:linear-gradient(180deg,#141a0e,#0f130b); border:1px solid #3a4a2c; border-radius:8px; padding:12px 14px; margin-bottom:18px; }
+  .sub-tray-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+  .sub-tray-title { font-size:10px; font-weight:700; color:#8ab866; letter-spacing:0.1em; text-transform:uppercase; }
+  .sub-tray-chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .sub-chip { display:inline-flex; align-items:center; gap:7px; background:#1b2413; border:1px solid #3e5230; border-radius:20px; padding:4px 5px 4px 12px; font-size:11.5px; }
+  .sub-chip-arrow { color:#566a44; font-size:10px; }
+  .sub-chip-x { display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border-radius:50%; background:#27331b; color:#8a9878; font-size:10px; cursor:pointer; border:none; line-height:1; transition:all 0.12s; }
+  .sub-chip-x:hover { background:#5a2828; color:#ff9a9a; }
+  .sub-create-btn { font-size:11.5px; font-weight:700; padding:6px 15px; border-radius:6px; border:1px solid #5a8838; background:#5a883824; color:#9ad072; cursor:pointer; transition:all 0.12s; }
+  .sub-create-btn:hover { background:#5a883844; border-color:#7ab85a; color:#bcec92; }
+
+  /* roster */
+  .sub-role-label { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#5a4838; padding:14px 2px 6px; font-weight:700; }
+  .sub-role-label.first { padding-top:2px; }
+  .sub-player { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:7px; background:#171310; border:1px solid #2a2218; border-left:3px solid #2a2218; margin-bottom:6px; transition:border-color 0.12s,background 0.12s; }
+  .sub-player.queued { border-color:#46603a; border-left-color:#7ab85a; background:#141a0e; }
+  .sub-player.active-fill { border-color:#5e4682; border-left-color:#9a7ac8; background:#16121e; }
+  .sub-player-info { flex:1; min-width:0; }
+  .sub-player-top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .sub-player-name { font-size:13.5px; font-weight:600; }
+  .sub-player-spec { font-size:11px; color:#6a5848; }
+  .sub-player-cds { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; align-items:center; }
+  .sub-state-badge { font-size:9px; font-weight:700; letter-spacing:0.05em; border-radius:3px; padding:2px 7px; text-transform:uppercase; }
+  .sub-state-badge.queued { color:#9ad072; border:1px solid #4a6838; background:#3a521e22; }
+  .sub-state-badge.fill { color:#b89ad8; border:1px solid #6a4a88; background:#4a2a6822; }
+  .sub-cd-tag { display:inline-flex; align-items:center; padding:2px 7px; border-radius:3px; font-size:10px; font-weight:600; border:1px solid; }
+  .sub-cd-tag.faded { opacity:0.32; }
+  .sub-arrow { font-size:12px; color:#566a44; margin:0 2px; line-height:1; }
+  .sub-arrow.purple { color:#7a5aa0; }
+  .sub-empty-note { font-size:10px; color:#4a3e30; font-style:italic; }
+  .sub-spec-pill { display:inline-flex; align-items:center; padding:2px 8px; border-radius:3px; font-size:10px; font-weight:700; border:1px solid; }
+  .sub-act { display:flex; gap:6px; flex-shrink:0; }
+  .sub-btn { font-size:11px; padding:6px 13px; border-radius:6px; border:1px solid #4a3828; background:#241e14; color:#b8a890; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+  .sub-btn:hover { border-color:#6a5238; color:#e6cca8; }
+  .sub-btn.primary:hover { border-color:#7ab85a; color:#9ad072; background:#5a883818; }
+  .sub-btn.danger { color:#c8847a; }
+  .sub-btn.danger:hover { border-color:#c84848; color:#ff9a8a; background:#c8484814; }
+  .sub-btn.icon { padding:6px 10px; }
+
+  /* fill picker */
+  .sub-picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.58); z-index:99998; display:flex; align-items:center; justify-content:center; }
+  .sub-picker { background:#1e1a12; border:1px solid #4a3828; border-radius:11px; width:440px; max-width:94vw; overflow:hidden; box-shadow:0 14px 44px rgba(0,0,0,0.62); }
+  .sub-picker-head { padding:16px 18px 13px; border-bottom:1px solid #2a2218; }
+  .sub-picker-title { font-size:14px; font-weight:600; color:#e6dac6; }
+  .sub-picker-title b { color:#eaa890; }
+  .sub-picker-out { font-size:11px; color:#6a5848; margin-top:4px; }
+  .sub-picker-body { padding:14px 18px; display:flex; flex-direction:column; gap:12px; }
+  .sub-picker-flabel { font-size:10px; font-weight:700; color:#6a5848; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px; }
+  .sub-picker-select { width:100%; background:#141008; border:1px solid #4a3828; color:#d8c8b0; padding:8px 10px; border-radius:6px; font-size:13px; }
+  .sub-picker-preview { background:#120f08; border:1px solid #2a2218; border-radius:6px; padding:11px; font-size:11px; min-height:44px; }
+  .sub-picker-foot { padding:0 18px 16px; display:flex; gap:8px; }
+  .sub-picker-foot .sub-btn { flex:1; text-align:center; padding:9px; }
+  .sub-swap-head { color:#5a4838; margin-bottom:7px; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; }
+  .sub-swap-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .sub-swap-from { color:#d08a82; flex:1; }
+  .sub-swap-to { color:#88c870; flex:1; }
+  .sub-swap-to.removed { color:#c86858; }
+  .sub-swap-mid { color:#5a4838; }
+
   /* ── Polish ── */
 
 
@@ -2171,23 +2256,23 @@ function showRosterModal() {
 
   function buildPendingSubsHtml() {
     if (!pendingSubs.length) return '';
-    const rows = pendingSubs.map(s => {
+    const chips = pendingSubs.map(s => {
       const player = DEFAULT_ROSTER.find(p => p.who === s.who);
       const col = SPEC_CLASS_COLORS[s.spec] || '#c83a20';
       const short = SPEC_SHORT_NAMES[s.spec] || s.spec;
-      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
-        <span style="font-size:12px;color:${player?.color||'#c8d0e8'};">${player?.name||s.who}</span>
-        <span style="font-size:11px;color:var(--text3);">→</span>
-        <span style="font-size:11px;color:${col};">${short}</span>
-        <button class="remove-pending-btn" data-who="${s.who}" style="margin-left:auto;background:transparent;border:none;color:#5a4838;font-size:13px;cursor:pointer;line-height:1;padding:0 2px;">✕</button>
-      </div>`;
+      return `<span class="sub-chip">
+        <span style="color:${player?.color||'#c8d0e8'};font-weight:600;">${player?.name||s.who}</span>
+        <span class="sub-chip-arrow">▶</span>
+        <span style="color:${col};font-weight:600;">${short}</span>
+        <button class="remove-pending-btn sub-chip-x" data-who="${s.who}" title="Remove">✕</button>
+      </span>`;
     }).join('');
-    return `<div style="margin-bottom:12px;border:1px solid #3a4838;border-radius:6px;overflow:hidden;">
-      <div style="padding:7px 12px;background:#101408;border-bottom:1px solid #3a4838;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:10px;font-weight:700;color:#6a8848;letter-spacing:0.1em;text-transform:uppercase;">Pending Subs (${pendingSubs.length})</span>
-        <button id="create-multi-plan-btn" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #6a8848;background:#6a884818;color:#88bb66;cursor:pointer;font-weight:700;">Create Plan →</button>
+    return `<div class="sub-tray">
+      <div class="sub-tray-head">
+        <span class="sub-tray-title">Selected to sub · ${pendingSubs.length}</span>
+        <button id="create-multi-plan-btn" class="sub-create-btn">Create Plan →</button>
       </div>
-      <div style="padding:6px 12px;">${rows}</div>
+      <div class="sub-tray-chips">${chips}</div>
     </div>`;
   }
 
@@ -2212,117 +2297,109 @@ function showRosterModal() {
     ).join('');
   }
 
+  function cdTag(id, faded) {
+    const cd = CD_POOL.find(c => c.id === id);
+    if (!cd) return '';
+    return `<span class="sub-cd-tag${faded ? ' faded' : ''}" style="border-color:${cd.color};color:${cd.textColor};background:${cd.color}22">${cd.short}</span>`;
+  }
+
   function buildRosterHtml() {
     const roles = ['tank','healer','ranged','melee'];
     const roleLabels = { tank:'Tanks', healer:'Healers', ranged:'Ranged DPS', melee:'Melee DPS' };
     let html = '';
+    let firstRole = true;
     roles.forEach(role => {
       const players = DEFAULT_ROSTER.filter(p => p.role === role);
       if (!players.length) return;
-      html += `<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:6px 0 3px;">${roleLabels[role]}</div>`;
+      html += `<div class="sub-role-label${firstRole ? ' first' : ''}">${roleLabels[role]}</div>`;
+      firstRole = false;
       players.forEach(player => {
         const fill = activeRosterFills[player.who];
         const pending = pendingSubs.find(s => s.who === player.who);
-        const hasCds = player.cds.length > 0;
-        const cdTags = player.cds.map(id => {
-          const cd = CD_POOL.find(c => c.id === id);
-          return cd ? `<span class="roster-cd-tag" style="border-color:${cd.color};color:${cd.textColor};background:${cd.color}22">${cd.short}</span>` : '';
-        }).join('');
-        const fillCdTags = fill ? (fill.fillCds || []).map(id => {
-          const cd = CD_POOL.find(c => c.id === id);
-          return cd ? `<span class="roster-cd-tag" style="border-color:${cd.color};color:${cd.textColor};background:${cd.color}22">${cd.short}</span>` : '';
-        }).join('') : '';
-        // Build per-CD swap display with large arrow for 1-for-1, faded+X for removed
-        let fillDisplay = '';
+        const cdTags = player.cds.map(id => cdTag(id)).join('') ||
+          '<span class="sub-empty-note">No tracked cooldowns</span>';
+
+        // CD line + badge + actions per state
+        let stateClass = '', badge = '', cdLine = cdTags, actions = '';
+
         if (fill) {
+          stateClass = ' active-fill';
+          badge = `<span class="sub-state-badge fill">Subbed · ${fill.fillSpec}</span>`;
           const origIds = fill.originalCds || [];
           const fillIds = fill.fillCds || [];
           const maxLen = Math.max(origIds.length, fillIds.length);
-          const is1for1 = origIds.length === 1 && fillIds.length === 1;
           const parts = [];
           for (let i = 0; i < maxLen; i++) {
-            const fromCd = origIds[i] ? CD_POOL.find(c => c.id === origIds[i]) : null;
-            const toCd   = fillIds[i]  ? CD_POOL.find(c => c.id === fillIds[i])  : null;
-            if (fromCd && toCd) {
-              const arrowSize = is1for1 ? '20px' : '12px';
-              parts.push(`<span class="roster-cd-tag" style="border-color:${fromCd.color};color:${fromCd.textColor};background:${fromCd.color}22">${fromCd.short}</span><span style="font-size:${arrowSize};color:var(--text3);line-height:1;">→</span><span class="roster-cd-tag" style="border-color:${toCd.color};color:${toCd.textColor};background:${toCd.color}22">${toCd.short}</span>`);
-            } else if (fromCd && !toCd) {
-              parts.push(`<span class="roster-cd-tag" style="border-color:${fromCd.color};color:${fromCd.textColor};background:${fromCd.color}22;opacity:0.35;">${fromCd.short}</span>`);
-            } else if (!fromCd && toCd) {
-              parts.push(`<span class="roster-cd-tag" style="border-color:${toCd.color};color:${toCd.textColor};background:${toCd.color}22">${toCd.short}</span>`);
-            }
+            const from = origIds[i], to = fillIds[i];
+            if (from && to)      parts.push(`${cdTag(from)}<span class="sub-arrow purple">▶</span>${cdTag(to)}`);
+            else if (from)       parts.push(cdTag(from, true));
+            else if (to)         parts.push(cdTag(to));
           }
-          fillDisplay = parts.join('<span style="font-size:10px;color:var(--text3);margin:0 2px;">·</span>');
+          cdLine = parts.join('<span style="color:#3a3024;margin:0 3px;">·</span>') || cdTags;
+          actions = `<button class="sub-btn danger revert-fill-btn" data-who="${player.who}">Revert</button>`;
+        } else if (pending) {
+          stateClass = ' queued';
+          const col = SPEC_CLASS_COLORS[pending.spec] || '#9ad072';
+          const short = SPEC_SHORT_NAMES[pending.spec] || pending.spec;
+          badge = `<span class="sub-state-badge queued">Queued</span>`;
+          cdLine = `${player.cds.map(id => cdTag(id)).join('') || '<span class="sub-empty-note">label only</span>'}
+            <span class="sub-arrow">▶</span>
+            <span class="sub-spec-pill" style="border-color:${col};color:${col};background:${col}1a">${short}</span>`;
+          actions = `<button class="sub-btn primary set-fill-btn" data-who="${player.who}">Edit</button>
+            <button class="sub-btn danger icon remove-pending-btn" data-who="${player.who}" title="Remove">✕</button>`;
+        } else {
+          actions = `<button class="sub-btn primary set-fill-btn" data-who="${player.who}">Set Sub</button>`;
         }
-        html += `<div class="roster-config-item${fill ? ' active-config' : ''}">
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <span style="font-size:14px;font-weight:600;color:${player.color};">${player.name}</span>
-              <span style="font-size:11px;color:var(--text3);">${player.spec}</span>
 
-              ${fill ? `<span class="roster-config-badge">FILL: ${fill.fillSpec}</span>` : pending ? `<span style="font-size:10px;color:#88bb66;border:1px solid #6a8848;border-radius:3px;padding:1px 5px;">QUEUED: ${SPEC_SHORT_NAMES[pending.spec]||pending.spec}</span>` : ''}
+        html += `<div class="sub-player${stateClass}">
+          <div class="sub-player-info">
+            <div class="sub-player-top">
+              <span class="sub-player-name" style="color:${player.color};">${player.name}</span>
+              <span class="sub-player-spec">${player.spec}</span>
+              ${badge}
             </div>
-            <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;">
-              ${fill ? fillDisplay : (cdTags || '<span style="font-size:10px;color:var(--text3);">No tracked CDs</span>')}
-            </div>
+            <div class="sub-player-cds">${cdLine}</div>
           </div>
-          <div style="display:flex;gap:6px;flex-shrink:0;">
-            ${fill
-              ? `<button class="btn revert-fill-btn" data-who="${player.who}" style="border-color:#c84848;color:#c84848;">Revert</button>`
-              : pending
-              ? `<button class="btn set-fill-btn" data-who="${player.who}" style="border-color:#6a8848;color:#88bb66;">Change</button><button class="remove-pending-btn" data-who="${player.who}" style="border-color:#5a3828;color:#8a6050;padding:6px 10px;">✕</button>`
-              : `<button class="btn set-fill-btn" data-who="${player.who}" style="${hasCds ? '' : 'opacity:0.5;'}">Set Sub</button>`
-            }
-          </div>
+          <div class="sub-act">${actions}</div>
         </div>`;
       });
     });
     return html;
   }
 
+  function buildPlansSection() {
+    const plans = getPlans();
+    const activePlanId = getActivePlanId();
+    const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
+    const planRow = (id, name, isActive) => `<div class="sub-plan-row${isActive ? ' active' : ''}" data-plan-id="${id}">
+      ${isActive ? '<span class="sub-plan-dot"></span>' : ''}
+      <span class="sub-plan-name">${name}</span>
+      ${id === FULL_RAID_ID ? '' : `<button class="sub-plan-del" data-id="${id}" title="Delete plan">✕</button>`}
+    </div>`;
+    let rows = planRow(FULL_RAID_ID, 'Full Raid', activePlanId === FULL_RAID_ID);
+    entries.forEach(plan => { rows += planRow(plan.id, plan.name, activePlanId === plan.id); });
+    return `<div class="sub-section-label">
+        <span>Plans</span>
+        <button id="planImportBtn" class="sub-import-btn">↓ Import Foji</button>
+      </div>
+      <div class="sub-plans">${rows}</div>`;
+  }
+
   function renderModal() {
-    function buildPlansSection() {
-      const plans = getPlans();
-      const activePlanId = getActivePlanId();
-      const entries = Object.values(plans).sort((a,b) => a.savedAt - b.savedAt);
-      let html = `<div style="margin-bottom:14px;border:1px solid #3a2e20;border-radius:6px;overflow:hidden;">
-        <div style="padding:8px 12px;background:#141008;border-bottom:1px solid #3a2e20;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.1em;text-transform:uppercase;">Saved Plans</span>
-          <div style="display:flex;gap:6px;">
-            <button id="planImportBtn" style="font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid #3a2e20;background:transparent;color:#5a4838;cursor:pointer;letter-spacing:0.04em;">↓ Import Foji</button>
-          </div>
-        </div>
-        <div style="padding:6px;">`;
-
-      // Full Raid
-      const isActiveFull = activePlanId === FULL_RAID_ID;
-      html += `<div class="plan-row" data-plan-id="${FULL_RAID_ID}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActiveFull?'#c83a2018':'transparent'};">
-        <span style="flex:1;font-size:12px;font-weight:${isActiveFull?'700':'500'};color:${isActiveFull?'#c83a20':'#c8d0e8'};">Full Raid</span>
-        ${isActiveFull ? '<span style="font-size:9px;font-weight:700;color:#c83a20;letter-spacing:0.06em;">ACTIVE</span>' : ''}
-      </div>`;
-
-      entries.forEach(plan => {
-        const isActive = activePlanId === plan.id;
-        html += `<div class="plan-row" data-plan-id="${plan.id}" style="display:flex;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;background:${isActive?'#c83a2018':'transparent'};">
-          <span style="flex:1;font-size:12px;font-weight:${isActive?'700':'500'};color:${isActive?'#c83a20':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${plan.name}</span>
-          ${isActive ? '<span style="font-size:9px;font-weight:700;color:#c83a20;letter-spacing:0.06em;margin-right:6px;">ACTIVE</span>' : ''}
-          <button class="plan-del-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#4a3828;font-size:11px;cursor:pointer;padding:0 2px;flex-shrink:0;">✕</button>
-        </div>`;
-      });
-
-      html += '</div></div>';
-      return html;
-    }
-
     overlay.innerHTML = `
-      <div class="modal-box" style="width:560px;max-height:82vh;overflow-y:auto;">
-        <h3>Sub</h3>
-        <div id="plansSection">${buildPlansSection()}</div>
-        <div id="pendingSubsSection">${buildPendingSubsHtml()}</div>
-        <div class="modal-sub" style="margin-bottom:10px;font-size:13px;">Click "Set Sub" on one or more players, then hit "Create Plan" to save them together.</div>
-        <div id="rosterList">${buildRosterHtml()}</div>
-        <div class="modal-footer" style="margin-top:12px;">
-          <button id="rosterClose" class="copy-btn">Done</button>
+      <div class="sub-modal">
+        <div class="sub-modal-head">
+          <div class="sub-modal-title">Substitutions</div>
+          <div class="sub-modal-sub">Pick a saved plan, or set one or more players to sub out and create a new plan.</div>
+        </div>
+        <div class="sub-modal-body">
+          <div id="plansSection">${buildPlansSection()}</div>
+          <div class="sub-section-label" style="margin-top:18px;"><span>Roster</span></div>
+          <div id="pendingSubsSection">${buildPendingSubsHtml()}</div>
+          <div id="rosterList">${buildRosterHtml()}</div>
+        </div>
+        <div class="sub-modal-foot">
+          <button id="rosterClose" class="sub-btn">Done</button>
         </div>
       </div>`;
 
@@ -2331,25 +2408,26 @@ function showRosterModal() {
     wireRosterButtons();
   }
 
+  function refreshPlansSection() {
+    overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
+    wirePlanRows();
+  }
+
   function wirePlanRows() {
-    overlay.querySelectorAll('.plan-row').forEach(row => {
+    overlay.querySelectorAll('.sub-plan-row').forEach(row => {
       row.addEventListener('click', () => {
-        const id = row.dataset.planId;
-        switchToPlan(id);
-        overlay.querySelector('#plansSection').innerHTML = buildPlansSection().replace('<div id="plansSection">', '').replace('</div>', '');
-        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
-        wirePlanRows();
+        switchToPlan(row.dataset.planId);
+        refreshPlansSection();
         updatePlansBtn();
       });
     });
-    overlay.querySelectorAll('.plan-del-btn').forEach(btn => {
+    overlay.querySelectorAll('.sub-plan-del').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.dataset.id;
         if (getActivePlanId() === id) switchToPlan(FULL_RAID_ID);
         deletePlan(id);
-        overlay.querySelector('#plansSection').innerHTML = buildPlansSection();
-        wirePlanRows();
+        refreshPlansSection();
         updatePlansBtn();
       });
     });
@@ -2384,67 +2462,72 @@ function showRosterModal() {
 
   function showFillPicker(playerWho) {
     const player = DEFAULT_ROSTER.find(p => p.who === playerWho);
-    const existing = overlay.querySelector('#fillPickerArea');
+    const existing = document.getElementById('fillPickerOverlay');
     if (existing) existing.remove();
 
-    const picker = document.createElement('div');
-    picker.id = 'fillPickerArea';
-    picker.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1a12;border:1px solid #4a3828;border-radius:8px;padding:20px;width:420px;z-index:99999;display:flex;flex-direction:column;gap:12px;';
-    picker.innerHTML = `
-      <h3 style="font-size:14px;font-weight:500;color:#c83a20;">${player.name} is out — who is subbing in?</h3>
-      <div style="font-size:11px;color:#5a4838;">Their CDs: ${player.cds.map(id => { const cd = CD_POOL.find(c=>c.id===id); return cd ? cd.name : id; }).join(', ') || 'none'}</div>
-      <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;color:#8a7060;">Fill spec</label>
-        <select id="fillSpecSelect" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:13px;">
-          ${getSpecOpts()}
-        </select>
-      </div>
-      <div id="fillPreview" style="background:#141008;border:1px solid #3a2e20;border-radius:4px;padding:10px;font-size:11px;color:#8a7060;min-height:48px;"></div>
-      <div style="display:flex;gap:8px;">
-        <button id="confirmFill" class="btn copy-btn">Confirm Swap</button>
-        <button id="cancelFill" class="btn">Cancel</button>
+    const pov = document.createElement('div');
+    pov.id = 'fillPickerOverlay';
+    pov.className = 'sub-picker-overlay';
+    pov.innerHTML = `
+      <div class="sub-picker">
+        <div class="sub-picker-head">
+          <div class="sub-picker-title">Sub out <b>${player.name}</b></div>
+          <div class="sub-picker-out">Covers: ${player.cds.map(id => { const cd = CD_POOL.find(c=>c.id===id); return cd ? cd.name : id; }).join(', ') || 'no tracked cooldowns'}</div>
+        </div>
+        <div class="sub-picker-body">
+          <div>
+            <div class="sub-picker-flabel">Who is subbing in?</div>
+            <select id="fillSpecSelect" class="sub-picker-select">${getSpecOpts()}</select>
+          </div>
+          <div id="fillPreview" class="sub-picker-preview"></div>
+        </div>
+        <div class="sub-picker-foot">
+          <button id="confirmFill" class="sub-btn primary">Add to plan</button>
+          <button id="cancelFill" class="sub-btn">Cancel</button>
+        </div>
       </div>`;
 
-    document.body.appendChild(picker);
+    document.body.appendChild(pov);
 
     function updatePreview() {
-      const specName = picker.querySelector('#fillSpecSelect').value;
+      const specName = pov.querySelector('#fillSpecSelect').value;
       const spec = SPEC_CD_MAP[specName];
-      const preview = picker.querySelector('#fillPreview');
+      const preview = pov.querySelector('#fillPreview');
       const outIds = player.cds;
       const inIds = spec?.cds || [];
       if (outIds.length === 0 && inIds.length === 0) {
-        preview.innerHTML = '<span style="color:#5a4838;">No CD changes — only WHO label updates.</span>';
+        preview.innerHTML = '<span style="color:#5a4838;">No cooldown changes — only the assignment label updates.</span>';
         return;
       }
       const maxLen = Math.max(outIds.length, inIds.length);
-      let rows = '<div style="margin-bottom:6px;color:#5a4838;">Changes across all bosses:</div>';
+      let rows = '<div class="sub-swap-head">Changes across all bosses</div>';
       for (let i = 0; i < maxLen; i++) {
         const fromCd = outIds[i] ? CD_POOL.find(c => c.id === outIds[i]) : null;
         const toCd   = inIds[i]  ? CD_POOL.find(c => c.id === inIds[i])  : null;
         const fromLabel = fromCd ? fromCd.name : '—';
-        const toLabel   = toCd   ? `${toCd.name} (${spec.who})` : '<span style="color:#c84848;">removed</span>';
-        rows += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-          <span style="color:#ff8888;min-width:140px;">− ${fromLabel}</span>
-          <span style="color:#5a4838;">→</span>
-          <span style="color:${toCd ? '#88ff88' : '#c84848'};">+ ${toLabel}</span>
+        const toLabel   = toCd   ? `${toCd.name} <span style="opacity:0.6;">(${spec.who})</span>` : 'removed';
+        rows += `<div class="sub-swap-row">
+          <span class="sub-swap-from">− ${fromLabel}</span>
+          <span class="sub-swap-mid">▶</span>
+          <span class="sub-swap-to${toCd ? '' : ' removed'}">+ ${toLabel}</span>
         </div>`;
       }
       preview.innerHTML = rows;
     }
 
-    picker.querySelector('#fillSpecSelect').addEventListener('change', updatePreview);
+    pov.querySelector('#fillSpecSelect').addEventListener('change', updatePreview);
     updatePreview();
 
-    picker.querySelector('#confirmFill').addEventListener('click', () => {
-      const specName = picker.querySelector('#fillSpecSelect').value;
-      picker.remove();
+    pov.querySelector('#confirmFill').addEventListener('click', () => {
+      const specName = pov.querySelector('#fillSpecSelect').value;
+      pov.remove();
       pendingSubs = pendingSubs.filter(s => s.who !== playerWho);
       pendingSubs.push({who: playerWho, spec: specName});
       refreshPendingAndRoster();
     });
 
-    picker.querySelector('#cancelFill').addEventListener('click', () => picker.remove());
+    pov.querySelector('#cancelFill').addEventListener('click', () => pov.remove());
+    pov.addEventListener('mousedown', e => { if (e.target === pov) pov.remove(); });
   }
 
   document.body.appendChild(overlay);
