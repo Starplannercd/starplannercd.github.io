@@ -322,39 +322,49 @@ function avgIlvl(gear) {
 }
 
 async function fetchRankings(encId, cls, spec, diff, partition) {
-  const all = [];
-  const partArg = partition ? `partition: ${partition},` : '';
-  const diffArg = diff      ? `difficulty: ${diff},`    : '';
+  // Try with selected difficulty first; if empty fall back to no difficulty filter
+  const attempts = diff ? [diff, null] : [null];
 
-  for (let page = 1; page <= 5; page++) {
-    let data;
-    try {
-      data = await gql(`{
-        worldData {
-          encounter(id: ${encId}) {
-            characterRankings(
-              className: "${cls}"
-              specName: "${spec}"
-              metric: dps
-              ${diffArg}
-              ${partArg}
-              page: ${page}
-              includeCombatantInfo: true
-            )
+  for (const tryDiff of attempts) {
+    const partArg = partition ? `partition: ${partition},` : '';
+    const diffArg = tryDiff   ? `difficulty: ${tryDiff},` : '';
+    const all = [];
+
+    for (let page = 1; page <= 5; page++) {
+      let data;
+      try {
+        data = await gql(`{
+          worldData {
+            encounter(id: ${encId}) {
+              characterRankings(
+                className: "${cls}"
+                specName: "${spec}"
+                metric: dps
+                ${diffArg}
+                ${partArg}
+                page: ${page}
+                includeCombatantInfo: true
+              )
+            }
           }
-        }
-      }`);
-    } catch (e) { console.warn('Rankings fetch error p' + page, e); break; }
+        }`);
+      } catch (e) { console.warn('Rankings fetch error p' + page, e); break; }
 
-    const cr       = data?.worldData?.encounter?.characterRankings;
-    const rankings = cr?.rankings;
+      const cr       = data?.worldData?.encounter?.characterRankings;
+      const rankings = cr?.rankings;
 
-    if (page === 1) console.log(`[${cls} ${spec}] page 1 raw:`, JSON.stringify(cr, null, 2)?.slice(0, 600));
-    if (!rankings?.length) break;
-    all.push(...rankings);
-    if (!cr?.hasMorePages) break;
+      if (page === 1) console.log(`[${cls} ${spec}] diff=${tryDiff ?? 'any'} part=${partition || 'any'} → count=${cr?.count ?? '?'} rankings=${rankings?.length ?? 0} hasMore=${cr?.hasMorePages}`);
+
+      if (!rankings?.length) break;
+      all.push(...rankings);
+      if (!cr?.hasMorePages) break;
+    }
+
+    if (all.length) return all;
+    if (attempts.indexOf(tryDiff) < attempts.length - 1) console.log(`[${cls} ${spec}] no data at diff=${tryDiff}, retrying without difficulty filter…`);
   }
-  return all;
+
+  return [];
 }
 
 // ── Calculate ─────────────────────────────────────────────────────────────────
