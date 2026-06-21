@@ -184,9 +184,9 @@ const SPECS = [
   {cls:'Druid',spec:'Balance',label:'Druid — Balance'},{cls:'Druid',spec:'Feral',label:'Druid — Feral'},
   {cls:'Hunter',spec:'BeastMastery',label:'Hunter — Beast Mastery'},{cls:'Hunter',spec:'Marksmanship',label:'Hunter — Marksmanship'},{cls:'Hunter',spec:'Survival',label:'Hunter — Survival'},
   {cls:'Mage',spec:'Arcane',label:'Mage — Arcane'},{cls:'Mage',spec:'Fire',label:'Mage — Fire'},{cls:'Mage',spec:'Frost',label:'Mage — Frost'},
-  {cls:'Monk',spec:'Windwalker',label:'Monk — Windwalker'},
+  {cls:'Monk',spec:'Mistweaver',label:'Monk — Mistweaver (dmg)'},{cls:'Monk',spec:'Windwalker',label:'Monk — Windwalker'},
   {cls:'Paladin',spec:'Retribution',label:'Paladin — Retribution'},
-  {cls:'Priest',spec:'Shadow',label:'Priest — Shadow'},
+  {cls:'Priest',spec:'Discipline',label:'Priest — Discipline (dmg)'},{cls:'Priest',spec:'Shadow',label:'Priest — Shadow'},
   {cls:'Rogue',spec:'Assassination',label:'Rogue — Assassination'},{cls:'Rogue',spec:'Combat',label:'Rogue — Combat'},{cls:'Rogue',spec:'Subtlety',label:'Rogue — Subtlety'},
   {cls:'Shaman',spec:'Elemental',label:'Shaman — Elemental'},{cls:'Shaman',spec:'Enhancement',label:'Shaman — Enhancement'},
   {cls:'Warlock',spec:'Affliction',label:'Warlock — Affliction'},{cls:'Warlock',spec:'Demonology',label:'Warlock — Demonology'},{cls:'Warlock',spec:'Destruction',label:'Warlock — Destruction'},
@@ -196,7 +196,7 @@ const SPEC_OPTS = SPECS.map(s=>`<option value="${s.cls}|${s.spec}">${s.label}</o
 
 function buildRaiders() {
   var c=document.getElementById('raider-rows');
-  for (var i=0;i<3;i++) {
+  for (var i=0;i<10;i++) {
     var row=document.createElement('div'); row.className='row';
     row.innerHTML=`<span class="row-num">${i+1}.</span><input id="rname-${i}" placeholder="Name" style="width:88px"><select id="rspec-${i}" style="width:210px"><option value="">— Spec —</option>${SPEC_OPTS}</select><input id="rilvl-${i}" type="number" placeholder="ilvl" style="width:62px" min="400" max="600">`;
     c.appendChild(row);
@@ -271,7 +271,7 @@ async function calculate() {
   if (!encId)      { resultsEl.innerHTML='<p class="err" style="margin-top:16px">Select a boss.</p>'; return; }
 
   var raiders=[];
-  for (var i=0;i<3;i++) {
+  for (var i=0;i<10;i++) {
     var name=document.getElementById('rname-'+i).value.trim()||('Raider '+(i+1));
     var specVal=document.getElementById('rspec-'+i).value;
     var ilvl=parseInt(document.getElementById('rilvl-'+i).value)||0;
