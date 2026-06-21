@@ -97,11 +97,9 @@ button:hover { border-color: #666; color: #eee; }
     <select id="boss-select" style="width:220px" onchange="onBossChange()">
       <option value="">— Select Boss —</option>
     </select>
-    <select id="diff-select" style="width:140px">
-      <option value="">— Difficulty —</option>
-    </select>
-    <select id="part-select" style="width:140px">
-      <option value="">— Partition —</option>
+    <select id="diff-select" style="width:120px">
+      <option value="3">Normal</option>
+      <option value="4" selected>Heroic</option>
     </select>
     <label>Enrage</label>
     <input id="enrage" type="number" placeholder="sec" style="width:68px" title="Enrage timer in seconds">
@@ -120,9 +118,9 @@ button:hover { border-color: #666; color: #eee; }
 <div id="results"></div>
 
 <script>
-// ── Constants ────────────────────────────────────────────────────────────────
-const WCL_CLIENT_ID  = 'a181f533-c14e-4f52-9b17-252b64aa1585';
-const WCL_REDIRECT   = 'https://starplannercd.github.io';
+// ── Constants ─────────────────────────────────────────────────────────────────
+const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
+const WCL_REDIRECT  = 'https://starplannercd.github.io';
 const WCL_AUTH_URL   = 'https://www.warcraftlogs.com/oauth/authorize';
 const WCL_TOKEN_URL  = 'https://www.warcraftlogs.com/oauth/token';
 const WCL_GQL_URL    = 'https://www.warcraftlogs.com/api/v2/user';
@@ -147,335 +145,210 @@ const ENRAGE_TIMERS = {
   'Paragons of the Klaxxi': 720, 'Garrosh Hellscream': 900,
 };
 
-// ── PKCE Auth ─────────────────────────────────────────────────────────────────
+// ── PKCE Auth (same as cooldown planner) ─────────────────────────────────────
 async function genVerifier() {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  return btoa(String.fromCharCode(...arr)).replace(/[+/=]/g, c => ({'+':'-','/':'_','=':''}[c]));
+  var arr = new Uint8Array(32); crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode.apply(null,arr)).replace(/[+/=]/g,function(c){return{'+':'-','/':'_','=':''}[c];});
 }
 async function genChallenge(v) {
-  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
-  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/[+/=]/g, c => ({'+':'-','/':'_','=':''}[c]));
+  var hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode.apply(null,new Uint8Array(hash))).replace(/[+/=]/g,function(c){return{'+':'-','/':'_','=':''}[c];});
 }
-function getToken() { return localStorage.getItem(WCL_TOKEN_KEY); }
-function isAuthed() {
-  const exp = localStorage.getItem(WCL_TOKEN_EXP);
-  return !!getToken() && !!exp && Date.now() < parseInt(exp);
-}
+function getToken() { return localStorage.getItem('tot_rcd_wcl_token'); }
+function isAuthed() { var e=localStorage.getItem('tot_rcd_wcl_exp'); return !!getToken()&&!!e&&Date.now()<parseInt(e); }
 async function doLogin() {
-  const v = await genVerifier(), ch = await genChallenge(v);
-  const state = Math.random().toString(36).slice(2);
-  sessionStorage.setItem('wcl_v', v);
-  sessionStorage.setItem('wcl_s', state);
-  sessionStorage.setItem('wcl_return', '/dps.html');
-  const p = new URLSearchParams({
-    client_id: WCL_CLIENT_ID, redirect_uri: WCL_REDIRECT,
-    response_type: 'code', code_challenge: ch,
-    code_challenge_method: 'S256', state, scope: 'view-user-profile'
-  });
-  window.location.href = WCL_AUTH_URL + '?' + p;
+  var v=await genVerifier(), ch=await genChallenge(v), state=Math.random().toString(36).slice(2);
+  sessionStorage.setItem('wcl_v',v); sessionStorage.setItem('wcl_s',state); sessionStorage.setItem('wcl_return','/dps.html');
+  var p=new URLSearchParams({client_id:WCL_CLIENT_ID,redirect_uri:WCL_REDIRECT,response_type:'code',code_challenge:ch,code_challenge_method:'S256',state:state,scope:'view-user-profile'});
+  window.location.href='https://www.warcraftlogs.com/oauth/authorize?'+p;
 }
 
-// ── GQL ──────────────────────────────────────────────────────────────────────
-async function gql(query) {
-  const res  = await fetch(WCL_GQL_URL, {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query })
+// ── GQL (with variable support, same endpoint as cooldown planner) ─────────────
+async function wclQuery(query, variables) {
+  var res = await fetch('https://www.warcraftlogs.com/api/v2/user', {
+    method:'POST',
+    headers:{'Authorization':'Bearer '+getToken(),'Content-Type':'application/json'},
+    body:JSON.stringify({query:query, variables:variables||{}})
   });
-  const data = await res.json();
+  var data = await res.json();
   if (data.errors) throw new Error(data.errors[0].message);
   return data.data;
 }
 
-// ── Zone / encounter loading ──────────────────────────────────────────────────
-let encounterIds = {};   // name → id
-let zoneLoaded   = false;
+// ── SoO encounter list (same candidates as cooldown planner) ──────────────────
+const SOO_ENCOUNTERS = {"Immerseus":1132,"The Fallen Protectors":1133,"Norushen":1134,"Sha of Pride":1135,"Galakras":1136,"Iron Juggernaut":1137,"Kor'kron Dark Shaman":1138,"General Nazgrim":1139,"Malkorok":1140,"Spoils of Pandaria":1141,"Thok the Bloodthirsty":1142,"Siegecrafter Blackfuse":1143,"Paragons of the Klaxxi":1144,"Garrosh Hellscream":1145};
+const ENRAGE_TIMERS  = {'Norushen':540,'Sha of Pride':600,'Iron Juggernaut':600,"Kor'kron Dark Shaman":600,'General Nazgrim':600,'Malkorok':540,'Siegecrafter Blackfuse':600,'Paragons of the Klaxxi':720,'Garrosh Hellscream':900};
 
+let zoneLoaded = false;
 async function loadZone() {
-  if (zoneLoaded) return;
-  zoneLoaded = true;
-
-  const bossSel = document.getElementById('boss-select');
-  const diffSel = document.getElementById('diff-select');
-  const partSel = document.getElementById('part-select');
-
+  if (zoneLoaded) return; zoneLoaded = true;
+  var bossSel = document.getElementById('boss-select');
   bossSel.innerHTML = '<option value="">Loading…</option>';
-
-  const candidates = [1054, 1098, 1105, 1106, 5];
-  let zone = null;
-
-  for (const zid of candidates) {
+  var candidates = [1054,1098,1105,1106,5];
+  var encounters = null;
+  for (var i=0;i<candidates.length;i++) {
     try {
-      const d = await gql(`{
-        worldData {
-          zone(id: ${zid}) {
-            name
-            encounters { id name }
-            difficulties { id name sizes }
-            partitions { id name isDefault }
-          }
-        }
-      }`);
-      const z = d?.worldData?.zone;
-      if (z?.encounters?.length) { zone = z; break; }
-    } catch {}
+      var d = await wclQuery('{worldData{zone(id:'+candidates[i]+'){encounters{id name}}}}',{});
+      var encs = d&&d.worldData&&d.worldData.zone&&d.worldData.zone.encounters||[];
+      if (encs.length) { encounters = encs; break; }
+    } catch(e) {}
   }
-
-  if (!zone) {
-    // Fallback to hardcoded
-    encounterIds = SOO_ENCOUNTERS;
-    bossSel.innerHTML = '<option value="">— Select Boss —</option>' +
-      Object.keys(SOO_ENCOUNTERS).map(n => `<option value="${SOO_ENCOUNTERS[n]}">${n}</option>`).join('');
-    diffSel.innerHTML = '<option value="3">Flex/Normal 10</option><option value="4">Normal 25</option><option value="5">Heroic</option>';
-    return;
-  }
-
-  // Populate bosses
-  zone.encounters.forEach(e => { encounterIds[e.name] = e.id; });
-  bossSel.innerHTML = '<option value="">— Select Boss —</option>' +
-    zone.encounters.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-
-  // Populate difficulties
-  if (zone.difficulties?.length) {
-    diffSel.innerHTML = zone.difficulties
-      .map(d => `<option value="${d.id}">${d.name}${d.sizes ? ' (' + d.sizes.join('/') + ')' : ''}</option>`)
-      .join('');
-  } else {
-    diffSel.innerHTML = '<option value="3">Normal 10</option><option value="4">Normal 25</option><option value="5">Heroic</option>';
-  }
-
-  // Populate partitions
-  if (zone.partitions?.length) {
-    partSel.innerHTML = zone.partitions
-      .map(p => `<option value="${p.id}"${p.isDefault ? ' selected' : ''}>${p.name}</option>`)
-      .join('');
-  } else {
-    partSel.innerHTML = '<option value="">— Any —</option>';
-  }
-
-  console.log('Zone loaded:', zone.name, '| difficulties:', zone.difficulties, '| partitions:', zone.partitions);
+  if (!encounters) encounters = Object.keys(SOO_ENCOUNTERS).map(n=>({id:SOO_ENCOUNTERS[n],name:n}));
+  bossSel.innerHTML = '<option value="">— Select Boss —</option>' + encounters.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
 }
 
 function onBossChange() {
-  const sel  = document.getElementById('boss-select');
-  const name = sel.options[sel.selectedIndex]?.text;
-  const timer = ENRAGE_TIMERS[name];
-  if (timer) document.getElementById('enrage').value = timer;
+  var sel=document.getElementById('boss-select'), name=sel.options[sel.selectedIndex]&&sel.options[sel.selectedIndex].text;
+  var t=ENRAGE_TIMERS[name]; if(t) document.getElementById('enrage').value=t;
 }
 
 // ── Specs ─────────────────────────────────────────────────────────────────────
 const SPECS = [
-  { cls:'DeathKnight', spec:'Frost',         label:'Death Knight — Frost'    },
-  { cls:'DeathKnight', spec:'Unholy',        label:'Death Knight — Unholy'   },
-  { cls:'Druid',       spec:'Balance',       label:'Druid — Balance'         },
-  { cls:'Druid',       spec:'Feral',         label:'Druid — Feral'           },
-  { cls:'Hunter',      spec:'BeastMastery',  label:'Hunter — Beast Mastery'  },
-  { cls:'Hunter',      spec:'Marksmanship',  label:'Hunter — Marksmanship'   },
-  { cls:'Hunter',      spec:'Survival',      label:'Hunter — Survival'       },
-  { cls:'Mage',        spec:'Arcane',        label:'Mage — Arcane'           },
-  { cls:'Mage',        spec:'Fire',          label:'Mage — Fire'             },
-  { cls:'Mage',        spec:'Frost',         label:'Mage — Frost'            },
-  { cls:'Monk',        spec:'Windwalker',    label:'Monk — Windwalker'       },
-  { cls:'Paladin',     spec:'Retribution',   label:'Paladin — Retribution'   },
-  { cls:'Priest',      spec:'Shadow',        label:'Priest — Shadow'         },
-  { cls:'Rogue',       spec:'Assassination', label:'Rogue — Assassination'   },
-  { cls:'Rogue',       spec:'Combat',        label:'Rogue — Combat'          },
-  { cls:'Rogue',       spec:'Subtlety',      label:'Rogue — Subtlety'        },
-  { cls:'Shaman',      spec:'Elemental',     label:'Shaman — Elemental'      },
-  { cls:'Shaman',      spec:'Enhancement',   label:'Shaman — Enhancement'    },
-  { cls:'Warlock',     spec:'Affliction',    label:'Warlock — Affliction'    },
-  { cls:'Warlock',     spec:'Demonology',    label:'Warlock — Demonology'    },
-  { cls:'Warlock',     spec:'Destruction',   label:'Warlock — Destruction'   },
-  { cls:'Warrior',     spec:'Arms',          label:'Warrior — Arms'          },
-  { cls:'Warrior',     spec:'Fury',          label:'Warrior — Fury'          },
+  {cls:'DeathKnight',spec:'Frost',label:'Death Knight — Frost'},{cls:'DeathKnight',spec:'Unholy',label:'Death Knight — Unholy'},
+  {cls:'Druid',spec:'Balance',label:'Druid — Balance'},{cls:'Druid',spec:'Feral',label:'Druid — Feral'},
+  {cls:'Hunter',spec:'BeastMastery',label:'Hunter — Beast Mastery'},{cls:'Hunter',spec:'Marksmanship',label:'Hunter — Marksmanship'},{cls:'Hunter',spec:'Survival',label:'Hunter — Survival'},
+  {cls:'Mage',spec:'Arcane',label:'Mage — Arcane'},{cls:'Mage',spec:'Fire',label:'Mage — Fire'},{cls:'Mage',spec:'Frost',label:'Mage — Frost'},
+  {cls:'Monk',spec:'Windwalker',label:'Monk — Windwalker'},
+  {cls:'Paladin',spec:'Retribution',label:'Paladin — Retribution'},
+  {cls:'Priest',spec:'Shadow',label:'Priest — Shadow'},
+  {cls:'Rogue',spec:'Assassination',label:'Rogue — Assassination'},{cls:'Rogue',spec:'Combat',label:'Rogue — Combat'},{cls:'Rogue',spec:'Subtlety',label:'Rogue — Subtlety'},
+  {cls:'Shaman',spec:'Elemental',label:'Shaman — Elemental'},{cls:'Shaman',spec:'Enhancement',label:'Shaman — Enhancement'},
+  {cls:'Warlock',spec:'Affliction',label:'Warlock — Affliction'},{cls:'Warlock',spec:'Demonology',label:'Warlock — Demonology'},{cls:'Warlock',spec:'Destruction',label:'Warlock — Destruction'},
+  {cls:'Warrior',spec:'Arms',label:'Warrior — Arms'},{cls:'Warrior',spec:'Fury',label:'Warrior — Fury'},
 ];
-const SPEC_OPTS = SPECS.map(s => `<option value="${s.cls}|${s.spec}">${s.label}</option>`).join('');
+const SPEC_OPTS = SPECS.map(s=>`<option value="${s.cls}|${s.spec}">${s.label}</option>`).join('');
 
 function buildRaiders() {
-  const c = document.getElementById('raider-rows');
-  for (let i = 0; i < 3; i++) {
-    const row = document.createElement('div');
-    row.className = 'row';
-    row.innerHTML = `
-      <span class="row-num">${i + 1}.</span>
-      <input id="rname-${i}" placeholder="Name" style="width:88px">
-      <select id="rspec-${i}" style="width:210px"><option value="">— Spec —</option>${SPEC_OPTS}</select>
-      <input id="rilvl-${i}" type="number" placeholder="ilvl" style="width:62px" min="400" max="600">
-    `;
+  var c=document.getElementById('raider-rows');
+  for (var i=0;i<3;i++) {
+    var row=document.createElement('div'); row.className='row';
+    row.innerHTML=`<span class="row-num">${i+1}.</span><input id="rname-${i}" placeholder="Name" style="width:88px"><select id="rspec-${i}" style="width:210px"><option value="">— Spec —</option>${SPEC_OPTS}</select><input id="rilvl-${i}" type="number" placeholder="ilvl" style="width:62px" min="400" max="600">`;
     c.appendChild(row);
   }
 }
 
-// ── Rankings ─────────────────────────────────────────────────────────────────
 function median(arr) {
   if (!arr.length) return 0;
-  const s = [...arr].sort((a, b) => a - b);
-  const m = Math.floor(s.length / 2);
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+  var s=arr.slice().sort(function(a,b){return a-b;}), m=Math.floor(s.length/2);
+  return s.length%2?s[m]:(s[m-1]+s[m])/2;
 }
 
-function avgIlvl(gear) {
-  if (!Array.isArray(gear) || !gear.length) return 0;
-  const valid = gear.filter(g => g.itemLevel > 0);
-  return valid.length ? valid.reduce((t, g) => t + g.itemLevel, 0) / valid.length : 0;
-}
+// ── Fetch DPS data using fightRankings + DamageDone table (same as cooldown planner) ──
+async function fetchAllSpecDps(encId, difficulty) {
+  var cacheKey = 'dps_cache_'+encId+'_'+difficulty;
+  try { var cached=localStorage.getItem(cacheKey); if(cached) { var c=JSON.parse(cached); if(c.ts&&Date.now()-c.ts<3600000) { console.log('Using cached DPS data'); return c.data; } } } catch(e){}
 
-async function fetchRankings(encId, cls, spec, diff, partition) {
-  // Try with selected difficulty first; if empty fall back to no difficulty filter
-  const attempts = diff ? [diff, null] : [null];
+  var crawlQuery = 'query($id:Int!,$pg:Int!){worldData{encounter(id:$id){fightRankings(difficulty:'+difficulty+',size:10,metric:execution,page:$pg)}}}';
+  var allFights = [];
+  for (var page=1; page<=10 && allFights.length<140; page++) {
+    var d = await wclQuery(crawlQuery, {id:parseInt(encId), pg:page});
+    var rankings = (d&&d.worldData&&d.worldData.encounter&&d.worldData.encounter.fightRankings&&d.worldData.encounter.fightRankings.rankings)||[];
+    if (!rankings.length) break;
+    allFights = allFights.concat(rankings);
+  }
+  console.log('Got '+allFights.length+' fight rankings');
 
-  for (const tryDiff of attempts) {
-    const partArg = partition ? `partition: ${partition},` : '';
-    const diffArg = tryDiff   ? `difficulty: ${tryDiff},` : '';
-    const all = [];
+  // Skip first 39 like cooldown planner (they're too fast / outliers)
+  var fights = allFights.slice(39, 140);
+  if (!fights.length && allFights.length) fights = allFights; // fallback if not enough
 
-    for (let page = 1; page <= 5; page++) {
-      let data;
-      try {
-        data = await gql(`{
-          worldData {
-            encounter(id: ${encId}) {
-              characterRankings(
-                className: "${cls}"
-                specName: "${spec}"
-                metric: dps
-                ${diffArg}
-                ${partArg}
-                page: ${page}
-                includeCombatantInfo: true
-              )
-            }
-          }
-        }`);
-      } catch (e) { console.warn('Rankings fetch error p' + page, e); break; }
+  var specDpsMap = {}; // "ClassName-SpecName" → [dps values]
+  var reportQ = 'query($c:String!,$fid:Int!){reportData{report(code:$c){fights(fightIDs:[$fid]){startTime endTime} damageDone:table(fightIDs:[$fid],dataType:DamageDone,startTime:0,endTime:9999999)}}}'
 
-      const cr       = data?.worldData?.encounter?.characterRankings;
-      const rankings = cr?.rankings;
-
-      if (page === 1) console.log(`[${cls} ${spec}] diff=${tryDiff ?? 'any'} part=${partition || 'any'} → count=${cr?.count ?? '?'} rankings=${rankings?.length ?? 0} hasMore=${cr?.hasMorePages}`);
-
-      if (!rankings?.length) break;
-      all.push(...rankings);
-      if (!cr?.hasMorePages) break;
-    }
-
-    if (all.length) return all;
-    if (attempts.indexOf(tryDiff) < attempts.length - 1) console.log(`[${cls} ${spec}] no data at diff=${tryDiff}, retrying without difficulty filter…`);
+  var resultsEl = document.getElementById('results');
+  for (var i=0; i<fights.length; i++) {
+    var fight = fights[i];
+    var code=fight.report&&fight.report.code, fid=fight.report&&fight.report.fightID;
+    if (!code||!fid) continue;
+    resultsEl.innerHTML = '<p class="loading">Fetching fight data… ('+( i+1)+'/'+fights.length+')</p>';
+    try {
+      var rd = await wclQuery(reportQ, {c:code, fid:fid});
+      var rep = rd&&rd.reportData&&rd.reportData.report;
+      if (!rep) continue;
+      var f = rep.fights&&rep.fights[0]; if (!f) continue;
+      var dur = (f.endTime-f.startTime)/1000; if (dur<30) continue;
+      var dd = rep.damageDone;
+      var table = typeof dd==='string'?JSON.parse(dd):dd;
+      var entries = (table&&table.data&&table.data.entries)||table&&table.entries||[];
+      entries.forEach(function(e){
+        if (!e.icon||!e.total) return;
+        var key = e.icon; // e.g. "Mage-Frost", "Warrior-Fury"
+        if (!specDpsMap[key]) specDpsMap[key]=[];
+        specDpsMap[key].push(Math.round(e.total/dur));
+      });
+    } catch(e) { console.warn('Fight '+i+' error:',e.message); }
   }
 
-  return [];
+  console.log('Spec keys found:', Object.keys(specDpsMap).join(', '));
+  try { localStorage.setItem(cacheKey, JSON.stringify({ts:Date.now(), data:specDpsMap})); } catch(e){}
+  return specDpsMap;
 }
 
 // ── Calculate ─────────────────────────────────────────────────────────────────
 async function calculate() {
-  const resultsEl = document.getElementById('results');
-  const encId     = document.getElementById('boss-select').value;
-  const diff      = document.getElementById('diff-select').value;
-  const partition = document.getElementById('part-select').value;
-  const enrageSec = parseInt(document.getElementById('enrage').value) || null;
+  var resultsEl=document.getElementById('results');
+  var encId=document.getElementById('boss-select').value;
+  var diff=document.getElementById('diff-select').value;
+  var enrageSec=parseInt(document.getElementById('enrage').value)||null;
 
-  if (!isAuthed()) { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Not connected — click Login with WCL first.</p>'; return; }
-  if (!encId)      { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Select a boss.</p>'; return; }
+  if (!isAuthed()) { resultsEl.innerHTML='<p class="err" style="margin-top:16px">Not connected.</p>'; return; }
+  if (!encId)      { resultsEl.innerHTML='<p class="err" style="margin-top:16px">Select a boss.</p>'; return; }
 
-  const raiders = [];
-  for (let i = 0; i < 3; i++) {
-    const name    = document.getElementById(`rname-${i}`).value.trim() || `Raider ${i + 1}`;
-    const specVal = document.getElementById(`rspec-${i}`).value;
-    const ilvl    = parseInt(document.getElementById(`rilvl-${i}`).value) || 0;
-    if (specVal && ilvl) {
-      const [cls, spec] = specVal.split('|');
-      raiders.push({ name, cls, spec, ilvl });
-    }
+  var raiders=[];
+  for (var i=0;i<3;i++) {
+    var name=document.getElementById('rname-'+i).value.trim()||('Raider '+(i+1));
+    var specVal=document.getElementById('rspec-'+i).value;
+    var ilvl=parseInt(document.getElementById('rilvl-'+i).value)||0;
+    if (specVal&&ilvl) { var parts=specVal.split('|'); raiders.push({name:name,cls:parts[0],spec:parts[1],ilvl:ilvl}); }
   }
-  if (!raiders.length) { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Fill in at least one raider with spec + ilvl.</p>'; return; }
+  if (!raiders.length) { resultsEl.innerHTML='<p class="err" style="margin-top:16px">Fill in at least one raider.</p>'; return; }
 
-  resultsEl.innerHTML = '<p class="loading">Fetching ranking data from WCL…</p>';
+  resultsEl.innerHTML='<p class="loading">Fetching fight rankings from WCL…</p>';
 
   try {
-    const rows = [];
-    for (const r of raiders) {
-      resultsEl.innerHTML = `<p class="loading">Loading ${r.name} (${r.spec})…</p>`;
-      const rankings = await fetchRankings(encId, r.cls, r.spec, diff, partition);
+    var specDpsMap = await fetchAllSpecDps(encId, diff);
+    var rows=[];
 
-      if (!rankings.length) {
-        rows.push({ ...r, dps: 0, note: 'no data returned for this spec/difficulty' });
-        continue;
+    raiders.forEach(function(r) {
+      // WCL icon key: "ClassName-SpecName" e.g. "Mage-Frost", "DeathKnight-Frost"
+      var key = r.cls+'-'+r.spec;
+      var values = specDpsMap[key]||[];
+      // Also check lowercase variants just in case
+      if (!values.length) {
+        Object.keys(specDpsMap).forEach(function(k){
+          if (k.toLowerCase()===key.toLowerCase()) values=specDpsMap[k];
+        });
       }
-
-      // Filter to ilvl ± 15 of target
-      const inRange = rankings.filter(rk => {
-        const avg = avgIlvl(rk.gear);
-        return avg > 0 && Math.abs(avg - r.ilvl) <= 15;
-      });
-
-      const sample  = inRange.length >= 5 ? inRange : rankings;
-      const usedAll = inRange.length < 5;
-      const dps     = Math.round(median(sample.map(rk => rk.amount)));
-
-      rows.push({
-        ...r, dps,
-        note: usedAll
-          ? `no ilvl matches — using top ${sample.length} overall`
-          : `${inRange.length} players at ±15 ilvl`
-      });
-    }
-
-    const totalDps = rows.reduce((t, r) => t + r.dps, 0);
-
-    let html = '<div class="res-header">Results</div>';
-    rows.forEach(r => {
-      html += `
-        <div class="res-row">
-          <span class="res-name">${r.name}</span>
-          <span class="res-spec">${r.spec}</span>
-          <span class="res-ilvl">ilvl ${r.ilvl}</span>
-          <span class="res-dps">${r.dps ? r.dps.toLocaleString() + ' DPS' : 'No data'}</span>
-          <span class="res-note">${r.note}</span>
-        </div>`;
+      var dps = values.length ? Math.round(median(values)) : 0;
+      rows.push({name:r.name,spec:r.spec,ilvl:r.ilvl,dps:dps,count:values.length,key:key});
     });
 
-    html += `
-      <div class="total-block">
-        <div class="total-label">Total expected DPS</div>
-        <div class="total-dps">${totalDps.toLocaleString()}</div>`;
-
-    if (enrageSec) {
-      const totalDmg = totalDps * enrageSec;
-      html += `<div class="total-sub">→ ${(totalDmg / 1e6).toFixed(1)}M damage in ${enrageSec}s enrage window</div>`;
-    }
-
-    html += `</div>`;
-
-    html += `<div class="caveat">
-      Numbers are median DPS from WCL logs at similar ilvl.<br>
-      Real output varies with movement, mechanics, and player skill.
-    </div>`;
-
-    resultsEl.innerHTML = html;
-  } catch (e) {
-    resultsEl.innerHTML = `<p class="err" style="margin-top:16px">Error: ${e.message}</p>`;
+    var totalDps=rows.reduce(function(t,r){return t+r.dps;},0);
+    var html='<div class="res-header">Results</div>';
+    rows.forEach(function(r){
+      html+='<div class="res-row"><span class="res-name">'+r.name+'</span><span class="res-spec">'+r.spec+'</span><span class="res-ilvl">ilvl '+r.ilvl+'</span><span class="res-dps">'+(r.dps?r.dps.toLocaleString()+' DPS':'No data')+'</span><span class="res-note">'+(r.count?r.count+' fights sampled':'key: '+r.key+' — not found')+'</span></div>';
+    });
+    html+='<div class="total-block"><div class="total-label">Total expected DPS</div><div class="total-dps">'+totalDps.toLocaleString()+'</div>';
+    if (enrageSec) html+='<div class="total-sub">→ '+(totalDps*enrageSec/1e6).toFixed(1)+'M damage in '+enrageSec+'s enrage window</div>';
+    html+='</div><div class="caveat">Median DPS from '+diff=='3'?'normal':'heroic'+' 10-man WCL logs.<br>Real output varies with movement, mechanics, and skill.</div>';
+    resultsEl.innerHTML=html;
+  } catch(e) {
+    resultsEl.innerHTML='<p class="err" style="margin-top:16px">Error: '+e.message+'</p>';
   }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
   buildRaiders();
-
-  const statusEl = document.getElementById('auth-status');
-  const loginBtn = document.getElementById('login-btn');
-
+  var statusEl=document.getElementById('auth-status'), loginBtn=document.getElementById('login-btn');
   if (isAuthed()) {
-    statusEl.textContent = 'Connected ✓';
-    statusEl.className   = 'auth-status ok';
-    loginBtn.textContent = 'Reconnect WCL';
+    statusEl.textContent='Connected ✓'; statusEl.className='auth-status ok';
+    loginBtn.textContent='Reconnect WCL';
     await loadZone();
   } else {
-    statusEl.textContent = 'not connected';
-    statusEl.className   = 'auth-status dim';
+    statusEl.textContent='not connected'; statusEl.className='auth-status dim';
   }
 }
-
 init();
 </script>
 </body>
