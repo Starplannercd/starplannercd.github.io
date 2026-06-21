@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Raid DPS Estimator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0e0e0e; color: #ccc; font-family: monospace; font-size: 13px; padding: 32px; max-width: 820px; margin: 0 auto; }
+
+h1 { color: #999; font-size: 14px; letter-spacing: 0.12em; margin-bottom: 6px; }
+.subtitle { color: #3a3a3a; font-size: 11px; margin-bottom: 28px; }
+h2 { color: #484848; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+.section { margin-bottom: 22px; }
+
+input, select {
+  background: #161616; border: 1px solid #2a2a2a; color: #ccc;
+  padding: 5px 10px; border-radius: 3px; font-family: monospace; font-size: 12px;
+}
+input:focus, select:focus { outline: none; border-color: #484848; }
+select option { background: #1a1a1a; }
+
+button {
+  background: #181818; border: 1px solid #333; color: #aaa;
+  padding: 6px 16px; border-radius: 3px; cursor: pointer; font-family: monospace; font-size: 12px;
+  transition: border-color 0.1s, color 0.1s;
+}
+button:hover { border-color: #666; color: #eee; }
+
+#login-btn {
+  background: #1a1a10; border-color: #4a4a20; color: #c8c870;
+  padding: 8px 22px; font-size: 13px;
+}
+#login-btn:hover { border-color: #8a8a40; color: #efe080; }
+
+.auth-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid #1a1a1a; }
+.auth-status { font-size: 11px; }
+.ok   { color: #6d6; }
+.warn { color: #fa3; }
+.err  { color: #f77; }
+.dim  { color: #444; }
+
+.row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.row-num { color: #383838; width: 18px; text-align: right; font-size: 11px; }
+
+.boss-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.boss-row label { color: #3a3a3a; font-size: 11px; margin-left: 4px; }
+
+#calc-btn {
+  background: #121a12; border-color: #2a4a2a; color: #8a8; padding: 8px 28px; font-size: 13px; margin-top: 6px;
+}
+#calc-btn:hover { border-color: #4a8a4a; color: #afa; }
+
+/* Results */
+#results { margin-top: 26px; }
+.res-header { color: #3a3a3a; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid #181818; }
+.res-row { display: flex; align-items: baseline; gap: 0; padding: 8px 0; border-bottom: 1px solid #181818; }
+.res-name { color: #ddd; width: 100px; }
+.res-spec { color: #555; width: 140px; }
+.res-ilvl { color: #3a3a3a; width: 70px; }
+.res-dps  { color: #7ab8e8; font-weight: bold; width: 120px; }
+.res-note { color: #383838; font-size: 11px; }
+
+.total-block { margin-top: 18px; padding-top: 14px; border-top: 1px solid #252525; }
+.total-label { color: #555; font-size: 11px; margin-bottom: 4px; }
+.total-dps { color: #5af; font-size: 20px; font-weight: bold; }
+.total-sub { color: #444; font-size: 11px; margin-top: 6px; }
+
+.enrage-block { margin-top: 14px; font-size: 12px; }
+.enrage-ok   { color: #6d6; }
+.enrage-warn { color: #fa3; }
+.enrage-bad  { color: #f77; }
+
+.caveat { margin-top: 20px; color: #2c2c2c; font-size: 11px; line-height: 1.7; }
+
+.loading { color: #3a3a3a; font-style: italic; margin-top: 16px; }
+.back-link { color: #3a3a3a; font-size: 11px; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+.back-link:hover { color: #777; }
+</style>
+</head>
+<body>
+
+<a href="/" class="back-link">← cooldown planner</a>
+
+<h1>RAID DPS ESTIMATOR</h1>
+<div class="subtitle">median expected DPS per spec at target ilvl, from WCL ranking data</div>
+
+<!-- Auth -->
+<div class="auth-bar">
+  <button id="login-btn" onclick="doLogin()">Login with WCL</button>
+  <span id="auth-status" class="auth-status dim">not connected</span>
+</div>
+
+<!-- Boss -->
+<div class="section">
+  <h2>Boss</h2>
+  <div class="boss-row">
+    <select id="boss-select" style="width:220px" onchange="onBossChange()">
+      <option value="">— Select Boss —</option>
+    </select>
+    <select id="diff-select" style="width:140px">
+      <option value="">— Difficulty —</option>
+    </select>
+    <select id="part-select" style="width:140px">
+      <option value="">— Partition —</option>
+    </select>
+    <label>Enrage</label>
+    <input id="enrage" type="number" placeholder="sec" style="width:68px" title="Enrage timer in seconds">
+    <span class="dim" style="font-size:11px">s</span>
+  </div>
+</div>
+
+<!-- Raiders -->
+<div class="section">
+  <h2>Raiders</h2>
+  <div id="raider-rows"></div>
+</div>
+
+<button id="calc-btn" onclick="calculate()">Calculate</button>
+
+<div id="results"></div>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const WCL_CLIENT_ID  = 'a181f533-c14e-4f52-9b17-252b64aa1585';
+const WCL_REDIRECT   = 'https://starplannercd.github.io/dps.html';
+const WCL_AUTH_URL   = 'https://www.warcraftlogs.com/oauth/authorize';
+const WCL_TOKEN_URL  = 'https://www.warcraftlogs.com/oauth/token';
+const WCL_GQL_URL    = 'https://www.warcraftlogs.com/api/v2/user';
+const WCL_TOKEN_KEY  = 'tot_rcd_wcl_token';
+const WCL_TOKEN_EXP  = 'tot_rcd_wcl_exp';
+
+// SoO encounter IDs (fallback)
+const SOO_ENCOUNTERS = {
+  'Immerseus': 1132, 'The Fallen Protectors': 1133, 'Norushen': 1134,
+  'Sha of Pride': 1135, 'Galakras': 1136, 'Iron Juggernaut': 1137,
+  "Kor'kron Dark Shaman": 1138, 'General Nazgrim': 1139, 'Malkorok': 1140,
+  'Spoils of Pandaria': 1141, 'Thok the Bloodthirsty': 1142,
+  'Siegecrafter Blackfuse': 1143, 'Paragons of the Klaxxi': 1144,
+  'Garrosh Hellscream': 1145,
+};
+
+// Rough enrage timers in seconds for SoO normal
+const ENRAGE_TIMERS = {
+  'Immerseus': 660, 'Norushen': 540, 'Sha of Pride': 600,
+  'Iron Juggernaut': 600, "Kor'kron Dark Shaman": 600,
+  'General Nazgrim': 600, 'Malkorok': 540, 'Siegecrafter Blackfuse': 600,
+  'Paragons of the Klaxxi': 720, 'Garrosh Hellscream': 900,
+};
+
+// ── PKCE Auth ─────────────────────────────────────────────────────────────────
+async function genVerifier() {
+  const arr = new Uint8Array(32);
+  crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode(...arr)).replace(/[+/=]/g, c => ({'+':'-','/':'_','=':''}[c]));
+}
+async function genChallenge(v) {
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/[+/=]/g, c => ({'+':'-','/':'_','=':''}[c]));
+}
+function getToken() { return localStorage.getItem(WCL_TOKEN_KEY); }
+function isAuthed() {
+  const exp = localStorage.getItem(WCL_TOKEN_EXP);
+  return !!getToken() && !!exp && Date.now() < parseInt(exp);
+}
+async function doLogin() {
+  const v = await genVerifier(), ch = await genChallenge(v);
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('dps_v', v);
+  sessionStorage.setItem('dps_s', state);
+  const p = new URLSearchParams({
+    client_id: WCL_CLIENT_ID, redirect_uri: WCL_REDIRECT,
+    response_type: 'code', code_challenge: ch,
+    code_challenge_method: 'S256', state, scope: 'view-user-profile'
+  });
+  window.location.href = WCL_AUTH_URL + '?' + p;
+}
+async function handleCallback() {
+  const p    = new URLSearchParams(window.location.search);
+  const code = p.get('code'), state = p.get('state');
+  if (!code || state !== sessionStorage.getItem('dps_s')) return false;
+  const v    = sessionStorage.getItem('dps_v');
+  const body = new URLSearchParams({
+    grant_type: 'authorization_code', client_id: WCL_CLIENT_ID,
+    redirect_uri: WCL_REDIRECT, code, code_verifier: v
+  });
+  try {
+    const res  = await fetch(WCL_TOKEN_URL, { method: 'POST', body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    const data = await res.json();
+    if (data.access_token) {
+      localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
+      localStorage.setItem(WCL_TOKEN_EXP,  String(Date.now() + (data.expires_in || 3600) * 1000));
+      sessionStorage.removeItem('dps_v');
+      sessionStorage.removeItem('dps_s');
+      window.history.replaceState({}, '', window.location.pathname);
+      return true;
+    }
+  } catch (e) { console.error('Token exchange error', e); }
+  return false;
+}
+
+// ── GQL ──────────────────────────────────────────────────────────────────────
+async function gql(query) {
+  const res  = await fetch(WCL_GQL_URL, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query })
+  });
+  const data = await res.json();
+  if (data.errors) throw new Error(data.errors[0].message);
+  return data.data;
+}
+
+// ── Zone / encounter loading ──────────────────────────────────────────────────
+let encounterIds = {};   // name → id
+let zoneLoaded   = false;
+
+async function loadZone() {
+  if (zoneLoaded) return;
+  zoneLoaded = true;
+
+  const bossSel = document.getElementById('boss-select');
+  const diffSel = document.getElementById('diff-select');
+  const partSel = document.getElementById('part-select');
+
+  bossSel.innerHTML = '<option value="">Loading…</option>';
+
+  const candidates = [1054, 1098, 1105, 1106, 5];
+  let zone = null;
+
+  for (const zid of candidates) {
+    try {
+      const d = await gql(`{
+        worldData {
+          zone(id: ${zid}) {
+            name
+            encounters { id name }
+            difficulties { id name sizes }
+            partitions { id name isDefault }
+          }
+        }
+      }`);
+      const z = d?.worldData?.zone;
+      if (z?.encounters?.length) { zone = z; break; }
+    } catch {}
+  }
+
+  if (!zone) {
+    // Fallback to hardcoded
+    encounterIds = SOO_ENCOUNTERS;
+    bossSel.innerHTML = '<option value="">— Select Boss —</option>' +
+      Object.keys(SOO_ENCOUNTERS).map(n => `<option value="${SOO_ENCOUNTERS[n]}">${n}</option>`).join('');
+    diffSel.innerHTML = '<option value="3">Flex/Normal 10</option><option value="4">Normal 25</option><option value="5">Heroic</option>';
+    return;
+  }
+
+  // Populate bosses
+  zone.encounters.forEach(e => { encounterIds[e.name] = e.id; });
+  bossSel.innerHTML = '<option value="">— Select Boss —</option>' +
+    zone.encounters.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+
+  // Populate difficulties
+  if (zone.difficulties?.length) {
+    diffSel.innerHTML = zone.difficulties
+      .map(d => `<option value="${d.id}">${d.name}${d.sizes ? ' (' + d.sizes.join('/') + ')' : ''}</option>`)
+      .join('');
+  } else {
+    diffSel.innerHTML = '<option value="3">Normal 10</option><option value="4">Normal 25</option><option value="5">Heroic</option>';
+  }
+
+  // Populate partitions
+  if (zone.partitions?.length) {
+    partSel.innerHTML = zone.partitions
+      .map(p => `<option value="${p.id}"${p.isDefault ? ' selected' : ''}>${p.name}</option>`)
+      .join('');
+  } else {
+    partSel.innerHTML = '<option value="">— Any —</option>';
+  }
+
+  console.log('Zone loaded:', zone.name, '| difficulties:', zone.difficulties, '| partitions:', zone.partitions);
+}
+
+function onBossChange() {
+  const sel  = document.getElementById('boss-select');
+  const name = sel.options[sel.selectedIndex]?.text;
+  const timer = ENRAGE_TIMERS[name];
+  if (timer) document.getElementById('enrage').value = timer;
+}
+
+// ── Specs ─────────────────────────────────────────────────────────────────────
+const SPECS = [
+  { cls:'DeathKnight', spec:'Frost',         label:'Death Knight — Frost'    },
+  { cls:'DeathKnight', spec:'Unholy',        label:'Death Knight — Unholy'   },
+  { cls:'Druid',       spec:'Balance',       label:'Druid — Balance'         },
+  { cls:'Druid',       spec:'Feral',         label:'Druid — Feral'           },
+  { cls:'Hunter',      spec:'BeastMastery',  label:'Hunter — Beast Mastery'  },
+  { cls:'Hunter',      spec:'Marksmanship',  label:'Hunter — Marksmanship'   },
+  { cls:'Hunter',      spec:'Survival',      label:'Hunter — Survival'       },
+  { cls:'Mage',        spec:'Arcane',        label:'Mage — Arcane'           },
+  { cls:'Mage',        spec:'Fire',          label:'Mage — Fire'             },
+  { cls:'Mage',        spec:'Frost',         label:'Mage — Frost'            },
+  { cls:'Monk',        spec:'Windwalker',    label:'Monk — Windwalker'       },
+  { cls:'Paladin',     spec:'Retribution',   label:'Paladin — Retribution'   },
+  { cls:'Priest',      spec:'Shadow',        label:'Priest — Shadow'         },
+  { cls:'Rogue',       spec:'Assassination', label:'Rogue — Assassination'   },
+  { cls:'Rogue',       spec:'Combat',        label:'Rogue — Combat'          },
+  { cls:'Rogue',       spec:'Subtlety',      label:'Rogue — Subtlety'        },
+  { cls:'Shaman',      spec:'Elemental',     label:'Shaman — Elemental'      },
+  { cls:'Shaman',      spec:'Enhancement',   label:'Shaman — Enhancement'    },
+  { cls:'Warlock',     spec:'Affliction',    label:'Warlock — Affliction'    },
+  { cls:'Warlock',     spec:'Demonology',    label:'Warlock — Demonology'    },
+  { cls:'Warlock',     spec:'Destruction',   label:'Warlock — Destruction'   },
+  { cls:'Warrior',     spec:'Arms',          label:'Warrior — Arms'          },
+  { cls:'Warrior',     spec:'Fury',          label:'Warrior — Fury'          },
+];
+const SPEC_OPTS = SPECS.map(s => `<option value="${s.cls}|${s.spec}">${s.label}</option>`).join('');
+
+function buildRaiders() {
+  const c = document.getElementById('raider-rows');
+  for (let i = 0; i < 3; i++) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <span class="row-num">${i + 1}.</span>
+      <input id="rname-${i}" placeholder="Name" style="width:88px">
+      <select id="rspec-${i}" style="width:210px"><option value="">— Spec —</option>${SPEC_OPTS}</select>
+      <input id="rilvl-${i}" type="number" placeholder="ilvl" style="width:62px" min="400" max="600">
+    `;
+    c.appendChild(row);
+  }
+}
+
+// ── Rankings ─────────────────────────────────────────────────────────────────
+function median(arr) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+function avgIlvl(gear) {
+  if (!Array.isArray(gear) || !gear.length) return 0;
+  const valid = gear.filter(g => g.itemLevel > 0);
+  return valid.length ? valid.reduce((t, g) => t + g.itemLevel, 0) / valid.length : 0;
+}
+
+async function fetchRankings(encId, cls, spec, diff, partition) {
+  const all = [];
+  const partArg = partition ? `partition: ${partition},` : '';
+  const diffArg = diff      ? `difficulty: ${diff},`    : '';
+
+  for (let page = 1; page <= 5; page++) {
+    let data;
+    try {
+      data = await gql(`{
+        worldData {
+          encounter(id: ${encId}) {
+            characterRankings(
+              className: "${cls}"
+              specName: "${spec}"
+              metric: dps
+              ${diffArg}
+              ${partArg}
+              page: ${page}
+              includeCombatantInfo: true
+            )
+          }
+        }
+      }`);
+    } catch (e) { console.warn('Rankings fetch error p' + page, e); break; }
+
+    const cr       = data?.worldData?.encounter?.characterRankings;
+    const rankings = cr?.rankings;
+
+    if (page === 1) console.log(`[${cls} ${spec}] page 1 raw:`, JSON.stringify(cr, null, 2)?.slice(0, 600));
+    if (!rankings?.length) break;
+    all.push(...rankings);
+    if (!cr?.hasMorePages) break;
+  }
+  return all;
+}
+
+// ── Calculate ─────────────────────────────────────────────────────────────────
+async function calculate() {
+  const resultsEl = document.getElementById('results');
+  const encId     = document.getElementById('boss-select').value;
+  const diff      = document.getElementById('diff-select').value;
+  const partition = document.getElementById('part-select').value;
+  const enrageSec = parseInt(document.getElementById('enrage').value) || null;
+
+  if (!isAuthed()) { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Not connected — click Login with WCL first.</p>'; return; }
+  if (!encId)      { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Select a boss.</p>'; return; }
+
+  const raiders = [];
+  for (let i = 0; i < 3; i++) {
+    const name    = document.getElementById(`rname-${i}`).value.trim() || `Raider ${i + 1}`;
+    const specVal = document.getElementById(`rspec-${i}`).value;
+    const ilvl    = parseInt(document.getElementById(`rilvl-${i}`).value) || 0;
+    if (specVal && ilvl) {
+      const [cls, spec] = specVal.split('|');
+      raiders.push({ name, cls, spec, ilvl });
+    }
+  }
+  if (!raiders.length) { resultsEl.innerHTML = '<p class="err" style="margin-top:16px">Fill in at least one raider with spec + ilvl.</p>'; return; }
+
+  resultsEl.innerHTML = '<p class="loading">Fetching ranking data from WCL…</p>';
+
+  try {
+    const rows = [];
+    for (const r of raiders) {
+      resultsEl.innerHTML = `<p class="loading">Loading ${r.name} (${r.spec})…</p>`;
+      const rankings = await fetchRankings(encId, r.cls, r.spec, diff, partition);
+
+      if (!rankings.length) {
+        rows.push({ ...r, dps: 0, note: 'no data returned for this spec/difficulty' });
+        continue;
+      }
+
+      // Filter to ilvl ± 15 of target
+      const inRange = rankings.filter(rk => {
+        const avg = avgIlvl(rk.gear);
+        return avg > 0 && Math.abs(avg - r.ilvl) <= 15;
+      });
+
+      const sample  = inRange.length >= 5 ? inRange : rankings;
+      const usedAll = inRange.length < 5;
+      const dps     = Math.round(median(sample.map(rk => rk.amount)));
+
+      rows.push({
+        ...r, dps,
+        note: usedAll
+          ? `no ilvl matches — using top ${sample.length} overall`
+          : `${inRange.length} players at ±15 ilvl`
+      });
+    }
+
+    const totalDps = rows.reduce((t, r) => t + r.dps, 0);
+
+    let html = '<div class="res-header">Results</div>';
+    rows.forEach(r => {
+      html += `
+        <div class="res-row">
+          <span class="res-name">${r.name}</span>
+          <span class="res-spec">${r.spec}</span>
+          <span class="res-ilvl">ilvl ${r.ilvl}</span>
+          <span class="res-dps">${r.dps ? r.dps.toLocaleString() + ' DPS' : 'No data'}</span>
+          <span class="res-note">${r.note}</span>
+        </div>`;
+    });
+
+    html += `
+      <div class="total-block">
+        <div class="total-label">Total expected DPS</div>
+        <div class="total-dps">${totalDps.toLocaleString()}</div>`;
+
+    if (enrageSec) {
+      const totalDmg = totalDps * enrageSec;
+      html += `<div class="total-sub">→ ${(totalDmg / 1e6).toFixed(1)}M damage in ${enrageSec}s enrage window</div>`;
+    }
+
+    html += `</div>`;
+
+    html += `<div class="caveat">
+      Numbers are median DPS from WCL logs at similar ilvl.<br>
+      Real output varies with movement, mechanics, and player skill.
+    </div>`;
+
+    resultsEl.innerHTML = html;
+  } catch (e) {
+    resultsEl.innerHTML = `<p class="err" style="margin-top:16px">Error: ${e.message}</p>`;
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  buildRaiders();
+
+  const statusEl = document.getElementById('auth-status');
+  const loginBtn = document.getElementById('login-btn');
+
+  // Handle OAuth callback
+  if (window.location.search.includes('code=')) {
+    statusEl.textContent = 'Completing login…';
+    statusEl.className   = 'auth-status dim';
+    const ok = await handleCallback();
+    if (ok) {
+      statusEl.textContent = 'Connected ✓';
+      statusEl.className   = 'auth-status ok';
+      loginBtn.textContent = 'Reconnect WCL';
+      await loadZone();
+    } else {
+      statusEl.textContent = 'Login failed — try again';
+      statusEl.className   = 'auth-status err';
+    }
+    return;
+  }
+
+  if (isAuthed()) {
+    statusEl.textContent = 'Connected ✓';
+    statusEl.className   = 'auth-status ok';
+    loginBtn.textContent = 'Reconnect WCL';
+    await loadZone();
+  } else {
+    statusEl.textContent = 'not connected';
+    statusEl.className   = 'auth-status dim';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
