@@ -5558,6 +5558,9 @@ async function wclHandleCallback() {
       localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
       localStorage.setItem(WCL_TOKEN_EXP_KEY, String(Date.now() + (data.expires_in||3600)*1000));
       sessionStorage.removeItem('wcl_v'); sessionStorage.removeItem('wcl_s');
+      var returnTo = sessionStorage.getItem('wcl_return');
+      sessionStorage.removeItem('wcl_return');
+      if (returnTo) { window.location.href = returnTo; return true; }
       window.history.replaceState({}, '', window.location.pathname);
       return true;
     }

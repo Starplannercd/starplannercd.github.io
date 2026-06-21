@@ -122,7 +122,7 @@ button:hover { border-color: #666; color: #eee; }
 <script>
 // ── Constants ────────────────────────────────────────────────────────────────
 const WCL_CLIENT_ID  = 'a181f533-c14e-4f52-9b17-252b64aa1585';
-const WCL_REDIRECT   = 'https://starplannercd.github.io/dps.html';
+const WCL_REDIRECT   = 'https://starplannercd.github.io';
 const WCL_AUTH_URL   = 'https://www.warcraftlogs.com/oauth/authorize';
 const WCL_TOKEN_URL  = 'https://www.warcraftlogs.com/oauth/token';
 const WCL_GQL_URL    = 'https://www.warcraftlogs.com/api/v2/user';
@@ -165,37 +165,15 @@ function isAuthed() {
 async function doLogin() {
   const v = await genVerifier(), ch = await genChallenge(v);
   const state = Math.random().toString(36).slice(2);
-  sessionStorage.setItem('dps_v', v);
-  sessionStorage.setItem('dps_s', state);
+  sessionStorage.setItem('wcl_v', v);
+  sessionStorage.setItem('wcl_s', state);
+  sessionStorage.setItem('wcl_return', '/dps.html');
   const p = new URLSearchParams({
     client_id: WCL_CLIENT_ID, redirect_uri: WCL_REDIRECT,
     response_type: 'code', code_challenge: ch,
     code_challenge_method: 'S256', state, scope: 'view-user-profile'
   });
   window.location.href = WCL_AUTH_URL + '?' + p;
-}
-async function handleCallback() {
-  const p    = new URLSearchParams(window.location.search);
-  const code = p.get('code'), state = p.get('state');
-  if (!code || state !== sessionStorage.getItem('dps_s')) return false;
-  const v    = sessionStorage.getItem('dps_v');
-  const body = new URLSearchParams({
-    grant_type: 'authorization_code', client_id: WCL_CLIENT_ID,
-    redirect_uri: WCL_REDIRECT, code, code_verifier: v
-  });
-  try {
-    const res  = await fetch(WCL_TOKEN_URL, { method: 'POST', body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-    const data = await res.json();
-    if (data.access_token) {
-      localStorage.setItem(WCL_TOKEN_KEY, data.access_token);
-      localStorage.setItem(WCL_TOKEN_EXP,  String(Date.now() + (data.expires_in || 3600) * 1000));
-      sessionStorage.removeItem('dps_v');
-      sessionStorage.removeItem('dps_s');
-      window.history.replaceState({}, '', window.location.pathname);
-      return true;
-    }
-  } catch (e) { console.error('Token exchange error', e); }
-  return false;
 }
 
 // ── GQL ──────────────────────────────────────────────────────────────────────
@@ -476,23 +454,6 @@ async function init() {
 
   const statusEl = document.getElementById('auth-status');
   const loginBtn = document.getElementById('login-btn');
-
-  // Handle OAuth callback
-  if (window.location.search.includes('code=')) {
-    statusEl.textContent = 'Completing login…';
-    statusEl.className   = 'auth-status dim';
-    const ok = await handleCallback();
-    if (ok) {
-      statusEl.textContent = 'Connected ✓';
-      statusEl.className   = 'auth-status ok';
-      loginBtn.textContent = 'Reconnect WCL';
-      await loadZone();
-    } else {
-      statusEl.textContent = 'Login failed — try again';
-      statusEl.className   = 'auth-status err';
-    }
-    return;
-  }
 
   if (isAuthed()) {
     statusEl.textContent = 'Connected ✓';
