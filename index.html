@@ -3554,7 +3554,6 @@ function getCastNumber(abName) {
 
 function buildFojiExport() {
   const lines = [];
-  const rosterWhos = new Set(DEFAULT_ROSTER.map(r => r.who));
 
   BOSSES.forEach(boss => {
     const bossData = placedCDs[boss.id];
@@ -3577,9 +3576,16 @@ function buildFojiExport() {
           const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
           const cd = CD_POOL.find(c => c.id === p.cdId);
           if (!cd) return;
-          if (cd.who !== 'ALL' && !rosterWhos.has(cd.who)) return;
-          const _exportCd = CD_POOL.find(c => c.id === p.cdId);
-          const isCustomPlacement = !!(_exportCd && _exportCd.customType);
+          const _exportCd = cd;
+          const isCustomPlacement = !!cd.customType;
+          // Export only CDs still active in Manage CDs (and not disabled for this boss). Custom
+          // placements always export. This keeps the export in sync with the timeline after a CD is
+          // de-selected or a player is subbed out — orphaned placements no longer leak into the export.
+          if (!isCustomPlacement) {
+            if (!activeSetIds.has(p.cdId)) return;
+            const _bossDisabled = bossDisabledIds[boss.id];
+            if (_bossDisabled && _bossDisabled.has(p.cdId)) return;
+          }
           let _bossAbKey = bossAbKey;
           let _castNum = _pCastNum;
           if (isCustomPlacement && p.customBossAbility && FOJI_ABILITY_KEYS[p.customBossAbility]) {
@@ -3595,7 +3601,7 @@ function buildFojiExport() {
             : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
-          const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1' };
+          const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
           const who = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Personals' : isDem ? 'Green banner' : (isCustomPlacement && p.customName ? p.customName : ttsText);
