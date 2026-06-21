@@ -194,12 +194,43 @@ const SPECS = [
 ];
 const SPEC_OPTS = SPECS.map(s=>`<option value="${s.cls}|${s.spec}">${s.label}</option>`).join('');
 
+function saveRaiders() {
+  var data=[];
+  for (var i=0;i<10;i++) {
+    data.push({
+      name: document.getElementById('rname-'+i).value,
+      spec: document.getElementById('rspec-'+i).value,
+      ilvl: document.getElementById('rilvl-'+i).value
+    });
+  }
+  localStorage.setItem('dps_raiders', JSON.stringify(data));
+}
+
+function loadRaiders() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('dps_raiders')||'[]');
+    saved.forEach(function(r,i) {
+      if (i>=10) return;
+      if (r.name) document.getElementById('rname-'+i).value = r.name;
+      if (r.spec) document.getElementById('rspec-'+i).value = r.spec;
+      if (r.ilvl) document.getElementById('rilvl-'+i).value = r.ilvl;
+    });
+  } catch(e) {}
+}
+
 function buildRaiders() {
   var c=document.getElementById('raider-rows');
   for (var i=0;i<10;i++) {
     var row=document.createElement('div'); row.className='row';
     row.innerHTML=`<span class="row-num">${i+1}.</span><input id="rname-${i}" placeholder="Name" style="width:88px"><select id="rspec-${i}" style="width:210px"><option value="">— Spec —</option>${SPEC_OPTS}</select><input id="rilvl-${i}" type="number" placeholder="ilvl" style="width:62px" min="400" max="600">`;
     c.appendChild(row);
+  }
+  loadRaiders();
+  // Save on any change
+  for (var i=0;i<10;i++) {
+    document.getElementById('rname-'+i).addEventListener('input', saveRaiders);
+    document.getElementById('rspec-'+i).addEventListener('change', saveRaiders);
+    document.getElementById('rilvl-'+i).addEventListener('input', saveRaiders);
   }
 }
 
