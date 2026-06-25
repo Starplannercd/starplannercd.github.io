@@ -2606,6 +2606,7 @@ const CD_ICON_URLS = {
   'holyavenger': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_holyavenger.jpg',
   'ascend':     'https://wow.zamimg.com/images/wow/icons/large/classic_spell_fire_elementaldevastation.jpg',
   'slt':        'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_spiritlink.jpg',
+  'revival':    'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_blessingofeternals.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -4415,7 +4416,7 @@ const SPEC_ICONS = {
   'Holy Priest':      'spell_holy_guardianspirit',
   'Restoration Sham': 'spell_nature_magicimmunity',
   'Restoration Dru':  'spell_nature_healingtouch',
-  'Mistweaver':       'monk_stance_wiseserpent',
+  'Mistweaver':       'spell_monk_mistweaver_spec',
   'Brewmaster':       'monk_stance_drunkenox',
   'Protection Pal':   'ability_paladin_shieldofthetemplar',
   'Protection War':   'ability_warrior_defensivestance',
@@ -7411,10 +7412,36 @@ function buildShareData() {
     if (Object.keys(filteredRows).length) filteredPlaced[bossId] = filteredRows;
   });
 
+  // The plan wizard subs a spec in by retargeting CDs to a new WHO (e.g. Revival →
+  // MWMONK1) without adding that player to DEFAULT_ROSTER. Add a roster entry for any
+  // WHO that owns a surviving placement but isn't already in the roster, so the view's
+  // roster filter keeps the CD and its spec badge resolves correctly.
+  const finalRoster = [...effectiveRoster];
+  const rosterWhos = new Set(finalRoster.map(p => p.who));
+  Object.values(filteredPlaced).forEach(rows => {
+    Object.values(rows).forEach(placements => {
+      placements.forEach(p => {
+        const cd = CD_POOL.find(c => c.id === p.cdId);
+        if (!cd || cd.who === 'ALL' || rosterWhos.has(cd.who)) return;
+        rosterWhos.add(cd.who);
+        const specEntry = Object.entries(SPEC_CD_MAP).find(([, v]) => v.who === cd.who);
+        const specName = specEntry ? specEntry[0] : null;
+        finalRoster.push({
+          name: specName || cd.who,
+          spec: specName || '',
+          who: cd.who,
+          cds: [],
+          color: (specName && SPEC_CLASS_COLORS[specName]) || cd.color,
+          role: 'healer',
+        });
+      });
+    });
+  });
+
   return {
     placedCDs: filteredPlaced,
     bossReady: JSON.parse(JSON.stringify(bossReady)),
-    roster: effectiveRoster,
+    roster: finalRoster,
     activeSetIds: [...activeSetIds],
     createdAt: Date.now(),
   };
