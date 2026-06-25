@@ -7388,8 +7388,25 @@ function buildShareData() {
       return p;
     });
 
+  // Strip placements for CDs not in activeSetIds so stale/deselected placements
+  // from other bosses don't surface in the share view.
+  const filteredPlaced = {};
+  Object.entries(placedCDs).forEach(([bossId, rows]) => {
+    const filteredRows = {};
+    Object.entries(rows).forEach(([rowKey, placements]) => {
+      const kept = placements.filter(p => {
+        const cd = CD_POOL.find(c => c.id === p.cdId);
+        if (!cd) return false;
+        if (cd.customType) return true;
+        return activeSetIds.has(p.cdId);
+      });
+      if (kept.length) filteredRows[rowKey] = kept;
+    });
+    if (Object.keys(filteredRows).length) filteredPlaced[bossId] = filteredRows;
+  });
+
   return {
-    placedCDs: JSON.parse(JSON.stringify(placedCDs)),
+    placedCDs: filteredPlaced,
     bossReady: JSON.parse(JSON.stringify(bossReady)),
     roster: effectiveRoster,
     activeSetIds: [...activeSetIds],
