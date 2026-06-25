@@ -631,25 +631,38 @@
     display: none;
   }
 
-  /* SECTION DIVIDER */
+  /* SECTION DIVIDER — phase / intermission header strip */
   .phase-divider {
     width: 100%;
-    height: 1px;
-    background: var(--border2);
-    margin: 8px 0;
+    margin: 16px 0 8px;
+    padding: 6px 0 6px 18px;
     position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    background: linear-gradient(90deg, rgba(224,120,32,0.12) 0%, rgba(224,120,32,0.03) 38%, rgba(224,120,32,0) 70%);
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border);
   }
   .phase-divider::before {
-    content: attr(data-label);
+    content: '';
     position: absolute;
-    left: 164px;
-    top: -8px;
-    font-size: 10px;
-    color: var(--accent2);
-    letter-spacing: 0.06em;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--forge);
+    box-shadow: 0 0 8px rgba(224,120,32,0.55);
+  }
+  .phase-divider::after {
+    content: attr(data-label);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--forge);
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    background: var(--bg);
-    padding: 0 6px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    white-space: nowrap;
   }
 
   /* SCROLLBAR */
