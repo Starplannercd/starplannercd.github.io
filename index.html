@@ -3926,8 +3926,9 @@ function buildSummaryForBoss(boss) {
       const rowKey = `${si}-${encodeURIComponent(ab.name)}`;
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
+      const _bossDisabled = bossDisabledIds[boss.id];
       const sorted = [...placements]
-        .filter(p => p.cdId !== 'custom' && !['lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId))
+        .filter(p => p.cdId !== 'custom' && !['lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId)))
         .sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       if (sorted.length) rows.push({ ab, sorted });
     });
@@ -7388,17 +7389,22 @@ function buildShareData() {
       return p;
     });
 
-  // Strip placements for CDs not in activeSetIds so stale/deselected placements
-  // from other bosses don't surface in the share view.
+  // Strip placements that won't show on the live timeline so they don't surface
+  // in the share view: CDs not in activeSetIds, or per-boss-disabled via the
+  // Manage CDs modal (bossDisabledIds is not transmitted to the view page, so we
+  // bake its effect into the placements here).
   const filteredPlaced = {};
   Object.entries(placedCDs).forEach(([bossId, rows]) => {
+    const bossDisabled = bossDisabledIds[bossId];
     const filteredRows = {};
     Object.entries(rows).forEach(([rowKey, placements]) => {
       const kept = placements.filter(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return false;
         if (cd.customType) return true;
-        return activeSetIds.has(p.cdId);
+        if (!activeSetIds.has(p.cdId)) return false;
+        if (bossDisabled && bossDisabled.has(p.cdId)) return false;
+        return true;
       });
       if (kept.length) filteredRows[rowKey] = kept;
     });
