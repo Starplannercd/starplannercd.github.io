@@ -1419,7 +1419,8 @@ const CD_POOL = [
   { id:'smoke',     name:'Smoke Bomb', short:'SB',  cd:180, dur:15, color:'#c8a800', textColor:'#ffe040', who:'ROGUE1', core:false },
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
-  { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',  core:false },
+  { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',    core:false },
+  { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
   { id:'xuen',      name:'Invoke Xuen',   short:'Xuen',  cd:180, dur:45,color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'revival',   name:'Revival',       short:'Revival',cd:180,dur:0, color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'devo3',    name:'Ret Devotion Aura',    short:'RDevo', cd:180, dur:6,  color:'#c85890', textColor:'#ffb8d8', who:'RETPALA1',  core:false },
@@ -1492,7 +1493,8 @@ const SPEC_CD_MAP = {
   'Marksmanship':     { who:'HUNT1',     cds:[] },
   'Beast Mastery':    { who:'HUNT1',     cds:[] },
   'Balance Dru':      { who:'BOOMKIN1',  cds:[] },
-  'Feral Dru':        { who:'FERAL1',    cds:[] },
+  'Feral Dru':        { who:'FERAL1',       cds:[] },
+  'Feral Tank':       { who:'FERALTANK1',  cds:['ftranq'] },
   'Retribution':      { who:'RETPALA1',  cds:['devo3'] },
   'None / Absent':    { who:null,        cds:[] },
 };
@@ -3499,6 +3501,7 @@ const CD_SPELL_IDS = {
   'dh':        '64843',
   'personals': 'nil',
   'tranq':     '740',
+  'ftranq':    '740',
   'xuen':      '123904',
   'revival':   '115310',
 };
