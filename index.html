@@ -1671,7 +1671,16 @@ const BOSSES = [
     id:'darkshaman', name:"Kor'kron Dark Shaman",
     desc:'Heroic · Gates of Retribution',
     duration: 480,
-    sections: [{ label: null, abilities: [] }]
+    sections: [{ label: null, abilities: [
+      { name:'Encounter Start',  time:0,   color:'#ffffff', encounterStart:true },
+      { name:'Falling Ash 1',   time:215, color:'#c87820' },
+      { name:'Falling Ash 2',   time:249, color:'#c87820' },
+      { name:'Falling Ash 3',   time:283, color:'#c87820' },
+      { name:'Falling Ash 4',   time:317, color:'#c87820' },
+      { name:'Falling Ash 5',   time:351, color:'#c87820' },
+      { name:'Falling Ash 6',   time:384, color:'#c87820' },
+      { name:'Falling Ash 7',   time:416, color:'#c87820' },
+    ]}]
   },
   {
     id:'generalnazmak', name:'General Nazgrim',
@@ -3534,7 +3543,7 @@ const FOJI_ABILITY_NAME_MAP = {
   'sha': { 'Swelling Pride': 'SHAPRIDE_SWELLING_PRIDE', 'Phase 2': 'SHAPRIDE_P2' },
   'galakras': { 'Flames': 'GALAKRAS_FLAMES', 'Pulsing': 'GALAKRAS_PULSING' },
   'ironjuggernaut': { 'Shock Pulse': 'JUGGERNAUT_SHOCK_PULSE', 'Electromagnetic': 'JUGGERNAUT_SHOCK_PULSE' },
-  'dark-shaman': { 'Toxic Mist': 'KORKRON_TOXIC_MIST', 'Falling Ash': 'KORKRON_FALLING_ASH' },
+  'darkshaman': { 'Toxic Mist': 'KORKRON_TOXIC_MIST', 'Falling Ash': 'KORKRON_FALLING_ASH' },
   'generalnazmak': { 'ADD CD (NAZ)': 'NAZGRIM_ADDS', 'War Song': 'NAZGRIM_WAR_SONG' },
   'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
   'spoils': {},
