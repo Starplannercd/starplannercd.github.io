@@ -3036,21 +3036,11 @@ function moveDragGhost(e) {
       const _ghostAbName = decodeURIComponent(_ghostParts.slice(1).join('-'));
       const _ghostBoss = BOSSES.find(b => b.id === bossId);
       const _ghostAb = _ghostBoss && _ghostBoss.sections[_ghostSi]?.abilities.find(ab => ab.name === _ghostAbName);
-      const isDuplicate = (_ghostAb && _ghostAb.hpAssign) ? false : (_ghostCd && _ghostCd.customType) ? false : (activeDrag.isMove
-        ? rowPlacements.some(p => p.cdId === cdId && p.id !== activeDrag.movePlacedId && !(rowKey === activeDrag.moveRowKey))
-        : rowPlacements.some(p => p.cdId === cdId));
-      if (isDuplicate) {
-        dragGhostEl.style.background = '#c8484833';
-        dragGhostEl.style.border = '2px solid #c84848';
-        dragGhostEl.style.color = '#ff8888';
-        dragGhostEl.textContent = '✕ ' + activeDrag.cd.short;
-      } else {
-        const cd = activeDrag.cd;
-        dragGhostEl.style.background = cd.color + '33';
-        dragGhostEl.style.border = '1px solid ' + cd.color;
-        dragGhostEl.style.color = cd.textColor;
-        dragGhostEl.textContent = cd.short;
-      }
+      const cd = activeDrag.cd;
+      dragGhostEl.style.background = cd.color + '33';
+      dragGhostEl.style.border = '1px solid ' + cd.color;
+      dragGhostEl.style.color = cd.textColor;
+      dragGhostEl.textContent = cd.short;
     }
   }
 }
@@ -3128,9 +3118,6 @@ function getCellIndex(time) { return Math.floor(time / 30); }
 function placeCd(bossId, rowKey, cdId, time, cell) {
   if (!placedCDs[bossId]) placedCDs[bossId] = {};
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
-  // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
-  const _cd = CD_POOL.find(c => c.id === cdId);
-  if (!(_cd && _cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
   placedCDs[bossId][rowKey].push({ cdId, time, offset: 0, cell: c, id: Date.now() + Math.random() });
@@ -3141,15 +3128,7 @@ function placeCd(bossId, rowKey, cdId, time, cell) {
 function placeCdWithOffset(bossId, rowKey, cdId, time, offset, cell, _preserveMeta) {
   if (!placedCDs[bossId]) placedCDs[bossId] = {};
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
-  // Prevent duplicate same CD in same row — but allow multiple 'custom' CDs
   const cd = CD_POOL.find(c => c.id === cdId);
-  // Also allow multiple placements on HP assign rows
-  const _rowParts = rowKey.split('-');
-  const _rowSi = Number(_rowParts[0]);
-  const _rowAbName = decodeURIComponent(_rowParts.slice(1).join('-'));
-  const _rowBoss = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
-  const _rowAb = _rowBoss && _rowBoss.sections[_rowSi]?.abilities.find(ab => ab.name === _rowAbName);
-  if (!(_rowAb && _rowAb.hpAssign) && !(cd && cd.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   const c = cell != null ? cell : getCellIndex(time);
   placedCDs[bossId][rowKey] = placedCDs[bossId][rowKey].filter(p => (p.cell != null ? p.cell : getCellIndex(p.time)) !== c);
   const newEntry = { cdId, time, offset: offset ?? null, cell: c, id: Date.now() + Math.random(), hpPct: 40 };
