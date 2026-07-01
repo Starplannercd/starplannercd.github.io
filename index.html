@@ -3779,11 +3779,6 @@ function placeCd(bossId, rowKey, cdId, time) {
   isDirty = true;
   if (!placedCDs[bossId]) placedCDs[bossId] = {};
   if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
-  const _cd3 = CD_POOL.find(c => c.id === cdId);
-  const _rowAbParts3 = rowKey.split('-').map(Number);
-  const _rowBoss3 = typeof BOSSES !== 'undefined' && BOSSES.find(b => b.id === bossId);
-  const _rowAb3 = _rowBoss3 && _rowBoss3.sections[_rowAbParts3[0]]?.abilities[_rowAbParts3[1]];
-  if (!(_rowAb3 && _rowAb3.hpAssign) && !(_cd3 && _cd3.customType) && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
   placedCDs[bossId][rowKey].push({ cdId, time, offset: 0, id: Date.now() + Math.random() });
   renderTimeline();
 }
