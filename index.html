@@ -1418,7 +1418,9 @@
 // Full pool of all possible raid CDs
 const CD_POOL = [
   { id:'pwb',   name:'Power Word: Barrier', short:'PW:B',      cd:180, dur:10, color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:true  },
+  { id:'pwb2',  name:'Power Word: Barrier', short:'PW:B',      cd:180, dur:10, color:'#c8c8c8', textColor:'#ffffff',  who:'SPRIEST1',  core:false },
   { id:'ss',    name:'Spirit Shell',         short:'SS',       cd:60,  dur:15, color:'#d0e8ff', textColor:'#ffffff',  who:'DISC1',     core:true  },
+  { id:'ss2',   name:'Spirit Shell',         short:'SS',       cd:60,  dur:15, color:'#d0e8ff', textColor:'#ffffff',  who:'SPRIEST1',  core:false },
   { id:'dh',    name:'Divine Hymn',          short:'Hymn',  cd:180, dur:8,  color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:false },
   { id:'dem',   name:'Demoralizing Banner',  short:'Demo',cd:180,dur:15, color:'#8b5e3c', textColor:'#d4956a', who:'DPSWARR1',  core:true  },
   { id:'devo1', name:'Holy Devotion Aura',   short:'HDevo', cd:180, dur:6,  color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:true  },
@@ -2614,6 +2616,7 @@ const CD_ICON_URLS = {
   'rc':          'https://wow.zamimg.com/images/wow/icons/large/ability_toughness.jpg',
   'dem':         'https://wow.zamimg.com/images/wow/icons/large/demoralizing_banner.jpg',
   'pwb':         'https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordbarrier.jpg',
+  'pwb2':        'https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordbarrier.jpg',
   'htt':         'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_healingtide.jpg',
   'ag':          'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_ancestralguidance.jpg',
   'devo1':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auramastery.jpg',
@@ -2624,6 +2627,7 @@ const CD_ICON_URLS = {
   'smoke':       'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_smoke.jpg',
   'amz':         'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_antimagiczone.jpg',
   'ss':          'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_astralshift.jpg',
+  'ss2':         'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_astralshift.jpg',
   'dh':          'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
   'personals':   'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
   'lhammer':     'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
@@ -3486,7 +3490,9 @@ const BOSS_ABILITY_KEYS = {
 
 const CD_SPELL_IDS = {
   'pwb':       '62618',
+  'pwb2':      '62618',
   'ss':        '109964',
+  'ss2':       '109964',
   'dem':       '114203',
   'devo1':     '31821',
   'devo2':     '31821',
@@ -3689,7 +3695,7 @@ function showManageModal() {
   overlay.className = 'modal-overlay';
 
   // Ordered flat list — similar CDs grouped together
-  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','ss','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
+  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','pwb2','ss','ss2','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
@@ -3920,7 +3926,7 @@ let ssRowStyle = 'full-color';
 const ssLabelStyle = 'badge-left';
 let ssShowCdNames = false;
 const VIEW_CD_NAMES = { dem:'DJ', rc:'DJ', devo2:'Max', htt:'Bean', ag:'Bean', ascend:'Bean', slt:'Bean', ve:'Ix', devo1:'Hpal', goak:'Hpal', holyavenger:'Hpal', avwrath:'Hpal', lhammer:'Hpal', personals:'Pers', dh:'Star', pwb:'Star' };
-const VIEW_EXCLUDE_IDS = new Set(['ss']);
+const VIEW_EXCLUDE_IDS = new Set(['ss','ss2']);
 
 function buildSummaryForBoss(boss) {
   const bossData = placedCDs[boss.id] || {};
