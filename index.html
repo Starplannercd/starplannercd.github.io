@@ -394,55 +394,137 @@
 
   /* CD PALETTE */
   .palette {
-    width: 196px;
+    width: 218px;
     flex-shrink: 0;
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    padding: 10px 8px;
+    background: #0c0a08;
+    border-right: 1px solid #221c14;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+  }
+
+  .palette-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid #1c1710;
+    position: sticky;
+    top: 0;
+    background: #0c0a08;
+    z-index: 1;
+    flex-shrink: 0;
   }
 
   .palette-label {
-    font-size: 10px;
+    font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    padding: 4px 4px 2px;
+    letter-spacing: 0.12em;
+    color: #5a4838;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  .palette-fade-btn {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid #2e2620;
+    background: transparent;
+    color: #504038;
+    cursor: pointer;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .palette-fade-btn.fade-on {
+    border-color: #705028;
+    color: #c89030;
+    background: rgba(200,144,48,0.07);
+  }
+
+  .palette-chips {
+    padding: 5px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .cd-chip {
     display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid transparent;
+    align-items: stretch;
+    margin: 0 7px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.04);
     user-select: none;
-    transition: border-color 0.12s, opacity 0.15s, background 0.12s;
-    background: var(--bg3);
-    position: relative;
     cursor: grab;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+    background: #111009;
   }
+  .cd-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--chip-color, transparent);
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+  }
+  .cd-chip:hover { border-color: rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+  .cd-chip:hover::before { opacity: 0.08; }
   .cd-chip:active { cursor: grabbing; }
-  .cd-chip:hover { border-color: var(--border2); background: var(--bg2); }
-  .cd-chip.reorder-dragging { opacity: 0.35; }
-  .cd-chip.reorder-over { border-color: var(--accent); border-style: dashed; }
-
-  .cd-chip.placed-fade { opacity: 0.3; }
+  .cd-chip.reorder-dragging { opacity: 0.25; }
+  .cd-chip.reorder-over { border-color: #a07828; border-style: dashed; }
+  .cd-chip.placed-fade { opacity: 0.25; }
   .cd-chip.placed-fade:hover { opacity: 0.55; }
 
-
-  .cd-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
+  .cd-chip-bar {
+    width: 3px;
     flex-shrink: 0;
+    border-radius: 4px 0 0 4px;
   }
 
-  .cd-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; letter-spacing: 0.01em; }
-  .cd-cooldown { font-size: 11px; color: var(--text3); }
+  .cd-chip-body {
+    flex: 1;
+    padding: 6px 8px 5px;
+    min-width: 0;
+  }
+
+  .cd-chip-short {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cd-chip-who {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #3e3028;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .cd-chip-timer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 9px 0 4px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #3e3028;
+  }
 
   /* TIMELINE AREA */
   .timeline-area {
@@ -1205,14 +1287,9 @@
     padding: 10px 0 4px !important;
   }
 
-  .palette-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text3);
-    padding: 4px 4px 2px;
-    font-weight: 700;
-  }
+  .palette-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #5a4838; font-weight: 700; padding: 0; }
+  .cd-chip-who { color: #4a3828; }
+  .cd-chip-timer { color: #4a3828; }
 
   .modal-box {
     border-radius: 10px !important;
@@ -1227,7 +1304,7 @@
     color: var(--accent) !important;
   }
 
-  .cd-cooldown { font-size: 10px; color: var(--text3); letter-spacing: 0.03em; }
+  .cd-cooldown { display: none; }
 
 
   .ruler-tick {
@@ -2652,10 +2729,11 @@ function buildPalette() {
   const el = document.getElementById('palette');
   const boss = getBoss();
   const fadeActive = fadeModeByBoss[boss.id] || false;
-  el.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 4px 6px;">
-    <div class="palette-label" style="padding:0;">Active Raid Cooldowns</div>
-    <button id="fadeModeBtn" title="Fade raid cooldowns when placed in the timeline" style="font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid ${fadeActive ? 'var(--accent)' : 'var(--border2)'};background:var(--bg3);color:${fadeActive ? 'var(--accent)' : 'var(--text3)'};cursor:pointer;white-space:nowrap;">◑ Fade</button>
-  </div>`;
+  el.innerHTML = `<div class="palette-header">
+    <span class="palette-label">Active Raid Cooldowns</span>
+    <button id="fadeModeBtn" class="palette-fade-btn${fadeActive ? ' fade-on' : ''}" title="Fade raid cooldowns when placed in the timeline">◑ Fade</button>
+  </div>
+  <div class="palette-chips" id="paletteChips"></div>`;
   el.querySelector('#fadeModeBtn').addEventListener('click', () => {
     fadeModeByBoss[boss.id] = !fadeModeByBoss[boss.id];
     isDirty = true;
@@ -2671,12 +2749,15 @@ function buildPalette() {
     const isPlaced = Object.values(bossData).some(row => row && row.some(p => p.cdId === cd.id));
     if (fadeModeByBoss[boss.id] && isPlaced) chip.classList.add('placed-fade');
 
+    chip.style.setProperty('--chip-color', cd.color);
+    const cdMins = cd.cd > 0 ? (cd.cd % 60 === 0 ? `${cd.cd/60}m` : `${cd.cd}s`) : null;
     chip.innerHTML = `
-      <div class="cd-dot" style="background:${cd.color}"></div>
-      <div style="flex:1;">
-        <div class="cd-name">${cd.name}</div>
-        ${cd.cd > 0 ? `<div class="cd-cooldown">${cd.cd/60}M CD</div>` : ''}
+      <div class="cd-chip-bar" style="background:${cd.color};box-shadow:0 0 6px ${cd.color}60"></div>
+      <div class="cd-chip-body">
+        <span class="cd-chip-short" style="color:${cd.textColor}">${cd.short}</span>
+        <span class="cd-chip-who">${cd.who}</span>
       </div>
+      ${cdMins ? `<div class="cd-chip-timer">${cdMins}</div>` : ''}
     `;
 
     // Unified drag: vertical = reorder, horizontal = palette drag to timeline
@@ -2739,7 +2820,7 @@ function buildPalette() {
       document.addEventListener('mouseup', onCancel, { once: true });
     });
 
-    el.appendChild(chip);
+    el.querySelector('#paletteChips').appendChild(chip);
   });
 }
 
