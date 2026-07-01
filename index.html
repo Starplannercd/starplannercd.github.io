@@ -2801,6 +2801,7 @@ function buildPalette() {
               paletteOrder = current;
               buildPalette();
               isDirty = true;
+              scheduleAutoSave();
             }
             paletteReorderDrag = null;
           }
