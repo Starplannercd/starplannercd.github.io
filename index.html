@@ -3403,6 +3403,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const popup = document.createElement('div');
   popup.className = 'offset-popup';
   const isCustom = !!(cd.customType);
+  const isPersonals = cd.id === 'personals';
 
   // Full Foji sheet boss ability lists per boss
     const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
@@ -3416,7 +3417,6 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
     } else {
-    const isPersonals = cd.id === 'personals';
     popup.innerHTML = isCustom ? `
     <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
