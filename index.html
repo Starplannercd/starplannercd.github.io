@@ -3772,7 +3772,7 @@ function buildFojiExport() {
           const baseWho = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
-          const iconId = isPersonals ? 'Personals' : customIconId;
+          const iconId = isPersonals ? '134951' : customIconId;
           // Expand multi-target assignments into one line per player
           const _targetWhos = (isPersonals || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
             ? p.targetWhos.map(w => _whoRemap[w] || w)
