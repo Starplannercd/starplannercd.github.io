@@ -3173,21 +3173,21 @@ function onDragUp(e) {
       // Snapshot custom meta before removing so we can restore it
       const _draggedRow = (placedCDs[drag.moveBossId] || {})[drag.moveRowKey] || [];
       const _draggedP = _draggedRow.find(p => p.id === drag.movePlacedId);
-      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, hpPct: _draggedP.hpPct } : null;
+      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, hpPct: _draggedP.hpPct, targetWhos: _draggedP.targetWhos } : null;
       __rawRemove(drag.moveBossId, drag.moveRowKey, drag.movePlacedId);
 
       if (displaced && (drag.moveBossId !== bossId || drag.moveRowKey !== rowKey)) {
         // Move displaced CD to source position (different row swap)
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(drag.moveBossId, drag.moveRowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       } else if (displaced && drag.moveRowKey === rowKey) {
         // Same row swap: remove displaced then move it to source cell
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(bossId, rowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       }
@@ -3355,6 +3355,46 @@ const FOJI_ABILITY_KEYS = {
 };
 
 
+function buildTargetPickerHtml(currentTargetWhos) {
+  const isAll = !Array.isArray(currentTargetWhos) || currentTargetWhos.length === 0;
+  const rows = DEFAULT_ROSTER.map(r => {
+    const checked = !isAll && currentTargetWhos.includes(r.who);
+    return `<label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;">
+      <input type="checkbox" class="tp-player" value="${r.who}" ${checked ? 'checked' : ''} style="accent-color:${r.color};cursor:pointer;width:13px;height:13px;">
+      <span style="color:${r.color};font-weight:600;font-size:11px;">${r.name}</span>
+      <span style="color:#5a4838;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">${r.spec}</span>
+    </label>`;
+  }).join('');
+  return `<div style="display:flex;flex-direction:column;gap:2px;">
+    <label style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:2px;">Assign to</label>
+    <label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;border-bottom:1px solid #2a2018;margin-bottom:3px;padding-bottom:6px;">
+      <input type="checkbox" id="tp-all" ${isAll ? 'checked' : ''} style="cursor:pointer;width:13px;height:13px;">
+      <span style="color:#c8a870;font-weight:600;font-size:11px;">All Players</span>
+    </label>
+    <div id="tp-players">${rows}</div>
+  </div>`;
+}
+
+function wireTargetPicker(popup) {
+  const allBox = popup.querySelector('#tp-all');
+  const playerBoxes = [...popup.querySelectorAll('.tp-player')];
+  if (!allBox) return;
+  allBox.addEventListener('change', () => {
+    if (allBox.checked) playerBoxes.forEach(b => b.checked = false);
+  });
+  playerBoxes.forEach(b => b.addEventListener('change', () => {
+    if (b.checked) allBox.checked = false;
+    if (!playerBoxes.some(x => x.checked)) allBox.checked = true;
+  }));
+}
+
+function readTargetWhos(popup) {
+  const allBox = popup.querySelector('#tp-all');
+  if (!allBox || allBox.checked) return null;
+  const checked = [...popup.querySelectorAll('.tp-player:checked')].map(b => b.value);
+  return checked.length > 0 ? checked : null;
+}
+
 function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const isHpAssign = !!(ab && ab.hpAssign);
   closeOffsetPopup();
@@ -3374,6 +3414,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
     } else {
+    const isPersonals = cd.id === 'personals';
     popup.innerHTML = isCustom ? `
     <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
@@ -3388,11 +3429,8 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
       </select>
     </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>WHO</label>
-      <select id="customWho" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-        ${['ALL', ...CD_POOL.filter(c => c.who && c.who !== 'ALL').map(c => c.who).filter((v,i,a) => a.indexOf(v) === i).sort()].map(w => `<option value="${w}" ${(p.customWho || 'ALL') === w ? 'selected' : ''}>${w}</option>`).join('')}
-      </select>
+    <div style="display:flex;flex-direction:column;gap:4px;" id="customWhoWrap">
+      ${buildTargetPickerHtml(p.targetWhos)}
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Overwrite TTS (optional)</label>
@@ -3408,6 +3446,16 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     </div>
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
+      <button id="offsetCancel">Cancel</button>
+    </div>` : isPersonals ? `
+    <label style="font-size:12px;color:#c83a20;">Personals — assign &amp; offset</label>
+    <div id="personalsTargetWrap">${buildTargetPickerHtml(p.targetWhos)}</div>
+    <label style="margin-top:4px;">Offset (seconds) — type or scroll</label>
+    <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1"
+      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+    <div class="popup-btns">
+      <button class="confirm" id="offsetConfirm">Save</button>
+      <button id="offsetClear">Clear</button>
       <button id="offsetCancel">Cancel</button>
     </div>` : `
     <label style="font-size:12px;color:#c83a20;">${cd.short} — set offset</label>
@@ -3425,6 +3473,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   popup.style.top = '-9999px';
   popup.style.visibility = 'hidden';
   document.body.appendChild(popup);
+  wireTargetPicker(popup);
   var popH = popup.offsetHeight || 200;
   var topPos = e.clientY + 8;
   if (topPos + popH > window.innerHeight - 8) topPos = e.clientY - popH - 8;
@@ -3445,21 +3494,32 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     const offsetInput = popup.querySelector('#offsetInput');
     const offVal = parseFloat(offsetInput.value);
     if (isCustom) {
-      const who = popup.querySelector('#customWho').value.trim().toUpperCase() || 'ALL';
+      const targetWhos = readTargetWhos(popup);
       const spellId = 'nil';
       const ability = popup.querySelector('#customAbility') ? popup.querySelector('#customAbility').value : '';
       const bossAbility = popup.querySelector('#customBossAbility') ? popup.querySelector('#customBossAbility').value : '';
       let customName = popup.querySelector('#customName').value.trim();
       let tts = popup.querySelector('#customTts').value.trim();
-      // Auto-fill name/tts from ability if left blank
       if (ability && !customName) customName = ability;
       if (ability && !tts) tts = ability;
-      setCustomPlacementMeta(bossId, rowKey, p.id, who, spellId, tts, customName, isNaN(offVal) ? null : offVal);
+      const singleWho = targetWhos ? targetWhos[0] : 'ALL';
+      setCustomPlacementMeta(bossId, rowKey, p.id, singleWho, spellId, tts, customName, isNaN(offVal) ? null : offVal);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
       if (placedItem) {
         if (ability) placedItem.customAbility = ability;
         placedItem.customBossAbility = bossAbility || null;
+        placedItem.targetWhos = targetWhos;
+      }
+      renderTimeline();
+    } else if (isPersonals) {
+      const targetWhos = readTargetWhos(popup);
+      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
+      const placedItem = placedRow.find(x => x.id === p.id);
+      if (placedItem) {
+        placedItem.targetWhos = targetWhos;
+        placedItem.offset = isNaN(offVal) ? 0 : offVal;
+        isDirty = true;
       }
       renderTimeline();
     } else {
@@ -3469,7 +3529,10 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   });
   if (!isHpAssign && !isCustom) {
     popup.querySelector('#offsetClear')?.addEventListener('click', () => {
-      setPlacementMeta(bossId, rowKey, p.id, cd.who, null);
+      const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
+      const placedItem = placedRow.find(x => x.id === p.id);
+      if (isPersonals && placedItem) { placedItem.targetWhos = null; placedItem.offset = 0; isDirty = true; renderTimeline(); }
+      else setPlacementMeta(bossId, rowKey, p.id, cd.who, null);
       closeOffsetPopup();
     });
   }
@@ -3704,11 +3767,17 @@ function buildFojiExport() {
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
-          const who = _whoRemap[_whoRaw] || _whoRaw;
+          const baseWho = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = isPersonals ? 'Personals' : customIconId;
-          lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          // Expand multi-target assignments into one line per player
+          const _targetWhos = (isPersonals || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
+            ? p.targetWhos.map(w => _whoRemap[w] || w)
+            : [baseWho];
+          _targetWhos.forEach(who => {
+            lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+          });
         });
       });
     });
