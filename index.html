@@ -2916,7 +2916,7 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
   if (ab.encounterStart) {
     label.innerHTML = `<div class="ability-marker" style="background:#ffffff66"></div><div class="ability-label-text" style="color:#8a7060;font-style:italic;">${ab.name}</div>`;
   } else if (ab.hpAssign) {
-    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};">HP Assign</span></div>`;
+    label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ab.hpLabel ? ab.name : 'HP Assign'}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   } else {
     label.innerHTML = `<div class="ability-marker" style="background:${ab.color}"></div><div class="ability-label-text" style="display:flex;flex-direction:column;justify-content:center;gap:2px;"><span style="font-size:12px;font-weight:600;color:${ab.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${formatAbilityName(ab.name)}</span><span style="font-size:10px;font-weight:500;color:var(--text);letter-spacing:0.04em;">${formatTime(ab.time)}</span></div>`;
   }
