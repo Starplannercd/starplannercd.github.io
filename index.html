@@ -1785,7 +1785,9 @@ const BOSSES = [
     id:'malkorok', name:'Malkorok',
     desc:'Heroic · Underhold',
     duration: 360,
-    sections: [{ label: null, abilities: [] }]
+    sections: [{ label: null, abilities: [
+      { name:'Blood Rage', time:120, color:'#c84020' },
+    ]}]
   },
   {
     id:'spoils', name:'Spoils of Pandaria',
@@ -1797,7 +1799,11 @@ const BOSSES = [
     id:'thok', name:'Thok the Bloodthirsty',
     desc:'Heroic · Underhold',
     duration: 480,
-    sections: [{ label: null, abilities: [] }]
+    sections: [{ label: null, abilities: [
+      { name:'Deafening Screech 1', time:30,  color:'#c848c8' },
+      { name:'Deafening Screech 2', time:55,  color:'#c848c8' },
+      { name:'Deafening Screech 3', time:75,  color:'#c848c8' },
+    ]}]
   },
   {
     id:'siegecrafter', name:'Siegecrafter Blackfuse',
