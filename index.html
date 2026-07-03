@@ -1800,9 +1800,9 @@ const BOSSES = [
     desc:'Heroic · Underhold',
     duration: 480,
     sections: [{ label: null, abilities: [
-      { name:'Deafening Screech 1', time:30,  color:'#c848c8' },
-      { name:'Deafening Screech 2', time:55,  color:'#c848c8' },
-      { name:'Deafening Screech 3', time:75,  color:'#c848c8' },
+      { name:'DS Set 1', time:13,  color:'#c848c8', hpAssign:true, hpLabel:'DS Set 1 — screech count', hpMax:30, hpAscend:true },
+      { name:'DS Set 2', time:192, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 2 — screech count', hpMax:30, hpAscend:true },
+      { name:'DS Set 3', time:370, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 3 — screech count', hpMax:30, hpAscend:true },
     ]}]
   },
   {
@@ -3019,11 +3019,14 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     el.appendChild(iconText);
     // Offset shown inside icon on hover
-    if (_ab && _ab.hpAssign) { // Always show HP % on hover
-      const hpPct = p.hpPct != null ? p.hpPct : 40;
+    if (_ab && _ab.hpAssign) { // Always show count/HP % on hover
+      const _hpDef = (_ab.hpAscend) ? 1 : ((_ab.hpMax) ? _ab.hpMax : 40);
+      const hpPct = p.hpPct != null ? p.hpPct : _hpDef;
       const inner = document.createElement('div');
       inner.className = 'cd-offset-inner';
-      inner.innerHTML = `<span class="cd-offset-value">${hpPct}%</span><span class="cd-offset-hint">HP</span>`;
+      const _hpHint = _ab.hpLabel ? 'count' : 'HP';
+      const _hpVal = _ab.hpLabel ? hpPct : hpPct + '%';
+      inner.innerHTML = `<span class="cd-offset-value">${_hpVal}</span><span class="cd-offset-hint">${_hpHint}</span>`;
       inner.style.color = cd.textColor;
       el.appendChild(inner);
     } else if (p.offset != null) {
@@ -3416,10 +3419,14 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
 
     if (isHpAssign) {
-      const hpVal = p.hpPct != null ? p.hpPct : 40;
-      popup.innerHTML = '<label style="font-size:12px;color:#c83a20;">HP Assign — set health %</label>'
-        + '<label>Health % trigger</label>'
-        + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="1" max="40" step="1"'
+      const hpMax = (ab && ab.hpMax) ? ab.hpMax : 40;
+      const hpDefault = (ab && ab.hpAscend) ? 1 : hpMax;
+      const hpVal = p.hpPct != null ? p.hpPct : hpDefault;
+      const hpTitle = (ab && ab.hpLabel) ? ab.hpLabel : 'HP Assign — set health %';
+      const hpSublabel = (ab && ab.hpLabel) ? 'Screech count' : 'Health % trigger';
+      popup.innerHTML = '<label style="font-size:12px;color:#c83a20;">' + hpTitle + '</label>'
+        + '<label>' + hpSublabel + '</label>'
+        + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="1" max="' + hpMax + '" step="1"'
         + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />'
         + '<div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>';
     } else {
@@ -3495,7 +3502,9 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpPct = parseInt(popup.querySelector('#hpPctInput').value, 10);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
-      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? 40 : Math.max(1, Math.min(40, hpPct)); isDirty = true; renderTimeline(); }
+      const _hpMax = (ab && ab.hpMax) ? ab.hpMax : 40;
+      const _hpDefault = (ab && ab.hpAscend) ? 1 : _hpMax;
+      if (placedItem) { placedItem.hpPct = isNaN(hpPct) ? _hpDefault : Math.max(1, Math.min(_hpMax, hpPct)); isDirty = true; renderTimeline(); }
       closeOffsetPopup();
       return;
     }
@@ -3552,7 +3561,9 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     hpInputEl.addEventListener('mouseenter', () => hpInputEl.focus());
     hpInputEl.addEventListener('wheel', e => {
       e.preventDefault();
-      hpInputEl.value = Math.max(1, Math.min(40, (parseInt(hpInputEl.value) || 40) - Math.sign(e.deltaY)));
+      const _wMax = (ab && ab.hpMax) ? ab.hpMax : 40;
+      const _wDef = (ab && ab.hpAscend) ? 1 : _wMax;
+      hpInputEl.value = Math.max(1, Math.min(_wMax, (parseInt(hpInputEl.value) || _wDef) - Math.sign(e.deltaY)));
     }, { passive: false });
     hpInputEl.addEventListener('keydown', ev => {
       if (ev.key === 'Enter') { popup.querySelector('#offsetConfirm').click(); }
@@ -3686,7 +3697,7 @@ const FOJI_ABILITY_NAME_MAP = {
   'generalnazmak': { 'ADD CD (NAZ)': 'NAZGRIM_ADDS', 'War Song': 'NAZGRIM_WAR_SONG' },
   'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
   'spoils': {},
-  'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH' },
+  'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH', 'DS Set 1': 'THOK_DS_SET_1', 'DS Set 2': 'THOK_DS_SET_2', 'DS Set 3': 'THOK_DS_SET_3' },
   'siegecrafter': { 'Overcharge': 'BLACKFUSE_OVERCHARGE_ELECTRO' },
   'paragons': { 'Insane Calculation': 'PARAGONS_INSANE_CALCULATION', 'Catalyst': 'PARAGONS_CATALYST', 'Mutate': 'PARAGONS_MUTATE', 'Encase': 'PARAGONS_ENCASE_IN_AMBER' },
   'garrosh': { 'Power Iron Star': 'GARROSH_IRON_STAR', 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling Corruption P3': 'GARROSH_WHIRLING_P3', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineer': 'GARROSH_ENGINEERS' },
@@ -3742,10 +3753,11 @@ function buildFojiExport() {
         const castNum = ab.hpAssign ? 1 : getCastNumber(ab.name);
         const bossAbKey = getBossAbilityKey(boss, rowKey, ab.name);
 
-        const sortedPlacements = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.offset ?? 0) - (b.offset ?? 0));
+        const sortedPlacements = [...placements].sort((a, b) => ab.hpAssign ? (ab.hpAscend ? (a.hpPct ?? 1) - (b.hpPct ?? 1) : (b.hpPct ?? 40) - (a.hpPct ?? 40)) : (a.offset ?? 0) - (b.offset ?? 0));
         sortedPlacements.forEach(p => {
           // For HP assign rows, cast number = the placement's health % value
-          const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
+          const _hpCastDef = ab.hpAscend ? 1 : (ab.hpMax || 40);
+          const _pCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : _hpCastDef) : castNum;
           const cd = CD_POOL.find(c => c.id === p.cdId);
           if (!cd) return;
           const _exportCd = cd;
@@ -4109,7 +4121,11 @@ function buildSummaryForBoss(boss) {
 
 
 function getSsInfoLabel(cd, p, ab) {
-  if (ab && ab.hpAssign) return `${p.hpPct != null ? p.hpPct : 40}%`;
+  if (ab && ab.hpAssign) {
+    const _def = (ab.hpAscend) ? 1 : (ab.hpMax || 40);
+    const val = p.hpPct != null ? p.hpPct : _def;
+    return ab.hpLabel ? `count ${val}` : `${val}%`;
+  }
   if (p && p.offset != null && p.offset !== 0) return `${p.offset > 0 ? '+' : ''}${p.offset}s`;
   return null;
 }
@@ -4275,7 +4291,7 @@ function buildSsLabel(ab) {
         return `<div class="ss-label">
           <div class="ss-label-marker" style="background:${c};"></div>
           <div class="ss-label-inner">
-            <span class="ss-label-name" style="color:${c};">HP Assign</span>
+            <span class="ss-label-name" style="color:${c};">${ab.hpLabel ? ab.name : 'HP Assign'}</span>
           </div>
         </div>`;
     }
@@ -5080,7 +5096,7 @@ function renderSheetPreview(el) {
       const placements = bossData[rowKey];
       if (!placements || !placements.length) return;
       const castNum = getCastNumber(ab.name);
-      const sorted = [...placements].sort((a, b) => ab.hpAssign ? (b.hpPct ?? 40) - (a.hpPct ?? 40) : (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
+      const sorted = [...placements].sort((a, b) => ab.hpAssign ? (ab.hpAscend ? (a.hpPct ?? 1) - (b.hpPct ?? 1) : (b.hpPct ?? 40) - (a.hpPct ?? 40)) : (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       sorted.forEach(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return;
@@ -5092,7 +5108,8 @@ function renderSheetPreview(el) {
         const tts = p.cdId === 'custom' && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
         const displayName = p.cdId === 'custom' && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
         const customIcon = p.cdId === 'personals' ? '134951' : '';
-        const _rowCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : 40) : castNum;
+        const _rowHpDef = ab.hpAscend ? 1 : (ab.hpMax || 40);
+        const _rowCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : _rowHpDef) : castNum;
         rows.push({ ab, castNum: _rowCastNum, who, playerName, playerColor, offset, cd, cdName, tts, displayName, customIcon });
       });
     });
