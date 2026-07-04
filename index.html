@@ -1800,9 +1800,9 @@ const BOSSES = [
     desc:'Heroic · Underhold',
     duration: 480,
     sections: [{ label: null, abilities: [
-      { name:'DS Set 1', time:13,  color:'#c848c8', hpAssign:true, hpLabel:'DS Set 1 — screech count', hpMax:30, hpAscend:true },
-      { name:'DS Set 2', time:192, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 2 — screech count', hpMax:30, hpAscend:true },
-      { name:'DS Set 3', time:370, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 3 — screech count', hpMax:30, hpAscend:true },
+      { name:'DS Set 1', time:13,  color:'#c848c8', hpAssign:true, hpLabel:'DS Set 1 — screech count', hpMax:30, hpAscend:true, hpOffset:-1 },
+      { name:'DS Set 2', time:192, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 2 — screech count', hpMax:30, hpAscend:true, hpOffset:-1 },
+      { name:'DS Set 3', time:370, color:'#c848c8', hpAssign:true, hpLabel:'DS Set 3 — screech count', hpMax:30, hpAscend:true, hpOffset:-1 },
     ]}]
   },
   {
@@ -3780,7 +3780,7 @@ function buildFojiExport() {
           const isDem = p.cdId === 'dem';
           const isXuen = p.cdId === 'xuen';
           const offset = p.offset != null ? p.offset : 0;
-          const _exportOffset = ab.hpAssign ? 1 : offset;
+          const _exportOffset = ab.hpAssign ? (ab.hpOffset != null ? ab.hpOffset : 1) : offset;
           const spellId = isCustomPlacement
             ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
             : isXuen ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
@@ -5103,7 +5103,7 @@ function renderSheetPreview(el) {
         const who = p.cdId === 'custom' ? (p.customWho || 'ALL') : cd.who;
         const playerName = getPlayerName(who);
         const playerColor = getPlayerColor(who);
-        const offset = ab.hpAssign ? 1 : (p.offset != null ? p.offset : 0);
+        const offset = ab.hpAssign ? (ab.hpOffset != null ? ab.hpOffset : 1) : (p.offset != null ? p.offset : 0);
         const cdName = p.cdId === 'custom' ? 'Custom Spell Assignment' : cd.name;
         const tts = p.cdId === 'custom' && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
         const displayName = p.cdId === 'custom' && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
