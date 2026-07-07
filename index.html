@@ -2747,10 +2747,12 @@ function buildPalette() {
     const chip = document.createElement('div');
     chip.className = 'cd-chip';
     chip.dataset.cdId = cd.id;
-    // Check if this CD is placed anywhere on the current boss
+    // Check if this CD is placed anywhere on the current boss (valid rows only)
     const boss = getBoss();
     const bossData = placedCDs[boss.id] || {};
-    const isPlaced = Object.values(bossData).some(row => row && row.some(p => p.cdId === cd.id));
+    const validRowKeys = new Set();
+    boss.sections.forEach((sec, si) => sec.abilities.forEach(ab => validRowKeys.add(`${si}-${encodeURIComponent(ab.name)}`)));
+    const isPlaced = Object.entries(bossData).some(([rk, row]) => validRowKeys.has(rk) && row && row.some(p => p.cdId === cd.id));
     if (fadeModeByBoss[boss.id] && isPlaced) chip.classList.add('placed-fade');
 
     chip.style.setProperty('--chip-color', cd.color);
