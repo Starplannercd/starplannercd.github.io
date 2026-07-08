@@ -550,14 +550,12 @@ function renderResults(encName, specLabel, players, totalFights, elapsedSec) {
     for (var [name, count] of entries) {
       var pct = count/n*100;
       var isTop = name===entries[0][0];
-      var col = pct>=75?'#c89830':pct>=50?'#bbb':'#666';
       var bg = isTop?'#161616':'#111';
       var border = isTop?'#333':'#1e1e1e';
+      var pctCol = pct>=80?'#d070a8':pct>=60?'#9966cc':pct>=40?'#5588dd':'#555';
       html += '<div style="flex:1;background:'+bg+';border:1px solid '+border+';padding:8px 10px;">';
-      html += '<div style="color:'+col+';font-size:13px;margin-bottom:4px;">'+name+'</div>';
-      html += '<div style="background:#1a1a1a;height:3px;border-radius:2px;margin-bottom:4px;">';
-      html += '<div style="background:'+col+';height:3px;border-radius:2px;width:'+Math.round(pct)+'%;"></div></div>';
-      html += '<div style="color:#444;font-size:11px;">'+pct.toFixed(1)+'%</div>';
+      html += '<div style="color:#ccc;font-size:13px;margin-bottom:3px;">'+name+'</div>';
+      html += '<div style="font-size:11px;color:'+pctCol+';">'+pct.toFixed(1)+'%</div>';
       html += '</div>';
     }
     html += '</div>';
