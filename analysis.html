@@ -245,51 +245,47 @@ async function getFightRankings(encId, maxFights) {
   return all.slice(0, maxFights);
 }
 
-async function processFight(fight, specClass, specName) {
-  var code = fight.report?.code, fightId = fight.report?.fightID;
-  if (!code || fightId == null) return null;
-  var fightStart = fight.startTime - fight.report.startTime;
-  var specSplit = specName === '*';
+function groupByCode(fights) {
+  var byCode = {};
+  for (var f of fights) {
+    var code = f.report?.code;
+    if (!code) continue;
+    if (!byCode[code]) byCode[code] = [];
+    byCode[code].push(f.report.fightID);
+  }
+  return Object.entries(byCode).map(([code, fids]) => ({code, fids}));
+}
 
+async function processLog(code, fids, specClass, specName) {
+  var specSplit = specName === "*";
   var query = specSplit
-    ? `query($c:String!,$fid:Int!){reportData{report(code:$c){playerDetails(fightIDs:[$fid])}}}`
-    : `query($c:String!,$fid:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){
-        playerDetails(fightIDs:[$fid])
-        events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$s,endTime:$e){data}
+    ? `query($c:String!,$fids:[Int]!){reportData{report(code:$c){playerDetails(fightIDs:$fids)}}}`
+    : `query($c:String!,$fids:[Int]!){reportData{report(code:$c){
+        playerDetails(fightIDs:$fids)
+        events(fightIDs:$fids,dataType:CombatantInfo){data}
       }}}`;
-  var vars = specSplit
-    ? {c:code, fid:fightId}
-    : {c:code, fid:fightId, s:fightStart, e:fightStart+10000};
-
-  var d = await wclQuery(query, vars);
-
+  var d = await wclQuery(query, {c:code, fids});
   var pd = d?.reportData?.report?.playerDetails;
-  var pdp = typeof pd === 'string' ? JSON.parse(pd) : pd;
+  var pdp = typeof pd === "string" ? JSON.parse(pd) : pd;
   var allPlayers = [
     ...(pdp?.data?.playerDetails?.healers || []),
     ...(pdp?.data?.playerDetails?.dps || []),
     ...(pdp?.data?.playerDetails?.tanks || []),
   ];
-
   if (specSplit) {
-    var targets = allPlayers.filter(p => p.type === specClass);
-    var players = targets.map(p => ({name:p.name, spec:p.specs?.[0]?.spec || 'Unknown', glyphs:[], talents:[]}));
-    return {players};
+    return {players: allPlayers.filter(p => p.type === specClass)
+      .map(p => ({name:p.name, spec:p.specs?.[0]?.spec || "Unknown", glyphs:[]}))};
   }
-
   var targets = allPlayers.filter(p => p.type === specClass && p.specs?.some(s => s.spec === specName));
   if (!targets.length) return {players:[]};
-
   var ciEvents = d?.reportData?.report?.events?.data || [];
   var ciByActor = {};
   for (var ev of ciEvents) ciByActor[ev.sourceID] = ev;
-
   var players = [];
-  var specKey = specClass+'|'+specName;
   for (var player of targets) {
     var ev = ciByActor[player.id];
     if (!ev) continue;
-    var glyphs  = (ev.customPowerSet||[]).filter(g=>(g.slot===0||GLYPH_NAMES[g.spellID])&&!MINOR_GLYPHS.has(g.spellID)).map(g=>glyphLabel(g.spellID,g.icon)).filter(Boolean);
+    var glyphs = (ev.customPowerSet||[]).filter(g=>(g.slot===0||GLYPH_NAMES[g.spellID])&&!MINOR_GLYPHS.has(g.spellID)).map(g=>glyphLabel(g.spellID,g.icon)).filter(Boolean);
     players.push({name:player.name, glyphs});
   }
   return {players};
@@ -437,14 +433,16 @@ async function doFetch() {
     }
 
     if (!fromCache) {
-      prog.textContent = 'Fetching fight rankings...';
-      var fights = await getFightRankings(encId, 100);
-      prog.textContent = 'Processing '+fights.length+' fights ('+CONCURRENCY+' at a time)...';
+      var maxLogs = parseInt(document.getElementById("logCount")?.value || "25", 10) || 25;
+      prog.textContent = "Fetching fight rankings...";
+      var fights = await getFightRankings(encId, maxLogs);
+      var logs = groupByCode(fights);
+      prog.textContent = "Processing "+logs.length+" logs ("+fights.length+" fights, "+CONCURRENCY+" at a time)...";
       var done = 0;
-      var results = await runPool(fights, async (fight) => {
-        var r = await processFight(fight, specClass, specName);
+      var results = await runPool(logs, async (log) => {
+        var r = await processLog(log.code, log.fids, specClass, specName);
         done++;
-        prog.textContent = 'Processing... '+done+'/'+fights.length;
+        prog.textContent = "Processing... "+done+"/"+logs.length+" logs";
         return r;
       }, CONCURRENCY);
       for (var r of results) if (r?.players) allPlayers.push(...r.players);
@@ -524,12 +522,14 @@ async function doFetchAllBosses() {
     }
     prog.textContent = 'Scanning ' + boss.name + '...';
     try {
-      var fights = await getFightRankings(boss.id, 100);
+      var maxLogs = parseInt(document.getElementById("logCount")?.value || "25", 10) || 25;
+      var fights = await getFightRankings(boss.id, maxLogs);
+      var logs = groupByCode(fights);
       var done = 0;
-      var results = await runPool(fights, async fight => {
-        var r = await processFight(fight, specClass, specName);
+      var results = await runPool(logs, async log => {
+        var r = await processLog(log.code, log.fids, specClass, specName);
         done++;
-        prog.textContent = boss.name + ' — ' + done + '/' + fights.length;
+        prog.textContent = boss.name + " — " + done + "/" + logs.length + " logs";
         return r;
       }, CONCURRENCY);
       var allPlayers = [];
@@ -571,12 +571,14 @@ async function doFetchAllSplit() {
     }
     prog.textContent = 'Scanning ' + boss.name + '...';
     try {
-      var fights = await getFightRankings(boss.id, 100);
+      var maxLogs = parseInt(document.getElementById("logCount")?.value || "25", 10) || 25;
+      var fights = await getFightRankings(boss.id, maxLogs);
+      var logs = groupByCode(fights);
       var done = 0;
-      var results = await runPool(fights, async fight => {
-        var r = await processFight(fight, specClass, '*');
+      var results = await runPool(logs, async log => {
+        var r = await processLog(log.code, log.fids, specClass, "*");
         done++;
-        prog.textContent = boss.name + ' — ' + done + '/' + fights.length;
+        prog.textContent = boss.name + " — " + done + "/" + logs.length + " logs";
         return r;
       }, CONCURRENCY);
       var allPlayers = [];
