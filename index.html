@@ -703,42 +703,39 @@
   .placed-cd { overflow: hidden; position: absolute; }
   .placed-cd:hover { opacity: 1; z-index: 10; transform: translateY(-50%) scale(1.06); box-shadow: 0 3px 14px rgba(0,0,0,0.5); }
 
-  /* Icon + name stack inside a placed CD (mirrors the sidebar chips) */
+  /* Label inside a placed CD. For icon pills (.pcd-img) the spell icon IS the
+     pill background, and the name sits on a dark scrim along the bottom. */
   .cd-icon-text {
     transition: opacity 0.12s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
     min-width: 0;
     max-width: 100%;
     padding: 0 4px;
-  }
-  .pcd-icon {
-    width: 25px;
-    height: 25px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.16);
-    overflow: hidden;
-    background: #0a0806;
-    flex-shrink: 0;
-  }
-  .pcd-icon img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    transform: scale(1.1);   /* crop the icon's baked-in dark border */
-    pointer-events: none;
   }
   .pcd-name {
     line-height: 1;
     text-transform: uppercase;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 67px;
+    max-width: 100%;
   }
+  .placed-cd.pcd-img .cd-icon-text {
+    position: absolute;
+    inset: 0;
+    justify-content: flex-end;
+    padding: 0;
+    background: linear-gradient(180deg, rgba(6,4,2,0) 46%, rgba(6,4,2,0.85) 100%);
+  }
+  .placed-cd.pcd-img .pcd-name {
+    padding: 0 4px 4px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.85);
+  }
+  .placed-cd.pcd-img .cd-offset-inner { background: rgba(0,0,0,0.72); }
   .cd-offset-inner {
     position: absolute;
     inset: 0;
@@ -2787,6 +2784,8 @@ const CD_ICON_URLS = {
   'slt':        'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_spiritlink.jpg',
   'revival':    'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_blessingofeternals.jpg',
   'xuen':       'https://wow.zamimg.com/images/wow/icons/large/ability_monk_summontigerstatue.jpg',
+  'tranq':      'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
+  'ftranq':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -3053,17 +3052,22 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       // Keep ec as default custom color for background/border — only text changes per WHO
       et = CUSTOM_ABILITY_COLORS[p.customAbility].textColor;
     }
-    // Chip-style fill: dark base with the spell colour washing in from the left,
-    // plus a subtle tinted border (matches the sidebar palette chips).
-    const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
-    el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
+    // Full-bleed spell icon as the pill itself, with a tinted border + soft glow.
+    // Falls back to the sidebar-chip gradient fill when there's no icon (custom).
+    const _iconUrl = getCdIconUrl(cd.id);
+    if (_iconUrl) {
+      el.classList.add('pcd-img');
+      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; border-color:${ec}; color:${et}; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};`;
+    } else {
+      const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
+      el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
+    }
     const offsetStr = p.offset != null ? ` +${p.offset}s` : '';
     const displayWho = (cd.customType) ? (p.customWho || cd.who || 'ALL') : cd.who;
     el.title = `${cd.name} (${displayWho})${offsetStr} · Right-click to edit · Middle-click to remove`;
 
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
-    const _iconUrl = getCdIconUrl(cd.id);
     let _label = cd.short;
     const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
       // Show CUST with WHO class color for text only, keep original icon colors
@@ -3073,9 +3077,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       if (_whoPlayer) { iconText.style.color = _whoPlayer.color; }
       el.style.fontSize = '9px';
     }
-    iconText.innerHTML = `${_iconUrl
-        ? `<span class="pcd-icon" style="box-shadow:0 0 8px -2px ${ec}"><img src="${_iconUrl}" alt="" loading="lazy" draggable="false"></span>`
-        : ''}<span class="pcd-name">${_label}</span>`;
+    iconText.innerHTML = `<span class="pcd-name">${_label}</span>`;
     el.appendChild(iconText);
     // Offset shown inside icon on hover
     if (_ab && _ab.hpAssign) { // Always show count/HP % on hover
