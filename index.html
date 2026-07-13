@@ -547,18 +547,6 @@
     text-overflow: ellipsis;
   }
 
-  .cd-chip-who {
-    font-size: 9.5px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #55432f;
-    opacity: 0.85;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .cd-chip-timer {
     flex-shrink: 0;
     align-self: center;
@@ -2804,10 +2792,6 @@ function buildPalette() {
     const cdMins = cd.cd > 0 ? (cd.cd % 60 === 0 ? `${cd.cd/60}m` : `${cd.cd}s`) : null;
     // Spell icon (falls back to a coloured monogram block if no icon URL exists)
     const iconUrl = getCdIconUrl(cd.id);
-    // Resolve the who-tag to the roster player's name + class colour when possible
-    const rosterP = DEFAULT_ROSTER.find(r => r.who === cd.who || r.name === cd.who);
-    const whoLabel = rosterP ? rosterP.name : cd.who;
-    const whoStyle = rosterP ? ` style="color:${rosterP.color}"` : '';
     chip.innerHTML = `
       <div class="cd-chip-icon" style="box-shadow:0 0 9px -2px ${cd.color}">
         ${iconUrl
@@ -2816,7 +2800,6 @@ function buildPalette() {
       </div>
       <div class="cd-chip-body">
         <span class="cd-chip-short" style="color:${cd.textColor}">${cd.palShort || cd.short}</span>
-        <span class="cd-chip-who"${whoStyle}>${whoLabel}</span>
       </div>
       ${cdMins ? `<div class="cd-chip-timer">${cdMins}</div>` : ''}
     `;
