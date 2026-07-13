@@ -394,9 +394,9 @@
 
   /* CD PALETTE */
   .palette {
-    width: 218px;
+    width: 234px;
     flex-shrink: 0;
-    background: #0c0a08;
+    background: linear-gradient(180deg, #0d0b08 0%, #0b0906 100%);
     border-right: 1px solid #221c14;
     overflow-y: auto;
     display: flex;
@@ -406,12 +406,12 @@
   .palette-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 10px 8px;
+    gap: 7px;
+    padding: 11px 11px 9px;
     border-bottom: 1px solid #1c1710;
     position: sticky;
     top: 0;
-    background: #0c0a08;
+    background: #0d0b08;
     z-index: 1;
     flex-shrink: 0;
   }
@@ -420,24 +420,38 @@
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #5a4838;
-    font-weight: 700;
+    color: #7a6248;
+    font-weight: 800;
     padding: 0;
+    white-space: nowrap;
+  }
+
+  .palette-count {
+    font-size: 8.5px;
+    font-weight: 800;
+    color: #55432f;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #241e14;
+    border-radius: 8px;
+    padding: 1px 6px;
+    line-height: 1.5;
   }
 
   .palette-fade-btn {
+    margin-left: auto;
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 2px 7px;
-    border-radius: 3px;
+    border-radius: 4px;
     border: 1px solid #2e2620;
     background: transparent;
     color: #504038;
     cursor: pointer;
     transition: border-color 0.12s, color 0.12s, background 0.12s;
   }
+  .palette-fade-btn:hover { border-color: #4a3c2c; color: #8a7050; }
   .palette-fade-btn.fade-on {
     border-color: #705028;
     color: #c89030;
@@ -445,58 +459,86 @@
   }
 
   .palette-chips {
-    padding: 5px 0 8px;
+    padding: 7px 8px 10px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
 
   .cd-chip {
     display: flex;
-    align-items: stretch;
-    margin: 0 7px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,0.04);
+    align-items: center;
+    gap: 9px;
+    padding: 5px 8px 5px 6px;
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.045);
     user-select: none;
     cursor: grab;
     position: relative;
     overflow: hidden;
     transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
-    background: #111009;
+    background: linear-gradient(135deg, #14110c 0%, #100d09 100%);
   }
+  /* Faint wash of the spell colour bleeding in from the icon side */
   .cd-chip::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--chip-color, transparent);
-    opacity: 0;
+    background: linear-gradient(90deg, var(--chip-color, transparent) 0%, transparent 60%);
+    opacity: 0.06;
     transition: opacity 0.15s;
     pointer-events: none;
   }
-  .cd-chip:hover { border-color: rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
-  .cd-chip:hover::before { opacity: 0.08; }
+  .cd-chip:hover { border-color: rgba(255,255,255,0.12); box-shadow: 0 2px 12px rgba(0,0,0,0.45); }
+  .cd-chip:hover::before { opacity: 0.14; }
   .cd-chip:active { cursor: grabbing; }
   .cd-chip.reorder-dragging { opacity: 0.25; }
   .cd-chip.reorder-over { border-color: #a07828; border-style: dashed; }
   .cd-chip.placed-fade { opacity: 0.25; }
   .cd-chip.placed-fade:hover { opacity: 0.55; }
 
-  .cd-chip-bar {
-    width: 3px;
+  .cd-chip-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
     flex-shrink: 0;
-    border-radius: 4px 0 0 4px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.14);
+    overflow: hidden;
+    background: #0a0806;
+  }
+  .cd-chip-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(1.1);   /* crop the icon's baked-in dark border */
+    pointer-events: none;
+  }
+  .cd-chip-icon-fb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
   }
 
   .cd-chip-body {
     flex: 1;
-    padding: 6px 8px 5px;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
   }
 
   .cd-chip-short {
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     line-height: 1.2;
     display: block;
@@ -506,24 +548,28 @@
   }
 
   .cd-chip-who {
-    font-size: 9px;
+    font-size: 9.5px;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #3e3028;
-    margin-top: 2px;
+    letter-spacing: 0.02em;
+    color: #55432f;
+    opacity: 0.85;
     display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .cd-chip-timer {
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    padding: 0 9px 0 4px;
+    align-self: center;
     font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #3e3028;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #6a5540;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 5px;
+    padding: 2px 5px;
   }
 
   /* TIMELINE AREA */
@@ -1287,9 +1333,6 @@
     padding: 10px 0 4px !important;
   }
 
-  .palette-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #5a4838; font-weight: 700; padding: 0; }
-  .cd-chip-who { color: #4a3828; }
-  .cd-chip-timer { color: #4a3828; }
 
   .modal-box {
     border-radius: 10px !important;
@@ -2733,8 +2776,10 @@ function buildPalette() {
   const el = document.getElementById('palette');
   const boss = getBoss();
   const fadeActive = fadeModeByBoss[boss.id] || false;
+  const cds = getCDS();
   el.innerHTML = `<div class="palette-header">
-    <span class="palette-label">Active Raid Cooldowns</span>
+    <span class="palette-label">Raid Cooldowns</span>
+    <span class="palette-count">${cds.length}</span>
     <button id="fadeModeBtn" class="palette-fade-btn${fadeActive ? ' fade-on' : ''}" title="Fade raid cooldowns when placed in the timeline">◑ Fade</button>
   </div>
   <div class="palette-chips" id="paletteChips"></div>`;
@@ -2743,7 +2788,7 @@ function buildPalette() {
     isDirty = true;
     buildPalette();
   });
-  getCDS().forEach(cd => {
+  cds.forEach(cd => {
     const chip = document.createElement('div');
     chip.className = 'cd-chip';
     chip.dataset.cdId = cd.id;
@@ -2757,11 +2802,21 @@ function buildPalette() {
 
     chip.style.setProperty('--chip-color', cd.color);
     const cdMins = cd.cd > 0 ? (cd.cd % 60 === 0 ? `${cd.cd/60}m` : `${cd.cd}s`) : null;
+    // Spell icon (falls back to a coloured monogram block if no icon URL exists)
+    const iconUrl = getCdIconUrl(cd.id);
+    // Resolve the who-tag to the roster player's name + class colour when possible
+    const rosterP = DEFAULT_ROSTER.find(r => r.who === cd.who || r.name === cd.who);
+    const whoLabel = rosterP ? rosterP.name : cd.who;
+    const whoStyle = rosterP ? ` style="color:${rosterP.color}"` : '';
     chip.innerHTML = `
-      <div class="cd-chip-bar" style="background:${cd.color};box-shadow:0 0 6px ${cd.color}60"></div>
+      <div class="cd-chip-icon" style="box-shadow:0 0 9px -2px ${cd.color}">
+        ${iconUrl
+          ? `<img src="${iconUrl}" alt="" loading="lazy" draggable="false">`
+          : `<span class="cd-chip-icon-fb" style="color:${cd.textColor};background:${cd.color}1e">${(cd.short || '?').slice(0, 3)}</span>`}
+      </div>
       <div class="cd-chip-body">
         <span class="cd-chip-short" style="color:${cd.textColor}">${cd.palShort || cd.short}</span>
-        <span class="cd-chip-who">${cd.who}</span>
+        <span class="cd-chip-who"${whoStyle}>${whoLabel}</span>
       </div>
       ${cdMins ? `<div class="cd-chip-timer">${cdMins}</div>` : ''}
     `;
