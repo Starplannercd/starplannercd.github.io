@@ -648,10 +648,10 @@
     display: flex;
     align-items: center;
     padding: 4px 10px;
-    background: var(--bg2);
+    background: linear-gradient(135deg, #14110c 0%, #100d09 100%);
     border: 1px solid var(--border);
     border-right: none;
-    border-radius: 4px 0 0 4px;
+    border-radius: 7px 0 0 7px;
   }
   .ability-label-text { font-size: 13px; color: var(--text2); line-height: 1.3; font-weight: 500; letter-spacing: 0.01em; }
   .ability-marker { width: 3px; align-self: stretch; border-radius: 0; margin-right: 8px; flex-shrink: 0; }
@@ -662,7 +662,7 @@
     min-height: 40px;
     background: var(--bg3);
     border: 1px solid var(--border);
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 7px 7px 0;
   }
   .track-gridline {
     position: absolute;
@@ -683,26 +683,62 @@
     width: 75px !important;
     min-width: 75px;
     height: 57px;
-    border-radius: 4px;
+    border-radius: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 0;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     cursor: pointer;
     z-index: 3;
-    border: 2px solid transparent;
-    opacity: 0.9;
+    border: 1px solid transparent;
+    opacity: 0.94;
     letter-spacing: 0.04em;
-    transition: opacity 0.12s;
+    transition: opacity 0.12s, box-shadow 0.12s;
   }
   .placed-cd { overflow: hidden; position: absolute; }
-  .placed-cd:hover { opacity: 1; z-index: 10; transform: translateY(-50%) scale(1.06); }
-  .cd-icon-text { transition: opacity 0.12s; }
+  .placed-cd:hover { opacity: 1; z-index: 10; transform: translateY(-50%) scale(1.06); box-shadow: 0 3px 14px rgba(0,0,0,0.5); }
+
+  /* Icon + name stack inside a placed CD (mirrors the sidebar chips) */
+  .cd-icon-text {
+    transition: opacity 0.12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0 4px;
+  }
+  .pcd-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.16);
+    overflow: hidden;
+    background: #0a0806;
+    flex-shrink: 0;
+  }
+  .pcd-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(1.1);   /* crop the icon's baked-in dark border */
+    pointer-events: none;
+  }
+  .pcd-name {
+    line-height: 1;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 67px;
+  }
   .cd-offset-inner {
     position: absolute;
     inset: 0;
@@ -740,7 +776,7 @@
     pointer-events: none;
     z-index: 9999;
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: 7px;
     font-size: 11px;
     font-weight: 500;
     opacity: 0.9;
@@ -1407,7 +1443,7 @@
   [data-icon="pill-ghost"] .placed-cd { border-radius:28px; background:transparent !important; border:2px solid transparent; }
 
   /* flat — very subtle border, light fill */
-  [data-icon="flat"] .placed-cd { border-radius:6px; border:1px solid transparent; }
+  [data-icon="flat"] .placed-cd { border-radius:7px; border:1px solid transparent; }
 
   /* inset-shadow — filled with inner shadow effect via border */
   [data-icon="inset-shadow"] .placed-cd { border-radius:8px; border:1px solid transparent; border-bottom:3px solid transparent; }
@@ -3017,41 +3053,29 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       // Keep ec as default custom color for background/border — only text changes per WHO
       et = CUSTOM_ABILITY_COLORS[p.customAbility].textColor;
     }
-    // Compute bg/border/text per icon style
-    const _iconSt = 'flat';
-    const _noFill = ['ghost-square','ghost-rounded','bold','bold-rounded','underline'].includes(_iconSt);
-    const _solidFill = ['solid','solid-sharp'].includes(_iconSt);
-    const _tagLeft   = ['tag-left','stamp'].includes(_iconSt);
-    const _tagTop    = ['stamp'].includes(_iconSt);
-    const _tagBottom = _iconSt === 'tag-bottom';
-    const _tagTopOnly = _iconSt === 'tag-top';
-    let cdBg = _noFill ? 'transparent' : _solidFill ? ec : ec + '22';
-    let cdBorder, cdTextCol;
-    if (_tagLeft && !_tagTop)    { cdBorder = `border-left-color:${ec};`; }
-    else if (_tagTopOnly)        { cdBorder = `border-top-color:${ec};`; }
-    else if (_tagBottom)         { cdBorder = `border-bottom-color:${ec};`; }
-    else if (_iconSt === 'stamp'){ cdBorder = `border-left-color:${ec};border-top-color:${ec};`; }
-    else if (_iconSt === 'inset'){ cdBorder = `border-color:${ec}44;border-top-color:${ec};`; }
-    else if (_iconSt === 'double'){ cdBorder = `border-color:${ec};outline-color:${ec}44;`; }
-    else                          { cdBorder = `border-color:${ec};`; }
-    cdTextCol = _solidFill ? '#0e0c0a' : et;
-    el.style.cssText = `left:${left}px; background:${cdBg}; ${cdBorder} color:${cdTextCol};`;
+    // Chip-style fill: dark base with the spell colour washing in from the left,
+    // plus a subtle tinted border (matches the sidebar palette chips).
+    const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
+    el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
     const offsetStr = p.offset != null ? ` +${p.offset}s` : '';
     const displayWho = (cd.customType) ? (p.customWho || cd.who || 'ALL') : cd.who;
     el.title = `${cd.name} (${displayWho})${offsetStr} · Right-click to edit · Middle-click to remove`;
 
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
+    const _iconUrl = getCdIconUrl(cd.id);
+    let _label = cd.short;
     const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
       // Show CUST with WHO class color for text only, keep original icon colors
-      iconText.textContent = 'CUST';
+      _label = 'CUST';
       const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
       const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
       if (_whoPlayer) { iconText.style.color = _whoPlayer.color; }
       el.style.fontSize = '9px';
-    } else {
-      iconText.textContent = cd.short;
     }
+    iconText.innerHTML = `${_iconUrl
+        ? `<span class="pcd-icon" style="box-shadow:0 0 8px -2px ${ec}"><img src="${_iconUrl}" alt="" loading="lazy" draggable="false"></span>`
+        : ''}<span class="pcd-name">${_label}</span>`;
     el.appendChild(iconText);
     // Offset shown inside icon on hover
     if (_ab && _ab.hpAssign) { // Always show count/HP % on hover
