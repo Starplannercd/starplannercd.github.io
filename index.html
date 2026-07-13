@@ -2786,6 +2786,7 @@ const CD_ICON_URLS = {
   'xuen':       'https://wow.zamimg.com/images/wow/icons/large/ability_monk_summontigerstatue.jpg',
   'tranq':      'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'ftranq':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
+  'custom':     'https://wow.zamimg.com/images/wow/icons/large/inv_misc_note_01.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -3046,15 +3047,23 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     el.className = 'placed-cd';
     el.dataset.placedId = p.id;
     el.dataset.rowKey = rowKey;
-    // Get effective colour (custom ability overrides cd colour for text only, not background)
+    // Effective colour / icon / label. A custom assign with a chosen ability
+    // renders exactly like a native CD: that ability's spell icon, short name
+    // and class colour. A free-form custom gets a parchment-note icon + CUST.
     let ec = cd.color, et = cd.textColor;
-    if (cd.customType && p.customAbility && CUSTOM_ABILITY_COLORS[p.customAbility]) {
-      // Keep ec as default custom color for background/border — only text changes per WHO
-      et = CUSTOM_ABILITY_COLORS[p.customAbility].textColor;
+    let _iconUrl = getCdIconUrl(cd.id);
+    let _label = cd.short;
+    if (cd.customType) {
+      _label = 'CUST';
+      if (p.customAbility) {
+        const _ca = CUSTOM_ABILITY_COLORS[p.customAbility];
+        if (_ca) { ec = _ca.color; et = _ca.textColor; }
+        if (CUSTOM_ABILITY_SHORTS[p.customAbility]) _label = CUSTOM_ABILITY_SHORTS[p.customAbility];
+        if (CUSTOM_ABILITY_ICONS[p.customAbility]) _iconUrl = CUSTOM_ABILITY_ICONS[p.customAbility];
+      }
     }
     // Full-bleed spell icon as the pill itself, with a tinted border + soft glow.
-    // Falls back to the sidebar-chip gradient fill when there's no icon (custom).
-    const _iconUrl = getCdIconUrl(cd.id);
+    // Falls back to the sidebar-chip gradient fill when there's no icon at all.
     if (_iconUrl) {
       el.classList.add('pcd-img');
       el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; border-color:${ec}; color:${et}; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};`;
@@ -3064,18 +3073,16 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     const offsetStr = p.offset != null ? ` +${p.offset}s` : '';
     const displayWho = (cd.customType) ? (p.customWho || cd.who || 'ALL') : cd.who;
-    el.title = `${cd.name} (${displayWho})${offsetStr} · Right-click to edit · Middle-click to remove`;
+    const displayName = (cd.customType && p.customAbility) ? p.customAbility : cd.name;
+    el.title = `${displayName} (${displayWho})${offsetStr} · Right-click to edit · Middle-click to remove`;
 
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
-    let _label = cd.short;
-    const _cd = CD_POOL.find(c => c.id === p.cdId); if (_cd && _cd.customType) {
-      // Show CUST with WHO class color for text only, keep original icon colors
-      _label = 'CUST';
+    if (cd.customType) {
+      // Assignee's class colour on the label (as before)
       const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
       const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
       if (_whoPlayer) { iconText.style.color = _whoPlayer.color; }
-      el.style.fontSize = '9px';
     }
     iconText.innerHTML = `<span class="pcd-name">${_label}</span>`;
     el.appendChild(iconText);
@@ -3350,6 +3357,9 @@ const CUSTOM_ABILITY_COLORS = {
   'Spellsteal':           { color:'#69ccf0', textColor:'#a0dcff' }, // Mage blue
   'Stampeding Roar':      { color:'#ff7d0a', textColor:'#ffb566' }, // Druid orange
   'Thunderstorm':         { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
+  'Blessing of Protection':{ color:'#f58cba', textColor:'#ffccee' }, // Paladin pink
+  'Pain Suppression':     { color:'#c8c8c8', textColor:'#ffffff' }, // Priest white
+  'Guardian Spirit':      { color:'#c8c8c8', textColor:'#ffffff' }, // Priest white
 };
 
 // Short labels for custom abilities
@@ -3371,6 +3381,33 @@ const CUSTOM_ABILITY_SHORTS = {
   'Spellsteal':            'SS',
   'Stampeding Roar':       'SR',
   'Thunderstorm':          'TS',
+  'Blessing of Protection':'BoP',
+  'Pain Suppression':      'PS',
+  'Guardian Spirit':       'GS',
+};
+
+// Spell icons for custom abilities (timeline pills render these full-bleed)
+const CUSTOM_ABILITY_ICONS = {
+  'Bloodlust':             'https://wow.zamimg.com/images/wow/icons/large/spell_nature_bloodlust.jpg',
+  'Windwalk Totem':        'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_windwalktotem.jpg',
+  'Mass Spell Reflection': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shieldreflection.jpg',
+  'Capacitor Totem':       'https://wow.zamimg.com/images/wow/icons/large/spell_nature_brilliance.jpg',
+  'Vigilance':             'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_vigilance.jpg',
+  'Hand of Sacrifice':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofsacrifice.jpg',
+  'Hand of Freedom':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofvalor.jpg',
+  'Blessing of Protection':'https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofprotection.jpg',
+  'Pain Suppression':      'https://wow.zamimg.com/images/wow/icons/large/spell_holy_painsupression.jpg',
+  'Guardian Spirit':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg',
+  'Grounding Totem':       'https://wow.zamimg.com/images/wow/icons/large/spell_nature_groundingtotem.jpg',
+  'Tremor Totem':          'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tremortotem.jpg',
+  'Fist of Justice':       'https://wow.zamimg.com/images/wow/icons/large/spell_holy_fistofjustice.jpg',
+  'Ring of Peace':         'https://wow.zamimg.com/images/wow/icons/large/spell_monk_ringofpeace.jpg',
+  'Kidney Shot':           'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_kidneyshot.jpg',
+  'Leg Sweep':             'https://wow.zamimg.com/images/wow/icons/large/ability_monk_legsweep.jpg',
+  'Shadowfury':            'https://wow.zamimg.com/images/wow/icons/large/ability_warlock_shadowfurytga.jpg',
+  'Spellsteal':            'https://wow.zamimg.com/images/wow/icons/large/spell_arcane_arcane02.jpg',
+  'Stampeding Roar':       'https://wow.zamimg.com/images/wow/icons/large/spell_druid_stampedingroar_cat.jpg',
+  'Thunderstorm':          'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_thunderstorm.jpg',
 };
 
 // Spell IDs for custom abilities (for Foji export)
