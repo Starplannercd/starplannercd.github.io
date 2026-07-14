@@ -7192,6 +7192,12 @@ function showNewPlanPicker() {
   const selectedOut = new Set();       // who values subbed out
   const subIns = {};                    // who -> specName (sub-in spec)
   let step = 1;
+  let sourceId = FULL_RAID_ID;         // which plan the new one copies from
+
+  function getSourceName() {
+    if (sourceId === FULL_RAID_ID) return 'Full Raid';
+    return getPlans()[sourceId]?.name || 'Full Raid';
+  }
 
   const SPEC_GROUPS = {
     'Healers':  ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
@@ -7225,6 +7231,11 @@ function showNewPlanPicker() {
     const anySelected = selectedOut.size > 0;
     const selectedNames = [...selectedOut].map(who => DEFAULT_ROSTER.find(r => r.who === who)?.name || who).join(', ');
 
+    // "Start from" — copy the timeline of any existing plan, not just Full Raid
+    const planEntries = Object.values(getPlans()).sort((a,b) => a.savedAt - b.savedAt);
+    const sourceOptsHtml = `<option value="${FULL_RAID_ID}" ${sourceId===FULL_RAID_ID?'selected':''}>Full Raid</option>` +
+      planEntries.map(p => `<option value="${p.id}" ${sourceId===p.id?'selected':''}>${p.name}</option>`).join('');
+
     box.innerHTML = `
       <div class="np-head">
         <div class="np-title">New Plan</div>
@@ -7232,17 +7243,24 @@ function showNewPlanPicker() {
         <button id="npClose" class="np-close">×</button>
       </div>
       <div class="np-body">
+        <div class="np-role" style="margin:0 0 6px;">Start from</div>
+        <select id="npSource" class="np-select" style="margin-bottom:6px;">${sourceOptsHtml}</select>
+        <div style="font-size:10px;color:#6a5848;margin-bottom:15px;line-height:1.4;">The new plan copies this plan's timeline, then applies your subs on top.</div>
         <div class="np-hint">Select players who are <b>subbing out</b> — pick as many as you need.</div>
         ${playersHtml}
       </div>
       <div class="np-foot">
-        <div class="np-summary">${anySelected?'Subbing out: <b>'+selectedNames+'</b>':'Nothing selected — you can still create a plain copy of Full Raid.'}</div>
+        <div class="np-summary">${anySelected?'Subbing out: <b>'+selectedNames+'</b>':'Nothing selected — you can still create a plain copy of '+getSourceName()+'.'}</div>
         <div class="np-actions">
-          <button id="npNext" class="np-btn-primary">${anySelected?'Next →':'Create Copy of Full Raid'}</button>
+          <button id="npNext" class="np-btn-primary">${anySelected?'Next →':'Create Copy of '+getSourceName()}</button>
           <button id="npCancel" class="np-btn-ghost">Cancel</button>
         </div>
       </div>`;
 
+    box.querySelector('#npSource')?.addEventListener('change', e => {
+      sourceId = e.target.value;
+      renderStep1();
+    });
     box.querySelectorAll('.sub-player-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const who = btn.dataset.who;
@@ -7254,7 +7272,7 @@ function showNewPlanPicker() {
     box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npNext')?.addEventListener('click', () => {
-      if (selectedOut.size === 0) { createPlan('Copy of Full Raid', [], {}); return; }
+      if (selectedOut.size === 0) { createPlan('Copy of ' + getSourceName(), [], {}); return; }
       step = 2; renderStep2();
     });
   }
@@ -7320,11 +7338,35 @@ function showNewPlanPicker() {
     });
   }
 
-  function createPlan(name, subbedWhos, subInMap) {
+  function getSourceSnapshot() {
+    if (sourceId !== FULL_RAID_ID) {
+      const src = getPlans()[sourceId];
+      if (src) {
+        // A plan's placedCDs may be a plain map OR a nested full snapshot
+        // ({placedCDs, activeSetIds, ...}) depending on how it was last saved.
+        const nested = src.placedCDs && src.placedCDs.placedCDs ? src.placedCDs : null;
+        return {
+          placedCDs:    (nested ? nested.placedCDs : src.placedCDs) || {},
+          activeSetIds: (nested ? nested.activeSetIds : src.activeSetIds) || [...activeSetIds],
+          cdWho:        (nested ? nested.cdWho : src.cdWho) || {},
+          paletteOrder: (nested ? nested.paletteOrder : src.paletteOrder) || {},
+        };
+      }
+    }
     const fullSnap = getFullRaidSnapshot();
-    const newPlacedCDs = JSON.parse(JSON.stringify(fullSnap.placedCDs || fullSnap || {}));
-    let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
-    const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+    return {
+      placedCDs:    fullSnap.placedCDs || fullSnap || {},
+      activeSetIds: fullSnap.activeSetIds || [...activeSetIds],
+      cdWho:        fullSnap.cdWho || {},
+      paletteOrder: fullSnap.paletteOrder || {},
+    };
+  }
+
+  function createPlan(name, subbedWhos, subInMap) {
+    const srcSnap = getSourceSnapshot();
+    const newPlacedCDs = JSON.parse(JSON.stringify(srcSnap.placedCDs));
+    let newActiveSetIds = [...srcSnap.activeSetIds];
+    const newCdWho = JSON.parse(JSON.stringify(srcSnap.cdWho));
 
     // Remove subbed-out CDs
     const removedCdIds = new Set();
@@ -7363,8 +7405,10 @@ function showNewPlanPicker() {
     Object.assign(placedCDs, newPlacedCDs);
     activeSetIds = new Set(newActiveSetIds);
     CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
+    paletteOrder = JSON.parse(JSON.stringify(srcSnap.paletteOrder));
 
-    const id = saveCurrentAsPlan(name, null, null, subbedWhos);
+    const subsArr = Object.entries(subInMap).filter(([, s]) => s).map(([who, spec]) => ({ who, spec }));
+    const id = saveCurrentAsPlan(name, subsArr, subbedWhos);
     setActivePlanId(id);
     buildPalette();
     renderTimeline();
