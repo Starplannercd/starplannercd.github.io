@@ -1485,7 +1485,7 @@ const CD_POOL = [
   { id:'dh',    name:'Divine Hymn',          short:'Hymn',  cd:180, dur:8,  color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:false },
   { id:'dem',   name:'Demoralizing Banner',  short:'Demo',cd:180,dur:15, color:'#8b5e3c', textColor:'#d4956a', who:'DPSWARR1',  core:true  },
   { id:'devo1', name:'Holy Devotion Aura',   short:'HDevo', cd:180, dur:6,  color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:true  },
-  { id:'devo2', name:'Prot Devotion Aura',   short:'PDevo', cd:180, dur:6,  color:'#a83888', textColor:'#ff99cc', who:'PROTPALA1', core:true  },
+  { id:'devo2', name:'Prot Devotion Aura',   short:'PDevo', pillShort:'Prot', cd:180, dur:6,  color:'#a83888', textColor:'#ff99cc', who:'PROTPALA1', core:true  },
   { id:'ah',    name:'Avert Harm',           short:'Avert',cd:180,  dur:6,  color:'#00c97a', textColor:'#00ff96', who:'BREWMAST1', core:false },
   { id:'rc',    name:'Rallying Cry',         short:'Rally',     cd:180, dur:10, color:'#7a4f2e', textColor:'#c89060', who:'DPSWARR1',  core:true  },
   { id:'ve',    name:'Vampiric Embrace',     short:'VE',        cd:180,   dur:15, color:'#6840b8', textColor:'#d0a8ff', who:'SPRIEST1',  core:true  },
@@ -1500,7 +1500,7 @@ const CD_POOL = [
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
   { id:'xuen',      name:'Invoke Xuen',   short:'Xuen',  cd:180, dur:45,color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'revival',   name:'Revival',       short:'Revival',cd:180,dur:0, color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
-  { id:'devo3',    name:'Ret Devotion Aura',    short:'RDevo', cd:180, dur:6,  color:'#c85890', textColor:'#ffb8d8', who:'RETPALA1',  core:false },
+  { id:'devo3',    name:'Ret Devotion Aura',    short:'RDevo', pillShort:'Ret', cd:180, dur:6,  color:'#c85890', textColor:'#ffb8d8', who:'RETPALA1',  core:false },
   { id:'ascend',   name:'Ascendance',           short:'Asc',   cd:180, dur:15, color:'#0070de', textColor:'#88c8ff', who:'ELE1',      core:false },
   { id:'slt',      name:'Spirit Link Totem',    short:'SLT',   cd:180, dur:6,  color:'#0070de', textColor:'#88c8ff', who:'ELE1',      core:false },
   { id:'goak',     name:'Guardian of Ancient Kings', short:'GoAK', cd:180, dur:10, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
@@ -2975,7 +2975,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     // and class colour. A free-form custom gets a parchment-note icon + CUST.
     let ec = cd.color, et = cd.textColor;
     let _iconUrl = getCdIconUrl(cd.id);
-    let _label = cd.short;
+    let _label = cd.pillShort || cd.short;   // pillShort = timeline-only label override
     if (cd.customType) {
       _label = 'CUST';
       if (p.customAbility) {
@@ -2993,7 +2993,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       // background-clip:padding-box stops the icon art from bleeding out past the
       // border's anti-aliased inner edge (showed as a thin bright line at the
       // bottom middle of the pill).
-      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; background-clip:padding-box; color:${et}; border-color:#060402; border-radius:7px; box-shadow:0 0 13px -2px ${ec}, 0 2px 6px rgba(0,0,0,0.45);`;
+      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; background-clip:padding-box; color:${et}; border-color:#060402; border-radius:7px; box-shadow:0 0 12px -2px ${ec}, 0 2px 6px rgba(0,0,0,0.45);`;
     } else {
       const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
       el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
