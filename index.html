@@ -1493,6 +1493,7 @@ const CD_POOL = [
   { id:'amz',   name:'Anti-Magic Zone',      short:'AMZ',       cd:180, dur:10, color:'#c41e3a', textColor:'#ff6680', who:'UHDK1',      core:false },
   { id:'smoke',     name:'Smoke Bomb', short:'SB',  cd:180, dur:15, color:'#c8a800', textColor:'#ffe040', who:'ROGUE1', core:false },
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
+  { id:'hstone',    name:'Healthstone', short:'HS', cd:0,   dur:15, color:'#40c060', textColor:'#88e8a0', who:'ALL',    core:false },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
   { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',    core:false },
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
@@ -2706,6 +2707,7 @@ const CD_ICON_URLS = {
   'tranq':      'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'ftranq':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'custom':     'https://wow.zamimg.com/images/wow/icons/large/inv_misc_note_01.jpg',
+  'hstone':     'https://wow.zamimg.com/images/wow/icons/large/warlock_-healthstone.jpg',
 };
 
 function getCdIconUrl(cdId) {
@@ -3842,22 +3844,23 @@ function buildFojiExport() {
             _castNum = getCastNumber(p.customBossAbility);
           }
           const isPersonals = p.cdId === 'personals';
+          const isHstone = p.cdId === 'hstone';
           const isDem = p.cdId === 'dem';
           const isXuen = p.cdId === 'xuen';
           const offset = p.offset != null ? p.offset : 0;
           const _exportOffset = ab.hpAssign ? (ab.hpOffset != null ? ab.hpOffset : 1) : offset;
           const spellId = isCustomPlacement
             ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
-            : isXuen ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
+            : (isXuen || isHstone) ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
           const baseWho = _whoRemap[_whoRaw] || _whoRaw;
-          const ttsText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
-          const displayText = isPersonals ? 'Use Personals' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
-          const iconId = isPersonals ? '134951' : customIconId;
+          const ttsText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
+          const displayText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
+          const iconId = (isPersonals || isHstone) ? '134951' : customIconId;
           // Expand multi-target assignments into one line per player
-          const _targetWhos = (isPersonals || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
+          const _targetWhos = (isPersonals || isHstone || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
             ? p.targetWhos.map(w => _whoRemap[w] || w)
             : [baseWho];
           _targetWhos.forEach(who => {
@@ -3932,7 +3935,7 @@ function showManageModal() {
   overlay.className = 'modal-overlay';
 
   // Ordered flat list — similar CDs grouped together
-  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','pwb2','ss','ss2','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','custom','tranq','xuen','revival'];
+  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','pwb2','ss','ss2','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','hstone','custom','tranq','xuen','revival'];
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
@@ -4707,7 +4710,7 @@ const CD_SPEC_ICON = {
   rc:     'classicon_warrior',          // Rallying Cry → Warrior (base class)
 };
 
-const NO_SPEC_ICON = new Set(['personals']);
+const NO_SPEC_ICON = new Set(['personals', 'hstone']);
 function getSpecIconUrl(cd) {
   if (NO_SPEC_ICON.has(cd.id)) return null;
   if (CD_SPEC_ICON[cd.id]) return SPEC_ICON_CDN + CD_SPEC_ICON[cd.id] + '.jpg';
@@ -5357,6 +5360,8 @@ function parseFojiImport(raw) {
 
     // Special cases
     if (spellId === 'nil' && tts === 'Personals') cdId = 'personals';
+    if (spellId === 'nil' && tts === 'Use Personals') cdId = 'personals';
+    if (spellId === 'nil' && tts === 'Healthstone') cdId = 'hstone';
     if (spellId === '114203') cdId = 'dem';
 
     if (!cdId) {
