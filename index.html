@@ -1493,7 +1493,7 @@ const CD_POOL = [
   { id:'amz',   name:'Anti-Magic Zone',      short:'AMZ',       cd:180, dur:10, color:'#c41e3a', textColor:'#ff6680', who:'UHDK1',      core:false },
   { id:'smoke',     name:'Smoke Bomb', short:'SB',  cd:180, dur:15, color:'#c8a800', textColor:'#ffe040', who:'ROGUE1', core:false },
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
-  { id:'hstone',    name:'Healthstone', short:'HS', cd:0,   dur:15, color:'#40c060', textColor:'#88e8a0', who:'ALL',    core:false },
+  { id:'hstone',    name:'Healthstone', short:'HS', cd:0,   dur:15, color:'#40c060', textColor:'#88e8a0', who:'ALL',    core:true  },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
   { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',    core:false },
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
@@ -6917,9 +6917,13 @@ function applyTimelineSnapshot(snapshot) {
   const pCDs = snapshot.placedCDs || snapshot; // backwards compat
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
   Object.assign(placedCDs, JSON.parse(JSON.stringify(pCDs)));
-  // Restore activeSetIds
+  // Restore activeSetIds. Raid-wide utilities (Personals, Healthstone, Custom)
+  // aren't tied to any player, so they stay available even when the plan was
+  // saved before they existed. (Player CDs are NOT merged back — a sub plan
+  // legitimately removes the subbed-out player's CDs.)
   if (snapshot.activeSetIds) {
-    activeSetIds = new Set(snapshot.activeSetIds);
+    const utilIds = CD_POOL.filter(c => c.who === 'ALL').map(c => c.id);
+    activeSetIds = new Set([...snapshot.activeSetIds, ...utilIds]);
   }
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
@@ -7371,6 +7375,8 @@ function showNewPlanPicker() {
     const srcSnap = getSourceSnapshot();
     const newPlacedCDs = JSON.parse(JSON.stringify(srcSnap.placedCDs));
     let newActiveSetIds = [...srcSnap.activeSetIds];
+    // Raid-wide utilities are always available, even if the source plan predates them
+    CD_POOL.filter(c => c.who === 'ALL').forEach(c => { if (!newActiveSetIds.includes(c.id)) newActiveSetIds.push(c.id); });
     const newCdWho = JSON.parse(JSON.stringify(srcSnap.cdWho));
 
     // Remove subbed-out CDs
