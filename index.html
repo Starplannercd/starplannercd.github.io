@@ -144,6 +144,27 @@
     letter-spacing: 0.03em;
   }
 
+  /* Timeline icon-style picker */
+  #pillStylePicker {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 6px; border-left: 1px solid #2e2620; margin-left: 4px;
+    flex-shrink: 0;
+  }
+  #pillStylePicker .psp-tag {
+    font-size: 9px; color: #5a4838; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  }
+  #pillStylePrev, #pillStyleNext {
+    width: 18px; height: 18px; background: #14110c; border: 1px solid #2e2620;
+    border-radius: 5px; color: #8a7060; font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  #pillStylePrev:hover, #pillStyleNext:hover { border-color: #c83a20; color: #c83a20; }
+  #pillStyleLabel {
+    font-size: 9px; color: #8a7060; white-space: nowrap; min-width: 64px; text-align: center;
+    letter-spacing: 0.06em;
+  }
+
   /* MAIN LAYOUT */
   .main { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
   .main-top { display: flex; flex: 1; overflow: hidden; min-height: 0; }
@@ -1454,6 +1475,12 @@
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
+    <div id="pillStylePicker" title="Timeline icon style">
+      <span class="psp-tag">Icons</span>
+      <button id="pillStylePrev">&#8249;</button>
+      <span id="pillStyleLabel">Classic</span>
+      <button id="pillStyleNext">&#8250;</button>
+    </div>
   </div>
   <div class="main">
     <div class="main-top">
@@ -2714,6 +2741,41 @@ function getCdIconUrl(cdId) {
   return CD_ICON_URLS[cdId] || null;
 }
 
+// ---- Timeline pill styles — cycle with the "Icons" picker in the topbar ----
+// Each style returns the border/glow CSS for an icon pill given the spell colour.
+// `bg` optionally overrides the background-size (e.g. over-scan to crop the
+// icon's baked-in dark frame).
+const PILL_STYLES = [
+  { id:'classic',   label:'Classic',
+    css: ec => `border-color:${ec}; border-radius:7px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};` },
+  { id:'darkframe', label:'Dark Frame',
+    css: ec => `border-color:#060402; border-radius:7px; box-shadow:0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
+  { id:'muted',     label:'Muted',
+    css: ec => `border-color:${ec}88; border-radius:7px; box-shadow:0 0 9px -4px ${ec}, 0 2px 5px rgba(0,0,0,0.4);` },
+  { id:'bold',      label:'Bold',
+    css: ec => `border-color:${ec}; border-width:2px; border-radius:8px; box-shadow:0 0 12px -3px ${ec};` },
+  { id:'glow',      label:'Glow',
+    css: ec => `border-color:transparent; border-radius:8px; box-shadow:0 0 14px -2px ${ec}, 0 2px 8px rgba(0,0,0,0.5);` },
+  { id:'tag',       label:'Bottom Tag',
+    css: ec => `border-color:#0a0806; border-bottom:3px solid ${ec}; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.45);` },
+  { id:'rounded',   label:'Rounded',
+    css: ec => `border-color:${ec}; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};` },
+  { id:'cropped',   label:'Cropped', bg:'116% auto',
+    css: ec => `border-color:${ec}cc; border-radius:7px; box-shadow:0 0 9px -3px ${ec};` },
+];
+let pillStyleIdx = 0;
+try { const _s = parseInt(localStorage.getItem('rcd_pill_style')); if (!isNaN(_s) && _s >= 0 && _s < PILL_STYLES.length) pillStyleIdx = _s; } catch(e) {}
+
+function applyPillStyle() {
+  const lbl = document.getElementById('pillStyleLabel');
+  if (lbl) lbl.textContent = (PILL_STYLES[pillStyleIdx] || PILL_STYLES[0]).label;
+  try { localStorage.setItem('rcd_pill_style', pillStyleIdx); } catch(e) {}
+  renderTimeline();
+}
+document.getElementById('pillStylePrev')?.addEventListener('click', () => { pillStyleIdx = (pillStyleIdx - 1 + PILL_STYLES.length) % PILL_STYLES.length; applyPillStyle(); });
+document.getElementById('pillStyleNext')?.addEventListener('click', () => { pillStyleIdx = (pillStyleIdx + 1) % PILL_STYLES.length; applyPillStyle(); });
+(function() { const lbl = document.getElementById('pillStyleLabel'); if (lbl) lbl.textContent = (PILL_STYLES[pillStyleIdx] || PILL_STYLES[0]).label; })();
+
 // ---- Build palette ----
 let paletteReorderDrag = null;
 
@@ -2987,7 +3049,8 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     // Falls back to the sidebar-chip gradient fill when there's no icon at all.
     if (_iconUrl) {
       el.classList.add('pcd-img');
-      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; border-color:${ec}; color:${et}; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};`;
+      const _ps = PILL_STYLES[pillStyleIdx] || PILL_STYLES[0];
+      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/${_ps.bg || 'cover'} no-repeat #0a0806; color:${et}; ${_ps.css(ec)}`;
     } else {
       const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
       el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
