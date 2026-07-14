@@ -5292,6 +5292,7 @@ function showImportFojiModal() {
       status.style.color = '#48a868';
       status.textContent = `Imported ${count} assignment${count !== 1 ? 's' : ''} successfully.`;
       renderTimeline();
+      buildPalette();
       isDirty = true;
       setTimeout(() => overlay.remove(), 800);
     } catch(e) {
@@ -5345,7 +5346,8 @@ function parseFojiImport(raw) {
     if (!rowMatch) return;
 
     const { boss, si, ai } = rowMatch;
-    const rowKey = `${si}-${ai}`;
+    // Row keys everywhere else in the app are si-<encoded ability name>, NOT si-<index>.
+    const rowKey = `${si}-${encodeURIComponent(rowMatch.ab.name)}`;
     if (!placedCDs[boss.id]) placedCDs[boss.id] = {};
     if (!placedCDs[boss.id][rowKey]) placedCDs[boss.id][rowKey] = [];
 
