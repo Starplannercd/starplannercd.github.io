@@ -270,6 +270,7 @@
   .bottom-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg2); }
   .bottom-content {
     flex: 1;
+    min-height: 0;
     overflow: auto;
     padding: 12px 18px;
   }
@@ -5731,6 +5732,10 @@ window.renderTimeline = function() {
     panel.style.transition = 'height 0.2s ease';
     panel.style.height = (v ? COLLAPSED_H : DEFAULT_H) + 'px';
     panel.style.minHeight = (v ? COLLAPSED_H : 110) + 'px';
+    // Hide the content when collapsed — otherwise its padding keeps a minimum
+    // height that pushes the bar below the panel's clipped edge.
+    const content = document.getElementById('bottomContent');
+    if (content) content.style.display = v ? 'none' : 'block';
     bar.textContent = (v ? '▲ ' : '▼ ') + 'Sheet Preview';
   }
 
