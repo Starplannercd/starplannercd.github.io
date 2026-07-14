@@ -5294,6 +5294,7 @@ function showImportFojiModal() {
       renderTimeline();
       buildPalette();
       isDirty = true;
+      if (typeof scheduleAutoSave === 'function') scheduleAutoSave();
       setTimeout(() => overlay.remove(), 800);
     } catch(e) {
       status.style.color = '#c84848';
@@ -5333,6 +5334,8 @@ function parseFojiImport(raw) {
     if (spellId) spellToCd['custom:' + spellId] = name;
   });
 
+  // Phase 1: parse every line into a resolved placement (don't touch state yet)
+  const parsed = [];   // { bossId, rowKey, cdId, placement }
   lines.forEach(line => {
     const parts = line.split('/');
     if (parts.length < 9) return;
@@ -5345,11 +5348,9 @@ function parseFojiImport(raw) {
     const rowMatch = matches.find(m => getCastNumber(m.ab.name) === castNum) || matches[0];
     if (!rowMatch) return;
 
-    const { boss, si, ai } = rowMatch;
+    const { boss, si } = rowMatch;
     // Row keys everywhere else in the app are si-<encoded ability name>, NOT si-<index>.
     const rowKey = `${si}-${encodeURIComponent(rowMatch.ab.name)}`;
-    if (!placedCDs[boss.id]) placedCDs[boss.id] = {};
-    if (!placedCDs[boss.id][rowKey]) placedCDs[boss.id][rowKey] = [];
 
     // Find cdId from spellId
     let cdId = spellId && spellId !== 'nil' ? spellToCd[spellId] : null;
@@ -5384,9 +5385,28 @@ function parseFojiImport(raw) {
       if (customAbEntry) placement.customAbility = customAbEntry[0];
     }
 
-    // Avoid duplicate non-custom CDs on same row
-    if (cdId !== 'custom' && placedCDs[boss.id][rowKey].some(p => p.cdId === cdId)) return;
-    placedCDs[boss.id][rowKey].push(placement);
+    parsed.push({ bossId: boss.id, rowKey, cdId, placement });
+  });
+
+  if (!parsed.length) throw new Error('No recognizable assignments in that string.');
+
+  // Phase 2: the import replaces the plan for every boss it mentions —
+  // clear those bosses' timelines first so stale placements don't linger.
+  const bossIds = new Set(parsed.map(x => x.bossId));
+  bossIds.forEach(bid => { placedCDs[bid] = {}; });
+
+  // Make every imported CD visible: activate it in Manage CDs and clear any
+  // per-boss disable, otherwise its placements would render invisible.
+  parsed.forEach(({ bossId, cdId }) => {
+    activeSetIds.add(cdId);
+    if (bossDisabledIds[bossId]) bossDisabledIds[bossId].delete(cdId);
+  });
+
+  // Phase 3: place everything (skip duplicate non-custom CDs on the same row)
+  parsed.forEach(({ bossId, rowKey, cdId, placement }) => {
+    if (!placedCDs[bossId][rowKey]) placedCDs[bossId][rowKey] = [];
+    if (cdId !== 'custom' && placedCDs[bossId][rowKey].some(p => p.cdId === cdId)) return;
+    placedCDs[bossId][rowKey].push(placement);
     count++;
   });
 
