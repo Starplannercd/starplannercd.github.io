@@ -207,19 +207,21 @@
 
   .expand-fullbar {
     width: 100%;
-    height: 14px;
+    height: 18px;
     background: var(--bg3);
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: ns-resize;
     font-size: 9px;
+    font-weight: 700;
     color: var(--text3);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     user-select: none;
     flex-shrink: 0;
+    margin-top: auto;
     transition: background 0.15s, color 0.15s;
   }
   .expand-fullbar:hover { background: var(--border); color: var(--accent); }
@@ -1463,13 +1465,8 @@
     </div>
     <div class="bottom-panel" id="bottomPanel">
       <div class="resize-handle" id="resizeHandle"></div>
-      <!-- Option A: full-width bar -->
-      <div class="expand-fullbar" id="expandFullbar">▲ Expand</div>
-      <div class="bottom-tabs">
-        <div class="bottom-tab active" data-tab="sheet">Sheet Preview</div>
-        <div class="bottom-tab" data-tab="notes"><span id="notesTabLabel">Notes</span></div>
-      </div>
       <div class="bottom-content" id="bottomContent"></div>
+      <div class="expand-fullbar" id="expandFullbar">▲ Sheet Preview</div>
     </div>
   </div>
 </div>
@@ -4966,15 +4963,8 @@ function renderBottomPanel() {
   else if (activeTab === 'notes') renderNotes(content);
 }
 
-// Wire tabs
-document.querySelectorAll('.bottom-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    activeTab = tab.dataset.tab;
-    renderBottomPanel();
-  });
-});
+// (Tabs removed — the bottom panel is Sheet Preview only; the expand bar at the
+// very bottom toggles it.)
 
 // --- Summary tab ---
 let summaryView = 'compact';
@@ -5731,7 +5721,7 @@ window.renderTimeline = function() {
   const bar = document.getElementById('expandFullbar');
   if (!panel || !bar) return;
   const DEFAULT_H = 320;
-  const COLLAPSED_H = 38; // just the bar itself
+  const COLLAPSED_H = 20; // just the bar itself
   const COLLAPSE_THRESHOLD = 60; // drag down this many px to collapse
   let dragStartY = null, dragStartH = null, isDragging = false;
   let isCollapsed = true;
@@ -5741,7 +5731,7 @@ window.renderTimeline = function() {
     panel.style.transition = 'height 0.2s ease';
     panel.style.height = (v ? COLLAPSED_H : DEFAULT_H) + 'px';
     panel.style.minHeight = (v ? COLLAPSED_H : 110) + 'px';
-    bar.textContent = v ? '▲ Expand' : '▼ Collapse';
+    bar.textContent = (v ? '▲ ' : '▼ ') + 'Sheet Preview';
   }
 
   bar.style.cursor = 'ns-resize';
