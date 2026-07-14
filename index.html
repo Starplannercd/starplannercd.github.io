@@ -3054,7 +3054,10 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     if (_iconUrl) {
       el.classList.add('pcd-img');
       const _ps = PILL_STYLES[pillStyleIdx] || PILL_STYLES[0];
-      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/${_ps.bg || 'cover'} no-repeat #0a0806; color:${et}; ${_ps.css(ec)}`;
+      // background-clip:padding-box stops the icon art from bleeding out past the
+      // border's anti-aliased inner edge (showed as a thin bright line at the
+      // bottom middle of the pill).
+      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/${_ps.bg || 'cover'} no-repeat #0a0806; background-clip:padding-box; color:${et}; ${_ps.css(ec)}`;
     } else {
       const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
       el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
