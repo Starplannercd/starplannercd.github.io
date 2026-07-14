@@ -2746,30 +2746,34 @@ function getCdIconUrl(cdId) {
 // `bg` optionally overrides the background-size (e.g. over-scan to crop the
 // icon's baked-in dark frame).
 const PILL_STYLES = [
-  { id:'classic',   label:'Classic',
-    css: ec => `border-color:${ec}; border-radius:7px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};` },
   { id:'darkframe', label:'Dark Frame',
     css: ec => `border-color:#060402; border-radius:7px; box-shadow:0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
-  { id:'muted',     label:'Muted',
-    css: ec => `border-color:${ec}88; border-radius:7px; box-shadow:0 0 9px -4px ${ec}, 0 2px 5px rgba(0,0,0,0.4);` },
-  { id:'bold',      label:'Bold',
-    css: ec => `border-color:${ec}; border-width:2px; border-radius:8px; box-shadow:0 0 12px -3px ${ec};` },
-  { id:'glow',      label:'Glow',
-    css: ec => `border-color:transparent; border-radius:8px; box-shadow:0 0 14px -2px ${ec}, 0 2px 8px rgba(0,0,0,0.5);` },
-  { id:'tag',       label:'Bottom Tag',
-    css: ec => `border-color:#0a0806; border-bottom:3px solid ${ec}; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.45);` },
-  { id:'rounded',   label:'Rounded',
-    css: ec => `border-color:${ec}; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), 0 0 10px -3px ${ec};` },
-  { id:'cropped',   label:'Cropped', bg:'116% auto',
-    css: ec => `border-color:${ec}cc; border-radius:7px; box-shadow:0 0 9px -3px ${ec};` },
+  { id:'thick', label:'Thick Frame',
+    css: ec => `border-color:#060402; border-width:2px; border-radius:8px; box-shadow:0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
+  { id:'strongglow', label:'Strong Glow',
+    css: ec => `border-color:#060402; border-radius:7px; box-shadow:0 0 16px -1px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
+  { id:'noglow', label:'No Glow',
+    css: ec => `border-color:#060402; border-radius:7px; box-shadow:0 3px 8px rgba(0,0,0,0.55);` },
+  { id:'innerlight', label:'Inner Light',
+    css: ec => `border-color:#060402; border-radius:7px; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.13), 0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
+  { id:'underlit', label:'Underlit',
+    css: ec => `border-color:#060402; border-radius:7px; box-shadow:0 5px 13px -4px ${ec}, 0 2px 6px rgba(0,0,0,0.4);` },
+  { id:'darkrounded', label:'Dark Rounded',
+    css: ec => `border-color:#060402; border-radius:13px; box-shadow:0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
+  { id:'darksharp', label:'Dark Sharp',
+    css: ec => `border-color:#060402; border-radius:3px; box-shadow:0 0 11px -3px ${ec}, 0 2px 6px rgba(0,0,0,0.45);` },
 ];
 let pillStyleIdx = 0;
-try { const _s = parseInt(localStorage.getItem('rcd_pill_style')); if (!isNaN(_s) && _s >= 0 && _s < PILL_STYLES.length) pillStyleIdx = _s; } catch(e) {}
+try {
+  const _s = localStorage.getItem('rcd_pill_style');
+  const _byId = PILL_STYLES.findIndex(p => p.id === _s);
+  if (_byId >= 0) pillStyleIdx = _byId;
+} catch(e) {}
 
 function applyPillStyle() {
   const lbl = document.getElementById('pillStyleLabel');
   if (lbl) lbl.textContent = (PILL_STYLES[pillStyleIdx] || PILL_STYLES[0]).label;
-  try { localStorage.setItem('rcd_pill_style', pillStyleIdx); } catch(e) {}
+  try { localStorage.setItem('rcd_pill_style', PILL_STYLES[pillStyleIdx].id); } catch(e) {}
   renderTimeline();
 }
 document.getElementById('pillStylePrev')?.addEventListener('click', () => { pillStyleIdx = (pillStyleIdx - 1 + PILL_STYLES.length) % PILL_STYLES.length; applyPillStyle(); });
