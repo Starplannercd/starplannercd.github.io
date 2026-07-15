@@ -101,66 +101,61 @@
     cursor: pointer;
     user-select: none;
   }
-  .boss-head:hover { background: var(--bg3); }
-  .boss-num {
-    font-family: 'Cinzel', serif;
-    color: var(--text3);
-    font-size: 14px;
-    width: 24px;
-    text-align: right;
-  }
-  .boss-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; flex: 0 0 240px; }
-  .boss-mid { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; flex-wrap: wrap; }
-  .chip {
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid var(--border2);
-    background: var(--bg3);
-  }
-  .chip.skip { color: var(--green); border-color: var(--green); background: rgba(72,168,104,.08); letter-spacing: 1px; }
-  .needbar {
-    width: 170px;
-    height: 6px;
-    border-radius: 3px;
-    background: rgba(28,25,22,.9);
-    overflow: hidden;
-    display: flex;
-    flex-shrink: 0;
-  }
-  .needbar .seg { height: 100%; }
+  .boss-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; }
   .seg.major { background: var(--accent); }
   .seg.moderate { background: var(--orange); }
   .seg.minor { background: var(--text2); }
-  .cnt { font-size: 12px; color: var(--text3); white-space: nowrap; }
-  .cnt b { font-weight: 700; }
-  .cnt b.major { color: var(--accent); }
-  .cnt b.moderate { color: var(--orange); }
-  .cnt b.minor { color: var(--text2); }
-  .boss-total {
-    margin-left: auto;
-    color: var(--text3);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    white-space: nowrap;
+
+  /* columns chart */
+  .col-wrap { overflow-x: auto; padding: 8px 4px 4px; }
+  .col-chart { display: flex; align-items: flex-end; gap: 10px; min-width: 820px; }
+  .col-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex: 1; user-select: none; }
+  .col-bar {
+    height: 170px;
+    width: 30px;
+    background: rgba(28,25,22,.9);
+    border-radius: 4px;
     display: flex;
-    align-items: baseline;
-    gap: 7px;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
   }
-  .boss-total b {
-    font-family: 'Cinzel', serif;
-    font-size: 19px;
-    font-weight: 700;
+  .col-bar .seg { width: 100%; }
+  .col-num { font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; }
+  .col-num.zero { color: var(--green); }
+  .col-item.sel .col-bar { box-shadow: 0 0 0 2px var(--forge); }
+  .col-item:hover .col-bar { box-shadow: 0 0 0 1px var(--forge); }
+  .col-item.extra { opacity: .7; }
+
+  /* orbit */
+  .orbit-wrap { overflow-x: auto; }
+  .orbit { position: relative; width: 460px; height: 460px; margin: 0 auto; }
+  .orbit::before { content: ''; position: absolute; inset: 52px; border: 1px dashed rgba(72,56,48,.7); border-radius: 50%; }
+  .onode { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 1; user-select: none; }
+  .onode.sel .pdot { box-shadow: 0 0 0 2px var(--forge); }
+  .onode:hover .pdot { border-color: var(--forge); }
+  .orbit-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .orbit-center .obig { font-family: 'Cinzel', serif; font-size: 46px; font-weight: 700; line-height: 1; }
+  .orbit-center .osub { color: var(--text2); font-size: 11px; margin-top: 6px; text-transform: uppercase; letter-spacing: 1.5px; }
+  .orbit-center .oskip { color: var(--green); font-size: 12px; margin-top: 5px; font-weight: 600; }
+
+  /* bubbles */
+  .bub-wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: center; align-items: flex-end; padding: 16px 0 6px; }
+  .bub { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+  .bubc {
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-weight: 700;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
     color: var(--text);
-    letter-spacing: 0;
-    min-width: 26px;
-    text-align: right;
   }
-  .boss-total.zero b { color: var(--green); }
-  .chev { color: var(--text3); font-size: 11px; margin-left: 4px; transition: transform .15s ease; }
-  .boss-card.open .chev { transform: rotate(180deg); }
+  .bubc.major { border-color: var(--accent); background: rgba(200,58,32,.14); }
+  .bubc.moderate { border-color: var(--orange); background: rgba(200,120,56,.12); }
+  .bubc.zero { border-color: var(--green); color: var(--green); }
+  .bub.sel .bubc { box-shadow: 0 0 0 2px var(--forge); }
+  .bub:hover .bubc { border-color: var(--forge); }
+  .bub.extra { opacity: .7; }
 
   /* boss view switcher */
   .viewtabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -177,16 +172,6 @@
   }
   .viewtab:hover { color: var(--text); }
   .viewtab.active { color: var(--text); border-color: var(--forge); }
-
-  .skipstrip {
-    margin-top: 12px;
-    padding: 10px 14px;
-    border: 1px solid var(--green);
-    border-radius: 6px;
-    color: var(--green);
-    background: rgba(72,168,104,.07);
-    font-weight: 600;
-  }
 
   /* tiles */
   .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
@@ -206,19 +191,6 @@
   .tile .tnum { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; line-height: 1.15; }
   .tile .tnum.zero { color: var(--green); font-size: 19px; padding: 7px 0; }
   .tile .tdots { margin-top: 5px; font-size: 11.5px; color: var(--text2); display: flex; gap: 10px; justify-content: center; min-height: 15px; }
-
-  /* heatmap */
-  .hm-wrap { overflow-x: auto; }
-  table.hm { border-collapse: collapse; }
-  table.hm th, table.hm td { padding: 5px 8px; text-align: center; font-size: 12px; }
-  table.hm th { color: var(--text2); font-weight: 600; }
-  td.rowname { text-align: left; font-family: 'Cinzel', serif; font-size: 13px; white-space: nowrap; padding-right: 16px; }
-  td.hm-cell { min-width: 36px; border: 1px solid rgba(46,38,32,.6); color: var(--text); font-weight: 700; }
-  td.hm-cell.empty { color: var(--text3); font-weight: 400; }
-  td.hm-cell.major { background: rgba(200,58,32,.4); }
-  td.hm-cell.moderate { background: rgba(200,120,56,.32); }
-  td.hm-cell.minor { background: rgba(138,112,96,.28); }
-  td.hm-total { font-weight: 700; color: var(--text2); }
 
   /* raid path */
   .path-wrap { overflow-x: auto; padding: 16px 4px 4px; }
@@ -580,15 +552,16 @@ function banners() {
 
 /* ---- Bosses tab: five switchable layouts (Garrosh, the goal boss, is never shown) ---- */
 
-const BOSS_VIEWS = [['list', 'List'], ['priority', 'Priority'], ['tiles', 'Tiles'], ['heatmap', 'Heatmap'], ['path', 'Path']];
-let bossView = localStorage.getItem('soo-bis-bossview') || 'list';
+const BOSS_VIEWS = [['tiles', 'Tiles'], ['path', 'Path'], ['columns', 'Columns'], ['orbit', 'Orbit'], ['bubbles', 'Bubbles']];
+let bossView = localStorage.getItem('soo-bis-bossview') || 'tiles';
+if (!BOSS_VIEWS.some(([k]) => k === bossView)) bossView = 'tiles';
 let bossSelected = null;
 
 const BOSS_SHORT = {
   immerseus: 'Immerseus', protectors: 'Protectors', norushen: 'Norushen', sha: 'Sha of Pride',
   galakras: 'Galakras', juggernaut: 'Iron Jugg.', shamans: 'Shamans', nazgrim: 'Nazgrim',
   malkorok: 'Malkorok', spoils: 'Spoils', thok: 'Thok', siegecrafter: 'Siegecrafter',
-  paragons: 'Paragons',
+  paragons: 'Paragons', multiple: 'Multiple', outside: 'Outside',
 };
 
 function farmBosses() { return BOSSES.filter(([k]) => k !== GOAL_BOSS); }
@@ -611,67 +584,6 @@ function needRowsHtml(key) {
     html += '<span class="need-cur">— has: ' + (row.equipped
       ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
       : 'nothing equipped') + '</span>';
-    html += '</div>';
-  }
-  return html;
-}
-
-function countsHtml(a) {
-  const parts = [];
-  if (a.major) parts.push('<b class="major">' + a.major + '</b> major');
-  if (a.moderate) parts.push('<b class="moderate">' + a.moderate + '</b> moderate');
-  if (a.minor) parts.push('<b class="minor">' + a.minor + '</b> minor');
-  return parts.join(' &middot; ');
-}
-
-function bossCardHtml(key, name, num, extra, maxTotal) {
-  const a = state.agg[key];
-  const skippable = !extra && a.total === 0;
-  let html = '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
-  html += '<div class="boss-head" data-toggle="1">';
-  html += '<span class="boss-num">' + num + '</span>';
-  html += '<span class="boss-name">' + esc(name) + '</span>';
-  html += '<div class="boss-mid">';
-  if (skippable) {
-    html += '<span class="chip skip">SKIPPABLE ✓</span>';
-  } else if (a.total) {
-    const px = (n) => (n ? Math.max(3, Math.round((n / maxTotal) * 170)) : 0);
-    html += '<div class="needbar">' +
-      (a.major ? '<span class="seg major" style="width:' + px(a.major) + 'px"></span>' : '') +
-      (a.moderate ? '<span class="seg moderate" style="width:' + px(a.moderate) + 'px"></span>' : '') +
-      (a.minor ? '<span class="seg minor" style="width:' + px(a.minor) + 'px"></span>' : '') +
-      '</div>';
-    html += '<span class="cnt">' + countsHtml(a) + '</span>';
-  }
-  html += '</div>';
-  html += '<span class="boss-total' + (a.total ? '' : ' zero') + '"><b>' + a.total + '</b> needed</span>';
-  html += '<span class="chev">▼</span>';
-  html += '</div>';
-  if (a.total) html += '<div class="boss-detail">' + needRowsHtml(key) + '</div>';
-  html += '</div>';
-  return html;
-}
-
-function renderBossList(sorted) {
-  let groups = farmBosses();
-  let skipStrip = '';
-  if (sorted) {
-    const skippable = groups.filter(([k]) => state.agg[k].total === 0);
-    groups = groups.filter(([k]) => state.agg[k].total > 0)
-      .sort((x, y) => state.agg[y[0]].total - state.agg[x[0]].total);
-    if (skippable.length) {
-      skipStrip = '<div class="skipstrip">✓ Clear to skip: ' + skippable.map(([, n]) => esc(n)).join(', ') + '</div>';
-    }
-  }
-  const extras = activeExtras();
-  const maxTotal = Math.max(1, ...farmBosses().concat(extras).map(([k]) => state.agg[k].total));
-  let html = '<div class="boss-grid">';
-  let i = 0;
-  for (const [key, name] of groups) { i++; html += bossCardHtml(key, name, i, false, maxTotal); }
-  html += '</div>' + skipStrip;
-  if (extras.length) {
-    html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div><div class="boss-grid">';
-    for (const [key, name] of extras) html += bossCardHtml(key, name, '·', true, maxTotal);
     html += '</div>';
   }
   return html;
@@ -704,38 +616,85 @@ function renderBossTiles() {
   return html;
 }
 
-function renderBossHeatmap() {
-  const sev = { minor: 1, moderate: 2, major: 3 };
-  const m = {};
-  for (const [charName, rows] of Object.entries(state.evaluations)) {
-    for (const r of rows) {
-      if (r.status === 'obtained' || r.status === 'good' || r.status === 'needsId') continue;
-      if (r.bis.source === GOAL_BOSS) continue;
-      const key = state.agg[r.bis.source] ? r.bis.source : 'outside';
-      const e = ((m[key] = m[key] || {})[charName] = m[key][charName] || { count: 0, worst: 'minor', items: [] });
-      e.count++;
-      if (sev[r.status] > sev[e.worst]) e.worst = r.status;
-      e.items.push(r.bis.slot + ': ' + r.bis.name + ' — ' + r.status + ' upgrade');
+function renderBossColumns() {
+  const all = farmBosses().concat(activeExtras());
+  const maxTotal = Math.max(1, ...all.map(([k]) => state.agg[k].total));
+  const px = (n) => (n ? Math.max(4, Math.round((n / maxTotal) * 170)) : 0);
+  let html = '<div class="col-wrap"><div class="col-chart">';
+  for (const [key, name] of all) {
+    const a = state.agg[key];
+    const extra = key === 'multiple' || key === 'outside';
+    html += '<div class="col-item' + (extra ? ' extra' : '') + (bossSelected === key ? ' sel' : '') +
+      '" data-select="' + key + '" title="' + esc(name) + ': ' + a.total + ' needed">';
+    html += '<div class="col-num' + (a.total ? '' : ' zero') + '">' + (a.total || '✓') + '</div>';
+    html += '<div class="col-bar">' +
+      (a.minor ? '<span class="seg minor" style="height:' + px(a.minor) + 'px"></span>' : '') +
+      (a.moderate ? '<span class="seg moderate" style="height:' + px(a.moderate) + 'px"></span>' : '') +
+      (a.major ? '<span class="seg major" style="height:' + px(a.major) + 'px"></span>' : '') +
+      '</div>';
+    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
+    html += '</div>';
+  }
+  html += '</div></div>' + selectedDetailHtml();
+  return html;
+}
+
+function renderBossOrbit() {
+  const bosses = farmBosses();
+  const maxTotal = Math.max(1, ...bosses.map(([k]) => state.agg[k].total));
+  const size = 460, r = 178;
+  let html = '<div class="orbit-wrap"><div class="orbit">';
+  bosses.forEach(([key, name], idx) => {
+    const a = state.agg[key];
+    const ang = -Math.PI / 2 + (idx / bosses.length) * 2 * Math.PI;
+    const x = Math.round(size / 2 + r * Math.cos(ang));
+    const y = Math.round(size / 2 + r * Math.sin(ang));
+    let tier = 0;
+    if (a.total) tier = a.total <= maxTotal / 3 ? 1 : (a.total <= (2 * maxTotal) / 3 ? 2 : 3);
+    html += '<div class="onode' + (bossSelected === key ? ' sel' : '') + '" data-select="' + key +
+      '" style="left:' + x + 'px;top:' + y + 'px" title="' + esc(name) + ': ' + a.total + ' needed">';
+    html += '<div class="pdot t' + tier + '">' + (a.total || '✓') + '</div>';
+    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
+    html += '</div>';
+  });
+  const remaining = bosses.reduce((s, [k]) => s + state.agg[k].total, 0);
+  const skippable = bosses.filter(([k]) => state.agg[k].total === 0);
+  html += '<div class="orbit-center"><div class="obig">' + remaining + '</div><div class="osub">BiS items left</div>' +
+    (skippable.length ? '<div class="oskip">✓ ' + skippable.length + ' boss' + (skippable.length > 1 ? 'es' : '') + ' skippable</div>' : '') +
+    '</div>';
+  html += '</div></div>';
+  const extras = activeExtras();
+  if (extras.length) {
+    html += '<div class="muted-note" style="text-align:center">Off the map: ' + extras.map(([k, n]) => esc(n) + ' (' + state.agg[k].total + ')').join(', ') + '</div>';
+  }
+  html += selectedDetailHtml();
+  return html;
+}
+
+function renderBossBubbles() {
+  const all = farmBosses().concat(activeExtras());
+  const sorted = all.slice().sort((x, y) => state.agg[y[0]].total - state.agg[x[0]].total);
+  const maxTotal = Math.max(1, ...all.map(([k]) => state.agg[k].total));
+  let html = '<div class="bub-wrap">';
+  for (const [key, name] of sorted) {
+    const a = state.agg[key];
+    const extra = key === 'multiple' || key === 'outside';
+    const d = a.total ? Math.round(40 + (a.total / maxTotal) * 66) : 30;
+    let cls = 'zero';
+    if (a.total) {
+      // color by the dominant need bucket (ties resolve to the more severe)
+      if (a.major >= a.moderate && a.major >= a.minor) cls = 'major';
+      else if (a.moderate >= a.minor) cls = 'moderate';
+      else cls = 'minor';
     }
+    const fs = Math.max(13, Math.round(d / 3.2));
+    html += '<div class="bub' + (extra ? ' extra' : '') + (bossSelected === key ? ' sel' : '') +
+      '" data-select="' + key + '" title="' + esc(name) + ': ' + a.total + ' needed">';
+    html += '<div class="bubc ' + cls + '" style="width:' + d + 'px;height:' + d + 'px;font-size:' + fs + 'px">' + (a.total || '✓') + '</div>';
+    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
+    html += '</div>';
   }
-  const chars = state.roster.characters.filter((c) => state.evaluations[c.name]);
-  let html = '<div class="hm-wrap"><table class="hm"><tr><th></th>';
-  for (const c of chars) {
-    html += '<th style="color:' + (CLASS_COLORS[c.class] || 'inherit') + '" title="' + esc(c.name) + '">' + esc(c.name.slice(0, 4)) + '</th>';
-  }
-  html += '<th>&Sigma;</th></tr>';
-  for (const [key, name] of farmBosses().concat(activeExtras())) {
-    html += '<tr><td class="rowname">' + esc(name) + '</td>';
-    for (const c of chars) {
-      const e = m[key] && m[key][c.name];
-      html += e
-        ? '<td class="hm-cell ' + e.worst + '" title="' + esc(e.items.join('\n')) + '">' + e.count + '</td>'
-        : '<td class="hm-cell empty">·</td>';
-    }
-    html += '<td class="hm-total">' + state.agg[key].total + '</td></tr>';
-  }
-  html += '</table></div>';
-  html += '<div class="muted-note">Cell = BiS items that raider still needs from that boss. Color = the biggest upgrade among them (red major, orange moderate, gray minor). Hover a cell for the item list.</div>';
+  html += '</div>' + selectedDetailHtml();
   return html;
 }
 
@@ -764,11 +723,11 @@ function renderBosses() {
   let html = banners();
   html += '<div class="viewtabs">' + BOSS_VIEWS.map(([k, label]) =>
     '<span class="viewtab' + (k === bossView ? ' active' : '') + '" data-view="' + k + '">' + label + '</span>').join('') + '</div>';
-  if (bossView === 'list') html += renderBossList(false);
-  else if (bossView === 'priority') html += renderBossList(true);
-  else if (bossView === 'tiles') html += renderBossTiles();
-  else if (bossView === 'heatmap') html += renderBossHeatmap();
-  else html += renderBossPath();
+  if (bossView === 'path') html += renderBossPath();
+  else if (bossView === 'columns') html += renderBossColumns();
+  else if (bossView === 'orbit') html += renderBossOrbit();
+  else if (bossView === 'bubbles') html += renderBossBubbles();
+  else html += renderBossTiles();
   $('#content').innerHTML = html;
 
   document.querySelectorAll('.viewtab').forEach((el) => el.addEventListener('click', () => {
@@ -777,9 +736,6 @@ function renderBosses() {
     bossSelected = null;
     renderBosses();
   }));
-  document.querySelectorAll('.boss-head[data-toggle]').forEach((el) => {
-    el.addEventListener('click', () => el.parentElement.classList.toggle('open'));
-  });
   document.querySelectorAll('[data-select]').forEach((el) => {
     el.addEventListener('click', () => {
       bossSelected = bossSelected === el.dataset.select ? null : el.dataset.select;
