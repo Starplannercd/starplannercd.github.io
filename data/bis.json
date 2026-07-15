@@ -66,11 +66,11 @@
         },
         {
           "slot": "Belt",
-          "name": "Belt of the Broken Pact",
-          "heroicId": 104650,
-          "wfId": 105646,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Sash of the Last Guardian",
+          "heroicId": 104467,
+          "wfId": 105463,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
           "bisIlvl": 566
         },
         {
@@ -79,7 +79,7 @@
           "heroicId": 99361,
           "wfId": 99361,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -370,7 +370,7 @@
           "heroicId": 104538,
           "wfId": 105534,
           "source": "multiple",
-          "sourceLabel": "Multiple",
+          "sourceLabel": "Multiple Bosses",
           "bisIlvl": 566
         },
         {
@@ -402,11 +402,11 @@
         },
         {
           "slot": "Weapon",
-          "name": "Xal'atoh, Desecrated Image of Gorehowl",
-          "heroicId": 104648,
-          "wfId": 105644,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Greatsword of Pride's Fall",
+          "heroicId": 104483,
+          "wfId": 105479,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
           "bisIlvl": 566
         }
       ]
@@ -712,7 +712,7 @@
           "heroicId": 104597,
           "wfId": 105593,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -757,7 +757,7 @@
           "heroicId": 104601,
           "wfId": 105597,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -766,7 +766,7 @@
           "heroicId": 99333,
           "wfId": 99333,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -816,20 +816,20 @@
         },
         {
           "slot": "Weapon",
-          "name": "Horned Mace of the Old Ones",
-          "heroicId": 104653,
-          "wfId": 105649,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Kardris' Scepter",
+          "heroicId": 104545,
+          "wfId": 105541,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
           "bisIlvl": 566
         },
         {
           "slot": "Offhand",
-          "name": "Revelations of Y'Shaarj",
-          "heroicId": 104654,
-          "wfId": 105650,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Norushen's Enigmatic Barrier",
+          "heroicId": 104470,
+          "wfId": 105466,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
           "bisIlvl": 566
         }
       ]
@@ -994,7 +994,7 @@
           "heroicId": 104597,
           "wfId": 105593,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -1048,7 +1048,7 @@
           "heroicId": 99377,
           "wfId": 99377,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -1536,11 +1536,11 @@
       "items": [
         {
           "slot": "Head",
-          "name": "Ebon Ritual Hood",
-          "heroicId": 104651,
-          "wfId": 105647,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Flameslinger's Fiery Cowl",
+          "heroicId": 104499,
+          "wfId": 105495,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
           "bisIlvl": 566
         },
         {
@@ -1576,7 +1576,7 @@
           "heroicId": 104595,
           "wfId": 105591,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -1603,7 +1603,7 @@
           "heroicId": 99399,
           "wfId": 99399,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -1653,11 +1653,11 @@
         },
         {
           "slot": "Weapon",
-          "name": "Rik'kal's Bloody Scalpel",
-          "heroicId": 104631,
-          "wfId": 105627,
-          "source": "paragons",
-          "sourceLabel": "Paragons",
+          "name": "Gaze of Arrogance",
+          "heroicId": 104479,
+          "wfId": 105475,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
           "bisIlvl": 566
         }
       ]
@@ -1672,7 +1672,7 @@
           "heroicId": 104590,
           "wfId": 105586,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -1731,11 +1731,11 @@
         },
         {
           "slot": "Legs",
-          "name": "Legplates of Unthinking Strife",
-          "heroicId": 104644,
-          "wfId": 105640,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Legplates of Winged Triumph",
+          "heroicId": 99372,
+          "wfId": 99372,
+          "source": "paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -1762,7 +1762,7 @@
           "heroicId": 104593,
           "wfId": 105589,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -1771,7 +1771,7 @@
           "heroicId": 104636,
           "wfId": 105632,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -2091,9 +2091,9 @@
       "items": [
         {
           "slot": "Head",
-          "name": "Ebon Ritual Hood",
-          "heroicId": 104651,
-          "wfId": 105647,
+          "name": "Hood of the Horned Nightmare",
+          "heroicId": 99425,
+          "wfId": 99425,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
           "bisIlvl": 566
@@ -2122,7 +2122,7 @@
           "heroicId": 104596,
           "wfId": 105592,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -2131,7 +2131,7 @@
           "heroicId": 104595,
           "wfId": 105591,
           "source": "spoils",
-          "sourceLabel": "Spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 566
         },
         {
@@ -2185,7 +2185,7 @@
           "heroicId": 104632,
           "wfId": 105628,
           "source": "paragons",
-          "sourceLabel": "Paragons",
+          "sourceLabel": "Paragons of the Klaxxi",
           "bisIlvl": 566
         },
         {
@@ -2199,20 +2199,20 @@
         },
         {
           "slot": "Trinket 2",
-          "name": "Black Blood of Y'Shaarj",
-          "heroicId": 104652,
-          "wfId": 105648,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "name": "Unerring Vision of Lei Shen",
+          "heroicId": 96558,
+          "wfId": 96930,
+          "source": "outside",
+          "sourceLabel": "Outside SoO",
+          "bisIlvl": 535
         },
         {
           "slot": "Weapon",
-          "name": "Hellscream's War Staff",
-          "heroicId": 105690,
-          "wfId": 105690,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Arcweaver Spell Sword",
+          "heroicId": 104554,
+          "wfId": 105550,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
           "bisIlvl": 582
         },
         {
