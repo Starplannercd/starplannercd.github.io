@@ -246,6 +246,10 @@ const BOSSES = [
 const EXTRA_GROUPS = [['multiple', 'Multiple Bosses'], ['outside', 'Outside SoO']];
 const BOSS_NAME = Object.fromEntries(BOSSES.concat(EXTRA_GROUPS));
 
+// Final tier: heroic Garrosh loot can only drop once the end goal is already
+// dead, so his items are shown for reference but never counted as "needed".
+const GOAL_BOSS = 'garrosh';
+
 // Blizzard API slot type -> BiS slot name. Rings/trinkets/weapons matched as pools.
 const SLOT_MAP = {
   HEAD: 'Head', NECK: 'Neck', SHOULDER: 'Shoulders', CHEST: 'Chest', ROBE: 'Chest',
@@ -445,19 +449,23 @@ function renderBosses() {
   let i = 0;
   for (const [key, name] of groups) {
     const a = state.agg[key];
+    const isGoal = key === GOAL_BOSS;
     const extra = key === 'multiple' || key === 'outside';
     if (extra && i === BOSSES.length) html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div>';
     i++;
-    const skippable = !extra && a.total === 0;
-    html += '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
+    const skippable = !extra && !isGoal && a.total === 0;
+    html += '<div class="boss-card' + (extra || isGoal ? ' extra' : '') + '" data-key="' + key + '">';
     html += '<div class="boss-head">';
     html += '<span class="boss-num">' + (extra ? '·' : i) + '</span>';
     html += '<span class="boss-name">' + esc(name) + '</span>';
     html += '<span class="boss-counts">';
     if (skippable) html += '<span class="chip skip">SKIPPABLE ✓</span>';
-    html += chipHtml(a.major, 'major', 'major') + chipHtml(a.moderate, 'moderate', 'moderate') + chipHtml(a.minor, 'minor', 'minor');
+    if (isGoal) html += '<span class="chip" title="Heroic Garrosh loot only drops once the goal is already achieved — it can\'t help you get there.">THE GOAL — loot not counted</span>';
+    else html += chipHtml(a.major, 'major', 'major') + chipHtml(a.moderate, 'moderate', 'moderate') + chipHtml(a.minor, 'minor', 'minor');
     html += '</span>';
-    html += '<span class="boss-total">' + (a.total ? a.total + ' BiS item' + (a.total > 1 ? 's' : '') + ' needed' : 'nothing needed') + '</span>';
+    html += '<span class="boss-total">' + (isGoal
+      ? (a.total ? a.total + ' drop' + (a.total > 1 ? 's' : '') + ' listed for reference' : 'nothing listed')
+      : (a.total ? a.total + ' BiS item' + (a.total > 1 ? 's' : '') + ' needed' : 'nothing needed')) + '</span>';
     html += '</div>';
     if (a.total) {
       html += '<div class="boss-detail">';
@@ -501,9 +509,10 @@ function renderRaiders() {
     if (entry && entry.ok === false) html += '<span class="badge err" title="' + esc(entry.error || '') + '">FETCH FAILED' + (entry.items && entry.items.length ? ' — OLD DATA' : '') + '</span>';
     else if (entry && entry.fetchedAt && Date.now() - new Date(entry.fetchedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(entry.fetchedAt).toUpperCase() + '</span>';
     if (rows) {
-      const got = rows.filter((r) => r.status === 'obtained').length;
-      const total = rows.filter((r) => r.status !== 'needsId').length;
-      html += '<span class="raider-score" style="color:' + (got === total ? 'var(--green)' : 'var(--text)') + '">' + got + ' / ' + total + ' BiS</span>';
+      const counted = rows.filter((r) => r.status !== 'needsId' && r.bis.source !== GOAL_BOSS);
+      const got = counted.filter((r) => r.status === 'obtained').length;
+      const total = counted.length;
+      html += '<span class="raider-score" style="color:' + (got === total ? 'var(--green)' : 'var(--text)') + '" title="Garrosh items not counted (final boss)">' + got + ' / ' + total + ' BiS</span>';
     } else {
       html += '<span class="raider-score" style="color:var(--text3)">no gear data</span>';
     }
@@ -514,6 +523,7 @@ function renderRaiders() {
         let st, cls = '';
         if (r.status === 'obtained') { st = '✓ BiS'; cls = 'st-obtained'; }
         else if (r.status === 'needsId') st = '<span style="color:var(--text3)">needs ID (' + whSearch(r.bis.name) + ')</span>';
+        else if (r.bis.source === GOAL_BOSS) st = '<span style="color:var(--text3)">goal boss — not counted</span>';
         else st = '<span class="dot ' + r.status + '"></span> ' + r.status + ' upgrade' + (r.lowerVersion ? ' <span style="color:var(--yellow)">(has lower difficulty)</span>' : '');
         html += '<tr><td>' + esc(r.bis.slot) + '</td><td>' + whItem(r.bis.heroicId, r.bis.name) + '</td>' +
           '<td style="color:var(--text2)">' + esc(BOSS_NAME[r.bis.source] || r.bis.sourceLabel || '') + '</td>' +
