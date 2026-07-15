@@ -110,7 +110,7 @@
     text-align: right;
   }
   .boss-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; flex: 0 0 240px; }
-  .boss-counts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .boss-mid { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; flex-wrap: wrap; }
   .chip {
     padding: 2px 10px;
     border-radius: 10px;
@@ -119,11 +119,28 @@
     border: 1px solid var(--border2);
     background: var(--bg3);
   }
-  .chip.minor { color: var(--text2); }
-  .chip.moderate { color: var(--orange); border-color: var(--orange); }
-  .chip.major { color: var(--accent); border-color: var(--accent2); }
   .chip.skip { color: var(--green); border-color: var(--green); background: rgba(72,168,104,.08); letter-spacing: 1px; }
-  .boss-total { margin-left: auto; color: var(--text2); font-size: 12px; }
+  .needbar {
+    width: 170px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(28,25,22,.9);
+    overflow: hidden;
+    display: flex;
+    flex-shrink: 0;
+  }
+  .needbar .seg { height: 100%; }
+  .seg.major { background: var(--accent); }
+  .seg.moderate { background: var(--orange); }
+  .seg.minor { background: var(--text2); }
+  .cnt { font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .cnt b { font-weight: 700; }
+  .cnt b.major { color: var(--accent); }
+  .cnt b.moderate { color: var(--orange); }
+  .cnt b.minor { color: var(--text2); }
+  .boss-total { margin-left: auto; color: var(--text2); font-size: 12px; white-space: nowrap; }
+  .chev { color: var(--text3); font-size: 11px; margin-left: 4px; transition: transform .15s ease; }
+  .boss-card.open .chev { transform: rotate(180deg); }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
   .boss-card.open .boss-detail { display: block; }
   .need-row {
@@ -150,7 +167,6 @@
   .raider-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 14px; }
   .raider-head { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .raider-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; }
-  .raider-spec { color: var(--text2); }
   .raider-score { margin-left: auto; font-weight: 700; }
   .badge {
     font-size: 11px;
@@ -449,33 +465,46 @@ function banners() {
   return html;
 }
 
-function chipHtml(count, cls, label) {
-  return count ? '<span class="chip ' + cls + '">' + count + ' ' + label + '</span>' : '';
-}
-
 function renderBosses() {
-  const groups = BOSSES.concat(EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0));
+  // Garrosh is the goal, not a farm target — he isn't shown here at all
+  const groups = BOSSES.filter(([k]) => k !== GOAL_BOSS)
+    .concat(EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0));
+  const maxTotal = Math.max(1, ...groups.map(([k]) => state.agg[k].total));
   let html = banners() + '<div class="boss-grid">';
   let i = 0;
+  let notePrinted = false;
   for (const [key, name] of groups) {
     const a = state.agg[key];
-    const isGoal = key === GOAL_BOSS;
     const extra = key === 'multiple' || key === 'outside';
-    if (extra && i === BOSSES.length) html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div>';
+    if (extra && !notePrinted) {
+      html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div>';
+      notePrinted = true;
+    }
     i++;
-    const skippable = !extra && !isGoal && a.total === 0;
-    html += '<div class="boss-card' + (extra || isGoal ? ' extra' : '') + '" data-key="' + key + '">';
+    const skippable = !extra && a.total === 0;
+    html += '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
     html += '<div class="boss-head">';
     html += '<span class="boss-num">' + (extra ? '·' : i) + '</span>';
     html += '<span class="boss-name">' + esc(name) + '</span>';
-    html += '<span class="boss-counts">';
-    if (skippable) html += '<span class="chip skip">SKIPPABLE ✓</span>';
-    if (isGoal) html += '<span class="chip" title="Heroic Garrosh loot only drops once the goal is already achieved — it can\'t help you get there.">THE GOAL — loot not counted</span>';
-    else html += chipHtml(a.major, 'major', 'major') + chipHtml(a.moderate, 'moderate', 'moderate') + chipHtml(a.minor, 'minor', 'minor');
-    html += '</span>';
-    html += '<span class="boss-total">' + (isGoal
-      ? (a.total ? a.total + ' drop' + (a.total > 1 ? 's' : '') + ' listed for reference' : 'nothing listed')
-      : (a.total ? a.total + ' BiS item' + (a.total > 1 ? 's' : '') + ' needed' : 'nothing needed')) + '</span>';
+    html += '<div class="boss-mid">';
+    if (skippable) {
+      html += '<span class="chip skip">SKIPPABLE ✓</span>';
+    } else if (a.total) {
+      const px = (n) => (n ? Math.max(3, Math.round((n / maxTotal) * 170)) : 0);
+      html += '<div class="needbar">' +
+        (a.major ? '<span class="seg major" style="width:' + px(a.major) + 'px"></span>' : '') +
+        (a.moderate ? '<span class="seg moderate" style="width:' + px(a.moderate) + 'px"></span>' : '') +
+        (a.minor ? '<span class="seg minor" style="width:' + px(a.minor) + 'px"></span>' : '') +
+        '</div>';
+      const parts = [];
+      if (a.major) parts.push('<b class="major">' + a.major + '</b> major');
+      if (a.moderate) parts.push('<b class="moderate">' + a.moderate + '</b> moderate');
+      if (a.minor) parts.push('<b class="minor">' + a.minor + '</b> minor');
+      html += '<span class="cnt">' + parts.join(' &middot; ') + '</span>';
+    }
+    html += '</div>';
+    html += '<span class="boss-total">' + (a.total ? a.total + ' needed' : 'nothing needed') + '</span>';
+    html += '<span class="chev">▼</span>';
     html += '</div>';
     if (a.total) {
       html += '<div class="boss-detail">';
@@ -508,14 +537,12 @@ function renderBosses() {
 function renderRaiders() {
   let html = banners();
   for (const ch of state.roster.characters) {
-    const spec = state.mergedSpecs[ch.spec];
     const entry = state.gear && state.gear.characters && state.gear.characters[ch.name];
     const rows = state.evaluations[ch.name];
     const col = CLASS_COLORS[ch.class] || 'inherit';
     html += '<div class="raider-card">';
     html += '<div class="raider-head">';
     html += '<span class="raider-name" style="color:' + col + '">' + esc(ch.name) + '</span>';
-    html += '<span class="raider-spec">' + esc(spec ? spec.label : ch.spec) + '</span>';
     if (entry && entry.ok === false) html += '<span class="badge err" title="' + esc(entry.error || '') + '">FETCH FAILED' + (entry.items && entry.items.length ? ' — OLD DATA' : '') + '</span>';
     else if (entry && entry.fetchedAt && Date.now() - new Date(entry.fetchedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(entry.fetchedAt).toUpperCase() + '</span>';
     if (rows) {
@@ -532,7 +559,7 @@ function renderRaiders() {
       for (const r of rows) {
         let st, cls = '';
         if (r.status === 'obtained') { st = '✓ BiS'; cls = 'st-obtained'; }
-        else if (r.status === 'good') { st = '✓ heroic weapon — good enough'; cls = 'st-obtained'; }
+        else if (r.status === 'good') { st = '✓ heroic weapon (not BiS)'; cls = 'st-obtained'; }
         else if (r.status === 'needsId') st = '<span style="color:var(--text3)">needs ID (' + whSearch(r.bis.name) + ')</span>';
         else if (r.bis.source === GOAL_BOSS) st = '<span style="color:var(--text3)">goal boss — not counted</span>';
         else st = '<span class="dot ' + r.status + '"></span> ' + r.status + ' upgrade' + (r.lowerVersion ? ' <span style="color:var(--yellow)">(has lower difficulty)</span>' : '');
