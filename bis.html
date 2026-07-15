@@ -338,7 +338,10 @@ function evaluateCharacter(bisItems, equippedItems) {
     let status, lowerVersion = false;
     if (!bis.heroicId) status = 'needsId';
     else if (strictMatch(bis, equipped)) status = 'obtained';
-    else {
+    else if ((bis.slot === 'Weapon' || bis.slot === 'Offhand') && equipped && equipped.ilvl >= MINOR_AT) {
+      // any heroic-ilvl weapon/offhand is close enough to BiS to stop farming for
+      status = 'good';
+    } else {
       status = bucketOf(equipped);
       lowerVersion = !!(equipped && normName(equipped.name) === normName(bis.name));
     }
@@ -352,7 +355,7 @@ function aggregateByBoss(evaluations) {
   for (const key of Object.keys(BOSS_NAME)) agg[key] = { total: 0, minor: 0, moderate: 0, major: 0, rows: [] };
   for (const [charName, rows] of Object.entries(evaluations)) {
     for (const row of rows) {
-      if (row.status === 'obtained' || row.status === 'needsId') continue;
+      if (row.status === 'obtained' || row.status === 'good' || row.status === 'needsId') continue;
       const a = agg[row.bis.source] || agg.outside;
       a.total++; a[row.status]++;
       a.rows.push({ char: charName, row });
@@ -510,7 +513,7 @@ function renderRaiders() {
     else if (entry && entry.fetchedAt && Date.now() - new Date(entry.fetchedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(entry.fetchedAt).toUpperCase() + '</span>';
     if (rows) {
       const counted = rows.filter((r) => r.status !== 'needsId' && r.bis.source !== GOAL_BOSS);
-      const got = counted.filter((r) => r.status === 'obtained').length;
+      const got = counted.filter((r) => r.status === 'obtained' || r.status === 'good').length;
       const total = counted.length;
       html += '<span class="raider-score" style="color:' + (got === total ? 'var(--green)' : 'var(--text)') + '" title="Garrosh items not counted (final boss)">' + got + ' / ' + total + ' BiS</span>';
     } else {
@@ -522,6 +525,7 @@ function renderRaiders() {
       for (const r of rows) {
         let st, cls = '';
         if (r.status === 'obtained') { st = '✓ BiS'; cls = 'st-obtained'; }
+        else if (r.status === 'good') { st = '✓ heroic weapon — good enough'; cls = 'st-obtained'; }
         else if (r.status === 'needsId') st = '<span style="color:var(--text3)">needs ID (' + whSearch(r.bis.name) + ')</span>';
         else if (r.bis.source === GOAL_BOSS) st = '<span style="color:var(--text3)">goal boss — not counted</span>';
         else st = '<span class="dot ' + r.status + '"></span> ' + r.status + ' upgrade' + (r.lowerVersion ? ' <span style="color:var(--yellow)">(has lower difficulty)</span>' : '');
@@ -712,6 +716,11 @@ function runSelfTest() {
 
   r = evaluateCharacter(bisFix, [eq('OFF_HAND', 400, 582)]);
   t('BiS weapon equipped in offhand -> obtained (pool)', r.find((x) => x.bis.slot === 'Weapon').status === 'obtained');
+
+  r = evaluateCharacter(bisFix, [eq('MAIN_HAND', 999, 566)]);
+  t('non-BiS heroic weapon -> good (counts as done)', r.find((x) => x.bis.slot === 'Weapon').status === 'good');
+  r = evaluateCharacter(bisFix, [eq('MAIN_HAND', 999, 565)]);
+  t('non-heroic weapon -> still a need', r.find((x) => x.bis.slot === 'Weapon').status === 'moderate');
 
   r = evaluateCharacter(bisFix, [eq('WAIST', 777, 566), eq('HEAD', 778, 565), eq('MAIN_HAND', 779, 553), eq('FINGER_1', 780, 552)]);
   t('bucket 566 -> minor', r.find((x) => x.bis.slot === 'Belt').status === 'minor');
