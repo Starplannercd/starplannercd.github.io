@@ -138,7 +138,27 @@
   .cnt b.major { color: var(--accent); }
   .cnt b.moderate { color: var(--orange); }
   .cnt b.minor { color: var(--text2); }
-  .boss-total { margin-left: auto; color: var(--text2); font-size: 12px; white-space: nowrap; }
+  .boss-total {
+    margin-left: auto;
+    color: var(--text3);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+  .boss-total b {
+    font-family: 'Cinzel', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0;
+    min-width: 26px;
+    text-align: right;
+  }
+  .boss-total.zero b { color: var(--green); }
   .chev { color: var(--text3); font-size: 11px; margin-left: 4px; transition: transform .15s ease; }
   .boss-card.open .chev { transform: rotate(180deg); }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
@@ -503,7 +523,7 @@ function renderBosses() {
       html += '<span class="cnt">' + parts.join(' &middot; ') + '</span>';
     }
     html += '</div>';
-    html += '<span class="boss-total">' + (a.total ? a.total + ' needed' : 'nothing needed') + '</span>';
+    html += '<span class="boss-total' + (a.total ? '' : ' zero') + '"><b>' + a.total + '</b> needed</span>';
     html += '<span class="chev">▼</span>';
     html += '</div>';
     if (a.total) {

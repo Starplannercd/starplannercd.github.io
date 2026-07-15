@@ -129,11 +129,11 @@
         },
         {
           "slot": "Weapon",
-          "name": "Horned Mace of the Old Ones",
-          "heroicId": 104653,
-          "wfId": 105649,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Lever of the Megantholithic Apparatus",
+          "heroicId": 104618,
+          "wfId": 105614,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
           "bisIlvl": 566
         }
       ]
@@ -2208,20 +2208,20 @@
         },
         {
           "slot": "Weapon",
-          "name": "Arcweaver Spell Sword",
-          "heroicId": 104554,
-          "wfId": 105550,
-          "source": "nazgrim",
-          "sourceLabel": "General Nazgrim",
+          "name": "Immaculately Preserved Wand",
+          "heroicId": 104598,
+          "wfId": 105594,
+          "source": "spoils",
+          "sourceLabel": "Spoils of Pandaria",
           "bisIlvl": 582
         },
         {
           "slot": "Offhand",
-          "name": "Revelations of Y'Shaarj",
-          "heroicId": 104654,
-          "wfId": 105650,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
+          "name": "Juggernaut's Power Core",
+          "heroicId": 104525,
+          "wfId": 105521,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
           "bisIlvl": 566
         }
       ]
