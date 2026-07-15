@@ -135,15 +135,6 @@
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
           "bisIlvl": 566
-        },
-        {
-          "slot": "Offhand",
-          "name": "Revelations of Y'Shaarj",
-          "heroicId": 104654,
-          "wfId": 105650,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
         }
       ]
     },
@@ -1668,15 +1659,6 @@
           "source": "paragons",
           "sourceLabel": "Paragons",
           "bisIlvl": 566
-        },
-        {
-          "slot": "Offhand",
-          "name": "Revelations of Y'Shaarj",
-          "heroicId": 104654,
-          "wfId": 105650,
-          "source": "garrosh",
-          "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
         }
       ]
     },
@@ -2232,6 +2214,15 @@
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
           "bisIlvl": 582
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
         }
       ]
     },
