@@ -7,6 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Numen';
+    src: url('fonts/Numen.ttf') format('truetype');
+    font-display: swap;
+  }
+
   :root {
     --bg: #0e0c0a;
     --bg2: #141210;
@@ -121,98 +127,12 @@
     overflow: hidden;
   }
   .col-bar .seg { width: 100%; }
-  .col-num { font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; }
+  .col-num { font-family: 'Numen', 'Cinzel', serif; font-weight: 400; font-size: 19px; letter-spacing: 1px; }
   .col-num.zero { color: var(--green); }
   .col-item.sel .col-bar { box-shadow: 0 0 0 2px var(--forge); }
   .col-item:hover .col-bar { box-shadow: 0 0 0 1px var(--forge); }
   .col-item.extra { opacity: .7; }
 
-  /* orbit */
-  .orbit-wrap { overflow-x: auto; }
-  .orbit { position: relative; width: 460px; height: 460px; margin: 0 auto; }
-  .orbit::before { content: ''; position: absolute; inset: 52px; border: 1px dashed rgba(72,56,48,.7); border-radius: 50%; }
-  .onode { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 1; user-select: none; }
-  .onode.sel .pdot { box-shadow: 0 0 0 2px var(--forge); }
-  .onode:hover .pdot { border-color: var(--forge); }
-  .orbit-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
-  .orbit-center .obig { font-family: 'Cinzel', serif; font-size: 46px; font-weight: 700; line-height: 1; }
-  .orbit-center .osub { color: var(--text2); font-size: 11px; margin-top: 6px; text-transform: uppercase; letter-spacing: 1.5px; }
-  .orbit-center .oskip { color: var(--green); font-size: 12px; margin-top: 5px; font-weight: 600; }
-
-  /* bubbles */
-  .bub-wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: center; align-items: flex-end; padding: 16px 0 6px; }
-  .bub { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-  .bubc {
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cinzel', serif; font-weight: 700;
-    background: var(--bg3);
-    border: 2px solid var(--border2);
-    color: var(--text);
-  }
-  .bubc.major { border-color: var(--accent); background: rgba(200,58,32,.14); }
-  .bubc.moderate { border-color: var(--orange); background: rgba(200,120,56,.12); }
-  .bubc.zero { border-color: var(--green); color: var(--green); }
-  .bub.sel .bubc { box-shadow: 0 0 0 2px var(--forge); }
-  .bub:hover .bubc { border-color: var(--forge); }
-  .bub.extra { opacity: .7; }
-
-  /* boss view switcher */
-  .viewtabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
-  .viewtab {
-    padding: 4px 14px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--bg2);
-    color: var(--text2);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-  }
-  .viewtab:hover { color: var(--text); }
-  .viewtab.active { color: var(--text); border-color: var(--forge); }
-
-  /* tiles */
-  .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-  .tile {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 10px 10px;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-  }
-  .tile:hover { background: var(--bg3); }
-  .tile.sel { border-color: var(--forge); }
-  .tile.extra { opacity: .7; }
-  .tile .tname { font-family: 'Cinzel', serif; font-size: 12.5px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tile .tnum { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; line-height: 1.15; }
-  .tile .tnum.zero { color: var(--green); font-size: 19px; padding: 7px 0; }
-  .tile .tdots { margin-top: 5px; font-size: 11.5px; color: var(--text2); display: flex; gap: 10px; justify-content: center; min-height: 15px; }
-
-  /* raid path */
-  .path-wrap { overflow-x: auto; padding: 16px 4px 4px; }
-  .path { display: flex; align-items: flex-start; min-width: 860px; }
-  .pnode { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; position: relative; user-select: none; }
-  .pnode::before { content: ''; position: absolute; top: 23px; left: -50%; width: 100%; height: 2px; background: var(--border2); z-index: 0; }
-  .pnode:first-child::before { display: none; }
-  .pnodetop { height: 46px; display: flex; align-items: center; position: relative; z-index: 1; }
-  .pdot {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px;
-    background: var(--bg3);
-    border: 2px solid var(--border2);
-    color: var(--text2);
-  }
-  .pdot.t0 { width: 26px; height: 26px; border-color: var(--green); color: var(--green); }
-  .pdot.t2 { width: 40px; height: 40px; border-color: var(--orange); color: var(--text); }
-  .pdot.t3 { width: 46px; height: 46px; border-color: var(--accent); background: rgba(200,58,32,.14); color: var(--text); font-size: 15px; }
-  .pnode.sel .pdot { box-shadow: 0 0 0 2px var(--forge); }
-  .pnode:hover .pdot { border-color: var(--forge); }
   .plabel { margin-top: 6px; font-size: 11px; color: var(--text2); text-align: center; }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
   .boss-card.open .boss-detail { display: block; }
@@ -552,10 +472,24 @@ function banners() {
 
 /* ---- Bosses tab: five switchable layouts (Garrosh, the goal boss, is never shown) ---- */
 
-const BOSS_VIEWS = [['tiles', 'Tiles'], ['path', 'Path'], ['columns', 'Columns'], ['orbit', 'Orbit'], ['bubbles', 'Bubbles']];
-let bossView = localStorage.getItem('soo-bis-bossview') || 'tiles';
-if (!BOSS_VIEWS.some(([k]) => k === bossView)) bossView = 'tiles';
 let bossSelected = null;
+
+// thematic per-boss colors for the column labels
+const BOSS_COLORS = {
+  immerseus: '#48b8c8',    // corrupted waters
+  protectors: '#58c088',   // jade celestials
+  norushen: '#e8d890',     // orb of light
+  sha: '#b070d8',          // sha purple
+  galakras: '#e06838',     // proto-drake flame
+  juggernaut: '#9aa0ac',   // siege iron
+  shamans: '#78b048',      // toxic totems
+  nazgrim: '#c79c6e',      // kor'kron leather
+  malkorok: '#c04040',     // dark blood
+  spoils: '#d8b840',       // treasure gold
+  thok: '#e06070',         // raw devilsaur
+  siegecrafter: '#e8983c', // goblin sparks
+  paragons: '#a8c048',     // klaxxi amber
+};
 
 const BOSS_SHORT = {
   immerseus: 'Immerseus', protectors: 'Protectors', norushen: 'Norushen', sha: 'Sha of Pride',
@@ -597,25 +531,6 @@ function selectedDetailHtml() {
     '<div class="boss-detail" style="padding-left:16px">' + needRowsHtml(bossSelected) + '</div></div>';
 }
 
-function renderBossTiles() {
-  let html = '<div class="tile-grid">';
-  for (const [key, name] of farmBosses().concat(activeExtras())) {
-    const a = state.agg[key];
-    const extra = key === 'multiple' || key === 'outside';
-    const dots = [];
-    if (a.major) dots.push('<span><span class="dot major"></span> ' + a.major + '</span>');
-    if (a.moderate) dots.push('<span><span class="dot moderate"></span> ' + a.moderate + '</span>');
-    if (a.minor) dots.push('<span><span class="dot minor"></span> ' + a.minor + '</span>');
-    html += '<div class="tile' + (extra ? ' extra' : '') + (bossSelected === key ? ' sel' : '') + '" data-select="' + key + '">';
-    html += '<div class="tname" title="' + esc(name) + '">' + esc(name) + '</div>';
-    html += a.total ? '<div class="tnum">' + a.total + '</div>' : '<div class="tnum zero">SKIP ✓</div>';
-    html += '<div class="tdots">' + dots.join('') + '</div>';
-    html += '</div>';
-  }
-  html += '</div>' + selectedDetailHtml();
-  return html;
-}
-
 function renderBossColumns() {
   const all = farmBosses().concat(activeExtras());
   const maxTotal = Math.max(1, ...all.map(([k]) => state.agg[k].total));
@@ -632,110 +547,16 @@ function renderBossColumns() {
       (a.moderate ? '<span class="seg moderate" style="height:' + px(a.moderate) + 'px"></span>' : '') +
       (a.major ? '<span class="seg major" style="height:' + px(a.major) + 'px"></span>' : '') +
       '</div>';
-    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
+    html += '<div class="plabel" style="color:' + (BOSS_COLORS[key] || 'var(--text2)') + '">' + esc(BOSS_SHORT[key] || name) + '</div>';
     html += '</div>';
   }
   html += '</div></div>' + selectedDetailHtml();
   return html;
 }
 
-function renderBossOrbit() {
-  const bosses = farmBosses();
-  const maxTotal = Math.max(1, ...bosses.map(([k]) => state.agg[k].total));
-  const size = 460, r = 178;
-  let html = '<div class="orbit-wrap"><div class="orbit">';
-  bosses.forEach(([key, name], idx) => {
-    const a = state.agg[key];
-    const ang = -Math.PI / 2 + (idx / bosses.length) * 2 * Math.PI;
-    const x = Math.round(size / 2 + r * Math.cos(ang));
-    const y = Math.round(size / 2 + r * Math.sin(ang));
-    let tier = 0;
-    if (a.total) tier = a.total <= maxTotal / 3 ? 1 : (a.total <= (2 * maxTotal) / 3 ? 2 : 3);
-    html += '<div class="onode' + (bossSelected === key ? ' sel' : '') + '" data-select="' + key +
-      '" style="left:' + x + 'px;top:' + y + 'px" title="' + esc(name) + ': ' + a.total + ' needed">';
-    html += '<div class="pdot t' + tier + '">' + (a.total || '✓') + '</div>';
-    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
-    html += '</div>';
-  });
-  const remaining = bosses.reduce((s, [k]) => s + state.agg[k].total, 0);
-  const skippable = bosses.filter(([k]) => state.agg[k].total === 0);
-  html += '<div class="orbit-center"><div class="obig">' + remaining + '</div><div class="osub">BiS items left</div>' +
-    (skippable.length ? '<div class="oskip">✓ ' + skippable.length + ' boss' + (skippable.length > 1 ? 'es' : '') + ' skippable</div>' : '') +
-    '</div>';
-  html += '</div></div>';
-  const extras = activeExtras();
-  if (extras.length) {
-    html += '<div class="muted-note" style="text-align:center">Off the map: ' + extras.map(([k, n]) => esc(n) + ' (' + state.agg[k].total + ')').join(', ') + '</div>';
-  }
-  html += selectedDetailHtml();
-  return html;
-}
-
-function renderBossBubbles() {
-  const all = farmBosses().concat(activeExtras());
-  const sorted = all.slice().sort((x, y) => state.agg[y[0]].total - state.agg[x[0]].total);
-  const maxTotal = Math.max(1, ...all.map(([k]) => state.agg[k].total));
-  let html = '<div class="bub-wrap">';
-  for (const [key, name] of sorted) {
-    const a = state.agg[key];
-    const extra = key === 'multiple' || key === 'outside';
-    const d = a.total ? Math.round(40 + (a.total / maxTotal) * 66) : 30;
-    let cls = 'zero';
-    if (a.total) {
-      // color by the dominant need bucket (ties resolve to the more severe)
-      if (a.major >= a.moderate && a.major >= a.minor) cls = 'major';
-      else if (a.moderate >= a.minor) cls = 'moderate';
-      else cls = 'minor';
-    }
-    const fs = Math.max(13, Math.round(d / 3.2));
-    html += '<div class="bub' + (extra ? ' extra' : '') + (bossSelected === key ? ' sel' : '') +
-      '" data-select="' + key + '" title="' + esc(name) + ': ' + a.total + ' needed">';
-    html += '<div class="bubc ' + cls + '" style="width:' + d + 'px;height:' + d + 'px;font-size:' + fs + 'px">' + (a.total || '✓') + '</div>';
-    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
-    html += '</div>';
-  }
-  html += '</div>' + selectedDetailHtml();
-  return html;
-}
-
-function renderBossPath() {
-  const maxTotal = Math.max(1, ...farmBosses().map(([k]) => state.agg[k].total));
-  let html = '<div class="path-wrap"><div class="path">';
-  for (const [key, name] of farmBosses()) {
-    const a = state.agg[key];
-    let tier = 0;
-    if (a.total) tier = a.total <= maxTotal / 3 ? 1 : (a.total <= (2 * maxTotal) / 3 ? 2 : 3);
-    html += '<div class="pnode' + (bossSelected === key ? ' sel' : '') + '" data-select="' + key + '" title="' + esc(name) + ': ' + a.total + ' needed">';
-    html += '<div class="pnodetop"><div class="pdot t' + tier + '">' + (a.total || '✓') + '</div></div>';
-    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
-    html += '</div>';
-  }
-  html += '</div></div>';
-  const extras = activeExtras();
-  if (extras.length) {
-    html += '<div class="muted-note">Not on the path: ' + extras.map(([k, n]) => esc(n) + ' (' + state.agg[k].total + ')').join(', ') + '</div>';
-  }
-  html += selectedDetailHtml();
-  return html;
-}
-
 function renderBosses() {
-  let html = banners();
-  html += '<div class="viewtabs">' + BOSS_VIEWS.map(([k, label]) =>
-    '<span class="viewtab' + (k === bossView ? ' active' : '') + '" data-view="' + k + '">' + label + '</span>').join('') + '</div>';
-  if (bossView === 'path') html += renderBossPath();
-  else if (bossView === 'columns') html += renderBossColumns();
-  else if (bossView === 'orbit') html += renderBossOrbit();
-  else if (bossView === 'bubbles') html += renderBossBubbles();
-  else html += renderBossTiles();
+  let html = banners() + renderBossColumns();
   $('#content').innerHTML = html;
-
-  document.querySelectorAll('.viewtab').forEach((el) => el.addEventListener('click', () => {
-    bossView = el.dataset.view;
-    localStorage.setItem('soo-bis-bossview', bossView);
-    bossSelected = null;
-    renderBosses();
-  }));
   document.querySelectorAll('[data-select]').forEach((el) => {
     el.addEventListener('click', () => {
       bossSelected = bossSelected === el.dataset.select ? null : el.dataset.select;
