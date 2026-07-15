@@ -64,6 +64,7 @@ async function fetchCharacter(token, region, realm, name) {
     name: typeof it.name === 'string' ? it.name : (it.name && it.name.en_US) || '',
     ilvl: 0, // the classic equipment API has no item level — filled in below from static item data
     quality: (it.quality && it.quality.type) || '',
+    invType: (it.inventory_type && it.inventory_type.type) || '', // TWOHWEAPON = fills both weapon slots
   })).filter((it) => it.slot && it.id);
 }
 

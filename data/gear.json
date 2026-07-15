@@ -1,1225 +1,1391 @@
 {
-  "fetchedAt": "2026-07-15T20:31:13.071Z",
+  "fetchedAt": "2026-07-15T20:57:56.821Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:31.858Z",
+      "fetchedAt": "2026-07-15T20:57:52.885Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 105488,
           "name": "Thranok's Shattering Helm",
           "ilvl": 572,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 104517,
           "name": "Juggernaut's Ignition Keys",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 96427,
           "name": "Shoulderguards of Centripetal Destruction",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 104416,
           "name": "Chestplate of Congealed Corrosion",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "CHEST"
         },
         {
           "slot": "WAIST",
           "id": 104437,
           "name": "Poisonbinder Girth",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99139,
           "name": "Legplates of Winged Triumph",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104535,
           "name": "Wolf-Rider Spurs",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 104415,
           "name": "Bubble-Burst Bracers",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 96533,
           "name": "Rein-Binder's Fists",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 103896,
           "name": "Devilfang Band",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 96448,
           "name": "Spinescale Seal",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 102305,
           "name": "Thok's Tail Tip",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 96398,
           "name": "Spark of Zandalar",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102250,
           "name": "Qian-Ying, Fortitude of Niuzao",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104464,
           "name": "Xifeng, Longblade of the Titanic Guardian",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 96512,
           "name": "Greatshield of the Gloaming",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHIELD"
         }
       ]
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:32.311Z",
+      "fetchedAt": "2026-07-15T20:57:53.331Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104413,
           "name": "Hood of Blackened Tears",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 105762,
           "name": "Smoldering Eye",
           "ilvl": 559,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 104510,
           "name": "Ricocheting Shoulderguards",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 99170,
           "name": "Tunic of the Shattered Vale",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "CHEST"
         },
         {
           "slot": "WAIST",
           "id": 96465,
           "name": "Featherflight Belt",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99165,
           "name": "Breeches of the Shattered Vale",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 96531,
           "name": "Spurs of the Storm Cavalry",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96392,
           "name": "Bindings of Multiplicative Strikes",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 99420,
           "name": "Handguards of the Shattered Vale",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 96368,
           "name": "Sign of the Bloodied God",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 96513,
           "name": "Gore-Soaked Gear",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 96546,
           "name": "Rune of Re-Origination",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 105278,
           "name": "Haromm's Talisman",
           "ilvl": 559,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102248,
           "name": "Fen-Yu, Fury of Xuen",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104412,
           "name": "Trident of Corrupted Waters",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TWOHWEAPON"
         },
         {
           "slot": "TABARD",
           "id": 69210,
           "name": "Renowned Guild Tabard",
           "ilvl": 1,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TABARD"
         }
       ]
     },
     "Starship": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:32.681Z",
+      "fetchedAt": "2026-07-15T20:57:53.732Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104424,
           "name": "Hood of Swirling Senses",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 104477,
           "name": "Necklace of Fading Light",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99018,
           "name": "Mantle of the Ternion Glory",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "SHIRT",
           "id": 6795,
           "name": "White Swashbuckler's Shirt",
           "ilvl": 1,
-          "quality": "COMMON"
+          "quality": "COMMON",
+          "invType": "BODY"
         },
         {
           "slot": "CHEST",
           "id": 104523,
           "name": "Shock Pulse Robes",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 104467,
           "name": "Sash of the Last Guardian",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99118,
           "name": "Legwraps of the Ternion Glory",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 95004,
           "name": "Starwalker Sandals",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96452,
           "name": "Frostborn Wristwraps",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 104422,
           "name": "Bolt-Burster Grips",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 96486,
           "name": "Durumu's Captive Eyeball",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 96529,
           "name": "Ro'shak's Remembrance",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 105225,
           "name": "Prismatic Prison of Pride",
           "ilvl": 559,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 96516,
           "name": "Cha-Ye's Essence of Brilliance",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102246,
           "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104545,
           "name": "Kardris' Scepter",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 96454,
           "name": "Fetish of the Hydra",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HOLDABLE"
         }
       ]
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:33.055Z",
+      "fetchedAt": "2026-07-15T20:57:54.117Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 105476,
           "name": "Self-Reflecting Mask",
           "ilvl": 572,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 94754,
           "name": "Horridon's Tusk Fragment",
           "ilvl": 522,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99151,
           "name": "Mantle of Seven Sacred Seals",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 99391,
           "name": "Vest of Seven Sacred Seals",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 104504,
           "name": "Dragonmaw Emergency Strap",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 96405,
           "name": "Roots of Rampaging Earth",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104428,
           "name": "Salt Water Sandals",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96758,
           "name": "Infinitely Conducting Bracers",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 104472,
           "name": "Confident Grips",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 95018,
           "name": "Ra-den's Evolving Signet",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 105076,
           "name": "Seal of Sullen Fury",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 105109,
           "name": "Thok's Acid-Grooved Tooth",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 104478,
           "name": "Prismatic Prison of Pride",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102247,
           "name": "Jina-Kang, Kindness of Chi-Ji",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104554,
           "name": "Arcweaver Spell Sword",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 105023,
           "name": "Juggernaut's Power Core",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HOLDABLE"
         },
         {
           "slot": "TABARD",
           "id": 69210,
           "name": "Renowned Guild Tabard",
           "ilvl": 1,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TABARD"
         }
       ]
     },
     "Ixiom": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:33.489Z",
+      "fetchedAt": "2026-07-15T20:57:54.565Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104499,
           "name": "Flameslinger's Fiery Cowl",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 104477,
           "name": "Necklace of Fading Light",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99005,
           "name": "Shoulderguards of the Ternion Glory",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "SHIRT",
           "id": 98091,
           "name": "Last Season's Shirt",
           "ilvl": 1,
-          "quality": "RARE"
+          "quality": "RARE",
+          "invType": "BODY"
         },
         {
           "slot": "CHEST",
           "id": 99362,
           "name": "Raiment of the Ternion Glory",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 96462,
           "name": "Cord of Cacophonous Cawing",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99123,
           "name": "Leggings of the Ternion Glory",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104500,
           "name": "Skydancer Boots",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 104465,
           "name": "Bracers of Broken Causation",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 99121,
           "name": "Gloves of the Ternion Glory",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 104524,
           "name": "Laser-Slice Signet",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 95019,
           "name": "Ra-den's Summoning Band",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 96930,
           "name": "Unerring Vision of Lei Shen",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 104426,
           "name": "Purified Bindings of Immerseus",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102246,
           "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104545,
           "name": "Kardris' Scepter",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 96530,
           "name": "Orb of Arcing Lightning",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HOLDABLE"
         },
         {
           "slot": "TABARD",
           "id": 69210,
           "name": "Renowned Guild Tabard",
           "ilvl": 1,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TABARD"
         }
       ]
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:33.880Z",
+      "fetchedAt": "2026-07-15T20:57:54.965Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 99402,
           "name": "Headguard of the Unblinking Vigil",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 105104,
           "name": "Gleaming Eye of the Devilsaur",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 104459,
           "name": "Quarantine Shoulderguards",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "SHIRT",
           "id": 23345,
           "name": "Scout's Shirt",
           "ilvl": 1,
-          "quality": "COMMON"
+          "quality": "COMMON",
+          "invType": "BODY"
         },
         {
           "slot": "CHEST",
           "id": 99405,
           "name": "Tunic of the Unblinking Vigil",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "CHEST"
         },
         {
           "slot": "WAIST",
           "id": 103888,
           "name": "Arrowflight Girdle",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99081,
           "name": "Legguards of the Unblinking Vigil",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104557,
           "name": "Ravager's Pathwalkers",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 105119,
           "name": "Bracers of Infinite Pipes",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 99406,
           "name": "Gloves of the Unblinking Vigil",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 95510,
           "name": "Sign of the Bloodied God",
           "ilvl": 522,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 104487,
           "name": "Swift Serpent Signet",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 104974,
           "name": "Assurance of Consequence",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 102311,
           "name": "Ticking Ebon Detonator",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102248,
           "name": "Fen-Yu, Fury of Xuen",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 105374,
           "name": "Hisek's Reserve Longbow",
           "ilvl": 559,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "RANGED"
         },
         {
           "slot": "TABARD",
           "id": 69210,
           "name": "Renowned Guild Tabard",
           "ilvl": 1,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TABARD"
         }
       ]
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:34.269Z",
+      "fetchedAt": "2026-07-15T20:57:55.372Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 99425,
           "name": "Hood of the Horned Nightmare",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 104469,
           "name": "Untainted Guardian's Chain",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 96729,
           "name": "Mantle of the Thousandfold Hells",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 96728,
           "name": "Robes of the Thousandfold Hells",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 96462,
           "name": "Cord of Cacophonous Cawing",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99098,
           "name": "Leggings of the Horned Nightmare",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 103804,
           "name": "Sha-Seared Sandals",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96804,
           "name": "Azure Shell Bracers",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 96725,
           "name": "Gloves of the Thousandfold Hells",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 96382,
           "name": "Jin'rokh's Dreamshard",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 96529,
           "name": "Ro'shak's Remembrance",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 96516,
           "name": "Cha-Ye's Essence of Brilliance",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 96558,
           "name": "Unerring Vision of Lei Shen",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102246,
           "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104554,
           "name": "Arcweaver Spell Sword",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 103920,
           "name": "Revelations of Y'Shaarj",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HOLDABLE"
         }
       ]
     },
     "Nothot": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:34.705Z",
+      "fetchedAt": "2026-07-15T20:57:55.753Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104499,
           "name": "Flameslinger's Fiery Cowl",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 104469,
           "name": "Untainted Guardian's Chain",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99153,
           "name": "Chronomancer Mantle",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 99152,
           "name": "Chronomancer Robes",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 96462,
           "name": "Cord of Cacophonous Cawing",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99162,
           "name": "Chronomancer Leggings",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 95004,
           "name": "Starwalker Sandals",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 104498,
           "name": "Scalebane Bracers",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 99397,
           "name": "Chronomancer Gloves",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 104447,
           "name": "Petrified Pennyroyal Ring",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 104502,
           "name": "Extinguished Ember of Galakras",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 104426,
           "name": "Purified Bindings of Immerseus",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 102300,
           "name": "Kardris' Toxic Totem",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102246,
           "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104479,
           "name": "Gaze of Arrogance",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TWOHWEAPON"
         },
         {
           "slot": "TABARD",
           "id": 89401,
           "name": "Anglers Tabard",
           "ilvl": 1,
-          "quality": "RARE"
+          "quality": "RARE",
+          "invType": "TABARD"
         }
       ]
     },
     "Beantotem": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:35.075Z",
+      "fetchedAt": "2026-07-15T20:57:56.156Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 99093,
           "name": "Headpiece of Celestial Harmony",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 96774,
           "name": "Horridon's Tusk Fragment",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99091,
           "name": "Shoulderwraps of Celestial Harmony",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 99344,
           "name": "Hauberk of Celestial Harmony",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "ROBE"
         },
         {
           "slot": "WAIST",
           "id": 103941,
           "name": "Chitin-Link Chain Belt",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 99094,
           "name": "Leggings of Celestial Harmony",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104527,
           "name": "Treads of Autonomic Motion",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96417,
           "name": "Loa-Ridden Bracers",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 103764,
           "name": "Marco's Crackling Gloves",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 96403,
           "name": "Petrified Eye of the Basilisk",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 96529,
           "name": "Ro'shak's Remembrance",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 104924,
           "name": "Purified Bindings of Immerseus",
           "ilvl": 528,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 96455,
           "name": "Breath of the Hydra",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102246,
           "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 104545,
           "name": "Kardris' Scepter",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 104470,
           "name": "Norushen's Enigmatic Barrier",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHIELD"
         }
       ]
     },
     "Skullhammer": {
       "ok": true,
-      "fetchedAt": "2026-07-15T20:30:35.492Z",
+      "fetchedAt": "2026-07-15T20:57:56.569Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104492,
           "name": "Thranok's Shattering Helm",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HEAD"
         },
         {
           "slot": "NECK",
           "id": 103917,
           "name": "Malkorok's Tainted Dog Tags",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
           "id": 99200,
           "name": "Pauldrons of the Prehistoric Marauder",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
           "id": 99415,
           "name": "Chestguard of the Prehistoric Marauder",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "CHEST"
         },
         {
           "slot": "WAIST",
           "id": 95003,
           "name": "Flare-Forged Greatbelt",
           "ilvl": 541,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WAIST"
         },
         {
           "slot": "LEGS",
           "id": 104311,
           "name": "Legplates of Unthinking Strife",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "LEGS"
         },
         {
           "slot": "FEET",
           "id": 104482,
           "name": "Greaves of Sublime Superiority",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FEET"
         },
         {
           "slot": "WRIST",
           "id": 96476,
           "name": "Caustic Spike Bracers",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "WRIST"
         },
         {
           "slot": "HANDS",
           "id": 99412,
           "name": "Gauntlets of the Prehistoric Marauder",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "HAND"
         },
         {
           "slot": "FINGER_1",
           "id": 104538,
           "name": "Bloodclaw Band",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "FINGER_2",
           "id": 103793,
           "name": "Sorrowpath Signet",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "FINGER"
         },
         {
           "slot": "TRINKET_1",
           "id": 102298,
           "name": "Evil Eye of Galakras",
           "ilvl": 553,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
           "id": 96470,
           "name": "Fabled Feather of Ji-Kun",
           "ilvl": 535,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TRINKET"
         },
         {
           "slot": "BACK",
           "id": 102249,
           "name": "Gong-Lu, Strength of Xuen",
           "ilvl": 600,
-          "quality": "LEGENDARY"
+          "quality": "LEGENDARY",
+          "invType": "CLOAK"
         },
         {
           "slot": "MAIN_HAND",
           "id": 105479,
           "name": "Greatsword of Pride's Fall",
           "ilvl": 572,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TWOHWEAPON"
         },
         {
           "slot": "OFF_HAND",
           "id": 104559,
           "name": "Gar'tok, Strength of the Faithful",
           "ilvl": 566,
-          "quality": "EPIC"
+          "quality": "EPIC",
+          "invType": "TWOHWEAPON"
         },
         {
           "slot": "TABARD",
           "id": 69209,
           "name": "Illustrious Guild Tabard",
           "ilvl": 1,
-          "quality": "RARE"
+          "quality": "RARE",
+          "invType": "TABARD"
         }
       ]
     }

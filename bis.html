@@ -322,8 +322,15 @@ function evaluateCharacter(bisItems, equippedItems) {
   const pairs = []; // [bis, equipped]
   for (const pool of POOLS) {
     const bisEntries = bisItems.filter((b) => pool.bisSlots.includes(b.slot));
-    if (bisEntries.length) {
-      matchPool(bisEntries, eqPools[POOLS.indexOf(pool)]).forEach((p) => pairs.push(p));
+    if (!bisEntries.length) continue;
+    const eqPool = eqPools[POOLS.indexOf(pool)];
+    const twoHander = eqPool.find((e) => e.invType === 'TWOHWEAPON');
+    if (twoHander && bisEntries.some((b) => b.slot === 'Offhand')) {
+      // an equipped two-hander occupies both weapon slots: pair it with the
+      // Weapon AND Offhand BiS rows so an empty offhand isn't a fake need
+      bisEntries.forEach((b) => pairs.push([b, twoHander]));
+    } else {
+      matchPool(bisEntries, eqPool).forEach((p) => pairs.push(p));
     }
   }
   for (const b of bisItems) {
@@ -721,6 +728,13 @@ function runSelfTest() {
   t('non-BiS heroic weapon -> good (counts as done)', r.find((x) => x.bis.slot === 'Weapon').status === 'good');
   r = evaluateCharacter(bisFix, [eq('MAIN_HAND', 999, 565)]);
   t('non-heroic weapon -> still a need', r.find((x) => x.bis.slot === 'Weapon').status === 'moderate');
+
+  const bisWithOffhand = bisFix.concat([{ slot: 'Offhand', name: 'Frill', heroicId: 700, wfId: 1696, source: 'galakras', bisIlvl: 566 }]);
+  const staff = { slot: 'MAIN_HAND', id: 998, ilvl: 566, name: 'Heroic Staff', quality: 'EPIC', invType: 'TWOHWEAPON' };
+  r = evaluateCharacter(bisWithOffhand, [staff]);
+  t('heroic 2H covers weapon AND offhand', r.find((x) => x.bis.slot === 'Weapon').status === 'good' && r.find((x) => x.bis.slot === 'Offhand').status === 'good');
+  r = evaluateCharacter(bisWithOffhand, [{ ...staff, ilvl: 553 }]);
+  t('normal 2H -> both weapon rows still needs', r.find((x) => x.bis.slot === 'Weapon').status === 'moderate' && r.find((x) => x.bis.slot === 'Offhand').status === 'moderate');
 
   r = evaluateCharacter(bisFix, [eq('WAIST', 777, 566), eq('HEAD', 778, 565), eq('MAIN_HAND', 779, 553), eq('FINGER_1', 780, 552)]);
   t('bucket 566 -> minor', r.find((x) => x.bis.slot === 'Belt').status === 'minor');
