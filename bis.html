@@ -161,6 +161,87 @@
   .boss-total.zero b { color: var(--green); }
   .chev { color: var(--text3); font-size: 11px; margin-left: 4px; transition: transform .15s ease; }
   .boss-card.open .chev { transform: rotate(180deg); }
+
+  /* boss view switcher */
+  .viewtabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .viewtab {
+    padding: 4px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg2);
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+  .viewtab:hover { color: var(--text); }
+  .viewtab.active { color: var(--text); border-color: var(--forge); }
+
+  .skipstrip {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--green);
+    border-radius: 6px;
+    color: var(--green);
+    background: rgba(72,168,104,.07);
+    font-weight: 600;
+  }
+
+  /* tiles */
+  .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .tile {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 10px 10px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tile:hover { background: var(--bg3); }
+  .tile.sel { border-color: var(--forge); }
+  .tile.extra { opacity: .7; }
+  .tile .tname { font-family: 'Cinzel', serif; font-size: 12.5px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .tnum { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; line-height: 1.15; }
+  .tile .tnum.zero { color: var(--green); font-size: 19px; padding: 7px 0; }
+  .tile .tdots { margin-top: 5px; font-size: 11.5px; color: var(--text2); display: flex; gap: 10px; justify-content: center; min-height: 15px; }
+
+  /* heatmap */
+  .hm-wrap { overflow-x: auto; }
+  table.hm { border-collapse: collapse; }
+  table.hm th, table.hm td { padding: 5px 8px; text-align: center; font-size: 12px; }
+  table.hm th { color: var(--text2); font-weight: 600; }
+  td.rowname { text-align: left; font-family: 'Cinzel', serif; font-size: 13px; white-space: nowrap; padding-right: 16px; }
+  td.hm-cell { min-width: 36px; border: 1px solid rgba(46,38,32,.6); color: var(--text); font-weight: 700; }
+  td.hm-cell.empty { color: var(--text3); font-weight: 400; }
+  td.hm-cell.major { background: rgba(200,58,32,.4); }
+  td.hm-cell.moderate { background: rgba(200,120,56,.32); }
+  td.hm-cell.minor { background: rgba(138,112,96,.28); }
+  td.hm-total { font-weight: 700; color: var(--text2); }
+
+  /* raid path */
+  .path-wrap { overflow-x: auto; padding: 16px 4px 4px; }
+  .path { display: flex; align-items: flex-start; min-width: 860px; }
+  .pnode { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; position: relative; user-select: none; }
+  .pnode::before { content: ''; position: absolute; top: 23px; left: -50%; width: 100%; height: 2px; background: var(--border2); z-index: 0; }
+  .pnode:first-child::before { display: none; }
+  .pnodetop { height: 46px; display: flex; align-items: center; position: relative; z-index: 1; }
+  .pdot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
+    color: var(--text2);
+  }
+  .pdot.t0 { width: 26px; height: 26px; border-color: var(--green); color: var(--green); }
+  .pdot.t2 { width: 40px; height: 40px; border-color: var(--orange); color: var(--text); }
+  .pdot.t3 { width: 46px; height: 46px; border-color: var(--accent); background: rgba(200,58,32,.14); color: var(--text); font-size: 15px; }
+  .pnode.sel .pdot { box-shadow: 0 0 0 2px var(--forge); }
+  .pnode:hover .pdot { border-color: var(--forge); }
+  .plabel { margin-top: 6px; font-size: 11px; color: var(--text2); text-align: center; }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
   .boss-card.open .boss-detail { display: block; }
   .need-row {
@@ -497,72 +578,213 @@ function banners() {
   return html;
 }
 
-function renderBosses() {
-  // Garrosh is the goal, not a farm target — he isn't shown here at all
-  const groups = BOSSES.filter(([k]) => k !== GOAL_BOSS)
-    .concat(EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0));
-  const maxTotal = Math.max(1, ...groups.map(([k]) => state.agg[k].total));
-  let html = banners() + '<div class="boss-grid">';
-  let i = 0;
-  let notePrinted = false;
-  for (const [key, name] of groups) {
-    const a = state.agg[key];
-    const extra = key === 'multiple' || key === 'outside';
-    if (extra && !notePrinted) {
-      html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div>';
-      notePrinted = true;
-    }
-    i++;
-    const skippable = !extra && a.total === 0;
-    html += '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
-    html += '<div class="boss-head">';
-    html += '<span class="boss-num">' + (extra ? '·' : i) + '</span>';
-    html += '<span class="boss-name">' + esc(name) + '</span>';
-    html += '<div class="boss-mid">';
-    if (skippable) {
-      html += '<span class="chip skip">SKIPPABLE ✓</span>';
-    } else if (a.total) {
-      const px = (n) => (n ? Math.max(3, Math.round((n / maxTotal) * 170)) : 0);
-      html += '<div class="needbar">' +
-        (a.major ? '<span class="seg major" style="width:' + px(a.major) + 'px"></span>' : '') +
-        (a.moderate ? '<span class="seg moderate" style="width:' + px(a.moderate) + 'px"></span>' : '') +
-        (a.minor ? '<span class="seg minor" style="width:' + px(a.minor) + 'px"></span>' : '') +
-        '</div>';
-      const parts = [];
-      if (a.major) parts.push('<b class="major">' + a.major + '</b> major');
-      if (a.moderate) parts.push('<b class="moderate">' + a.moderate + '</b> moderate');
-      if (a.minor) parts.push('<b class="minor">' + a.minor + '</b> minor');
-      html += '<span class="cnt">' + parts.join(' &middot; ') + '</span>';
-    }
-    html += '</div>';
-    html += '<span class="boss-total' + (a.total ? '' : ' zero') + '"><b>' + a.total + '</b> needed</span>';
-    html += '<span class="chev">▼</span>';
-    html += '</div>';
-    if (a.total) {
-      html += '<div class="boss-detail">';
-      const order = { major: 0, moderate: 1, minor: 2 };
-      a.rows.sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
-      for (const { char, row } of a.rows) {
-        const ch = state.roster.characters.find((c) => c.name === char);
-        const col = ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
-        html += '<div class="need-row">';
-        html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
-        html += '<span class="need-char" style="color:' + col + '">' + esc(char) + '</span>';
-        html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
-        html += '<span>' + whItem(row.bis.heroicId, row.bis.name) + '</span>';
-        html += '<span class="need-cur">— has: ' + (row.equipped
-          ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
-          : 'nothing equipped') + '</span>';
-        html += '</div>';
-      }
-      html += '</div>';
-    }
+/* ---- Bosses tab: five switchable layouts (Garrosh, the goal boss, is never shown) ---- */
+
+const BOSS_VIEWS = [['list', 'List'], ['priority', 'Priority'], ['tiles', 'Tiles'], ['heatmap', 'Heatmap'], ['path', 'Path']];
+let bossView = localStorage.getItem('soo-bis-bossview') || 'list';
+let bossSelected = null;
+
+const BOSS_SHORT = {
+  immerseus: 'Immerseus', protectors: 'Protectors', norushen: 'Norushen', sha: 'Sha of Pride',
+  galakras: 'Galakras', juggernaut: 'Iron Jugg.', shamans: 'Shamans', nazgrim: 'Nazgrim',
+  malkorok: 'Malkorok', spoils: 'Spoils', thok: 'Thok', siegecrafter: 'Siegecrafter',
+  paragons: 'Paragons',
+};
+
+function farmBosses() { return BOSSES.filter(([k]) => k !== GOAL_BOSS); }
+function activeExtras() { return EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0); }
+
+function needRowsHtml(key) {
+  const a = state.agg[key];
+  if (!a.total) return '<div class="muted-note">Nothing needed from here.</div>';
+  const order = { major: 0, moderate: 1, minor: 2 };
+  const rows = a.rows.slice().sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
+  let html = '';
+  for (const { char, row } of rows) {
+    const ch = state.roster.characters.find((c) => c.name === char);
+    const col = ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
+    html += '<div class="need-row">';
+    html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
+    html += '<span class="need-char" style="color:' + col + '">' + esc(char) + '</span>';
+    html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
+    html += '<span>' + whItem(row.bis.heroicId, row.bis.name) + '</span>';
+    html += '<span class="need-cur">— has: ' + (row.equipped
+      ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
+      : 'nothing equipped') + '</span>';
     html += '</div>';
   }
+  return html;
+}
+
+function countsHtml(a) {
+  const parts = [];
+  if (a.major) parts.push('<b class="major">' + a.major + '</b> major');
+  if (a.moderate) parts.push('<b class="moderate">' + a.moderate + '</b> moderate');
+  if (a.minor) parts.push('<b class="minor">' + a.minor + '</b> minor');
+  return parts.join(' &middot; ');
+}
+
+function bossCardHtml(key, name, num, extra, maxTotal) {
+  const a = state.agg[key];
+  const skippable = !extra && a.total === 0;
+  let html = '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
+  html += '<div class="boss-head" data-toggle="1">';
+  html += '<span class="boss-num">' + num + '</span>';
+  html += '<span class="boss-name">' + esc(name) + '</span>';
+  html += '<div class="boss-mid">';
+  if (skippable) {
+    html += '<span class="chip skip">SKIPPABLE ✓</span>';
+  } else if (a.total) {
+    const px = (n) => (n ? Math.max(3, Math.round((n / maxTotal) * 170)) : 0);
+    html += '<div class="needbar">' +
+      (a.major ? '<span class="seg major" style="width:' + px(a.major) + 'px"></span>' : '') +
+      (a.moderate ? '<span class="seg moderate" style="width:' + px(a.moderate) + 'px"></span>' : '') +
+      (a.minor ? '<span class="seg minor" style="width:' + px(a.minor) + 'px"></span>' : '') +
+      '</div>';
+    html += '<span class="cnt">' + countsHtml(a) + '</span>';
+  }
   html += '</div>';
+  html += '<span class="boss-total' + (a.total ? '' : ' zero') + '"><b>' + a.total + '</b> needed</span>';
+  html += '<span class="chev">▼</span>';
+  html += '</div>';
+  if (a.total) html += '<div class="boss-detail">' + needRowsHtml(key) + '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderBossList(sorted) {
+  let groups = farmBosses();
+  let skipStrip = '';
+  if (sorted) {
+    const skippable = groups.filter(([k]) => state.agg[k].total === 0);
+    groups = groups.filter(([k]) => state.agg[k].total > 0)
+      .sort((x, y) => state.agg[y[0]].total - state.agg[x[0]].total);
+    if (skippable.length) {
+      skipStrip = '<div class="skipstrip">✓ Clear to skip: ' + skippable.map(([, n]) => esc(n)).join(', ') + '</div>';
+    }
+  }
+  const extras = activeExtras();
+  const maxTotal = Math.max(1, ...farmBosses().concat(extras).map(([k]) => state.agg[k].total));
+  let html = '<div class="boss-grid">';
+  let i = 0;
+  for (const [key, name] of groups) { i++; html += bossCardHtml(key, name, i, false, maxTotal); }
+  html += '</div>' + skipStrip;
+  if (extras.length) {
+    html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div><div class="boss-grid">';
+    for (const [key, name] of extras) html += bossCardHtml(key, name, '·', true, maxTotal);
+    html += '</div>';
+  }
+  return html;
+}
+
+function selectedDetailHtml() {
+  if (!bossSelected) return '<div class="muted-note">Click a boss to see who needs what.</div>';
+  const name = BOSS_NAME[bossSelected] || bossSelected;
+  return '<div class="boss-card open" style="margin-top:14px">' +
+    '<div class="boss-head" style="cursor:default"><span class="boss-name" style="flex:none">' + esc(name) + '</span></div>' +
+    '<div class="boss-detail" style="padding-left:16px">' + needRowsHtml(bossSelected) + '</div></div>';
+}
+
+function renderBossTiles() {
+  let html = '<div class="tile-grid">';
+  for (const [key, name] of farmBosses().concat(activeExtras())) {
+    const a = state.agg[key];
+    const extra = key === 'multiple' || key === 'outside';
+    const dots = [];
+    if (a.major) dots.push('<span><span class="dot major"></span> ' + a.major + '</span>');
+    if (a.moderate) dots.push('<span><span class="dot moderate"></span> ' + a.moderate + '</span>');
+    if (a.minor) dots.push('<span><span class="dot minor"></span> ' + a.minor + '</span>');
+    html += '<div class="tile' + (extra ? ' extra' : '') + (bossSelected === key ? ' sel' : '') + '" data-select="' + key + '">';
+    html += '<div class="tname" title="' + esc(name) + '">' + esc(name) + '</div>';
+    html += a.total ? '<div class="tnum">' + a.total + '</div>' : '<div class="tnum zero">SKIP ✓</div>';
+    html += '<div class="tdots">' + dots.join('') + '</div>';
+    html += '</div>';
+  }
+  html += '</div>' + selectedDetailHtml();
+  return html;
+}
+
+function renderBossHeatmap() {
+  const sev = { minor: 1, moderate: 2, major: 3 };
+  const m = {};
+  for (const [charName, rows] of Object.entries(state.evaluations)) {
+    for (const r of rows) {
+      if (r.status === 'obtained' || r.status === 'good' || r.status === 'needsId') continue;
+      if (r.bis.source === GOAL_BOSS) continue;
+      const key = state.agg[r.bis.source] ? r.bis.source : 'outside';
+      const e = ((m[key] = m[key] || {})[charName] = m[key][charName] || { count: 0, worst: 'minor', items: [] });
+      e.count++;
+      if (sev[r.status] > sev[e.worst]) e.worst = r.status;
+      e.items.push(r.bis.slot + ': ' + r.bis.name + ' — ' + r.status + ' upgrade');
+    }
+  }
+  const chars = state.roster.characters.filter((c) => state.evaluations[c.name]);
+  let html = '<div class="hm-wrap"><table class="hm"><tr><th></th>';
+  for (const c of chars) {
+    html += '<th style="color:' + (CLASS_COLORS[c.class] || 'inherit') + '" title="' + esc(c.name) + '">' + esc(c.name.slice(0, 4)) + '</th>';
+  }
+  html += '<th>&Sigma;</th></tr>';
+  for (const [key, name] of farmBosses().concat(activeExtras())) {
+    html += '<tr><td class="rowname">' + esc(name) + '</td>';
+    for (const c of chars) {
+      const e = m[key] && m[key][c.name];
+      html += e
+        ? '<td class="hm-cell ' + e.worst + '" title="' + esc(e.items.join('\n')) + '">' + e.count + '</td>'
+        : '<td class="hm-cell empty">·</td>';
+    }
+    html += '<td class="hm-total">' + state.agg[key].total + '</td></tr>';
+  }
+  html += '</table></div>';
+  html += '<div class="muted-note">Cell = BiS items that raider still needs from that boss. Color = the biggest upgrade among them (red major, orange moderate, gray minor). Hover a cell for the item list.</div>';
+  return html;
+}
+
+function renderBossPath() {
+  const maxTotal = Math.max(1, ...farmBosses().map(([k]) => state.agg[k].total));
+  let html = '<div class="path-wrap"><div class="path">';
+  for (const [key, name] of farmBosses()) {
+    const a = state.agg[key];
+    let tier = 0;
+    if (a.total) tier = a.total <= maxTotal / 3 ? 1 : (a.total <= (2 * maxTotal) / 3 ? 2 : 3);
+    html += '<div class="pnode' + (bossSelected === key ? ' sel' : '') + '" data-select="' + key + '" title="' + esc(name) + ': ' + a.total + ' needed">';
+    html += '<div class="pnodetop"><div class="pdot t' + tier + '">' + (a.total || '✓') + '</div></div>';
+    html += '<div class="plabel">' + esc(BOSS_SHORT[key] || name) + '</div>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+  const extras = activeExtras();
+  if (extras.length) {
+    html += '<div class="muted-note">Not on the path: ' + extras.map(([k, n]) => esc(n) + ' (' + state.agg[k].total + ')').join(', ') + '</div>';
+  }
+  html += selectedDetailHtml();
+  return html;
+}
+
+function renderBosses() {
+  let html = banners();
+  html += '<div class="viewtabs">' + BOSS_VIEWS.map(([k, label]) =>
+    '<span class="viewtab' + (k === bossView ? ' active' : '') + '" data-view="' + k + '">' + label + '</span>').join('') + '</div>';
+  if (bossView === 'list') html += renderBossList(false);
+  else if (bossView === 'priority') html += renderBossList(true);
+  else if (bossView === 'tiles') html += renderBossTiles();
+  else if (bossView === 'heatmap') html += renderBossHeatmap();
+  else html += renderBossPath();
   $('#content').innerHTML = html;
-  document.querySelectorAll('.boss-head').forEach((el) => {
+
+  document.querySelectorAll('.viewtab').forEach((el) => el.addEventListener('click', () => {
+    bossView = el.dataset.view;
+    localStorage.setItem('soo-bis-bossview', bossView);
+    bossSelected = null;
+    renderBosses();
+  }));
+  document.querySelectorAll('.boss-head[data-toggle]').forEach((el) => {
     el.addEventListener('click', () => el.parentElement.classList.toggle('open'));
+  });
+  document.querySelectorAll('[data-select]').forEach((el) => {
+    el.addEventListener('click', () => {
+      bossSelected = bossSelected === el.dataset.select ? null : el.dataset.select;
+      renderBosses();
+    });
   });
 }
 
