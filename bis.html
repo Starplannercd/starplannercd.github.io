@@ -418,6 +418,18 @@ function loadOverrides() {
 function mergedBis() {
   const merged = JSON.parse(JSON.stringify(state.bis));
   const ov = loadOverrides();
+  // self-heal: a local draft that matches the published data is obsolete — drop it
+  let dropped = false;
+  for (const [slug, items] of Object.entries(ov)) {
+    if (merged.specs[slug] && JSON.stringify(merged.specs[slug].items) === JSON.stringify(items)) {
+      delete ov[slug];
+      dropped = true;
+    }
+  }
+  if (dropped) {
+    if (Object.keys(ov).length) localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
+    else localStorage.removeItem(OVERRIDE_KEY);
+  }
   state.overridesActive = Object.keys(ov).length > 0;
   for (const [slug, items] of Object.entries(ov)) {
     if (!merged.specs[slug]) merged.specs[slug] = { label: slug, class: '', items: [] };
