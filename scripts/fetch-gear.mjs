@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ROSTER = path.join(root, 'data', 'roster.json');
 const GEAR = path.join(root, 'data', 'gear.json');
+const ILVL_CACHE = path.join(root, 'data', 'item-levels.json');
 
 const clientId = process.env.BLIZZARD_CLIENT_ID;
 const clientSecret = process.env.BLIZZARD_CLIENT_SECRET;
@@ -61,9 +62,43 @@ async function fetchCharacter(token, region, realm, name) {
     slot: it.slot && it.slot.type,
     id: it.item && it.item.id,
     name: typeof it.name === 'string' ? it.name : (it.name && it.name.en_US) || '',
-    ilvl: (it.level && it.level.value) || 0,
+    ilvl: 0, // the classic equipment API has no item level — filled in below from static item data
     quality: (it.quality && it.quality.type) || '',
   })).filter((it) => it.slot && it.id);
+}
+
+// The classic profile API omits item level, so look up each distinct item's base
+// ilvl from the static item endpoint. Cached in data/item-levels.json so repeat
+// runs only fetch items we haven't seen before.
+async function fillItemLevels(token, region, characters) {
+  let cache = {};
+  try { cache = JSON.parse(fs.readFileSync(ILVL_CACHE, 'utf8')); } catch { /* first run */ }
+  const needed = new Set();
+  for (const entry of Object.values(characters)) {
+    for (const it of entry.items || []) {
+      if (cache[it.id] === undefined) needed.add(it.id);
+    }
+  }
+  let fetched = 0;
+  for (const id of needed) {
+    try {
+      const res = await fetch(
+        `https://${region}.api.blizzard.com/data/wow/item/${id}?namespace=static-classic-${region}&locale=en_US`,
+        { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) {
+        cache[id] = (await res.json()).level || 0;
+        fetched++;
+      } else if (res.status === 404) {
+        cache[id] = 0; // unknown item: cache it so we don't retry forever
+      }
+    } catch { /* leave uncached, retried next run */ }
+    await sleep(150);
+  }
+  if (fetched) fs.writeFileSync(ILVL_CACHE, JSON.stringify(cache, null, 2) + '\n');
+  for (const entry of Object.values(characters)) {
+    for (const it of entry.items || []) it.ilvl = cache[it.id] || 0;
+  }
+  console.log(`Item levels: ${fetched} newly fetched, ${Object.keys(cache).length} cached total`);
 }
 
 let token;
@@ -84,10 +119,7 @@ for (const ch of roster.characters) {
   const prev = (previous.characters && previous.characters[ch.name]) || null;
   try {
     const items = await fetchCharacter(token, roster.region, realm, ch.name);
-    const entry = { ok: true, fetchedAt: new Date().toISOString(), items };
-    if (!prev || !prev.ok || JSON.stringify(prev.items) !== JSON.stringify(items)) changed = true;
-    else entry.fetchedAt = prev.fetchedAt; // no change -> keep old timestamp, keep diff quiet
-    out.characters[ch.name] = entry;
+    out.characters[ch.name] = { ok: true, fetchedAt: new Date().toISOString(), items };
     okCount++;
     console.log(`  OK   ${ch.name} (${items.length} items)`);
   } catch (e) {
@@ -97,10 +129,23 @@ for (const ch of roster.characters) {
       fetchedAt: prev ? prev.fetchedAt : null,
       items: prev ? prev.items || [] : [],
     };
-    if (!prev || prev.ok || prev.error !== e.message) changed = true;
     console.log(`  FAIL ${ch.name}: ${e.message}`);
   }
   await sleep(250);
+}
+
+await fillItemLevels(token, roster.region, out.characters);
+
+// change detection (after ilvl fill so comparisons see final data)
+for (const ch of roster.characters) {
+  const entry = out.characters[ch.name];
+  const prev = (previous.characters && previous.characters[ch.name]) || null;
+  if (entry.ok) {
+    if (!prev || !prev.ok || JSON.stringify(prev.items) !== JSON.stringify(entry.items)) changed = true;
+    else entry.fetchedAt = prev.fetchedAt; // identical -> keep old timestamp, keep diff quiet
+  } else if (!prev || prev.ok || prev.error !== entry.error) {
+    changed = true;
+  }
 }
 
 if (okCount === 0) {

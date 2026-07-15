@@ -1,6 +1,6 @@
 {
   "region": "us",
-  "defaultRealm": "leishen",
+  "defaultRealm": "lei-shen",
   "characters": [
     { "name": "Johnholyman",  "class": "PALADIN", "spec": "prot-paladin" },
     { "name": "Merphshrooms", "class": "DRUID",   "spec": "guardian-druid" },
@@ -9,7 +9,7 @@
     { "name": "Ixiom",        "class": "PRIEST",  "spec": "shadow-priest" },
     { "name": "Vynunaara",    "class": "HUNTER",  "spec": "bm-hunter" },
     { "name": "Zakar",        "class": "WARLOCK", "spec": "affliction-warlock" },
-    { "name": "Nothot",       "class": "MAGE",    "spec": "frost-mage" },
+    { "name": "Nothot",       "class": "MAGE",    "spec": "frost-mage", "realm": "galakras" },
     { "name": "Beantotem",    "class": "SHAMAN",  "spec": "elemental-shaman" },
     { "name": "Skullhammer",  "class": "WARRIOR", "spec": "fury-warrior" }
   ]
