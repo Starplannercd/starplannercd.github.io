@@ -1,0 +1,114 @@
+// Fetches equipped gear for every character in data/roster.json from the
+// Blizzard API (MoP Classic / classic progression) and writes data/gear.json.
+//
+// Runs in GitHub Actions (see .github/workflows/fetch-gear.yml) and locally:
+//   BLIZZARD_CLIENT_ID=xxx BLIZZARD_CLIENT_SECRET=yyy node scripts/fetch-gear.mjs
+//
+// Behavior on failure:
+//   - token fetch fails  -> exit 1, gear.json untouched
+//   - one character fails -> ok:false + error message, previous items carried
+//     forward so the page can show stale data with a warning
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROSTER = path.join(root, 'data', 'roster.json');
+const GEAR = path.join(root, 'data', 'gear.json');
+
+const clientId = process.env.BLIZZARD_CLIENT_ID;
+const clientSecret = process.env.BLIZZARD_CLIENT_SECRET;
+if (!clientId || !clientSecret) {
+  console.error('Missing BLIZZARD_CLIENT_ID / BLIZZARD_CLIENT_SECRET environment variables.');
+  console.error('(In GitHub: repo Settings -> Secrets and variables -> Actions.)');
+  process.exit(1);
+}
+
+const roster = JSON.parse(fs.readFileSync(ROSTER, 'utf8'));
+let previous = { characters: {} };
+try { previous = JSON.parse(fs.readFileSync(GEAR, 'utf8')); } catch { /* first run */ }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function getToken() {
+  const res = await fetch('https://oauth.battle.net/token', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  });
+  if (!res.ok) throw new Error(`token request failed: HTTP ${res.status} ${await res.text()}`);
+  return (await res.json()).access_token;
+}
+
+function friendlyError(status, name, realm) {
+  if (status === 404) return `HTTP 404: character not found — check spelling of "${name}" and realm slug "${realm}" in data/roster.json`;
+  if (status === 403) return 'HTTP 403: API client lacks access (check the Blizzard API client setup)';
+  if (status === 401) return 'HTTP 401: authentication failed mid-run';
+  return `HTTP ${status}`;
+}
+
+async function fetchCharacter(token, region, realm, name) {
+  const url = `https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name.toLowerCase()}` +
+    `/equipment?namespace=profile-classic-${region}&locale=en_US`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  if (!res.ok) throw Object.assign(new Error(friendlyError(res.status, name, realm)), { status: res.status });
+  const data = await res.json();
+  return (data.equipped_items || []).map((it) => ({
+    slot: it.slot && it.slot.type,
+    id: it.item && it.item.id,
+    name: typeof it.name === 'string' ? it.name : (it.name && it.name.en_US) || '',
+    ilvl: (it.level && it.level.value) || 0,
+    quality: (it.quality && it.quality.type) || '',
+  })).filter((it) => it.slot && it.id);
+}
+
+let token;
+try {
+  token = await getToken();
+} catch (e) {
+  console.error('FATAL: ' + e.message);
+  console.error('gear.json left untouched.');
+  process.exit(1);
+}
+
+const out = { fetchedAt: previous.fetchedAt || null, characters: {} };
+let okCount = 0;
+let changed = false;
+
+for (const ch of roster.characters) {
+  const realm = ch.realm || roster.defaultRealm;
+  const prev = (previous.characters && previous.characters[ch.name]) || null;
+  try {
+    const items = await fetchCharacter(token, roster.region, realm, ch.name);
+    const entry = { ok: true, fetchedAt: new Date().toISOString(), items };
+    if (!prev || !prev.ok || JSON.stringify(prev.items) !== JSON.stringify(items)) changed = true;
+    else entry.fetchedAt = prev.fetchedAt; // no change -> keep old timestamp, keep diff quiet
+    out.characters[ch.name] = entry;
+    okCount++;
+    console.log(`  OK   ${ch.name} (${items.length} items)`);
+  } catch (e) {
+    out.characters[ch.name] = {
+      ok: false,
+      error: e.message,
+      fetchedAt: prev ? prev.fetchedAt : null,
+      items: prev ? prev.items || [] : [],
+    };
+    if (!prev || prev.ok || prev.error !== e.message) changed = true;
+    console.log(`  FAIL ${ch.name}: ${e.message}`);
+  }
+  await sleep(250);
+}
+
+if (okCount === 0) {
+  console.error('FATAL: every character failed — gear.json left untouched.');
+  process.exit(1);
+}
+
+if (changed) out.fetchedAt = new Date().toISOString();
+
+fs.writeFileSync(GEAR, JSON.stringify(out, null, 2) + '\n');
+console.log(`Wrote data/gear.json (${okCount}/${roster.characters.length} characters OK, changed=${changed})`);

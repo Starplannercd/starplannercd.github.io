@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siege of Orgrimmar — BiS Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0c0a;
+    --bg2: #141210;
+    --bg3: #1c1916;
+    --border: #2e2620;
+    --border2: #483830;
+    --text: #d8c8b0;
+    --text2: #8a7060;
+    --text3: #504038;
+    --accent: #c83a20;
+    --accent2: #8a2010;
+    --forge: #e07820;
+    --green: #48a868;
+    --orange: #c87838;
+    --yellow: #c8b838;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  a { color: var(--forge); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .topbar {
+    background: linear-gradient(180deg, #1e1a16 0%, #0c0a08 100%);
+    border-bottom: 3px solid var(--accent);
+    border-top: 3px solid var(--accent);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topbar h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .topbar h1 span { color: var(--accent); }
+  .tabs { display: flex; gap: 4px; margin-left: auto; }
+  .tab {
+    padding: 6px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .tab:hover { color: var(--text); }
+  .meta-line { color: var(--text2); font-size: 12px; }
+  .meta-line b { color: var(--text); font-weight: 600; }
+
+  #content { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+  .banner {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .banner.err { border-left-color: var(--accent); }
+
+  /* Boss cards */
+  .boss-grid { display: flex; flex-direction: column; gap: 10px; }
+  .boss-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .boss-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .boss-head:hover { background: var(--bg3); }
+  .boss-num {
+    font-family: 'Cinzel', serif;
+    color: var(--text3);
+    font-size: 14px;
+    width: 24px;
+    text-align: right;
+  }
+  .boss-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; flex: 0 0 240px; }
+  .boss-counts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chip {
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+  }
+  .chip.minor { color: var(--text2); }
+  .chip.moderate { color: var(--orange); border-color: var(--orange); }
+  .chip.major { color: var(--accent); border-color: var(--accent2); }
+  .chip.skip { color: var(--green); border-color: var(--green); background: rgba(72,168,104,.08); letter-spacing: 1px; }
+  .boss-total { margin-left: auto; color: var(--text2); font-size: 12px; }
+  .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
+  .boss-card.open .boss-detail { display: block; }
+  .need-row {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(46,38,32,.5);
+    flex-wrap: wrap;
+  }
+  .need-row:last-child { border-bottom: none; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; align-self: center; }
+  .dot.minor { background: var(--text2); }
+  .dot.moderate { background: var(--orange); }
+  .dot.major { background: var(--accent); }
+  .need-char { font-weight: 600; flex: 0 0 110px; }
+  .need-slot { color: var(--text2); flex: 0 0 70px; }
+  .need-cur { color: var(--text2); font-size: 12px; }
+  .need-cur .lower { color: var(--yellow); }
+  .muted-note { color: var(--text3); font-size: 11px; font-style: italic; margin: 14px 4px 6px; }
+  .boss-card.extra { opacity: .75; }
+
+  /* Raider view */
+  .raider-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 14px; }
+  .raider-head { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .raider-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; }
+  .raider-spec { color: var(--text2); }
+  .raider-score { margin-left: auto; font-weight: 700; }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: .5px;
+  }
+  .badge.err { background: var(--accent2); color: #fff; }
+  .badge.stale { background: #6a5210; color: #e8d890; }
+  table.slots { width: 100%; border-collapse: collapse; }
+  table.slots td, table.slots th { padding: 5px 16px; text-align: left; font-size: 12.5px; }
+  table.slots th { color: var(--text3); font-weight: 600; text-transform: uppercase; font-size: 10.5px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  table.slots tr:nth-child(even) td { background: rgba(28,25,22,.5); }
+  td.st-obtained { color: var(--green); font-weight: 700; }
+  td.eq { color: var(--text2); }
+
+  /* Editor */
+  .editor-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  select, input[type=text], input[type=number] {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 12.5px;
+  }
+  input.bad { border-color: var(--accent); background: rgba(200,58,32,.1); }
+  button {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  button:hover { border-color: var(--forge); color: var(--forge); }
+  button.primary { border-color: var(--green); color: var(--green); }
+  table.editor { width: 100%; border-collapse: collapse; }
+  table.editor td, table.editor th { padding: 4px 6px; text-align: left; }
+  table.editor th { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; }
+  table.editor input[type=text] { width: 100%; }
+  table.editor input.id { width: 90px; }
+  table.editor input.lvl { width: 60px; }
+
+  .footer { text-align: center; color: var(--text3); font-size: 11px; padding: 24px 0 30px; }
+  .footer a { color: var(--text2); }
+
+  #selftest { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 18px; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>SoO <span>BiS</span> Tracker</h1>
+  <div class="meta-line" id="gearStamp">loading…</div>
+  <div class="tabs">
+    <div class="tab" data-view="bosses">Bosses</div>
+    <div class="tab" data-view="raiders">Raiders</div>
+    <div class="tab" data-view="editor">BiS Editor</div>
+  </div>
+</div>
+<div id="content"></div>
+<div class="footer">
+  Gear auto-refreshes every Monday · manual refresh: GitHub repo → Actions → “Fetch raid gear” → Run workflow<br>
+  <a href="index.html">← Raid Cooldown Planner</a>
+</div>
+
+<script>
+'use strict';
+
+/* ============================== constants ============================== */
+
+const BOSSES = [
+  ['immerseus', 'Immerseus'],
+  ['protectors', 'Fallen Protectors'],
+  ['norushen', 'Norushen'],
+  ['sha', 'Sha of Pride'],
+  ['galakras', 'Galakras'],
+  ['juggernaut', 'Iron Juggernaut'],
+  ['shamans', 'Dark Shamans'],
+  ['nazgrim', 'General Nazgrim'],
+  ['malkorok', 'Malkorok'],
+  ['spoils', 'Spoils of Pandaria'],
+  ['thok', 'Thok the Bloodthirsty'],
+  ['siegecrafter', 'Siegecrafter Blackfuse'],
+  ['paragons', 'Paragons of the Klaxxi'],
+  ['garrosh', 'Garrosh Hellscream'],
+];
+const EXTRA_GROUPS = [['multiple', 'Multiple Bosses'], ['outside', 'Outside SoO']];
+const BOSS_NAME = Object.fromEntries(BOSSES.concat(EXTRA_GROUPS));
+
+// Blizzard API slot type -> BiS slot name. Rings/trinkets/weapons matched as pools.
+const SLOT_MAP = {
+  HEAD: 'Head', NECK: 'Neck', SHOULDER: 'Shoulders', CHEST: 'Chest', ROBE: 'Chest',
+  WRIST: 'Bracers', HANDS: 'Gloves', WAIST: 'Belt', LEGS: 'Legs', FEET: 'Boots',
+};
+const POOLS = [
+  { bisSlots: ['Ring 1', 'Ring 2'], apiSlots: ['FINGER_1', 'FINGER_2'] },
+  { bisSlots: ['Trinket 1', 'Trinket 2'], apiSlots: ['TRINKET_1', 'TRINKET_2'] },
+  { bisSlots: ['Weapon', 'Offhand'], apiSlots: ['MAIN_HAND', 'OFF_HAND', 'RANGED'] },
+];
+
+const CLASS_COLORS = {
+  PALADIN: '#f58cba', DRUID: '#ff7d0a', PRIEST: '#ffffff', MONK: '#00ff96',
+  HUNTER: '#abd473', WARLOCK: '#9482c9', MAGE: '#69ccf0', SHAMAN: '#0070de',
+  WARRIOR: '#c79c6e', ROGUE: '#fff569', DEATHKNIGHT: '#c41f3b',
+};
+
+const OVERRIDE_KEY = 'soo-bis-overrides';
+const MINOR_AT = 566, MODERATE_AT = 553; // equipped ilvl thresholds for need size
+
+/* ============================== matching ============================== */
+
+const normName = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+function bucketOf(equipped) {
+  if (!equipped) return 'major';
+  if (equipped.ilvl >= MINOR_AT) return 'minor';
+  if (equipped.ilvl >= MODERATE_AT) return 'moderate';
+  return 'major';
+}
+
+function strictMatch(bis, eq) {
+  return !!(eq && bis.heroicId && (eq.id === bis.heroicId || eq.id === bis.wfId));
+}
+
+// bisEntries (n<=2 with slot labels) vs equipped items (n<=3 for weapons pool):
+// choose the assignment maximizing strict matches, then pair leftovers by ilvl desc.
+function matchPool(bisEntries, equipped) {
+  const perms = (arr) => arr.length <= 1 ? [arr] :
+    arr.flatMap((v, i) => perms(arr.slice(0, i).concat(arr.slice(i + 1))).map((p) => [v].concat(p)));
+  let best = null;
+  const eqPerms = perms(equipped.length ? equipped : [null]);
+  for (const ep of eqPerms) {
+    const pairs = bisEntries.map((b, i) => [b, ep[i] || null]);
+    const score = pairs.filter(([b, e]) => strictMatch(b, e)).length;
+    if (!best || score > best.score) best = { score, pairs };
+  }
+  // re-pair non-matching bis entries with leftover equipped by descending ilvl
+  const used = new Set(best.pairs.filter(([b, e]) => strictMatch(b, e)).map(([, e]) => e));
+  const leftoverEq = equipped.filter((e) => !used.has(e)).sort((a, b) => b.ilvl - a.ilvl);
+  const out = [];
+  for (const [b, e] of best.pairs) {
+    if (strictMatch(b, e)) { out.push([b, e]); }
+    else { out.push([b, leftoverEq.shift() || null]); }
+  }
+  return out;
+}
+
+// -> [{bis, equipped, status, lowerVersion}]  status: obtained|minor|moderate|major|needsId
+function evaluateCharacter(bisItems, equippedItems) {
+  const eqBySlot = {};
+  const eqPools = POOLS.map(() => []);
+  for (const eq of equippedItems || []) {
+    const poolIdx = POOLS.findIndex((p) => p.apiSlots.includes(eq.slot));
+    if (poolIdx >= 0) { eqPools[poolIdx].push(eq); continue; }
+    const slot = SLOT_MAP[eq.slot];
+    if (slot) eqBySlot[slot] = eq;
+  }
+
+  const pairs = []; // [bis, equipped]
+  for (const pool of POOLS) {
+    const bisEntries = bisItems.filter((b) => pool.bisSlots.includes(b.slot));
+    if (bisEntries.length) {
+      matchPool(bisEntries, eqPools[POOLS.indexOf(pool)]).forEach((p) => pairs.push(p));
+    }
+  }
+  for (const b of bisItems) {
+    if (POOLS.some((p) => p.bisSlots.includes(b.slot))) continue;
+    pairs.push([b, eqBySlot[b.slot] || null]);
+  }
+
+  // keep original list order
+  pairs.sort((a, b) => bisItems.indexOf(a[0]) - bisItems.indexOf(b[0]));
+
+  return pairs.map(([bis, equipped]) => {
+    let status, lowerVersion = false;
+    if (!bis.heroicId) status = 'needsId';
+    else if (strictMatch(bis, equipped)) status = 'obtained';
+    else {
+      status = bucketOf(equipped);
+      lowerVersion = !!(equipped && normName(equipped.name) === normName(bis.name));
+    }
+    return { bis, equipped, status, lowerVersion };
+  });
+}
+
+// evaluations: {charName: rows[]} -> {bossKey: {total, minor, moderate, major, rows:[{char, row}]}}
+function aggregateByBoss(evaluations) {
+  const agg = {};
+  for (const key of Object.keys(BOSS_NAME)) agg[key] = { total: 0, minor: 0, moderate: 0, major: 0, rows: [] };
+  for (const [charName, rows] of Object.entries(evaluations)) {
+    for (const row of rows) {
+      if (row.status === 'obtained' || row.status === 'needsId') continue;
+      const a = agg[row.bis.source] || agg.outside;
+      a.total++; a[row.status]++;
+      a.rows.push({ char: charName, row });
+    }
+  }
+  return agg;
+}
+
+/* ============================== data / state ============================== */
+
+const state = { roster: null, bis: null, gear: null, evaluations: {}, agg: null, overridesActive: false };
+
+function loadOverrides() {
+  try { return JSON.parse(localStorage.getItem(OVERRIDE_KEY)) || {}; } catch { return {}; }
+}
+
+function mergedBis() {
+  const merged = JSON.parse(JSON.stringify(state.bis));
+  const ov = loadOverrides();
+  state.overridesActive = Object.keys(ov).length > 0;
+  for (const [slug, items] of Object.entries(ov)) {
+    if (!merged.specs[slug]) merged.specs[slug] = { label: slug, class: '', items: [] };
+    merged.specs[slug].items = items;
+  }
+  return merged;
+}
+
+function recompute() {
+  const bis = mergedBis();
+  state.mergedSpecs = bis.specs;
+  state.evaluations = {};
+  state.noData = [];
+  state.fetchErrors = [];
+  state.needsIdCount = 0;
+  for (const ch of state.roster.characters) {
+    const spec = bis.specs[ch.spec];
+    const entry = state.gear && state.gear.characters && state.gear.characters[ch.name];
+    if (!spec) { state.fetchErrors.push(ch.name + ': unknown spec "' + ch.spec + '" (add it in the BiS Editor)'); continue; }
+    state.needsIdCount += spec.items.filter((i) => !i.heroicId).length ? 1 : 0;
+    if (!entry || !entry.items || !entry.items.length) { state.noData.push(ch.name); continue; }
+    if (entry.ok === false) state.fetchErrors.push(ch.name + ': ' + (entry.error || 'fetch failed') + (entry.items.length ? ' — showing older gear' : ''));
+    state.evaluations[ch.name] = evaluateCharacter(spec.items, entry.items);
+  }
+  state.agg = aggregateByBoss(state.evaluations);
+}
+
+/* ============================== rendering ============================== */
+
+const $ = (sel) => document.querySelector(sel);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const whItem = (id, name) => id
+  ? '<a href="https://www.wowhead.com/mop-classic/item=' + id + '" target="_blank" rel="noopener">' + esc(name) + '</a>'
+  : esc(name);
+const whSearch = (name) => '<a href="https://www.wowhead.com/mop-classic/search?q=' + encodeURIComponent(name) + '" target="_blank" rel="noopener">search</a>';
+
+function relTime(iso) {
+  if (!iso) return 'unknown';
+  const d = (Date.now() - new Date(iso).getTime()) / 864e5;
+  if (d < 0.8) return 'today';
+  if (d < 1.5) return 'yesterday';
+  return Math.round(d) + ' days ago';
+}
+
+function banners() {
+  let html = '';
+  if (!state.gear) {
+    html += '<div class="banner err"><b>No gear data yet.</b> The Blizzard API fetch hasn\'t run. Once the GitHub secrets are set up, go to the repo → Actions → “Fetch raid gear” → Run workflow.</div>';
+  }
+  if (state.noData.length) {
+    html += '<div class="banner">No gear data for: <b>' + state.noData.map(esc).join(', ') + '</b> — they\'re excluded from boss counts.</div>';
+  }
+  for (const e of state.fetchErrors) html += '<div class="banner err">' + esc(e) + '</div>';
+  const missingIds = [];
+  for (const [slug, spec] of Object.entries(state.mergedSpecs || {})) {
+    const n = spec.items.filter((i) => !i.heroicId).length;
+    if (n && state.roster.characters.some((c) => c.spec === slug)) missingIds.push(spec.label + ' (' + n + ')');
+  }
+  if (missingIds.length) {
+    html += '<div class="banner">Missing item IDs: <b>' + esc(missingIds.join(', ')) + '</b> — those slots aren\'t counted yet. Fill them in the <a href="#editor">BiS Editor</a>.</div>';
+  }
+  if (state.overridesActive) {
+    html += '<div class="banner">Viewing <b>local BiS edits</b> (only on this computer). Export from the <a href="#editor">BiS Editor</a> and commit <code>data/bis.json</code> to share with the raid.</div>';
+  }
+  return html;
+}
+
+function chipHtml(count, cls, label) {
+  return count ? '<span class="chip ' + cls + '">' + count + ' ' + label + '</span>' : '';
+}
+
+function renderBosses() {
+  const groups = BOSSES.concat(EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0));
+  let html = banners() + '<div class="boss-grid">';
+  let i = 0;
+  for (const [key, name] of groups) {
+    const a = state.agg[key];
+    const extra = key === 'multiple' || key === 'outside';
+    if (extra && i === BOSSES.length) html += '<div class="muted-note">Below: needs not tied to one skippable boss — not part of skip decisions.</div>';
+    i++;
+    const skippable = !extra && a.total === 0;
+    html += '<div class="boss-card' + (extra ? ' extra' : '') + '" data-key="' + key + '">';
+    html += '<div class="boss-head">';
+    html += '<span class="boss-num">' + (extra ? '·' : i) + '</span>';
+    html += '<span class="boss-name">' + esc(name) + '</span>';
+    html += '<span class="boss-counts">';
+    if (skippable) html += '<span class="chip skip">SKIPPABLE ✓</span>';
+    html += chipHtml(a.major, 'major', 'major') + chipHtml(a.moderate, 'moderate', 'moderate') + chipHtml(a.minor, 'minor', 'minor');
+    html += '</span>';
+    html += '<span class="boss-total">' + (a.total ? a.total + ' BiS item' + (a.total > 1 ? 's' : '') + ' needed' : 'nothing needed') + '</span>';
+    html += '</div>';
+    if (a.total) {
+      html += '<div class="boss-detail">';
+      const order = { major: 0, moderate: 1, minor: 2 };
+      a.rows.sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
+      for (const { char, row } of a.rows) {
+        const ch = state.roster.characters.find((c) => c.name === char);
+        const col = ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
+        html += '<div class="need-row">';
+        html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
+        html += '<span class="need-char" style="color:' + col + '">' + esc(char) + '</span>';
+        html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
+        html += '<span>' + whItem(row.bis.heroicId, row.bis.name) + '</span>';
+        html += '<span class="need-cur">— has: ' + (row.equipped
+          ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
+          : 'nothing equipped') + '</span>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  $('#content').innerHTML = html;
+  document.querySelectorAll('.boss-head').forEach((el) => {
+    el.addEventListener('click', () => el.parentElement.classList.toggle('open'));
+  });
+}
+
+function renderRaiders() {
+  let html = banners();
+  for (const ch of state.roster.characters) {
+    const spec = state.mergedSpecs[ch.spec];
+    const entry = state.gear && state.gear.characters && state.gear.characters[ch.name];
+    const rows = state.evaluations[ch.name];
+    const col = CLASS_COLORS[ch.class] || 'inherit';
+    html += '<div class="raider-card">';
+    html += '<div class="raider-head">';
+    html += '<span class="raider-name" style="color:' + col + '">' + esc(ch.name) + '</span>';
+    html += '<span class="raider-spec">' + esc(spec ? spec.label : ch.spec) + '</span>';
+    if (entry && entry.ok === false) html += '<span class="badge err" title="' + esc(entry.error || '') + '">FETCH FAILED' + (entry.items && entry.items.length ? ' — OLD DATA' : '') + '</span>';
+    else if (entry && entry.fetchedAt && Date.now() - new Date(entry.fetchedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(entry.fetchedAt).toUpperCase() + '</span>';
+    if (rows) {
+      const got = rows.filter((r) => r.status === 'obtained').length;
+      const total = rows.filter((r) => r.status !== 'needsId').length;
+      html += '<span class="raider-score" style="color:' + (got === total ? 'var(--green)' : 'var(--text)') + '">' + got + ' / ' + total + ' BiS</span>';
+    } else {
+      html += '<span class="raider-score" style="color:var(--text3)">no gear data</span>';
+    }
+    html += '</div>';
+    if (rows) {
+      html += '<table class="slots"><tr><th>Slot</th><th>BiS item</th><th>Boss</th><th>Status</th><th>Currently equipped</th></tr>';
+      for (const r of rows) {
+        let st, cls = '';
+        if (r.status === 'obtained') { st = '✓ BiS'; cls = 'st-obtained'; }
+        else if (r.status === 'needsId') st = '<span style="color:var(--text3)">needs ID (' + whSearch(r.bis.name) + ')</span>';
+        else st = '<span class="dot ' + r.status + '"></span> ' + r.status + ' upgrade' + (r.lowerVersion ? ' <span style="color:var(--yellow)">(has lower difficulty)</span>' : '');
+        html += '<tr><td>' + esc(r.bis.slot) + '</td><td>' + whItem(r.bis.heroicId, r.bis.name) + '</td>' +
+          '<td style="color:var(--text2)">' + esc(BOSS_NAME[r.bis.source] || r.bis.sourceLabel || '') + '</td>' +
+          '<td class="' + cls + '">' + st + '</td>' +
+          '<td class="eq">' + (r.equipped ? esc(r.equipped.name) + ' (' + r.equipped.ilvl + ')' : '—') + '</td></tr>';
+      }
+      html += '</table>';
+    }
+    html += '</div>';
+  }
+  $('#content').innerHTML = html;
+}
+
+/* ============================== editor ============================== */
+
+let editorSpec = null;
+
+function renderEditor() {
+  const specs = state.mergedSpecs;
+  if (!editorSpec || !specs[editorSpec]) editorSpec = state.roster.characters[0].spec;
+  const spec = specs[editorSpec];
+  let html = banners();
+  html += '<div class="editor-bar"><label>Spec: </label><select id="edSpec">';
+  for (const [slug, s] of Object.entries(specs)) {
+    html += '<option value="' + slug + '"' + (slug === editorSpec ? ' selected' : '') + '>' + esc(s.label) + '</option>';
+  }
+  html += '</select>';
+  html += '<button id="edSave" class="primary">Save (this browser)</button>';
+  html += '<button id="edExport">Export bis.json</button>';
+  html += '<button id="edReset">Discard local edits</button>';
+  html += '</div>';
+  html += '<div class="banner" style="border-left-color:var(--text3)">Tip: heroic IDs are on Wowhead MoP-Classic item pages (the <i>Heroic</i> ' + esc(String(MINOR_AT)) + ' version). Entering a Heroic ID auto-fills Warforged as +996 — correct for almost every SoO item; tier pieces have no Warforged version (keep both IDs the same). Rows with missing IDs are highlighted.</div>';
+  html += '<table class="editor"><tr><th>Slot</th><th>Item name</th><th>Heroic ID</th><th>Warforged ID</th><th>Boss</th><th>BiS ilvl</th><th>Wowhead</th></tr>';
+  spec.items.forEach((it, idx) => {
+    html += '<tr data-idx="' + idx + '">';
+    html += '<td><input type="text" class="slot" value="' + esc(it.slot) + '" style="width:80px"></td>';
+    html += '<td><input type="text" class="name" value="' + esc(it.name) + '"></td>';
+    html += '<td><input type="number" class="id heroic' + (it.heroicId ? '' : ' bad') + '" value="' + (it.heroicId || '') + '"></td>';
+    html += '<td><input type="number" class="id wf' + (it.heroicId ? '' : ' bad') + '" value="' + (it.wfId || '') + '"></td>';
+    html += '<td><select class="src">';
+    for (const [key, name] of BOSSES.concat(EXTRA_GROUPS)) {
+      html += '<option value="' + key + '"' + (key === it.source ? ' selected' : '') + '>' + esc(name) + '</option>';
+    }
+    html += '</select></td>';
+    html += '<td><input type="number" class="lvl" value="' + (it.bisIlvl || 566) + '"></td>';
+    html += '<td>' + whSearch(it.name) + '</td>';
+    html += '</tr>';
+  });
+  html += '</table>';
+  $('#content').innerHTML = html;
+
+  $('#edSpec').addEventListener('change', (e) => { editorSpec = e.target.value; renderEditor(); });
+
+  // heroic ID entry auto-fills WF (+996) when WF is empty or previously linked
+  document.querySelectorAll('tr[data-idx] input.heroic').forEach((inp) => {
+    inp.addEventListener('change', () => {
+      const tr = inp.closest('tr');
+      const wf = tr.querySelector('input.wf');
+      const v = parseInt(inp.value, 10);
+      if (v && !wf.dataset.touched) wf.value = v + 996;
+    });
+  });
+  document.querySelectorAll('tr[data-idx] input.wf').forEach((inp) => {
+    inp.addEventListener('input', () => { inp.dataset.touched = '1'; });
+  });
+
+  const collect = () => {
+    const items = [];
+    document.querySelectorAll('tr[data-idx]').forEach((tr) => {
+      const num = (cls) => { const v = parseInt(tr.querySelector('input.' + cls).value, 10); return Number.isFinite(v) ? v : null; };
+      items.push({
+        slot: tr.querySelector('input.slot').value.trim(),
+        name: tr.querySelector('input.name').value.trim(),
+        heroicId: num('heroic'),
+        wfId: num('wf') || num('heroic'),
+        source: tr.querySelector('select.src').value,
+        sourceLabel: BOSS_NAME[tr.querySelector('select.src').value],
+        bisIlvl: num('lvl') || 566,
+      });
+    });
+    return items;
+  };
+
+  $('#edSave').addEventListener('click', () => {
+    const ov = loadOverrides();
+    ov[editorSpec] = collect();
+    localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
+    recompute(); renderEditor();
+  });
+  $('#edExport').addEventListener('click', () => {
+    const ov = loadOverrides();
+    ov[editorSpec] = collect();
+    localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
+    recompute();
+    const out = JSON.parse(JSON.stringify(state.bis));
+    for (const [slug, items] of Object.entries(loadOverrides())) {
+      if (!out.specs[slug]) out.specs[slug] = { label: slug, class: '', items: [] };
+      out.specs[slug].items = items;
+    }
+    out.meta.generated = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bis.json';
+    a.click();
+    alert('Downloaded bis.json.\n\nReplace data/bis.json in the starplannercd.github.io repo with this file and push — then everyone sees the update.');
+  });
+  $('#edReset').addEventListener('click', () => {
+    if (confirm('Discard ALL local BiS edits on this computer?')) {
+      localStorage.removeItem(OVERRIDE_KEY);
+      recompute(); renderEditor();
+    }
+  });
+}
+
+/* ============================== router / boot ============================== */
+
+function currentView() {
+  const h = location.hash.replace('#', '');
+  return ['bosses', 'raiders', 'editor'].includes(h) ? h : 'bosses';
+}
+
+function render() {
+  const view = currentView();
+  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === view));
+  if (!state.bis) return;
+  recompute();
+  if (view === 'bosses') renderBosses();
+  else if (view === 'raiders') renderRaiders();
+  else renderEditor();
+}
+
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => { location.hash = t.dataset.view; }));
+window.addEventListener('hashchange', render);
+
+async function boot() {
+  const bust = '?v=' + Date.now();
+  try {
+    [state.roster, state.bis] = await Promise.all([
+      fetch('data/roster.json' + bust).then((r) => { if (!r.ok) throw new Error('roster.json: HTTP ' + r.status); return r.json(); }),
+      fetch('data/bis.json' + bust).then((r) => { if (!r.ok) throw new Error('bis.json: HTTP ' + r.status); return r.json(); }),
+    ]);
+  } catch (e) {
+    $('#content').innerHTML = '<div class="banner err"><b>Failed to load data files:</b> ' + esc(e.message) + '</div>';
+    $('#gearStamp').textContent = '';
+    return;
+  }
+  try {
+    state.gear = await fetch('data/gear.json' + bust).then((r) => (r.ok ? r.json() : null));
+  } catch { state.gear = null; }
+
+  $('#gearStamp').innerHTML = state.gear && state.gear.fetchedAt
+    ? 'gear data: <b>' + relTime(state.gear.fetchedAt) + '</b> (' + esc(String(state.gear.fetchedAt).slice(0, 10)) + ')'
+    : 'gear data: <b>none yet</b>';
+
+  if (new URLSearchParams(location.search).has('selftest')) runSelfTest();
+  render();
+}
+
+/* ============================== selftest ============================== */
+
+function runSelfTest() {
+  const out = [];
+  const t = (name, cond) => out.push((cond ? 'PASS' : 'FAIL') + '  ' + name);
+  const bisFix = [
+    { slot: 'Head', name: 'BiS Hat', heroicId: 100, wfId: 1096, source: 'immerseus', bisIlvl: 566 },
+    { slot: 'Ring 1', name: 'Ring A', heroicId: 200, wfId: 1196, source: 'sha', bisIlvl: 566 },
+    { slot: 'Ring 2', name: 'Ring B', heroicId: 300, wfId: 1296, source: 'thok', bisIlvl: 566 },
+    { slot: 'Weapon', name: 'Big Axe', heroicId: 400, wfId: 1396, source: 'garrosh', bisIlvl: 582 },
+    { slot: 'Belt', name: 'Cool Belt', heroicId: 500, wfId: 1496, source: 'spoils', bisIlvl: 566 },
+    { slot: 'Neck', name: 'No ID Neck', heroicId: null, wfId: null, source: 'norushen', bisIlvl: 566 },
+  ];
+  const eq = (slot, id, ilvl, name) => ({ slot, id, ilvl, name: name || 'x', quality: 'EPIC' });
+
+  let r = evaluateCharacter(bisFix, [eq('HEAD', 100, 566, 'BiS Hat')]);
+  t('heroic ID match -> obtained', r.find((x) => x.bis.slot === 'Head').status === 'obtained');
+
+  r = evaluateCharacter(bisFix, [eq('HEAD', 1096, 572)]);
+  t('warforged ID match -> obtained', r.find((x) => x.bis.slot === 'Head').status === 'obtained');
+
+  r = evaluateCharacter(bisFix, [eq('FINGER_1', 300, 566), eq('FINGER_2', 200, 566)]);
+  t('rings swapped -> both obtained', r.filter((x) => x.bis.slot.startsWith('Ring') && x.status === 'obtained').length === 2);
+
+  r = evaluateCharacter(bisFix, [eq('FINGER_1', 200, 566), eq('FINGER_2', 999, 553)]);
+  t('ring pool: one match not double-consumed', r.find((x) => x.bis.slot === 'Ring 1').status === 'obtained' && r.find((x) => x.bis.slot === 'Ring 2').status === 'moderate');
+
+  r = evaluateCharacter(bisFix, [eq('OFF_HAND', 400, 582)]);
+  t('BiS weapon equipped in offhand -> obtained (pool)', r.find((x) => x.bis.slot === 'Weapon').status === 'obtained');
+
+  r = evaluateCharacter(bisFix, [eq('WAIST', 777, 566), eq('HEAD', 778, 565), eq('MAIN_HAND', 779, 553), eq('FINGER_1', 780, 552)]);
+  t('bucket 566 -> minor', r.find((x) => x.bis.slot === 'Belt').status === 'minor');
+  t('bucket 565 -> moderate', r.find((x) => x.bis.slot === 'Head').status === 'moderate');
+  t('bucket 553 -> moderate', r.find((x) => x.bis.slot === 'Weapon').status === 'moderate');
+  t('bucket 552 -> major', r.find((x) => x.bis.slot === 'Ring 1').status === 'major');
+
+  r = evaluateCharacter(bisFix, []);
+  t('empty slot -> major', r.find((x) => x.bis.slot === 'Belt').status === 'major');
+  t('null ID -> needsId', r.find((x) => x.bis.slot === 'Neck').status === 'needsId');
+
+  r = evaluateCharacter(bisFix, [eq('WAIST', 888, 553, 'Cool Belt')]);
+  t('same name lower difficulty -> flagged, not obtained', (() => { const x = r.find((y) => y.bis.slot === 'Belt'); return x.status === 'moderate' && x.lowerVersion === true; })());
+
+  const agg = aggregateByBoss({ A: evaluateCharacter(bisFix, [eq('HEAD', 100, 566)]) });
+  t('aggregation: obtained + needsId excluded', agg.immerseus.total === 0 && agg.norushen.total === 0);
+  t('aggregation: needs counted per boss', agg.sha.total === 1 && agg.garrosh.total === 1 && agg.spoils.total === 1);
+
+  const div = document.createElement('div');
+  div.id = 'selftest';
+  div.textContent = 'SELFTEST\n' + out.join('\n') + '\n' + (out.every((l) => l.startsWith('PASS')) ? 'ALL PASS' : 'FAILURES PRESENT');
+  document.body.insertBefore(div, $('#content'));
+}
+
+boot();
+</script>
+</body>
+</html>

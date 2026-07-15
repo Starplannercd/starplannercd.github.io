@@ -1,0 +1,16 @@
+{
+  "region": "us",
+  "defaultRealm": "leishen",
+  "characters": [
+    { "name": "Johnholyman",  "class": "PALADIN", "spec": "prot-paladin" },
+    { "name": "Merphshrooms", "class": "DRUID",   "spec": "guardian-druid" },
+    { "name": "Starship",     "class": "PRIEST",  "spec": "disc-priest" },
+    { "name": "Brewcocky",    "class": "MONK",    "spec": "mistweaver-monk" },
+    { "name": "Ixiom",        "class": "PRIEST",  "spec": "shadow-priest" },
+    { "name": "Vynunaara",    "class": "HUNTER",  "spec": "bm-hunter" },
+    { "name": "Zakar",        "class": "WARLOCK", "spec": "affliction-warlock" },
+    { "name": "Nothot",       "class": "MAGE",    "spec": "frost-mage" },
+    { "name": "Beantotem",    "class": "SHAMAN",  "spec": "elemental-shaman" },
+    { "name": "Skullhammer",  "class": "WARRIOR", "spec": "fury-warrior" }
+  ]
+}

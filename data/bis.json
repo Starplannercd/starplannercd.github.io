@@ -1,0 +1,2785 @@
+{
+  "meta": {
+    "heroicIlvl": 566,
+    "warforgedIlvl": 572,
+    "generated": "2026-07-15",
+    "note": "Converted from BIS LISTS.txt (WeakAura Lua). Sources: key = canonical boss, sourceLabel = original text."
+  },
+  "specs": {
+    "shadow-priest": {
+      "label": "Shadow Priest",
+      "class": "PRIEST",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of Swirling Senses",
+          "heroicId": 104424,
+          "wfId": 105420,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Necklace of Fading Light",
+          "heroicId": 104477,
+          "wfId": 105473,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Shoulderguards of the Ternion Glory",
+          "heroicId": 99363,
+          "wfId": 99363,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Raiment of the Ternion Glory",
+          "heroicId": 99362,
+          "wfId": 99362,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Sonic Projection",
+          "heroicId": 104630,
+          "wfId": 105626,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Ternion Glory",
+          "heroicId": 99359,
+          "wfId": 99359,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Belt of the Broken Pact",
+          "heroicId": 104650,
+          "wfId": 105646,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of the Ternion Glory",
+          "heroicId": 99361,
+          "wfId": 99361,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Bone-Inlaid Sandals",
+          "heroicId": 104497,
+          "wfId": 105493,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Laser-Slice Signet",
+          "heroicId": 104524,
+          "wfId": 105520,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Horned Mace of the Old Ones",
+          "heroicId": 104653,
+          "wfId": 105649,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "disc-priest": {
+      "label": "Disc Priest",
+      "class": "PRIEST",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of Swirling Senses",
+          "heroicId": 104424,
+          "wfId": 105420,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Lost Necklace of the Mogu Empress",
+          "heroicId": 104597,
+          "wfId": 105593,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of the Ternion Glory",
+          "heroicId": 99358,
+          "wfId": 99358,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Robes of the Ternion Glory",
+          "heroicId": 99357,
+          "wfId": 99357,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Sonic Projection",
+          "heroicId": 104630,
+          "wfId": 105626,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Handwraps of the Ternion Glory",
+          "heroicId": 99365,
+          "wfId": 99365,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Sash of the Last Guardian",
+          "heroicId": 104467,
+          "wfId": 105463,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legwraps of the Ternion Glory",
+          "heroicId": 99367,
+          "wfId": 99367,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Toxic Tornado Treads",
+          "heroicId": 104541,
+          "wfId": 105537,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Seal of Sullen Fury",
+          "heroicId": 104578,
+          "wfId": 105574,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Prismatic Prison of Pride",
+          "heroicId": 104478,
+          "wfId": 105474,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Nazgrim's Burnished Insignia",
+          "heroicId": 104553,
+          "wfId": 105549,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Immaculately Preserved Wand",
+          "heroicId": 104598,
+          "wfId": 105594,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Juggernaut's Power Core",
+          "heroicId": 104525,
+          "wfId": 105521,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "fury-warrior": {
+      "label": "Warrior",
+      "class": "WARRIOR",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Helmet of the Prehistoric Marauder",
+          "heroicId": 99418,
+          "wfId": 99418,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Malkorok's Tainted Dog Tags",
+          "heroicId": 104570,
+          "wfId": 105566,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Pauldrons of the Prehistoric Marauder",
+          "heroicId": 99414,
+          "wfId": 99414,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Breastplate of Shamanic Mirrors",
+          "heroicId": 104536,
+          "wfId": 105532,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Blind Hatred",
+          "heroicId": 104460,
+          "wfId": 105456,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Tar-Coated Gauntlets",
+          "heroicId": 104515,
+          "wfId": 105511,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Ashen Wall Girdle",
+          "heroicId": 104537,
+          "wfId": 105533,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legplates of Willful Doom",
+          "heroicId": 104569,
+          "wfId": 105565,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Greaves of Sublime Superiority",
+          "heroicId": 104482,
+          "wfId": 105478,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Bloodclaw Band",
+          "heroicId": 104538,
+          "wfId": 105534,
+          "source": "multiple",
+          "sourceLabel": "Multiple",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Devilfang Band",
+          "heroicId": 104615,
+          "wfId": 105611,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Evil Eye of Galakras",
+          "heroicId": 104495,
+          "wfId": 105491,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Thok's Tail Tip",
+          "heroicId": 104613,
+          "wfId": 105609,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Xal'atoh, Desecrated Image of Gorehowl",
+          "heroicId": 104648,
+          "wfId": 105644,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "brewmaster-monk": {
+      "label": "Brewmaster Monk",
+      "class": "MONK",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of Blackened Tears",
+          "heroicId": 104413,
+          "wfId": 105409,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Gleaming Eye of the Devilsaur",
+          "heroicId": 104606,
+          "wfId": 105602,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Spaulders of Seven Sacred Seals",
+          "heroicId": 99395,
+          "wfId": 99395,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Robes of the Blackened Watcher",
+          "heroicId": 104456,
+          "wfId": 105452,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Laser Burn Bracers",
+          "heroicId": 104509,
+          "wfId": 105505,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Golden Protector",
+          "heroicId": 104457,
+          "wfId": 105453,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Cord of Black Dreams",
+          "heroicId": 104639,
+          "wfId": 105635,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of Seven Sacred Seals",
+          "heroicId": 99394,
+          "wfId": 99394,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Unrepentant Heels",
+          "heroicId": 104488,
+          "wfId": 105484,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Reality Ripper Ring",
+          "heroicId": 104455,
+          "wfId": 105451,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Ring of Restless Energy",
+          "heroicId": 104562,
+          "wfId": 105558,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Thok's Tail Tip",
+          "heroicId": 104613,
+          "wfId": 105609,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Haromm's Talisman",
+          "heroicId": 104531,
+          "wfId": 105527,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Hellscream's Cleaver",
+          "heroicId": 105685,
+          "wfId": 105685,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 582
+        },
+        {
+          "slot": "Offhand",
+          "name": "Hellscream's Cleaver",
+          "heroicId": 105685,
+          "wfId": 105685,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 582
+        }
+      ]
+    },
+    "windwalker-monk": {
+      "label": "Windwalker Monk",
+      "class": "MONK",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Headpiece of Seven Sacred Seals",
+          "heroicId": 99393,
+          "wfId": 99393,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Immerseus' Crystalline Eye",
+          "heroicId": 104411,
+          "wfId": 105407,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Spaulders of Seven Sacred Seals",
+          "heroicId": 99395,
+          "wfId": 99395,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Robes of the Blackened Watcher",
+          "heroicId": 104456,
+          "wfId": 105452,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bomber's Blackened Wristwatch",
+          "heroicId": 104620,
+          "wfId": 105616,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Grips of Seven Sacred Seals",
+          "heroicId": 99392,
+          "wfId": 99392,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Cord of Black Dreams",
+          "heroicId": 104639,
+          "wfId": 105635,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of Seven Sacred Seals",
+          "heroicId": 99394,
+          "wfId": 99394,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Pandaren Roofsprinters",
+          "heroicId": 104586,
+          "wfId": 105582,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Reality Ripper Ring",
+          "heroicId": 104455,
+          "wfId": 105451,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Kil'ruk's Band of Ascendancy",
+          "heroicId": 104628,
+          "wfId": 105624,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Rune of Re-Origination",
+          "heroicId": 96546,
+          "wfId": 96546,
+          "source": "outside",
+          "sourceLabel": "Lei Shen (ToT)",
+          "bisIlvl": 535
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Haromm's Talisman",
+          "heroicId": 104531,
+          "wfId": 105527,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Hellscream's Cleaver",
+          "heroicId": 105685,
+          "wfId": 105685,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 582
+        },
+        {
+          "slot": "Offhand",
+          "name": "Hellscream's Cleaver",
+          "heroicId": 105685,
+          "wfId": 105685,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 582
+        }
+      ]
+    },
+    "elemental-shaman": {
+      "label": "Elemental Shaman",
+      "class": "SHAMAN",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Headpiece of Celestial Harmony",
+          "heroicId": 99332,
+          "wfId": 99332,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Lost Necklace of the Mogu Empress",
+          "heroicId": 104597,
+          "wfId": 105593,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Shoulderwraps of Celestial Harmony",
+          "heroicId": 99334,
+          "wfId": 99334,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Hauberk of Celestial Harmony",
+          "heroicId": 99344,
+          "wfId": 99344,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Cavemaker Wristguards",
+          "heroicId": 104528,
+          "wfId": 105524,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Grips of Tidal Force",
+          "heroicId": 104505,
+          "wfId": 105501,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Chitin-Link Chain Belt",
+          "heroicId": 104601,
+          "wfId": 105597,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of Celestial Harmony",
+          "heroicId": 99333,
+          "wfId": 99333,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Powder-Stained Totemic Treads",
+          "heroicId": 104622,
+          "wfId": 105618,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Laser-Slice Signet",
+          "heroicId": 104524,
+          "wfId": 105520,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Horned Mace of the Old Ones",
+          "heroicId": 104653,
+          "wfId": 105649,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "resto-shaman": {
+      "label": "Resto Shaman",
+      "class": "SHAMAN",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Faceguard of Celestial Harmony",
+          "heroicId": 99353,
+          "wfId": 99353,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Lost Necklace of the Mogu Empress",
+          "heroicId": 104597,
+          "wfId": 105593,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of Celestial Harmony",
+          "heroicId": 99346,
+          "wfId": 99346,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Tunic of Celestial Harmony",
+          "heroicId": 99351,
+          "wfId": 99351,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Cavemaker Wristguards",
+          "heroicId": 104528,
+          "wfId": 105524,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Grips of Tidal Force",
+          "heroicId": 104505,
+          "wfId": 105501,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Chitin-Link Chain Belt",
+          "heroicId": 104601,
+          "wfId": 105597,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legwraps of Celestial Harmony",
+          "heroicId": 99354,
+          "wfId": 99354,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Powder-Stained Totemic Treads",
+          "heroicId": 104622,
+          "wfId": 105618,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Laser-Slice Signet",
+          "heroicId": 104524,
+          "wfId": 105520,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Thok's Acid-Grooved Tooth",
+          "heroicId": 104611,
+          "wfId": 105607,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Prismatic Prison of Pride",
+          "heroicId": 104478,
+          "wfId": 105474,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Horned Mace of the Old Ones",
+          "heroicId": 104653,
+          "wfId": 105649,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "holy-paladin": {
+      "label": "Holy Paladin",
+      "class": "PALADIN",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Headguard of Winged Triumph",
+          "heroicId": 99376,
+          "wfId": 99376,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Lost Necklace of the Mogu Empress",
+          "heroicId": 104597,
+          "wfId": 105593,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of Winged Triumph",
+          "heroicId": 99378,
+          "wfId": 99378,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Chestplate of Fallen Passion",
+          "heroicId": 104658,
+          "wfId": 105654,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Smoldering Drakescale Bracers",
+          "heroicId": 104506,
+          "wfId": 105502,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of Winged Triumph",
+          "heroicId": 99375,
+          "wfId": 99375,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Greatbelt of Living Waters",
+          "heroicId": 104431,
+          "wfId": 105427,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Greaves of Winged Triumph",
+          "heroicId": 99377,
+          "wfId": 99377,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Waterwalker Greatboots",
+          "heroicId": 104432,
+          "wfId": 105428,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Seal of Eternal Sorrow",
+          "heroicId": 104427,
+          "wfId": 105423,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Prismatic Prison of Pride",
+          "heroicId": 104478,
+          "wfId": 105474,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Nazgrim's Burnished Insignia",
+          "heroicId": 104553,
+          "wfId": 105549,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Kardris' Scepter",
+          "heroicId": 104545,
+          "wfId": 105541,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "ret-paladin": {
+      "label": "Ret Paladin",
+      "class": "PALADIN",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Helmet of Winged Triumph",
+          "heroicId": 99379,
+          "wfId": 99379,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Malkorok's Tainted Dog Tags",
+          "heroicId": 104570,
+          "wfId": 105566,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Pauldrons of Winged Triumph",
+          "heroicId": 99373,
+          "wfId": 99373,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Battleplate of Winged Triumph",
+          "heroicId": 99387,
+          "wfId": 99387,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Blind Hatred",
+          "heroicId": 104460,
+          "wfId": 105456,
+          "source": "multiple",
+          "sourceLabel": "Multiple",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gauntlets of Winged Triumph",
+          "heroicId": 99380,
+          "wfId": 99380,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Demolisher's Reinforced Belt",
+          "heroicId": 104513,
+          "wfId": 105509,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legplates of Unthinking Strife",
+          "heroicId": 104644,
+          "wfId": 105640,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Wolf-Rider Spurs",
+          "heroicId": 104535,
+          "wfId": 105531,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Seal of the Forgotten Kings",
+          "heroicId": 104593,
+          "wfId": 105589,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Bloodclaw Band",
+          "heroicId": 104538,
+          "wfId": 105534,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Evil Eye of Galakras",
+          "heroicId": 104495,
+          "wfId": 105491,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Thok's Tail Tip",
+          "heroicId": 104613,
+          "wfId": 105609,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Greatsword of Pride's Fall",
+          "heroicId": 104483,
+          "wfId": 105479,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "arcane-mage": {
+      "label": "Arcane Mage",
+      "class": "MAGE",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of Swirling Senses",
+          "heroicId": 104424,
+          "wfId": 105420,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Untainted Guardian's Chain",
+          "heroicId": 104469,
+          "wfId": 105465,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Chronomancer Mantle",
+          "heroicId": 99401,
+          "wfId": 99401,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Chronomancer Robes",
+          "heroicId": 99400,
+          "wfId": 99400,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Avool's Ancestral Bracers",
+          "heroicId": 104595,
+          "wfId": 105591,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Chronomancer Gloves",
+          "heroicId": 99397,
+          "wfId": 99397,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Belt of Ominous Trembles",
+          "heroicId": 104519,
+          "wfId": 105515,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Chronomancer Leggings",
+          "heroicId": 99399,
+          "wfId": 99399,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Bone-Inlaid Sandals",
+          "heroicId": 104497,
+          "wfId": 105493,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Iyyokuk's Hereditary Seal",
+          "heroicId": 104632,
+          "wfId": 105628,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Immaculately Preserved Wand",
+          "heroicId": 104598,
+          "wfId": 105594,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "fire-mage": {
+      "label": "Fire Mage",
+      "class": "MAGE",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of Swirling Senses",
+          "heroicId": 104424,
+          "wfId": 105420,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Untainted Guardian's Chain",
+          "heroicId": 104469,
+          "wfId": 105465,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Chronomancer Mantle",
+          "heroicId": 99401,
+          "wfId": 99401,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Chronomancer Robes",
+          "heroicId": 99400,
+          "wfId": 99400,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Sonic Projection",
+          "heroicId": 104630,
+          "wfId": 105626,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Chronomancer Gloves",
+          "heroicId": 99397,
+          "wfId": 99397,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Miasmic Skullbelt",
+          "heroicId": 104573,
+          "wfId": 105569,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Chronomancer Leggings",
+          "heroicId": 99399,
+          "wfId": 99399,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Toxic Tornado Treads",
+          "heroicId": 104541,
+          "wfId": 105537,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Petrified Pennyroyal Ring",
+          "heroicId": 104447,
+          "wfId": 105443,
+          "source": "protectors",
+          "sourceLabel": "Fallen Protectors",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Immaculately Preserved Wand",
+          "heroicId": 104598,
+          "wfId": 105594,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "frost-mage": {
+      "label": "Frost Mage",
+      "class": "MAGE",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Ebon Ritual Hood",
+          "heroicId": 104651,
+          "wfId": 105647,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Untainted Guardian's Chain",
+          "heroicId": 104469,
+          "wfId": 105465,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Chronomancer Mantle",
+          "heroicId": 99401,
+          "wfId": 99401,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Chronomancer Robes",
+          "heroicId": 99400,
+          "wfId": 99400,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Avool's Ancestral Bracers",
+          "heroicId": 104595,
+          "wfId": 105591,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Chronomancer Gloves",
+          "heroicId": 99397,
+          "wfId": 99397,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Belt of Ominous Trembles",
+          "heroicId": 104519,
+          "wfId": 105515,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Chronomancer Leggings",
+          "heroicId": 99399,
+          "wfId": 99399,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Bone-Inlaid Sandals",
+          "heroicId": 104497,
+          "wfId": 105493,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Extinguished Ember of Galakras",
+          "heroicId": 104502,
+          "wfId": 105498,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Rik'kal's Bloody Scalpel",
+          "heroicId": 104631,
+          "wfId": 105627,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "prot-paladin": {
+      "label": "Prot Paladin",
+      "class": "PALADIN",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Helm of the Night Watchman",
+          "heroicId": 104590,
+          "wfId": 105586,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Juggernaut's Ignition Keys",
+          "heroicId": 104517,
+          "wfId": 105513,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Shoulderguards of Winged Triumph",
+          "heroicId": 99364,
+          "wfId": 99364,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Chestplate of Congealed Corrosion",
+          "heroicId": 104416,
+          "wfId": 105412,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bubble-Burst Bracers",
+          "heroicId": 104415,
+          "wfId": 105411,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Handguards of Winged Triumph",
+          "heroicId": 99369,
+          "wfId": 99369,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Poisonbinder Girth",
+          "heroicId": 104437,
+          "wfId": 105433,
+          "source": "protectors",
+          "sourceLabel": "Fallen Protectors",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legplates of Unthinking Strife",
+          "heroicId": 104644,
+          "wfId": 105640,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Wolf-Rider Spurs",
+          "heroicId": 104535,
+          "wfId": 105531,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Asgorathian Blood Seal",
+          "heroicId": 104624,
+          "wfId": 105620,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Seal of the Forgotten Kings",
+          "heroicId": 104593,
+          "wfId": 105589,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Skeer's Bloodsoaked Talisman",
+          "heroicId": 104636,
+          "wfId": 105632,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Vial of Living Corruption",
+          "heroicId": 104572,
+          "wfId": 105568,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Malkorok's Skullcleaver",
+          "heroicId": 104571,
+          "wfId": 105567,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Shield of Mockery",
+          "heroicId": 104485,
+          "wfId": 105481,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "assassination-rogue": {
+      "label": "Assassination Rogue",
+      "class": "ROGUE",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Helmet of the Barbed Assassin",
+          "heroicId": 99348,
+          "wfId": 99348,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Immerseus' Crystalline Eye",
+          "heroicId": 104411,
+          "wfId": 105407,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Spaulders of the Barbed Assassin",
+          "heroicId": 99350,
+          "wfId": 99350,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Tunic of the Barbed Assassin",
+          "heroicId": 99356,
+          "wfId": 99356,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bomber's Blackened Wristwatch",
+          "heroicId": 104620,
+          "wfId": 105616,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Barbed Assassin",
+          "heroicId": 99355,
+          "wfId": 99355,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Damron's Belt of Darkness",
+          "heroicId": 104532,
+          "wfId": 105528,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Riou's Vigilant Leggings",
+          "heroicId": 104533,
+          "wfId": 105529,
+          "source": "multiple",
+          "sourceLabel": "Multiple",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Unrepentant Heels",
+          "heroicId": 104488,
+          "wfId": 105484,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Ring of Restless Energy",
+          "heroicId": 104562,
+          "wfId": 105558,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Kil'ruk's Band of Ascendancy",
+          "heroicId": 104628,
+          "wfId": 105624,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Haromm's Talisman",
+          "heroicId": 104531,
+          "wfId": 105527,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Assurance of Consequence",
+          "heroicId": 104476,
+          "wfId": 105472,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Nazgrim's Gutripper",
+          "heroicId": 104551,
+          "wfId": 105547,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Nazgrim's Gutripper",
+          "heroicId": 104551,
+          "wfId": 105547,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "combat-rogue": {
+      "label": "Combat Rogue",
+      "class": "ROGUE",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Kor'kron Elite Skullmask",
+          "heroicId": 104640,
+          "wfId": 105636,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Immerseus' Crystalline Eye",
+          "heroicId": 104411,
+          "wfId": 105407,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Nine-Tailed Spaulders",
+          "heroicId": 96683,
+          "wfId": 96683,
+          "source": "outside",
+          "sourceLabel": "Iron Qon (ToT)",
+          "bisIlvl": 535
+        },
+        {
+          "slot": "Chest",
+          "name": "Nine-Tailed Tunic",
+          "heroicId": 96679,
+          "wfId": 96679,
+          "source": "outside",
+          "sourceLabel": "Dark Animus (ToT)",
+          "bisIlvl": 535
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bomber's Blackened Wristwatch",
+          "heroicId": 104620,
+          "wfId": 105616,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Nine-Tailed Gloves",
+          "heroicId": 96680,
+          "wfId": 96680,
+          "source": "outside",
+          "sourceLabel": "Council (ToT)",
+          "bisIlvl": 535
+        },
+        {
+          "slot": "Belt",
+          "name": "Damron's Belt of Darkness",
+          "heroicId": 104532,
+          "wfId": 105528,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Nine-Tailed Legguards",
+          "heroicId": 96682,
+          "wfId": 96682,
+          "source": "outside",
+          "sourceLabel": "Ji-Kun (ToT)",
+          "bisIlvl": 535
+        },
+        {
+          "slot": "Boots",
+          "name": "Pandaren Roofsprinters",
+          "heroicId": 104586,
+          "wfId": 105582,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Swift Serpent Signet",
+          "heroicId": 104487,
+          "wfId": 105483,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Kil'ruk's Band of Ascendancy",
+          "heroicId": 104628,
+          "wfId": 105624,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Haromm's Talisman",
+          "heroicId": 104531,
+          "wfId": 105527,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Assurance of Consequence",
+          "heroicId": 104476,
+          "wfId": 105472,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Enchanted Shao-Tien Saber",
+          "heroicId": 105083,
+          "wfId": 105581,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 528
+        },
+        {
+          "slot": "Offhand",
+          "name": "Enchanted Shao-Tien Saber",
+          "heroicId": 105083,
+          "wfId": 105581,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 528
+        }
+      ]
+    },
+    "affliction-warlock": {
+      "label": "Affliction Warlock",
+      "class": "WARLOCK",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Ebon Ritual Hood",
+          "heroicId": 104651,
+          "wfId": 105647,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Untainted Guardian's Chain",
+          "heroicId": 104469,
+          "wfId": 105465,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of the Horned Nightmare",
+          "heroicId": 99417,
+          "wfId": 99417,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Mantid Vizier's Robes",
+          "heroicId": 104596,
+          "wfId": 105592,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Avool's Ancestral Bracers",
+          "heroicId": 104595,
+          "wfId": 105591,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Horned Nightmare",
+          "heroicId": 99424,
+          "wfId": 99424,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Belt of Ominous Trembles",
+          "heroicId": 104519,
+          "wfId": 105515,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of Furious Flame",
+          "heroicId": 104520,
+          "wfId": 105516,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Bone-Inlaid Sandals",
+          "heroicId": 104497,
+          "wfId": 105493,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Iyyokuk's Hereditary Seal",
+          "heroicId": 104632,
+          "wfId": 105628,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Black Blood of Y'Shaarj",
+          "heroicId": 104652,
+          "wfId": 105648,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Hellscream's War Staff",
+          "heroicId": 105690,
+          "wfId": 105690,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 582
+        }
+      ]
+    },
+    "demonology-warlock": {
+      "label": "Demonology Warlock",
+      "class": "WARLOCK",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Hood of the Horned Nightmare",
+          "heroicId": 99425,
+          "wfId": 99425,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Untainted Guardian's Chain",
+          "heroicId": 104469,
+          "wfId": 105465,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of the Horned Nightmare",
+          "heroicId": 99417,
+          "wfId": 99417,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Akolik's Acid-Soaked Robes",
+          "heroicId": 104608,
+          "wfId": 105604,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Avool's Ancestral Bracers",
+          "heroicId": 104595,
+          "wfId": 105591,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Horned Nightmare",
+          "heroicId": 99424,
+          "wfId": 99424,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Belt of Ominous Trembles",
+          "heroicId": 104519,
+          "wfId": 105515,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Leggings of the Horned Nightmare",
+          "heroicId": 99426,
+          "wfId": 99426,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Bone-Inlaid Sandals",
+          "heroicId": 104497,
+          "wfId": 105493,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Signet of the Dinomancers",
+          "heroicId": 104610,
+          "wfId": 105606,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Iyyokuk's Hereditary Seal",
+          "heroicId": 104632,
+          "wfId": 105628,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Purified Bindings of Immerseus",
+          "heroicId": 104426,
+          "wfId": 105422,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Kardris' Toxic Totem",
+          "heroicId": 104544,
+          "wfId": 105540,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Rik'kal's Bloody Scalpel",
+          "heroicId": 104631,
+          "wfId": 105627,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Revelations of Y'Shaarj",
+          "heroicId": 104654,
+          "wfId": 105650,
+          "source": "garrosh",
+          "sourceLabel": "Garrosh Hellscream",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "guardian-druid": {
+      "label": "Guardian Druid",
+      "class": "DRUID",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Headguard of the Shattered Vale",
+          "heroicId": 99421,
+          "wfId": 99421,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Gleaming Eye of the Devilsaur",
+          "heroicId": 104606,
+          "wfId": 105602,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Ricocheting Shoulderguards",
+          "heroicId": 104510,
+          "wfId": 105506,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Tunic of the Shattered Vale",
+          "heroicId": 99419,
+          "wfId": 99419,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Laser Burn Bracers",
+          "heroicId": 104509,
+          "wfId": 105505,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Handguards of the Shattered Vale",
+          "heroicId": 99420,
+          "wfId": 99420,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Damron's Belt of Darkness",
+          "heroicId": 104532,
+          "wfId": 105528,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Breeches of the Shattered Vale",
+          "heroicId": 99422,
+          "wfId": 99422,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Unrepentant Heels",
+          "heroicId": 104488,
+          "wfId": 105484,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Reality Ripper Ring",
+          "heroicId": 104455,
+          "wfId": 105451,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Swift Serpent Signet",
+          "heroicId": 104487,
+          "wfId": 105483,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Vial of Living Corruption",
+          "heroicId": 104572,
+          "wfId": 105568,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Haromm's Talisman",
+          "heroicId": 104531,
+          "wfId": 105527,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Trident of Corrupted Waters",
+          "heroicId": 104412,
+          "wfId": 105408,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "mistweaver-monk": {
+      "label": "Mistweaver Monk",
+      "class": "MONK",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Darkfang Mask",
+          "heroicId": 104546,
+          "wfId": 105542,
+          "source": "shamans",
+          "sourceLabel": "Dark Shamans",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Lost Necklace of the Mogu Empress",
+          "heroicId": 104597,
+          "wfId": 105593,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Mantle of Seven Sacred Seals",
+          "heroicId": 99381,
+          "wfId": 99381,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Vest of Seven Sacred Seals",
+          "heroicId": 99391,
+          "wfId": 99391,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Purified Spirit",
+          "heroicId": 104429,
+          "wfId": 105425,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Handwraps of Seven Sacred Seals",
+          "heroicId": 99388,
+          "wfId": 99388,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Dragonmaw Emergency Strap",
+          "heroicId": 104504,
+          "wfId": 105500,
+          "source": "galakras",
+          "sourceLabel": "Galakras",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legwraps of Seven Sacred Seals",
+          "heroicId": 99390,
+          "wfId": 99390,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Boots of Broken Reliance",
+          "heroicId": 104471,
+          "wfId": 105467,
+          "source": "norushen",
+          "sourceLabel": "Norushen",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Seal of Sullen Fury",
+          "heroicId": 104578,
+          "wfId": 105574,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Seal of Eternal Sorrow",
+          "heroicId": 104427,
+          "wfId": 105423,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Nazgrim's Burnished Insignia",
+          "heroicId": 104553,
+          "wfId": 105549,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Thok's Acid-Grooved Tooth",
+          "heroicId": 104611,
+          "wfId": 105607,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Arcweaver Spell Sword",
+          "heroicId": 104554,
+          "wfId": 105550,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Offhand",
+          "name": "Juggernaut's Power Core",
+          "heroicId": 104525,
+          "wfId": 105521,
+          "source": "juggernaut",
+          "sourceLabel": "Iron Juggernaut",
+          "bisIlvl": 566
+        }
+      ]
+    },
+    "bm-hunter": {
+      "label": "BM Hunter",
+      "class": "HUNTER",
+      "items": [
+        {
+          "slot": "Head",
+          "name": "Headguard of the Unblinking Vigil",
+          "heroicId": 99402,
+          "wfId": 99402,
+          "source": "thok",
+          "sourceLabel": "Thok the Bloodthirsty",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Neck",
+          "name": "Immerseus' Crystalline Eye",
+          "heroicId": 104411,
+          "wfId": 105407,
+          "source": "immerseus",
+          "sourceLabel": "Immerseus",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Shoulders",
+          "name": "Spaulders of the Unblinking Vigil",
+          "heroicId": 99404,
+          "wfId": 99404,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Chest",
+          "name": "Ancient Archer's Chestguard",
+          "heroicId": 104589,
+          "wfId": 105585,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Bracers",
+          "name": "Bracers of Infinite Pipes",
+          "heroicId": 104621,
+          "wfId": 105617,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Gloves",
+          "name": "Gloves of the Unblinking Vigil",
+          "heroicId": 99406,
+          "wfId": 99406,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Belt",
+          "name": "Arrowflight Girdle",
+          "heroicId": 104588,
+          "wfId": 105584,
+          "source": "spoils",
+          "sourceLabel": "Spoils",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Legs",
+          "name": "Legguards of the Unblinking Vigil",
+          "heroicId": 99403,
+          "wfId": 99403,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Boots",
+          "name": "Ravager's Pathwalkers",
+          "heroicId": 104557,
+          "wfId": 105553,
+          "source": "nazgrim",
+          "sourceLabel": "General Nazgrim",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 1",
+          "name": "Ring of Restless Energy",
+          "heroicId": 104562,
+          "wfId": 105558,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Ring 2",
+          "name": "Kil'ruk's Band of Ascendancy",
+          "heroicId": 104628,
+          "wfId": 105624,
+          "source": "paragons",
+          "sourceLabel": "Paragons",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 1",
+          "name": "Assurance of Consequence",
+          "heroicId": 104476,
+          "wfId": 105472,
+          "source": "sha",
+          "sourceLabel": "Sha of Pride",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Trinket 2",
+          "name": "Ticking Ebon Detonator",
+          "heroicId": 104616,
+          "wfId": 105612,
+          "source": "siegecrafter",
+          "sourceLabel": "Siegecrafter Blackfuse",
+          "bisIlvl": 566
+        },
+        {
+          "slot": "Weapon",
+          "name": "Kor'kron Hand Cannon",
+          "heroicId": 104563,
+          "wfId": 105559,
+          "source": "malkorok",
+          "sourceLabel": "Malkorok",
+          "bisIlvl": 566
+        }
+      ]
+    }
+  }
+}
