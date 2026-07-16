@@ -17,7 +17,8 @@
           "wfId": 105420,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidmage_n_01"
         },
         {
           "slot": "Neck",
@@ -26,7 +27,8 @@
           "wfId": 105473,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop5"
         },
         {
           "slot": "Shoulders",
@@ -35,7 +37,8 @@
           "wfId": 99363,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01shoulder"
         },
         {
           "slot": "Chest",
@@ -44,7 +47,8 @@
           "wfId": 99362,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01robe"
         },
         {
           "slot": "Bracers",
@@ -53,7 +57,8 @@
           "wfId": 105626,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -62,7 +67,8 @@
           "wfId": 99359,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01glove"
         },
         {
           "slot": "Belt",
@@ -71,7 +77,8 @@
           "wfId": 105463,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01belt"
         },
         {
           "slot": "Legs",
@@ -80,7 +87,8 @@
           "wfId": 99361,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01pant"
         },
         {
           "slot": "Boots",
@@ -89,7 +97,8 @@
           "wfId": 105493,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Ring 1",
@@ -98,7 +107,8 @@
           "wfId": 105520,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop17"
         },
         {
           "slot": "Ring 2",
@@ -107,7 +117,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -116,7 +127,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -125,7 +137,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -134,7 +147,8 @@
           "wfId": 105614,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_staff_2h_orgrimmarraid_d_03"
         }
       ]
     },
@@ -149,7 +163,8 @@
           "wfId": 105420,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidmage_n_01"
         },
         {
           "slot": "Neck",
@@ -158,7 +173,8 @@
           "wfId": 105593,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop9"
         },
         {
           "slot": "Shoulders",
@@ -167,7 +183,8 @@
           "wfId": 99358,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01shoulder"
         },
         {
           "slot": "Chest",
@@ -176,7 +193,8 @@
           "wfId": 99357,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01robe"
         },
         {
           "slot": "Bracers",
@@ -185,7 +203,8 @@
           "wfId": 105626,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -194,7 +213,8 @@
           "wfId": 99365,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01glove"
         },
         {
           "slot": "Belt",
@@ -203,7 +223,8 @@
           "wfId": 105463,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01belt"
         },
         {
           "slot": "Legs",
@@ -212,7 +233,8 @@
           "wfId": 99367,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01pant"
         },
         {
           "slot": "Boots",
@@ -221,7 +243,8 @@
           "wfId": 105537,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidmage_n_01"
         },
         {
           "slot": "Ring 1",
@@ -230,7 +253,8 @@
           "wfId": 105574,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop12"
         },
         {
           "slot": "Ring 2",
@@ -239,7 +263,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -248,7 +273,8 @@
           "wfId": 105474,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_09"
         },
         {
           "slot": "Trinket 2",
@@ -257,7 +283,8 @@
           "wfId": 105549,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_18"
         },
         {
           "slot": "Weapon",
@@ -266,7 +293,8 @@
           "wfId": 105594,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_wand_1h_orgrimmarraid_d_01"
         },
         {
           "slot": "Offhand",
@@ -275,7 +303,8 @@
           "wfId": 105521,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_pvpcataclysms3_c_01"
         }
       ]
     },
@@ -290,7 +319,8 @@
           "wfId": 99418,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helmet_plate_raidwarrior_n_01"
         },
         {
           "slot": "Neck",
@@ -299,7 +329,8 @@
           "wfId": 105566,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop7"
         },
         {
           "slot": "Shoulders",
@@ -308,7 +339,8 @@
           "wfId": 99414,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_plate_raidwarrior_n_01"
         },
         {
           "slot": "Chest",
@@ -317,7 +349,8 @@
           "wfId": 105532,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_plate_raidwarrior_n_01"
         },
         {
           "slot": "Bracers",
@@ -326,7 +359,8 @@
           "wfId": 105456,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Gloves",
@@ -335,7 +369,8 @@
           "wfId": 105511,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_gauntlet_plate_raidwarrior_n_01"
         },
         {
           "slot": "Belt",
@@ -344,7 +379,8 @@
           "wfId": 105533,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Legs",
@@ -353,7 +389,8 @@
           "wfId": 105565,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pants_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Boots",
@@ -362,7 +399,8 @@
           "wfId": 105478,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -371,7 +409,8 @@
           "wfId": 105534,
           "source": "multiple",
           "sourceLabel": "Multiple Bosses",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_3"
         },
         {
           "slot": "Ring 2",
@@ -380,7 +419,8 @@
           "wfId": 105611,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_4"
         },
         {
           "slot": "Trinket 1",
@@ -389,7 +429,8 @@
           "wfId": 105491,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_11"
         },
         {
           "slot": "Trinket 2",
@@ -398,7 +439,8 @@
           "wfId": 105609,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_03"
         },
         {
           "slot": "Weapon",
@@ -407,7 +449,8 @@
           "wfId": 105479,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_sword_2h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -422,7 +465,8 @@
           "wfId": 105409,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01helm"
         },
         {
           "slot": "Neck",
@@ -431,7 +475,8 @@
           "wfId": 105602,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop2"
         },
         {
           "slot": "Shoulders",
@@ -440,7 +485,8 @@
           "wfId": 99395,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_leather_raidmonk_n_01"
         },
         {
           "slot": "Chest",
@@ -449,7 +495,8 @@
           "wfId": 105452,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_robe_leather_raidmonk_n_01"
         },
         {
           "slot": "Bracers",
@@ -458,7 +505,8 @@
           "wfId": 105505,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_leather_raidmonk_n_01"
         },
         {
           "slot": "Gloves",
@@ -467,7 +515,8 @@
           "wfId": 105453,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_leather_raidmonk_n_01"
         },
         {
           "slot": "Belt",
@@ -476,7 +525,8 @@
           "wfId": 105635,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01belt"
         },
         {
           "slot": "Legs",
@@ -485,7 +535,8 @@
           "wfId": 99394,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_leather_raidmonk_n_01"
         },
         {
           "slot": "Boots",
@@ -494,7 +545,8 @@
           "wfId": 105484,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -503,7 +555,8 @@
           "wfId": 105451,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop16"
         },
         {
           "slot": "Ring 2",
@@ -512,7 +565,8 @@
           "wfId": 105558,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_2"
         },
         {
           "slot": "Trinket 1",
@@ -521,7 +575,8 @@
           "wfId": 105609,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_03"
         },
         {
           "slot": "Trinket 2",
@@ -530,7 +585,8 @@
           "wfId": 105527,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_08"
         },
         {
           "slot": "Weapon",
@@ -539,7 +595,8 @@
           "wfId": 105685,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 582
+          "bisIlvl": 582,
+          "icon": "inv_axe_1h_pvphorde_d_01_upres"
         },
         {
           "slot": "Offhand",
@@ -548,7 +605,8 @@
           "wfId": 105685,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 582
+          "bisIlvl": 582,
+          "icon": "inv_axe_1h_pvphorde_d_01_upres"
         }
       ]
     },
@@ -563,7 +621,8 @@
           "wfId": 99393,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_leather_raidmonk_n_01"
         },
         {
           "slot": "Neck",
@@ -572,7 +631,8 @@
           "wfId": 105407,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop8"
         },
         {
           "slot": "Shoulders",
@@ -581,7 +641,8 @@
           "wfId": 99395,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_leather_raidmonk_n_01"
         },
         {
           "slot": "Chest",
@@ -590,7 +651,8 @@
           "wfId": 105452,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_robe_leather_raidmonk_n_01"
         },
         {
           "slot": "Bracers",
@@ -599,7 +661,8 @@
           "wfId": 105616,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_leather_raidrogue_n_01"
         },
         {
           "slot": "Gloves",
@@ -608,7 +671,8 @@
           "wfId": 99392,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_leather_raidmonk_n_01"
         },
         {
           "slot": "Belt",
@@ -617,7 +681,8 @@
           "wfId": 105635,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01belt"
         },
         {
           "slot": "Legs",
@@ -626,7 +691,8 @@
           "wfId": 99394,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_leather_raidmonk_n_01"
         },
         {
           "slot": "Boots",
@@ -635,7 +701,8 @@
           "wfId": 105582,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_leather_raidrogue_n_01"
         },
         {
           "slot": "Ring 1",
@@ -644,7 +711,8 @@
           "wfId": 105451,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop16"
         },
         {
           "slot": "Ring 2",
@@ -653,7 +721,8 @@
           "wfId": 105624,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop20"
         },
         {
           "slot": "Trinket 1",
@@ -662,7 +731,8 @@
           "wfId": 96546,
           "source": "outside",
           "sourceLabel": "Lei Shen (ToT)",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "inv_offhand_1h_ulduarraid_d_01"
         },
         {
           "slot": "Trinket 2",
@@ -671,7 +741,8 @@
           "wfId": 105527,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_08"
         },
         {
           "slot": "Weapon",
@@ -680,7 +751,8 @@
           "wfId": 105685,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 582
+          "bisIlvl": 582,
+          "icon": "inv_axe_1h_pvphorde_d_01_upres"
         },
         {
           "slot": "Offhand",
@@ -689,7 +761,8 @@
           "wfId": 105685,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 582
+          "bisIlvl": 582,
+          "icon": "inv_axe_1h_pvphorde_d_01_upres"
         }
       ]
     },
@@ -704,7 +777,8 @@
           "wfId": 99332,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01helm"
         },
         {
           "slot": "Neck",
@@ -713,7 +787,8 @@
           "wfId": 105593,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop9"
         },
         {
           "slot": "Shoulders",
@@ -722,7 +797,8 @@
           "wfId": 99334,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01shoulder"
         },
         {
           "slot": "Chest",
@@ -731,7 +807,8 @@
           "wfId": 99344,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01chest"
         },
         {
           "slot": "Bracers",
@@ -740,7 +817,8 @@
           "wfId": 105524,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -749,7 +827,8 @@
           "wfId": 105501,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01glove"
         },
         {
           "slot": "Belt",
@@ -758,7 +837,8 @@
           "wfId": 105597,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01belt"
         },
         {
           "slot": "Legs",
@@ -767,7 +847,8 @@
           "wfId": 99333,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01pant"
         },
         {
           "slot": "Boots",
@@ -776,7 +857,8 @@
           "wfId": 105618,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -785,7 +867,8 @@
           "wfId": 105520,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop17"
         },
         {
           "slot": "Ring 2",
@@ -794,7 +877,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -803,7 +887,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -812,7 +897,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -821,7 +907,8 @@
           "wfId": 105541,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mace_1h_orgrimmarraid_d_02"
         },
         {
           "slot": "Offhand",
@@ -830,7 +917,8 @@
           "wfId": 105466,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shield_orgrimmarraid_d_02"
         }
       ]
     },
@@ -845,7 +933,8 @@
           "wfId": 99353,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01helm"
         },
         {
           "slot": "Neck",
@@ -854,7 +943,8 @@
           "wfId": 105593,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop9"
         },
         {
           "slot": "Shoulders",
@@ -863,7 +953,8 @@
           "wfId": 99346,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01shoulder"
         },
         {
           "slot": "Chest",
@@ -872,7 +963,8 @@
           "wfId": 99351,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01chest"
         },
         {
           "slot": "Bracers",
@@ -881,7 +973,8 @@
           "wfId": 105524,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -890,7 +983,8 @@
           "wfId": 105501,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01glove"
         },
         {
           "slot": "Belt",
@@ -899,7 +993,8 @@
           "wfId": 105597,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01belt"
         },
         {
           "slot": "Legs",
@@ -908,7 +1003,8 @@
           "wfId": 99354,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01pant"
         },
         {
           "slot": "Boots",
@@ -917,7 +1013,8 @@
           "wfId": 105618,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mail_raidshaman_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -926,7 +1023,8 @@
           "wfId": 105520,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop17"
         },
         {
           "slot": "Ring 2",
@@ -935,7 +1033,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -944,7 +1043,8 @@
           "wfId": 105607,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_01"
         },
         {
           "slot": "Trinket 2",
@@ -953,7 +1053,8 @@
           "wfId": 105474,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_09"
         },
         {
           "slot": "Weapon",
@@ -962,7 +1063,8 @@
           "wfId": 105649,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mace_1h_orgrimmarraid_d_03"
         },
         {
           "slot": "Offhand",
@@ -971,7 +1073,8 @@
           "wfId": 105650,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -986,7 +1089,8 @@
           "wfId": 99376,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_plate_raidpaladin_n_01"
         },
         {
           "slot": "Neck",
@@ -995,7 +1099,8 @@
           "wfId": 105593,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop9"
         },
         {
           "slot": "Shoulders",
@@ -1004,7 +1109,8 @@
           "wfId": 99378,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_plate_raidpaladin_n_01"
         },
         {
           "slot": "Chest",
@@ -1013,7 +1119,8 @@
           "wfId": 105654,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01robe"
         },
         {
           "slot": "Bracers",
@@ -1022,7 +1129,8 @@
           "wfId": 105502,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -1031,7 +1139,8 @@
           "wfId": 99375,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01glove"
         },
         {
           "slot": "Belt",
@@ -1040,7 +1149,8 @@
           "wfId": 105427,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01belt"
         },
         {
           "slot": "Legs",
@@ -1049,7 +1159,8 @@
           "wfId": 99377,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01pant"
         },
         {
           "slot": "Boots",
@@ -1058,7 +1169,8 @@
           "wfId": 105428,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -1067,7 +1179,8 @@
           "wfId": 105423,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop9"
         },
         {
           "slot": "Ring 2",
@@ -1076,7 +1189,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -1085,7 +1199,8 @@
           "wfId": 105474,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_09"
         },
         {
           "slot": "Trinket 2",
@@ -1094,7 +1209,8 @@
           "wfId": 105549,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_18"
         },
         {
           "slot": "Weapon",
@@ -1103,7 +1219,8 @@
           "wfId": 105541,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_mace_1h_orgrimmarraid_d_02"
         },
         {
           "slot": "Offhand",
@@ -1112,7 +1229,8 @@
           "wfId": 105650,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -1127,7 +1245,8 @@
           "wfId": 99379,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_plate_raidpaladin_n_01"
         },
         {
           "slot": "Neck",
@@ -1136,7 +1255,8 @@
           "wfId": 105566,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop7"
         },
         {
           "slot": "Shoulders",
@@ -1145,7 +1265,8 @@
           "wfId": 99373,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_plate_raidpaladin_n_01"
         },
         {
           "slot": "Chest",
@@ -1154,7 +1275,8 @@
           "wfId": 99387,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01robe"
         },
         {
           "slot": "Bracers",
@@ -1163,7 +1285,8 @@
           "wfId": 105456,
           "source": "multiple",
           "sourceLabel": "Multiple",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Gloves",
@@ -1172,7 +1295,8 @@
           "wfId": 99380,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01glove"
         },
         {
           "slot": "Belt",
@@ -1181,7 +1305,8 @@
           "wfId": 105509,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_plate_raidwarrior_n_01"
         },
         {
           "slot": "Legs",
@@ -1190,7 +1315,8 @@
           "wfId": 105640,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pants_plate_raidwarrior_n_01"
         },
         {
           "slot": "Boots",
@@ -1199,7 +1325,8 @@
           "wfId": 105531,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boots_plate_raidwarrior_n_01"
         },
         {
           "slot": "Ring 1",
@@ -1208,7 +1335,8 @@
           "wfId": 105589,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop18"
         },
         {
           "slot": "Ring 2",
@@ -1217,7 +1345,8 @@
           "wfId": 105534,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_3"
         },
         {
           "slot": "Trinket 1",
@@ -1226,7 +1355,8 @@
           "wfId": 105491,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_11"
         },
         {
           "slot": "Trinket 2",
@@ -1235,7 +1365,8 @@
           "wfId": 105609,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_03"
         },
         {
           "slot": "Weapon",
@@ -1244,7 +1375,8 @@
           "wfId": 105479,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_sword_2h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -1259,7 +1391,8 @@
           "wfId": 105420,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidmage_n_01"
         },
         {
           "slot": "Neck",
@@ -1268,7 +1401,8 @@
           "wfId": 105465,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop6"
         },
         {
           "slot": "Shoulders",
@@ -1277,7 +1411,8 @@
           "wfId": 99401,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_cloth_raidmage_n_01"
         },
         {
           "slot": "Chest",
@@ -1286,7 +1421,8 @@
           "wfId": 99400,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_cloth_raidmage_n_01"
         },
         {
           "slot": "Bracers",
@@ -1295,7 +1431,8 @@
           "wfId": 105591,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_cloth_raidmage_n_01"
         },
         {
           "slot": "Gloves",
@@ -1304,7 +1441,8 @@
           "wfId": 99397,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_cloth_raidmage_n_01"
         },
         {
           "slot": "Belt",
@@ -1313,7 +1451,8 @@
           "wfId": 105515,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_cloth_raidmage_n_01"
         },
         {
           "slot": "Legs",
@@ -1322,7 +1461,8 @@
           "wfId": 99399,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_cloth_raidmage_n_01"
         },
         {
           "slot": "Boots",
@@ -1331,7 +1471,8 @@
           "wfId": 105493,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Ring 1",
@@ -1340,7 +1481,8 @@
           "wfId": 105628,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop3"
         },
         {
           "slot": "Ring 2",
@@ -1349,7 +1491,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -1358,7 +1501,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -1367,7 +1511,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -1376,7 +1521,8 @@
           "wfId": 105594,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_wand_1h_orgrimmarraid_d_01"
         },
         {
           "slot": "Offhand",
@@ -1385,7 +1531,8 @@
           "wfId": 105650,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -1400,7 +1547,8 @@
           "wfId": 105420,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidmage_n_01"
         },
         {
           "slot": "Neck",
@@ -1409,7 +1557,8 @@
           "wfId": 105465,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop6"
         },
         {
           "slot": "Shoulders",
@@ -1418,7 +1567,8 @@
           "wfId": 99401,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_cloth_raidmage_n_01"
         },
         {
           "slot": "Chest",
@@ -1427,7 +1577,8 @@
           "wfId": 99400,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_cloth_raidmage_n_01"
         },
         {
           "slot": "Bracers",
@@ -1436,7 +1587,8 @@
           "wfId": 105626,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_cloth_raidpriest_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -1445,7 +1597,8 @@
           "wfId": 99397,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_cloth_raidmage_n_01"
         },
         {
           "slot": "Belt",
@@ -1454,7 +1607,8 @@
           "wfId": 105569,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Legs",
@@ -1463,7 +1617,8 @@
           "wfId": 99399,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_cloth_raidmage_n_01"
         },
         {
           "slot": "Boots",
@@ -1472,7 +1627,8 @@
           "wfId": 105537,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidmage_n_01"
         },
         {
           "slot": "Ring 1",
@@ -1481,7 +1637,8 @@
           "wfId": 105443,
           "source": "protectors",
           "sourceLabel": "Fallen Protectors",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop11"
         },
         {
           "slot": "Ring 2",
@@ -1490,7 +1647,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -1499,7 +1657,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -1508,7 +1667,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -1517,7 +1677,8 @@
           "wfId": 105594,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_wand_1h_orgrimmarraid_d_01"
         },
         {
           "slot": "Offhand",
@@ -1526,7 +1687,8 @@
           "wfId": 105650,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -1541,7 +1703,8 @@
           "wfId": 105495,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Neck",
@@ -1550,7 +1713,8 @@
           "wfId": 105465,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop6"
         },
         {
           "slot": "Shoulders",
@@ -1559,7 +1723,8 @@
           "wfId": 99401,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_cloth_raidmage_n_01"
         },
         {
           "slot": "Chest",
@@ -1568,7 +1733,8 @@
           "wfId": 99400,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_cloth_raidmage_n_01"
         },
         {
           "slot": "Bracers",
@@ -1577,7 +1743,8 @@
           "wfId": 105591,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_cloth_raidmage_n_01"
         },
         {
           "slot": "Gloves",
@@ -1586,7 +1753,8 @@
           "wfId": 99397,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_cloth_raidmage_n_01"
         },
         {
           "slot": "Belt",
@@ -1595,7 +1763,8 @@
           "wfId": 105515,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_cloth_raidmage_n_01"
         },
         {
           "slot": "Legs",
@@ -1604,7 +1773,8 @@
           "wfId": 99399,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_cloth_raidmage_n_01"
         },
         {
           "slot": "Boots",
@@ -1613,7 +1783,8 @@
           "wfId": 105493,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Ring 1",
@@ -1622,7 +1793,8 @@
           "wfId": 105498,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop5"
         },
         {
           "slot": "Ring 2",
@@ -1631,7 +1803,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Trinket 1",
@@ -1640,7 +1813,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -1649,7 +1823,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -1658,7 +1833,8 @@
           "wfId": 105475,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_staff_2h_orgrimmarraid_d_04"
         }
       ]
     },
@@ -1673,7 +1849,8 @@
           "wfId": 105586,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helmet_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Neck",
@@ -1682,7 +1859,8 @@
           "wfId": 105513,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_key_06"
         },
         {
           "slot": "Shoulders",
@@ -1691,7 +1869,8 @@
           "wfId": 99364,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_plate_raidpaladin_n_01"
         },
         {
           "slot": "Chest",
@@ -1700,7 +1879,8 @@
           "wfId": 105412,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Bracers",
@@ -1709,7 +1889,8 @@
           "wfId": 105411,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_plate_raidwarrior_n_01"
         },
         {
           "slot": "Gloves",
@@ -1718,7 +1899,8 @@
           "wfId": 99369,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01glove"
         },
         {
           "slot": "Belt",
@@ -1727,7 +1909,8 @@
           "wfId": 105433,
           "source": "protectors",
           "sourceLabel": "Fallen Protectors",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_plate_raiddeathknight_n_01"
         },
         {
           "slot": "Legs",
@@ -1736,7 +1919,8 @@
           "wfId": 99372,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_plate_raidpaladin_n_01pant"
         },
         {
           "slot": "Boots",
@@ -1745,7 +1929,8 @@
           "wfId": 105531,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boots_plate_raidwarrior_n_01"
         },
         {
           "slot": "Ring 1",
@@ -1754,7 +1939,8 @@
           "wfId": 105620,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop17"
         },
         {
           "slot": "Ring 2",
@@ -1763,7 +1949,8 @@
           "wfId": 105589,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop18"
         },
         {
           "slot": "Trinket 1",
@@ -1772,7 +1959,8 @@
           "wfId": 105632,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_06"
         },
         {
           "slot": "Trinket 2",
@@ -1781,7 +1969,8 @@
           "wfId": 105568,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_10"
         },
         {
           "slot": "Weapon",
@@ -1790,7 +1979,8 @@
           "wfId": 105567,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_axe_1h_orgrimmarraid_d_02"
         },
         {
           "slot": "Offhand",
@@ -1799,7 +1989,8 @@
           "wfId": 105481,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shield_orgrimmarraid_d_01"
         }
       ]
     },
@@ -1814,7 +2005,8 @@
           "wfId": 99348,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_leather_raidrogue_n_01"
         },
         {
           "slot": "Neck",
@@ -1823,7 +2015,8 @@
           "wfId": 105407,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop8"
         },
         {
           "slot": "Shoulders",
@@ -1832,7 +2025,8 @@
           "wfId": 99350,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_leather_raidrogue_n_01"
         },
         {
           "slot": "Chest",
@@ -1841,7 +2035,8 @@
           "wfId": 99356,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_leather_raidrogue_n_01"
         },
         {
           "slot": "Bracers",
@@ -1850,7 +2045,8 @@
           "wfId": 105616,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_leather_raidrogue_n_01"
         },
         {
           "slot": "Gloves",
@@ -1859,7 +2055,8 @@
           "wfId": 99355,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_leather_raidrogue_n_01"
         },
         {
           "slot": "Belt",
@@ -1868,7 +2065,8 @@
           "wfId": 105528,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_leather_raidrogue_n_01"
         },
         {
           "slot": "Legs",
@@ -1877,7 +2075,8 @@
           "wfId": 105529,
           "source": "multiple",
           "sourceLabel": "Multiple",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_leather_raidrogue_n_01"
         },
         {
           "slot": "Boots",
@@ -1886,7 +2085,8 @@
           "wfId": 105484,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -1895,7 +2095,8 @@
           "wfId": 105558,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_2"
         },
         {
           "slot": "Ring 2",
@@ -1904,7 +2105,8 @@
           "wfId": 105624,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop20"
         },
         {
           "slot": "Trinket 1",
@@ -1913,7 +2115,8 @@
           "wfId": 105527,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_08"
         },
         {
           "slot": "Trinket 2",
@@ -1922,7 +2125,8 @@
           "wfId": 105472,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_14"
         },
         {
           "slot": "Weapon",
@@ -1931,7 +2135,8 @@
           "wfId": 105547,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_knife_1h_orgrimmarraid_d_02"
         },
         {
           "slot": "Offhand",
@@ -1940,7 +2145,8 @@
           "wfId": 105547,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_knife_1h_orgrimmarraid_d_02"
         }
       ]
     },
@@ -1955,7 +2161,8 @@
           "wfId": 105636,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_leather_raidrogue_n_01"
         },
         {
           "slot": "Neck",
@@ -1964,7 +2171,8 @@
           "wfId": 105407,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop8"
         },
         {
           "slot": "Shoulders",
@@ -1973,7 +2181,8 @@
           "wfId": 96683,
           "source": "outside",
           "sourceLabel": "Iron Qon (ToT)",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "inv_shoulder_leather_raidrogue_m_01"
         },
         {
           "slot": "Chest",
@@ -1982,7 +2191,8 @@
           "wfId": 96679,
           "source": "outside",
           "sourceLabel": "Dark Animus (ToT)",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "inv_chest_leather_raidrogue_m_01"
         },
         {
           "slot": "Bracers",
@@ -1991,7 +2201,8 @@
           "wfId": 105616,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_leather_raidrogue_n_01"
         },
         {
           "slot": "Gloves",
@@ -2000,7 +2211,8 @@
           "wfId": 96680,
           "source": "outside",
           "sourceLabel": "Council (ToT)",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "inv_glove_leather_raidrogue_m_01"
         },
         {
           "slot": "Belt",
@@ -2009,7 +2221,8 @@
           "wfId": 105528,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_leather_raidrogue_n_01"
         },
         {
           "slot": "Legs",
@@ -2018,7 +2231,8 @@
           "wfId": 96682,
           "source": "outside",
           "sourceLabel": "Ji-Kun (ToT)",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "inv_pant_leather_raidrogue_m_01"
         },
         {
           "slot": "Boots",
@@ -2027,7 +2241,8 @@
           "wfId": 105582,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_leather_raidrogue_n_01"
         },
         {
           "slot": "Ring 1",
@@ -2036,7 +2251,8 @@
           "wfId": 105483,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop4"
         },
         {
           "slot": "Ring 2",
@@ -2045,7 +2261,8 @@
           "wfId": 105624,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop20"
         },
         {
           "slot": "Trinket 1",
@@ -2054,7 +2271,8 @@
           "wfId": 105527,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_08"
         },
         {
           "slot": "Trinket 2",
@@ -2063,7 +2281,8 @@
           "wfId": 105472,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_14"
         },
         {
           "slot": "Weapon",
@@ -2072,7 +2291,8 @@
           "wfId": 105581,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 528
+          "bisIlvl": 528,
+          "icon": "inv_sword_1h_orgrimmarraid_d_04"
         },
         {
           "slot": "Offhand",
@@ -2081,7 +2301,8 @@
           "wfId": 105581,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 528
+          "bisIlvl": 528,
+          "icon": "inv_sword_1h_orgrimmarraid_d_04"
         }
       ]
     },
@@ -2096,7 +2317,8 @@
           "wfId": 99425,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Neck",
@@ -2105,7 +2327,8 @@
           "wfId": 105465,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop6"
         },
         {
           "slot": "Shoulders",
@@ -2114,7 +2337,8 @@
           "wfId": 99417,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Chest",
@@ -2123,7 +2347,8 @@
           "wfId": 105592,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_cloth_raidmage_n_01"
         },
         {
           "slot": "Bracers",
@@ -2132,7 +2357,8 @@
           "wfId": 105591,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_cloth_raidmage_n_01"
         },
         {
           "slot": "Gloves",
@@ -2141,7 +2367,8 @@
           "wfId": 99424,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Belt",
@@ -2150,7 +2377,8 @@
           "wfId": 105515,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_cloth_raidmage_n_01"
         },
         {
           "slot": "Legs",
@@ -2159,7 +2387,8 @@
           "wfId": 105516,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Boots",
@@ -2168,7 +2397,8 @@
           "wfId": 105493,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Ring 1",
@@ -2177,7 +2407,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Ring 2",
@@ -2186,7 +2417,8 @@
           "wfId": 105628,
           "source": "paragons",
           "sourceLabel": "Paragons of the Klaxxi",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop3"
         },
         {
           "slot": "Trinket 1",
@@ -2195,7 +2427,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -2204,7 +2437,8 @@
           "wfId": 96930,
           "source": "outside",
           "sourceLabel": "Outside SoO",
-          "bisIlvl": 535
+          "bisIlvl": 535,
+          "icon": "ability_hunter_focusedaim"
         },
         {
           "slot": "Weapon",
@@ -2213,7 +2447,8 @@
           "wfId": 105594,
           "source": "spoils",
           "sourceLabel": "Spoils of Pandaria",
-          "bisIlvl": 582
+          "bisIlvl": 582,
+          "icon": "inv_wand_1h_orgrimmarraid_d_01"
         },
         {
           "slot": "Offhand",
@@ -2222,7 +2457,8 @@
           "wfId": 105521,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_pvpcataclysms3_c_01"
         }
       ]
     },
@@ -2237,7 +2473,8 @@
           "wfId": 99425,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Neck",
@@ -2246,7 +2483,8 @@
           "wfId": 105465,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop6"
         },
         {
           "slot": "Shoulders",
@@ -2255,7 +2493,8 @@
           "wfId": 99417,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Chest",
@@ -2264,7 +2503,8 @@
           "wfId": 105604,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_robe_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Bracers",
@@ -2273,7 +2513,8 @@
           "wfId": 105591,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_cloth_raidmage_n_01"
         },
         {
           "slot": "Gloves",
@@ -2282,7 +2523,8 @@
           "wfId": 99424,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Belt",
@@ -2291,7 +2533,8 @@
           "wfId": 105515,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_cloth_raidmage_n_01"
         },
         {
           "slot": "Legs",
@@ -2300,7 +2543,8 @@
           "wfId": 99426,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Boots",
@@ -2309,7 +2553,8 @@
           "wfId": 105493,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_cloth_raidwarlock_n_01"
         },
         {
           "slot": "Ring 1",
@@ -2318,7 +2563,8 @@
           "wfId": 105606,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_ring_181"
         },
         {
           "slot": "Ring 2",
@@ -2327,7 +2573,8 @@
           "wfId": 105628,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop3"
         },
         {
           "slot": "Trinket 1",
@@ -2336,7 +2583,8 @@
           "wfId": 105422,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_07"
         },
         {
           "slot": "Trinket 2",
@@ -2345,7 +2593,8 @@
           "wfId": 105540,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_13"
         },
         {
           "slot": "Weapon",
@@ -2354,7 +2603,8 @@
           "wfId": 105627,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_knife_1h_orgrimmarraid_d_04"
         },
         {
           "slot": "Offhand",
@@ -2363,7 +2613,8 @@
           "wfId": 105650,
           "source": "garrosh",
           "sourceLabel": "Garrosh Hellscream",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_orgrimmarraid_d_01"
         }
       ]
     },
@@ -2378,7 +2629,8 @@
           "wfId": 99421,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01helm"
         },
         {
           "slot": "Neck",
@@ -2387,7 +2639,8 @@
           "wfId": 105602,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop2"
         },
         {
           "slot": "Shoulders",
@@ -2396,7 +2649,8 @@
           "wfId": 105506,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_leather_raidrogue_n_01"
         },
         {
           "slot": "Chest",
@@ -2405,7 +2659,8 @@
           "wfId": 99419,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01chest"
         },
         {
           "slot": "Bracers",
@@ -2414,7 +2669,8 @@
           "wfId": 105505,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_leather_raidmonk_n_01"
         },
         {
           "slot": "Gloves",
@@ -2423,7 +2679,8 @@
           "wfId": 99420,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01glove"
         },
         {
           "slot": "Belt",
@@ -2432,7 +2689,8 @@
           "wfId": 105528,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_leather_raidrogue_n_01"
         },
         {
           "slot": "Legs",
@@ -2441,7 +2699,8 @@
           "wfId": 99422,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01pant"
         },
         {
           "slot": "Boots",
@@ -2450,7 +2709,8 @@
           "wfId": 105484,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01boot"
         },
         {
           "slot": "Ring 1",
@@ -2459,7 +2719,8 @@
           "wfId": 105451,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop16"
         },
         {
           "slot": "Ring 2",
@@ -2468,7 +2729,8 @@
           "wfId": 105483,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop4"
         },
         {
           "slot": "Trinket 1",
@@ -2477,7 +2739,8 @@
           "wfId": 105568,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_10"
         },
         {
           "slot": "Trinket 2",
@@ -2486,7 +2749,8 @@
           "wfId": 105527,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_08"
         },
         {
           "slot": "Weapon",
@@ -2495,7 +2759,8 @@
           "wfId": 105408,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_staff_2h_orgimmarraid_d_01"
         }
       ]
     },
@@ -2510,7 +2775,8 @@
           "wfId": 105542,
           "source": "shamans",
           "sourceLabel": "Dark Shamans",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_leather_raidmonk_n_01"
         },
         {
           "slot": "Neck",
@@ -2519,7 +2785,8 @@
           "wfId": 105593,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop9"
         },
         {
           "slot": "Shoulders",
@@ -2528,7 +2795,8 @@
           "wfId": 99381,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_leather_raidmonk_n_01"
         },
         {
           "slot": "Chest",
@@ -2537,7 +2805,8 @@
           "wfId": 99391,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_leather_raidmonk_n_01"
         },
         {
           "slot": "Bracers",
@@ -2546,7 +2815,8 @@
           "wfId": 105425,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01bracer"
         },
         {
           "slot": "Gloves",
@@ -2555,7 +2825,8 @@
           "wfId": 99388,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_leather_raidmonk_n_01"
         },
         {
           "slot": "Belt",
@@ -2564,7 +2835,8 @@
           "wfId": 105500,
           "source": "galakras",
           "sourceLabel": "Galakras",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_leather_raiddruid_n_01belt"
         },
         {
           "slot": "Legs",
@@ -2573,7 +2845,8 @@
           "wfId": 99390,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_leather_raidmonk_n_01"
         },
         {
           "slot": "Boots",
@@ -2582,7 +2855,8 @@
           "wfId": 105467,
           "source": "norushen",
           "sourceLabel": "Norushen",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_leather_raidmonk_n_01"
         },
         {
           "slot": "Ring 1",
@@ -2591,7 +2865,8 @@
           "wfId": 105574,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop12"
         },
         {
           "slot": "Ring 2",
@@ -2600,7 +2875,8 @@
           "wfId": 105423,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop9"
         },
         {
           "slot": "Trinket 1",
@@ -2609,7 +2885,8 @@
           "wfId": 105549,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_18"
         },
         {
           "slot": "Trinket 2",
@@ -2618,7 +2895,8 @@
           "wfId": 105607,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_01"
         },
         {
           "slot": "Weapon",
@@ -2627,7 +2905,8 @@
           "wfId": 105550,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_sword_1h_orgrimmarraid_d_03"
         },
         {
           "slot": "Offhand",
@@ -2636,7 +2915,8 @@
           "wfId": 105521,
           "source": "juggernaut",
           "sourceLabel": "Iron Juggernaut",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_offhand_1h_pvpcataclysms3_c_01"
         }
       ]
     },
@@ -2651,7 +2931,8 @@
           "wfId": 99402,
           "source": "thok",
           "sourceLabel": "Thok the Bloodthirsty",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_helm_mail_raidhunter_n_01"
         },
         {
           "slot": "Neck",
@@ -2660,7 +2941,8 @@
           "wfId": 105407,
           "source": "immerseus",
           "sourceLabel": "Immerseus",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_necklace_mop8"
         },
         {
           "slot": "Shoulders",
@@ -2669,7 +2951,8 @@
           "wfId": 99404,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_shoulder_mail_raidhunter_n_01"
         },
         {
           "slot": "Chest",
@@ -2678,7 +2961,8 @@
           "wfId": 105585,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_chest_mail_raidhunter_n_01"
         },
         {
           "slot": "Bracers",
@@ -2687,7 +2971,8 @@
           "wfId": 105617,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_bracer_mail_raidhunter_n_01"
         },
         {
           "slot": "Gloves",
@@ -2696,7 +2981,8 @@
           "wfId": 99406,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_glove_mail_raidhunter_n_01"
         },
         {
           "slot": "Belt",
@@ -2705,7 +2991,8 @@
           "wfId": 105584,
           "source": "spoils",
           "sourceLabel": "Spoils",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_belt_mail_raidhunter_n_01"
         },
         {
           "slot": "Legs",
@@ -2714,7 +3001,8 @@
           "wfId": 99403,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_pant_mail_raidhunter_n_01"
         },
         {
           "slot": "Boots",
@@ -2723,7 +3011,8 @@
           "wfId": 105553,
           "source": "nazgrim",
           "sourceLabel": "General Nazgrim",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_boot_mail_raidhunter_n_01"
         },
         {
           "slot": "Ring 1",
@@ -2732,7 +3021,8 @@
           "wfId": 105558,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_2"
         },
         {
           "slot": "Ring 2",
@@ -2741,7 +3031,8 @@
           "wfId": 105624,
           "source": "paragons",
           "sourceLabel": "Paragons",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_misc_ring_mop20"
         },
         {
           "slot": "Trinket 1",
@@ -2750,7 +3041,8 @@
           "wfId": 105472,
           "source": "sha",
           "sourceLabel": "Sha of Pride",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_14"
         },
         {
           "slot": "Trinket 2",
@@ -2759,7 +3051,8 @@
           "wfId": 105612,
           "source": "siegecrafter",
           "sourceLabel": "Siegecrafter Blackfuse",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_jewelry_orgrimmarraid_trinket_17"
         },
         {
           "slot": "Weapon",
@@ -2768,7 +3061,8 @@
           "wfId": 105559,
           "source": "malkorok",
           "sourceLabel": "Malkorok",
-          "bisIlvl": 566
+          "bisIlvl": 566,
+          "icon": "inv_firearm_2h_rifle_orgrimmarraid_d_01"
         }
       ]
     }

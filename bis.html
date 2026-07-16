@@ -143,6 +143,41 @@
   .col-item.extra { opacity: .7; }
 
   .plabel { margin-top: 6px; font-size: 11px; color: var(--text2); text-align: center; }
+
+  /* boss detail: style toggle + four layouts */
+  .dstyle { margin-left: auto; display: flex; gap: 5px; }
+  .dpill {
+    padding: 3px 11px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+  }
+  .dpill.active { color: var(--text); border-color: var(--forge); }
+  .dpill:hover { color: var(--text); }
+  .q-epic, a.q-epic { color: #a335ee; }
+  .icon-fallback { display: inline-block; background: var(--bg3); border: 1px solid var(--border2); border-radius: 4px; flex-shrink: 0; }
+  .loot-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(46,38,32,.5); }
+  .loot-row:last-child { border-bottom: none; }
+  .loot-row img { width: 38px; height: 38px; border-radius: 4px; border: 1px solid var(--border2); display: block; flex-shrink: 0; }
+  .loot-sub { color: var(--text3); font-size: 11px; margin-left: 8px; }
+  .needby { font-size: 12px; color: var(--text2); margin-top: 3px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .needby .nb { display: inline-flex; gap: 5px; align-items: center; }
+  .dcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 4px 0; }
+  .dcard { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 12px 10px; text-align: center; }
+  .dcard img { width: 48px; height: 48px; border-radius: 5px; border: 1px solid var(--border2); display: block; margin: 0 auto 8px; }
+  .dcard .icon-fallback { width: 48px; height: 48px; margin: 0 auto 8px; display: block; }
+  .dcard .dname { font-size: 12px; line-height: 1.3; margin-bottom: 8px; min-height: 31px; }
+  .dcard .dneed { font-size: 11.5px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .rgroup { margin-bottom: 14px; }
+  .rgroup h4 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px; margin-bottom: 5px; }
+  table.dtable { width: 100%; border-collapse: collapse; }
+  table.dtable th, table.dtable td { text-align: left; padding: 5px 10px; font-size: 12.5px; }
+  table.dtable th { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  table.dtable tr:nth-child(even) td { background: rgba(28,25,22,.5); }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
   .boss-card.open .boss-detail { display: block; }
   .need-row {
@@ -456,34 +491,120 @@ const BOSS_SHORT = {
 function farmBosses() { return BOSSES.filter(([k]) => k !== GOAL_BOSS); }
 function activeExtras() { return EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0); }
 
-function needRowsHtml(key) {
-  const a = state.agg[key];
-  if (!a.total) return '<div class="muted-note">Nothing needed from here.</div>';
+const DETAIL_STYLES = [['loot', 'Loot'], ['cards', 'Cards'], ['raiders', 'By raider'], ['table', 'Table']];
+let detailStyle = localStorage.getItem('soo-bis-detailstyle') || 'loot';
+if (!DETAIL_STYLES.some(([k]) => k === detailStyle)) detailStyle = 'loot';
+
+const classColorOf = (charName) => {
+  const ch = state.roster.characters.find((c) => c.name === charName);
+  return ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
+};
+
+const whItemEpic = (id, name) => id
+  ? '<a class="q-epic" href="https://www.wowhead.com/mop-classic/item=' + id + '" target="_blank" rel="noopener">' + esc(name) + '</a>'
+  : '<span class="q-epic">' + esc(name) + '</span>';
+
+function iconImg(bis, px) {
+  if (!bis.icon) return '<span class="icon-fallback" style="width:' + px + 'px;height:' + px + 'px"></span>';
+  return '<img src="https://wow.zamimg.com/images/wow/icons/large/' + esc(bis.icon) + '.jpg" alt="" loading="lazy"' +
+    (px !== 48 ? ' style="width:' + px + 'px;height:' + px + 'px"' : '') + '>';
+}
+
+function detailData(key) {
   const order = { major: 0, moderate: 1, minor: 2 };
-  const rows = a.rows.slice().sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
+  const rows = state.agg[key].rows.slice()
+    .sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
+  const byItem = [];
+  const imap = new Map();
+  for (const e of rows) {
+    const k = e.row.bis.heroicId + '|' + e.row.bis.name;
+    if (!imap.has(k)) { imap.set(k, { bis: e.row.bis, needers: [] }); byItem.push(imap.get(k)); }
+    imap.get(k).needers.push(e);
+  }
+  const byChar = [];
+  const cmap = new Map();
+  for (const e of rows) {
+    if (!cmap.has(e.char)) { cmap.set(e.char, { char: e.char, rows: [] }); byChar.push(cmap.get(e.char)); }
+    cmap.get(e.char).rows.push(e.row);
+  }
+  return { rows, byItem, byChar };
+}
+
+function detailLoot(d) {
   let html = '';
-  for (const { char, row } of rows) {
-    const ch = state.roster.characters.find((c) => c.name === char);
-    const col = ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
-    html += '<div class="need-row">';
-    html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
-    html += '<span class="need-char" style="color:' + col + '">' + esc(char) + '</span>';
-    html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
-    html += '<span>' + whItem(row.bis.heroicId, row.bis.name) + '</span>';
-    html += '<span class="need-cur">— has: ' + (row.equipped
-      ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
-      : 'nothing equipped') + '</span>';
+  for (const { bis, needers } of d.byItem) {
+    html += '<div class="loot-row">' + iconImg(bis, 38) + '<div>';
+    html += whItemEpic(bis.heroicId, bis.name) + '<span class="loot-sub">' + esc(bis.slot) + '</span>';
+    html += '<div class="needby">needed by:' + needers.map(({ char, row }) =>
+      ' <span class="nb"><span style="color:' + classColorOf(char) + '">' + esc(char) + '</span>' +
+      '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span></span>').join('') + '</div>';
+    html += '</div></div>';
+  }
+  return html;
+}
+
+function detailCards(d) {
+  let html = '<div class="dcard-grid">';
+  for (const { bis, needers } of d.byItem) {
+    html += '<div class="dcard">' + iconImg(bis, 48);
+    html += '<div class="dname">' + whItemEpic(bis.heroicId, bis.name) + '</div>';
+    html += '<div class="dneed">' + needers.map(({ char, row }) =>
+      '<span class="nb"><span class="dot ' + row.status + '"></span> <span style="color:' + classColorOf(char) + '">' + esc(char) + '</span></span>').join('') + '</div>';
+    html += '</div>';
+  }
+  return html + '</div>';
+}
+
+function detailRaiders(d) {
+  let html = '';
+  for (const { char, rows } of d.byChar) {
+    html += '<div class="rgroup"><h4 style="color:' + classColorOf(char) + '">' + esc(char) + '</h4>';
+    for (const row of rows) {
+      html += '<div class="need-row">';
+      html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
+      html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
+      html += '<span>' + whItemEpic(row.bis.heroicId, row.bis.name) + '</span>';
+      html += '</div>';
+    }
     html += '</div>';
   }
   return html;
 }
 
+function detailTable(d) {
+  let html = '<table class="dtable"><tr><th>Player</th><th>Slot</th><th>BiS item</th><th>Currently has</th><th>Upgrade</th></tr>';
+  for (const { char, row } of d.rows) {
+    html += '<tr><td style="color:' + classColorOf(char) + ';font-weight:600">' + esc(char) + '</td>';
+    html += '<td style="color:var(--text2)">' + esc(row.bis.slot) + '</td>';
+    html += '<td>' + whItemEpic(row.bis.heroicId, row.bis.name) + '</td>';
+    html += '<td style="color:var(--text2)">' + (row.equipped
+      ? esc(row.equipped.name) + ' (' + row.equipped.ilvl + ')' + (row.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
+      : '—') + '</td>';
+    html += '<td><span class="dot ' + row.status + '"></span> ' + row.status + '</td></tr>';
+  }
+  return html + '</table>';
+}
+
 function selectedDetailHtml() {
   if (!bossSelected) return '<div class="muted-note">Click a boss to see who needs what.</div>';
   const name = BOSS_NAME[bossSelected] || bossSelected;
+  const a = state.agg[bossSelected];
+  let body;
+  if (!a.total) {
+    body = '<div class="muted-note">Nothing needed from here.</div>';
+  } else {
+    const d = detailData(bossSelected);
+    body = detailStyle === 'cards' ? detailCards(d)
+      : detailStyle === 'raiders' ? detailRaiders(d)
+      : detailStyle === 'table' ? detailTable(d)
+      : detailLoot(d);
+  }
+  const pills = DETAIL_STYLES.map(([k, label]) =>
+    '<span class="dpill' + (k === detailStyle ? ' active' : '') + '" data-dstyle="' + k + '">' + label + '</span>').join('');
   return '<div class="boss-card open" style="margin-top:14px">' +
-    '<div class="boss-head" style="cursor:default"><span class="boss-name" style="flex:none">' + esc(name) + '</span></div>' +
-    '<div class="boss-detail" style="padding-left:16px">' + needRowsHtml(bossSelected) + '</div></div>';
+    '<div class="boss-head" style="cursor:default"><span class="boss-name" style="flex:none;color:' + (BOSS_COLORS[bossSelected] || 'var(--text)') + '">' + esc(name) + '</span>' +
+    '<div class="dstyle">' + pills + '</div></div>' +
+    '<div class="boss-detail" style="padding-left:16px">' + body + '</div></div>';
 }
 
 function renderBossColumns() {
@@ -515,6 +636,13 @@ function renderBosses() {
   document.querySelectorAll('[data-select]').forEach((el) => {
     el.addEventListener('click', () => {
       bossSelected = bossSelected === el.dataset.select ? null : el.dataset.select;
+      renderBosses();
+    });
+  });
+  document.querySelectorAll('[data-dstyle]').forEach((el) => {
+    el.addEventListener('click', () => {
+      detailStyle = el.dataset.dstyle;
+      localStorage.setItem('soo-bis-detailstyle', detailStyle);
       renderBosses();
     });
   });
