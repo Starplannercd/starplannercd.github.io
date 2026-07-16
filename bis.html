@@ -163,7 +163,7 @@
   .need-char { font-weight: 600; flex: 0 0 110px; }
   .need-slot { color: var(--text2); flex: 0 0 70px; }
   .need-cur { color: var(--text2); font-size: 12px; }
-  .need-cur .lower { color: var(--yellow); }
+  .lower { color: var(--yellow); }
   .muted-note { color: var(--text3); font-size: 11px; font-style: italic; margin: 14px 4px 6px; }
   .boss-card.extra { opacity: .75; }
 
@@ -181,12 +181,7 @@
   }
   .badge.err { background: var(--accent2); color: #fff; }
   .badge.stale { background: #6a5210; color: #e8d890; }
-  table.slots { width: 100%; border-collapse: collapse; }
-  table.slots td, table.slots th { padding: 5px 16px; text-align: left; font-size: 12.5px; }
-  table.slots th { color: var(--text3); font-weight: 600; text-transform: uppercase; font-size: 10.5px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-  table.slots tr:nth-child(even) td { background: rgba(28,25,22,.5); }
   td.st-obtained { color: var(--green); font-weight: 700; }
-  td.eq { color: var(--text2); }
 
   .footer { text-align: center; color: var(--text3); font-size: 11px; padding: 24px 0 30px; }
   .footer a { color: var(--text2); }
@@ -549,18 +544,21 @@ function renderRaiders() {
     }
     html += '</div>';
     if (rows) {
-      html += '<table class="slots"><tr><th>Slot</th><th>BiS item</th><th>Boss</th><th>Status</th><th>Currently equipped</th></tr>';
+      html += '<table class="dtable"><tr><th>Slot</th><th>BiS item</th><th>Boss</th><th>Currently has</th><th>Status</th></tr>';
       for (const r of rows) {
         let st, cls = '';
         if (r.status === 'obtained') { st = '✓ BiS'; cls = 'st-obtained'; }
         else if (r.status === 'good') { st = '✓ heroic weapon (not BiS)'; cls = 'st-obtained'; }
         else if (r.status === 'needsId') st = '<span style="color:var(--text3)">needs ID (' + whSearch(r.bis.name) + ')</span>';
         else if (r.bis.source === GOAL_BOSS) st = '<span style="color:var(--text3)">goal boss — not counted</span>';
-        else st = '<span class="dot ' + r.status + '"></span> ' + r.status + ' upgrade' + (r.lowerVersion ? ' <span style="color:var(--yellow)">(has lower difficulty)</span>' : '');
-        html += '<tr><td>' + esc(r.bis.slot) + '</td><td>' + whItem(r.bis.heroicId, r.bis.name) + '</td>' +
-          '<td style="color:var(--text2)">' + esc(BOSS_NAME[r.bis.source] || r.bis.sourceLabel || '') + '</td>' +
-          '<td class="' + cls + '">' + st + '</td>' +
-          '<td class="eq">' + (r.equipped ? esc(r.equipped.name) + ' (' + r.equipped.ilvl + ')' : '—') + '</td></tr>';
+        else st = '<span class="dot ' + r.status + '"></span> ' + r.status;
+        html += '<tr><td style="color:var(--text2)">' + esc(r.bis.slot) + '</td>' +
+          '<td>' + whItemEpic(r.bis.heroicId, r.bis.name) + '</td>' +
+          '<td style="color:' + (BOSS_COLORS[r.bis.source] || 'var(--text2)') + '">' + esc(BOSS_NAME[r.bis.source] || r.bis.sourceLabel || '') + '</td>' +
+          '<td style="color:var(--text2)">' + (r.equipped
+            ? esc(r.equipped.name) + ' (' + r.equipped.ilvl + ')' + (r.lowerVersion ? ' <span class="lower">← same item, lower difficulty</span>' : '')
+            : '—') + '</td>' +
+          '<td class="' + cls + '">' + st + '</td></tr>';
       }
       html += '</table>';
     }
