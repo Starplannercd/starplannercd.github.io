@@ -45,7 +45,6 @@
 
   .topbar {
     background: linear-gradient(180deg, #231b12 0%, #0c0a08 100%);
-    border-top: 3px solid var(--accent);
     border-bottom: 1px solid var(--border2);
     box-shadow: 0 4px 16px rgba(0,0,0,.55);
     padding: 13px 24px;
@@ -68,7 +67,6 @@
     color: var(--forge);
     text-shadow: 0 0 12px rgba(224,120,32,.35);
   }
-  .brandsub { color: var(--text3); font-size: 9.5px; text-transform: uppercase; letter-spacing: 3.5px; margin-top: 3px; }
   .tabs { display: flex; gap: 8px; margin-left: auto; }
   .tab {
     padding: 7px 20px;
@@ -83,8 +81,6 @@
   }
   .tab.active { background: var(--bg3); color: var(--text); border-color: var(--forge); }
   .tab:hover { color: var(--text); }
-  .meta-line { color: var(--text2); font-size: 12px; }
-  .meta-line b { color: var(--text); font-weight: 600; }
 
   #content { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
@@ -144,36 +140,7 @@
 
   .plabel { margin-top: 6px; font-size: 11px; color: var(--text2); text-align: center; }
 
-  /* boss detail: style toggle + four layouts */
-  .dstyle { margin-left: auto; display: flex; gap: 5px; }
-  .dpill {
-    padding: 3px 11px;
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text2);
-    cursor: pointer;
-    user-select: none;
-  }
-  .dpill.active { color: var(--text); border-color: var(--forge); }
-  .dpill:hover { color: var(--text); }
   .q-epic, a.q-epic { color: #a335ee; }
-  .icon-fallback { display: inline-block; background: var(--bg3); border: 1px solid var(--border2); border-radius: 4px; flex-shrink: 0; }
-  .loot-row { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(46,38,32,.5); }
-  .loot-row:last-child { border-bottom: none; }
-  .loot-row img { width: 38px; height: 38px; border-radius: 4px; border: 1px solid var(--border2); display: block; flex-shrink: 0; }
-  .loot-sub { color: var(--text3); font-size: 11px; margin-left: 8px; }
-  .needby { font-size: 12px; color: var(--text2); margin-top: 3px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  .needby .nb { display: inline-flex; gap: 5px; align-items: center; }
-  .dcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 4px 0; }
-  .dcard { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 12px 10px; text-align: center; }
-  .dcard img { width: 48px; height: 48px; border-radius: 5px; border: 1px solid var(--border2); display: block; margin: 0 auto 8px; }
-  .dcard .icon-fallback { width: 48px; height: 48px; margin: 0 auto 8px; display: block; }
-  .dcard .dname { font-size: 12px; line-height: 1.3; margin-bottom: 8px; min-height: 31px; }
-  .dcard .dneed { font-size: 11.5px; display: flex; flex-direction: column; gap: 3px; align-items: center; }
-  .rgroup { margin-bottom: 14px; }
-  .rgroup h4 { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1px; margin-bottom: 5px; }
   table.dtable { width: 100%; border-collapse: collapse; }
   table.dtable th, table.dtable td { text-align: left; padding: 5px 10px; font-size: 12.5px; }
   table.dtable th { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
@@ -230,18 +197,14 @@
 <body>
 <div class="topbar">
   <div class="brand">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M9.2 7V5.6A1.6 1.6 0 0 1 10.8 4h2.4a1.6 1.6 0 0 1 1.6 1.6V7" stroke="#e07820" stroke-width="1.5" stroke-linecap="round"/>
       <rect x="2.8" y="7" width="18.4" height="13" rx="2" fill="#241c12" stroke="#e07820" stroke-width="1.5"/>
       <path d="M2.8 12.2h18.4" stroke="#e07820" stroke-width="1.2"/>
       <rect x="10.3" y="11" width="3.4" height="2.6" rx="0.7" fill="#c8b838" stroke="#e07820" stroke-width="0.8"/>
     </svg>
-    <div>
-      <h1>Professional <span>BIS</span></h1>
-      <div class="brandsub">Siege of Orgrimmar</div>
-    </div>
+    <h1>Professional <span>BIS</span></h1>
   </div>
-  <div class="meta-line" id="gearStamp">loading…</div>
   <div class="tabs">
     <div class="tab" data-view="bosses">Bosses</div>
     <div class="tab" data-view="raiders">Raiders</div>
@@ -249,7 +212,8 @@
 </div>
 <div id="content"></div>
 <div class="footer">
-  Gear auto-refreshes every Monday &amp; Saturday
+  Gear auto-refreshes every Monday &amp; Saturday<br>
+  <span id="gearStamp"></span>
 </div>
 
 <script>
@@ -491,10 +455,6 @@ const BOSS_SHORT = {
 function farmBosses() { return BOSSES.filter(([k]) => k !== GOAL_BOSS); }
 function activeExtras() { return EXTRA_GROUPS.filter(([k]) => state.agg[k].total > 0); }
 
-const DETAIL_STYLES = [['loot', 'Loot'], ['cards', 'Cards'], ['raiders', 'By raider'], ['table', 'Table']];
-let detailStyle = localStorage.getItem('soo-bis-detailstyle') || 'loot';
-if (!DETAIL_STYLES.some(([k]) => k === detailStyle)) detailStyle = 'loot';
-
 const classColorOf = (charName) => {
   const ch = state.roster.characters.find((c) => c.name === charName);
   return ch ? CLASS_COLORS[ch.class] || 'inherit' : 'inherit';
@@ -504,76 +464,15 @@ const whItemEpic = (id, name) => id
   ? '<a class="q-epic" href="https://www.wowhead.com/mop-classic/item=' + id + '" target="_blank" rel="noopener">' + esc(name) + '</a>'
   : '<span class="q-epic">' + esc(name) + '</span>';
 
-function iconImg(bis, px) {
-  if (!bis.icon) return '<span class="icon-fallback" style="width:' + px + 'px;height:' + px + 'px"></span>';
-  return '<img src="https://wow.zamimg.com/images/wow/icons/large/' + esc(bis.icon) + '.jpg" alt="" loading="lazy"' +
-    (px !== 48 ? ' style="width:' + px + 'px;height:' + px + 'px"' : '') + '>';
-}
-
-function detailData(key) {
+function detailRows(key) {
   const order = { major: 0, moderate: 1, minor: 2 };
-  const rows = state.agg[key].rows.slice()
+  return state.agg[key].rows.slice()
     .sort((x, y) => order[x.row.status] - order[y.row.status] || x.char.localeCompare(y.char));
-  const byItem = [];
-  const imap = new Map();
-  for (const e of rows) {
-    const k = e.row.bis.heroicId + '|' + e.row.bis.name;
-    if (!imap.has(k)) { imap.set(k, { bis: e.row.bis, needers: [] }); byItem.push(imap.get(k)); }
-    imap.get(k).needers.push(e);
-  }
-  const byChar = [];
-  const cmap = new Map();
-  for (const e of rows) {
-    if (!cmap.has(e.char)) { cmap.set(e.char, { char: e.char, rows: [] }); byChar.push(cmap.get(e.char)); }
-    cmap.get(e.char).rows.push(e.row);
-  }
-  return { rows, byItem, byChar };
 }
 
-function detailLoot(d) {
-  let html = '';
-  for (const { bis, needers } of d.byItem) {
-    html += '<div class="loot-row">' + iconImg(bis, 38) + '<div>';
-    html += whItemEpic(bis.heroicId, bis.name) + '<span class="loot-sub">' + esc(bis.slot) + '</span>';
-    html += '<div class="needby">needed by:' + needers.map(({ char, row }) =>
-      ' <span class="nb"><span style="color:' + classColorOf(char) + '">' + esc(char) + '</span>' +
-      '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span></span>').join('') + '</div>';
-    html += '</div></div>';
-  }
-  return html;
-}
-
-function detailCards(d) {
-  let html = '<div class="dcard-grid">';
-  for (const { bis, needers } of d.byItem) {
-    html += '<div class="dcard">' + iconImg(bis, 48);
-    html += '<div class="dname">' + whItemEpic(bis.heroicId, bis.name) + '</div>';
-    html += '<div class="dneed">' + needers.map(({ char, row }) =>
-      '<span class="nb"><span class="dot ' + row.status + '"></span> <span style="color:' + classColorOf(char) + '">' + esc(char) + '</span></span>').join('') + '</div>';
-    html += '</div>';
-  }
-  return html + '</div>';
-}
-
-function detailRaiders(d) {
-  let html = '';
-  for (const { char, rows } of d.byChar) {
-    html += '<div class="rgroup"><h4 style="color:' + classColorOf(char) + '">' + esc(char) + '</h4>';
-    for (const row of rows) {
-      html += '<div class="need-row">';
-      html += '<span class="dot ' + row.status + '" title="' + row.status + ' upgrade"></span>';
-      html += '<span class="need-slot">' + esc(row.bis.slot) + '</span>';
-      html += '<span>' + whItemEpic(row.bis.heroicId, row.bis.name) + '</span>';
-      html += '</div>';
-    }
-    html += '</div>';
-  }
-  return html;
-}
-
-function detailTable(d) {
+function detailTable(rows) {
   let html = '<table class="dtable"><tr><th>Player</th><th>Slot</th><th>BiS item</th><th>Currently has</th><th>Upgrade</th></tr>';
-  for (const { char, row } of d.rows) {
+  for (const { char, row } of rows) {
     html += '<tr><td style="color:' + classColorOf(char) + ';font-weight:600">' + esc(char) + '</td>';
     html += '<td style="color:var(--text2)">' + esc(row.bis.slot) + '</td>';
     html += '<td>' + whItemEpic(row.bis.heroicId, row.bis.name) + '</td>';
@@ -589,21 +488,9 @@ function selectedDetailHtml() {
   if (!bossSelected) return '<div class="muted-note">Click a boss to see who needs what.</div>';
   const name = BOSS_NAME[bossSelected] || bossSelected;
   const a = state.agg[bossSelected];
-  let body;
-  if (!a.total) {
-    body = '<div class="muted-note">Nothing needed from here.</div>';
-  } else {
-    const d = detailData(bossSelected);
-    body = detailStyle === 'cards' ? detailCards(d)
-      : detailStyle === 'raiders' ? detailRaiders(d)
-      : detailStyle === 'table' ? detailTable(d)
-      : detailLoot(d);
-  }
-  const pills = DETAIL_STYLES.map(([k, label]) =>
-    '<span class="dpill' + (k === detailStyle ? ' active' : '') + '" data-dstyle="' + k + '">' + label + '</span>').join('');
+  const body = a.total ? detailTable(detailRows(bossSelected)) : '<div class="muted-note">Nothing needed from here.</div>';
   return '<div class="boss-card open" style="margin-top:14px">' +
-    '<div class="boss-head" style="cursor:default"><span class="boss-name" style="flex:none;color:' + (BOSS_COLORS[bossSelected] || 'var(--text)') + '">' + esc(name) + '</span>' +
-    '<div class="dstyle">' + pills + '</div></div>' +
+    '<div class="boss-head" style="cursor:default"><span class="boss-name" style="flex:none;color:' + (BOSS_COLORS[bossSelected] || 'var(--text)') + '">' + esc(name) + '</span></div>' +
     '<div class="boss-detail" style="padding-left:16px">' + body + '</div></div>';
 }
 
@@ -636,13 +523,6 @@ function renderBosses() {
   document.querySelectorAll('[data-select]').forEach((el) => {
     el.addEventListener('click', () => {
       bossSelected = bossSelected === el.dataset.select ? null : el.dataset.select;
-      renderBosses();
-    });
-  });
-  document.querySelectorAll('[data-dstyle]').forEach((el) => {
-    el.addEventListener('click', () => {
-      detailStyle = el.dataset.dstyle;
-      localStorage.setItem('soo-bis-detailstyle', detailStyle);
       renderBosses();
     });
   });
