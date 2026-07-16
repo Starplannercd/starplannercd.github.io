@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Siege of Orgrimmar — BiS Tracker</title>
+<title>Professional BIS — Siege of Orgrimmar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -44,35 +44,44 @@
   a:hover { text-decoration: underline; }
 
   .topbar {
-    background: linear-gradient(180deg, #1e1a16 0%, #0c0a08 100%);
-    border-bottom: 3px solid var(--accent);
+    background: linear-gradient(180deg, #231b12 0%, #0c0a08 100%);
     border-top: 3px solid var(--accent);
-    padding: 10px 20px;
+    border-bottom: 1px solid var(--border2);
+    box-shadow: 0 4px 16px rgba(0,0,0,.55);
+    padding: 13px 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
     flex-wrap: wrap;
   }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand svg { flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
   .topbar h1 {
     font-family: 'Cinzel', serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     color: var(--text);
+    line-height: 1.05;
   }
-  .topbar h1 span { color: var(--accent); }
-  .tabs { display: flex; gap: 4px; margin-left: auto; }
+  .topbar h1 span {
+    color: var(--forge);
+    text-shadow: 0 0 12px rgba(224,120,32,.35);
+  }
+  .brandsub { color: var(--text3); font-size: 9.5px; text-transform: uppercase; letter-spacing: 3.5px; margin-top: 3px; }
+  .tabs { display: flex; gap: 8px; margin-left: auto; }
   .tab {
-    padding: 6px 16px;
+    padding: 7px 20px;
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 16px;
     color: var(--text2);
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
+    transition: border-color .12s ease, color .12s ease;
   }
-  .tab.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .tab.active { background: var(--bg3); color: var(--text); border-color: var(--forge); }
   .tab:hover { color: var(--text); }
   .meta-line { color: var(--text2); font-size: 12px; }
   .meta-line b { color: var(--text); font-weight: 600; }
@@ -177,38 +186,6 @@
   td.st-obtained { color: var(--green); font-weight: 700; }
   td.eq { color: var(--text2); }
 
-  /* Editor */
-  .editor-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-  select, input[type=text], input[type=number] {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    border-radius: 4px;
-    padding: 5px 8px;
-    font-family: inherit;
-    font-size: 12.5px;
-  }
-  input.bad { border-color: var(--accent); background: rgba(200,58,32,.1); }
-  button {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    border-radius: 4px;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-  }
-  button:hover { border-color: var(--forge); color: var(--forge); }
-  button.primary { border-color: var(--green); color: var(--green); }
-  table.editor { width: 100%; border-collapse: collapse; }
-  table.editor td, table.editor th { padding: 4px 6px; text-align: left; }
-  table.editor th { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; }
-  table.editor input[type=text] { width: 100%; }
-  table.editor input.id { width: 90px; }
-  table.editor input.lvl { width: 60px; }
-
   .footer { text-align: center; color: var(--text3); font-size: 11px; padding: 24px 0 30px; }
   .footer a { color: var(--text2); }
 
@@ -217,17 +194,27 @@
 </head>
 <body>
 <div class="topbar">
-  <h1>SoO <span>BiS</span> Tracker</h1>
+  <div class="brand">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M9.2 7V5.6A1.6 1.6 0 0 1 10.8 4h2.4a1.6 1.6 0 0 1 1.6 1.6V7" stroke="#e07820" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="2.8" y="7" width="18.4" height="13" rx="2" fill="#241c12" stroke="#e07820" stroke-width="1.5"/>
+      <path d="M2.8 12.2h18.4" stroke="#e07820" stroke-width="1.2"/>
+      <rect x="10.3" y="11" width="3.4" height="2.6" rx="0.7" fill="#c8b838" stroke="#e07820" stroke-width="0.8"/>
+    </svg>
+    <div>
+      <h1>Professional <span>BIS</span></h1>
+      <div class="brandsub">Siege of Orgrimmar</div>
+    </div>
+  </div>
   <div class="meta-line" id="gearStamp">loading…</div>
   <div class="tabs">
     <div class="tab" data-view="bosses">Bosses</div>
     <div class="tab" data-view="raiders">Raiders</div>
-    <div class="tab" data-view="editor">BiS Editor</div>
   </div>
 </div>
 <div id="content"></div>
 <div class="footer">
-  Gear auto-refreshes every Monday
+  Gear auto-refreshes every Monday &amp; Saturday
 </div>
 
 <script>
@@ -275,7 +262,6 @@ const CLASS_COLORS = {
   WARRIOR: '#c79c6e', ROGUE: '#fff569', DEATHKNIGHT: '#c41f3b',
 };
 
-const OVERRIDE_KEY = 'soo-bis-overrides';
 const MINOR_AT = 566, MODERATE_AT = 553; // equipped ilvl thresholds for need size
 
 /* ============================== matching ============================== */
@@ -381,37 +367,10 @@ function aggregateByBoss(evaluations) {
 
 /* ============================== data / state ============================== */
 
-const state = { roster: null, bis: null, gear: null, evaluations: {}, agg: null, overridesActive: false };
-
-function loadOverrides() {
-  try { return JSON.parse(localStorage.getItem(OVERRIDE_KEY)) || {}; } catch { return {}; }
-}
-
-function mergedBis() {
-  const merged = JSON.parse(JSON.stringify(state.bis));
-  const ov = loadOverrides();
-  // self-heal: a local draft that matches the published data is obsolete — drop it
-  let dropped = false;
-  for (const [slug, items] of Object.entries(ov)) {
-    if (merged.specs[slug] && JSON.stringify(merged.specs[slug].items) === JSON.stringify(items)) {
-      delete ov[slug];
-      dropped = true;
-    }
-  }
-  if (dropped) {
-    if (Object.keys(ov).length) localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
-    else localStorage.removeItem(OVERRIDE_KEY);
-  }
-  state.overridesActive = Object.keys(ov).length > 0;
-  for (const [slug, items] of Object.entries(ov)) {
-    if (!merged.specs[slug]) merged.specs[slug] = { label: slug, class: '', items: [] };
-    merged.specs[slug].items = items;
-  }
-  return merged;
-}
+const state = { roster: null, bis: null, gear: null, evaluations: {}, agg: null };
 
 function recompute() {
-  const bis = mergedBis();
+  const bis = state.bis;
   state.mergedSpecs = bis.specs;
   state.evaluations = {};
   state.noData = [];
@@ -420,7 +379,7 @@ function recompute() {
   for (const ch of state.roster.characters) {
     const spec = bis.specs[ch.spec];
     const entry = state.gear && state.gear.characters && state.gear.characters[ch.name];
-    if (!spec) { state.fetchErrors.push(ch.name + ': unknown spec "' + ch.spec + '" (add it in the BiS Editor)'); continue; }
+    if (!spec) { state.fetchErrors.push(ch.name + ': unknown spec "' + ch.spec + '" — check data/roster.json'); continue; }
     state.needsIdCount += spec.items.filter((i) => !i.heroicId).length ? 1 : 0;
     if (!entry || !entry.items || !entry.items.length) { state.noData.push(ch.name); continue; }
     if (entry.ok === false) state.fetchErrors.push(ch.name + ': ' + (entry.error || 'fetch failed') + (entry.items.length ? ' — showing older gear' : ''));
@@ -461,10 +420,7 @@ function banners() {
     if (n && state.roster.characters.some((c) => c.spec === slug)) missingIds.push(spec.label + ' (' + n + ')');
   }
   if (missingIds.length) {
-    html += '<div class="banner">Missing item IDs: <b>' + esc(missingIds.join(', ')) + '</b> — those slots aren\'t counted yet. Fill them in the <a href="#editor">BiS Editor</a>.</div>';
-  }
-  if (state.overridesActive) {
-    html += '<div class="banner">Viewing <b>local BiS edits</b> (only on this computer). Export from the <a href="#editor">BiS Editor</a> and commit <code>data/bis.json</code> to share with the raid.</div>';
+    html += '<div class="banner">Missing item IDs: <b>' + esc(missingIds.join(', ')) + '</b> — those slots aren\'t counted yet.</div>';
   }
   return html;
 }
@@ -579,7 +535,7 @@ function renderRaiders() {
       const counted = rows.filter((r) => r.status !== 'needsId' && r.bis.source !== GOAL_BOSS);
       const got = counted.filter((r) => r.status === 'obtained' || r.status === 'good').length;
       const total = counted.length;
-      html += '<span class="raider-score" style="color:' + (got === total ? 'var(--green)' : 'var(--text)') + '" title="Garrosh items not counted (final boss)">' + got + ' / ' + total + ' BiS</span>';
+      html += '<span class="raider-score" style="color:' + col + '" title="Garrosh items not counted (final boss)">' + got + ' / ' + total + ' BiS</span>';
     } else {
       html += '<span class="raider-score" style="color:var(--text3)">no gear data</span>';
     }
@@ -605,113 +561,11 @@ function renderRaiders() {
   $('#content').innerHTML = html;
 }
 
-/* ============================== editor ============================== */
-
-let editorSpec = null;
-
-function renderEditor() {
-  const specs = state.mergedSpecs;
-  if (!editorSpec || !specs[editorSpec]) editorSpec = state.roster.characters[0].spec;
-  const spec = specs[editorSpec];
-  let html = banners();
-  html += '<div class="editor-bar"><label>Spec: </label><select id="edSpec">';
-  for (const [slug, s] of Object.entries(specs)) {
-    html += '<option value="' + slug + '"' + (slug === editorSpec ? ' selected' : '') + '>' + esc(s.label) + '</option>';
-  }
-  html += '</select>';
-  html += '<button id="edSave" class="primary">Save (this browser)</button>';
-  html += '<button id="edExport">Export bis.json</button>';
-  html += '<button id="edReset">Discard local edits</button>';
-  html += '</div>';
-  html += '<div class="banner" style="border-left-color:var(--text3)">Tip: heroic IDs are on Wowhead MoP-Classic item pages (the <i>Heroic</i> ' + esc(String(MINOR_AT)) + ' version). Entering a Heroic ID auto-fills Warforged as +996 — correct for almost every SoO item; tier pieces have no Warforged version (keep both IDs the same). Rows with missing IDs are highlighted.</div>';
-  html += '<table class="editor"><tr><th>Slot</th><th>Item name</th><th>Heroic ID</th><th>Warforged ID</th><th>Boss</th><th>BiS ilvl</th><th>Wowhead</th></tr>';
-  spec.items.forEach((it, idx) => {
-    html += '<tr data-idx="' + idx + '">';
-    html += '<td><input type="text" class="slot" value="' + esc(it.slot) + '" style="width:80px"></td>';
-    html += '<td><input type="text" class="name" value="' + esc(it.name) + '"></td>';
-    html += '<td><input type="number" class="id heroic' + (it.heroicId ? '' : ' bad') + '" value="' + (it.heroicId || '') + '"></td>';
-    html += '<td><input type="number" class="id wf' + (it.heroicId ? '' : ' bad') + '" value="' + (it.wfId || '') + '"></td>';
-    html += '<td><select class="src">';
-    for (const [key, name] of BOSSES.concat(EXTRA_GROUPS)) {
-      html += '<option value="' + key + '"' + (key === it.source ? ' selected' : '') + '>' + esc(name) + '</option>';
-    }
-    html += '</select></td>';
-    html += '<td><input type="number" class="lvl" value="' + (it.bisIlvl || 566) + '"></td>';
-    html += '<td>' + whSearch(it.name) + '</td>';
-    html += '</tr>';
-  });
-  html += '</table>';
-  $('#content').innerHTML = html;
-
-  $('#edSpec').addEventListener('change', (e) => { editorSpec = e.target.value; renderEditor(); });
-
-  // heroic ID entry auto-fills WF (+996) when WF is empty or previously linked
-  document.querySelectorAll('tr[data-idx] input.heroic').forEach((inp) => {
-    inp.addEventListener('change', () => {
-      const tr = inp.closest('tr');
-      const wf = tr.querySelector('input.wf');
-      const v = parseInt(inp.value, 10);
-      if (v && !wf.dataset.touched) wf.value = v + 996;
-    });
-  });
-  document.querySelectorAll('tr[data-idx] input.wf').forEach((inp) => {
-    inp.addEventListener('input', () => { inp.dataset.touched = '1'; });
-  });
-
-  const collect = () => {
-    const items = [];
-    document.querySelectorAll('tr[data-idx]').forEach((tr) => {
-      const num = (cls) => { const v = parseInt(tr.querySelector('input.' + cls).value, 10); return Number.isFinite(v) ? v : null; };
-      items.push({
-        slot: tr.querySelector('input.slot').value.trim(),
-        name: tr.querySelector('input.name').value.trim(),
-        heroicId: num('heroic'),
-        wfId: num('wf') || num('heroic'),
-        source: tr.querySelector('select.src').value,
-        sourceLabel: BOSS_NAME[tr.querySelector('select.src').value],
-        bisIlvl: num('lvl') || 566,
-      });
-    });
-    return items;
-  };
-
-  $('#edSave').addEventListener('click', () => {
-    const ov = loadOverrides();
-    ov[editorSpec] = collect();
-    localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
-    recompute(); renderEditor();
-  });
-  $('#edExport').addEventListener('click', () => {
-    const ov = loadOverrides();
-    ov[editorSpec] = collect();
-    localStorage.setItem(OVERRIDE_KEY, JSON.stringify(ov));
-    recompute();
-    const out = JSON.parse(JSON.stringify(state.bis));
-    for (const [slug, items] of Object.entries(loadOverrides())) {
-      if (!out.specs[slug]) out.specs[slug] = { label: slug, class: '', items: [] };
-      out.specs[slug].items = items;
-    }
-    out.meta.generated = new Date().toISOString().slice(0, 10);
-    const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'bis.json';
-    a.click();
-    alert('Downloaded bis.json.\n\nReplace data/bis.json in the starplannercd.github.io repo with this file and push — then everyone sees the update.');
-  });
-  $('#edReset').addEventListener('click', () => {
-    if (confirm('Discard ALL local BiS edits on this computer?')) {
-      localStorage.removeItem(OVERRIDE_KEY);
-      recompute(); renderEditor();
-    }
-  });
-}
-
 /* ============================== router / boot ============================== */
 
 function currentView() {
   const h = location.hash.replace('#', '');
-  return ['bosses', 'raiders', 'editor'].includes(h) ? h : 'bosses';
+  return ['bosses', 'raiders'].includes(h) ? h : 'bosses';
 }
 
 function render() {
@@ -719,9 +573,8 @@ function render() {
   document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === view));
   if (!state.bis) return;
   recompute();
-  if (view === 'bosses') renderBosses();
-  else if (view === 'raiders') renderRaiders();
-  else renderEditor();
+  if (view === 'raiders') renderRaiders();
+  else renderBosses();
 }
 
 document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => { location.hash = t.dataset.view; }));

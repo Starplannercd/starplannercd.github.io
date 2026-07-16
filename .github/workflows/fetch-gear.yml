@@ -2,7 +2,7 @@ name: Fetch raid gear
 
 on:
   schedule:
-    - cron: "23 12 * * 1"   # Mondays 12:23 UTC — after the Sunday-evening US raid
+    - cron: "23 12 * * 1,6" # Mondays & Saturdays 12:23 UTC — post-raid + late-week catch-up
   workflow_dispatch: {}      # "Run workflow" button for on-demand refreshes
 
 permissions:
