@@ -50,7 +50,6 @@
   /* TOP BAR */
   .topbar {
     background: linear-gradient(180deg, #1e1a16 0%, #0c0a08 100%);
-    border-bottom: 3px solid #c83a20;
     border-top: 3px solid #c83a20;
     padding: 6px 20px 6px 20px;
     display: flex;
@@ -522,53 +521,29 @@
   }
   .boss-ready-wrap input[type=checkbox] { display: none; }
   .boss-ready-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border2);
-    color: var(--text3);
-    background: transparent;
-    transition: all 0.15s;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: none;
+    color: var(--text2);
+    background: rgba(255,255,255,0.07);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
   }
+  .boss-ready-wrap:hover .boss-ready-label { background: rgba(255,255,255,0.13); color: var(--text); }
+  .boss-ready-wrap:active .boss-ready-label { transform: scale(0.96); }
   .boss-ready-wrap.ready .boss-ready-label {
-    border-color: transparent;
-    background: #48a868;
-    color: #0e0c0a;
+    background: #34c759;
+    color: #ffffff;
   }
+  .boss-ready-wrap.ready:hover .boss-ready-label { background: #2fb350; color: #ffffff; }
 
   .boss-name { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; text-transform: uppercase; }
   .boss-desc { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
 
   /* TIMELINE GRID */
   .timeline-grid { position: relative; }
-
-  /* Time ruler */
-  .ruler {
-    position: relative;
-    height: 24px;
-    margin-bottom: 2px;
-  }
-
-  .ruler-tick {
-    position: absolute;
-    top: 0;
-    font-size: 10px;
-    color: var(--text3);
-    transform: translateX(-50%);
-    white-space: nowrap;
-  }
-
-  .ruler-tick::after {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 6px;
-    background: var(--border2);
-    margin: 2px auto 0;
-  }
 
   /* ABILITY ROW */
   .ability-row {
@@ -1300,91 +1275,17 @@
   .cd-cooldown { display: none; }
 
 
-  .ruler-tick {
-    font-size: 9px !important;
-    letter-spacing: 0.02em;
-    font-weight: 500;
-  }
-
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
 
 
-  /* ── TIMELINE ICON STYLES ─────────────────────────────────────────────────
-     The dropdown in the topbar sets data-icon on #app. Each variant restyles
-     the icon pills (.pcd-img). Colour comes in via --ec (set inline per CD). */
+  /* ── TIMELINE ICON STYLE: Colour Ring (baked in) ──────────────────────────
+     2px border in the CD's colour (--ec, set inline per CD) + soft glow. */
 
   .placed-cd { border-radius: 6px; border: 1px solid transparent; }
-
-  /* Default: Dark Frame — near-black border, colour carried by the glow */
-  .placed-cd.pcd-img { border-color:#060402; border-radius:7px; box-shadow:0 0 12px -2px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
-
-  /* ── Ring family — rectangular pills with the CD colour as the frame ── */
-
-  /* ring — 2px colour border + soft glow */
-  [data-icon="ring"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:8px; box-shadow:0 0 10px -3px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
-
-  /* thin-ring — crisp 1px colour border, no glow */
-  [data-icon="thin-ring"] .placed-cd.pcd-img { border:1px solid var(--ec); border-radius:7px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
-
-  /* ring-glow — colour border + strong halo */
-  [data-icon="ring-glow"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:8px; box-shadow:0 0 16px -1px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
-
-  /* double-ring — colour border with a second outer ring */
-  [data-icon="double-ring"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:8px; outline:1px solid var(--ec); outline-offset:2px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
-
-  /* dashed-ring — dashed colour border */
-  [data-icon="dashed-ring"] .placed-cd.pcd-img { border:2px dashed var(--ec); border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
-
-  /* inset-ring — dark edge with the colour ring tucked just inside it */
-  [data-icon="inset-ring"] .placed-cd.pcd-img { border:1px solid #060402; border-radius:7px; box-shadow:inset 0 0 0 2px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
-
-  /* rounded-ring — colour ring with big soft corners */
-  [data-icon="rounded-ring"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:14px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
-
-  /* pill-ring — capsule shape with colour ring */
-  [data-icon="pill-ring"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:28px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
-
-  /* ── Circle family — round icons (shared sizing below) ── */
-  [data-icon="circle"] .placed-cd.pcd-img,
-  [data-icon="circle-thin"] .placed-cd.pcd-img,
-  [data-icon="circle-bold"] .placed-cd.pcd-img,
-  [data-icon="circle-glow"] .placed-cd.pcd-img,
-  [data-icon="circle-dashed"] .placed-cd.pcd-img,
-  [data-icon="circle-double"] .placed-cd.pcd-img,
-  [data-icon="circle-dark"] .placed-cd.pcd-img {
-    width:57px !important; min-width:57px; margin-left:9px; border-radius:50%;
-  }
-  [data-icon="circle"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-thin"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-bold"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-glow"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-dashed"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-double"] .placed-cd.pcd-img .pcd-name,
-  [data-icon="circle-dark"] .placed-cd.pcd-img .pcd-name { font-size:8.5px; padding:0 6px 7px; }
-
-  /* circle — colour ring + soft glow */
-  [data-icon="circle"] .placed-cd.pcd-img { border:2px solid var(--ec); box-shadow:0 0 12px -3px var(--ec), 0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-thin — crisp 1px colour ring, no glow */
-  [data-icon="circle-thin"] .placed-cd.pcd-img { border:1px solid var(--ec); box-shadow:0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-bold — thick 3px colour ring, no glow */
-  [data-icon="circle-bold"] .placed-cd.pcd-img { border:3px solid var(--ec); box-shadow:0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-glow — ringless, colour halo only */
-  [data-icon="circle-glow"] .placed-cd.pcd-img { border:none; box-shadow:0 0 14px 0 var(--ec), 0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-dashed — dashed colour ring */
-  [data-icon="circle-dashed"] .placed-cd.pcd-img { border:2px dashed var(--ec); box-shadow:0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-double — colour ring with second outer ring */
-  [data-icon="circle-double"] .placed-cd.pcd-img { border:2px solid var(--ec); outline:1px solid var(--ec); outline-offset:2px; box-shadow:0 2px 6px rgba(0,0,0,0.5); }
-
-  /* circle-dark — dark ring, colour carried by the glow (round Dark Frame) */
-  [data-icon="circle-dark"] .placed-cd.pcd-img { border:2px solid #060402; box-shadow:0 0 12px -2px var(--ec), 0 2px 6px rgba(0,0,0,0.5); }
+  .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:8px; box-shadow:0 0 10px -3px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
 
 
   /* ── ANIMATION SYSTEM ── */
@@ -1469,24 +1370,6 @@
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
-    <select class="boss-select" id="iconStyleSelect" title="Timeline icon style" style="min-width:0;width:auto;font-size:11px;padding:5px 8px;">
-      <option value="flat">Icons · Dark Frame</option>
-      <option value="ring">Icons · Colour Ring</option>
-      <option value="thin-ring">Icons · Thin Ring</option>
-      <option value="ring-glow">Icons · Ring Glow</option>
-      <option value="double-ring">Icons · Double Ring</option>
-      <option value="dashed-ring">Icons · Dashed Ring</option>
-      <option value="inset-ring">Icons · Inset Ring</option>
-      <option value="rounded-ring">Icons · Rounded Ring</option>
-      <option value="pill-ring">Icons · Pill Ring</option>
-      <option value="circle">Icons · Circle</option>
-      <option value="circle-thin">Icons · Circle Thin</option>
-      <option value="circle-bold">Icons · Circle Bold</option>
-      <option value="circle-glow">Icons · Circle Glow</option>
-      <option value="circle-dashed">Icons · Circle Dashed</option>
-      <option value="circle-double">Icons · Circle Double</option>
-      <option value="circle-dark">Icons · Circle Dark</option>
-    </select>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
   </div>
   <div class="main">
@@ -2892,18 +2775,6 @@ function renderTimeline() {
   const PX_PER_SEC = 2.8;
   const LABEL_W = 160;
   const totalW = Math.max(boss.duration * PX_PER_SEC, 1600);
-
-  // Ruler — tick marks only, no time labels
-  const ruler = document.createElement('div');
-  ruler.className = 'ruler';
-  ruler.style.paddingLeft = LABEL_W + 'px';
-  for (let t = 0; t <= boss.duration; t += 30) {
-    const tick = document.createElement('div');
-    tick.className = 'ruler-tick';
-    tick.style.left = (LABEL_W + t * PX_PER_SEC) + 'px';
-    ruler.appendChild(tick);
-  }
-  grid.appendChild(ruler);
 
   // Collect all abilities flat per section
   const bossData = getPlacedKey(boss.id);
@@ -5837,21 +5708,6 @@ initFirebase();
 
 
 
-// Timeline icon style — saved choice from the topbar dropdown
-const ICON_STYLE_KEY = 'tot_rcd_icon_style';
-(function initIconStyle() {
-  let saved = localStorage.getItem(ICON_STYLE_KEY) || 'flat';
-  const sel = document.getElementById('iconStyleSelect');
-  // Fall back to the default if the saved style no longer exists
-  if (sel && ![...sel.options].some(o => o.value === saved)) saved = 'flat';
-  document.getElementById('app').setAttribute('data-icon', saved);
-  if (!sel) return;
-  sel.value = saved;
-  sel.addEventListener('change', () => {
-    document.getElementById('app').setAttribute('data-icon', sel.value);
-    localStorage.setItem(ICON_STYLE_KEY, sel.value);
-  });
-})();
 const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
 const WCL_REDIRECT = 'https://starplannercd.github.io';
 const WCL_AUTH_URL = 'https://www.warcraftlogs.com/oauth/authorize';
