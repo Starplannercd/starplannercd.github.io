@@ -1312,67 +1312,68 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
 
 
-  /* Icon style: Flat (baked in) */
+  /* ── TIMELINE ICON STYLES ─────────────────────────────────────────────────
+     The dropdown in the topbar sets data-icon on #app. Each variant restyles
+     the icon pills (.pcd-img). Colour comes in via --ec (set inline per CD). */
+
   .placed-cd { border-radius: 6px; border: 1px solid transparent; }
-  /* ghost — outline only, no fill */
-  [data-icon="ghost"] .placed-cd { border-radius:8px; background:transparent !important; border:2px solid transparent; }
 
-  /* rounded — soft corners, semi-transparent fill */
-  [data-icon="rounded"] .placed-cd { border-radius:12px; border:1.5px solid transparent; }
+  /* Default: Dark Frame — near-black border, colour carried by the glow */
+  .placed-cd.pcd-img { border-color:#060402; border-radius:7px; box-shadow:0 0 12px -2px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
 
-  /* square — hard corners */
-  [data-icon="square"] .placed-cd { border-radius:0px; border:1.5px solid transparent; }
+  /* glow — frameless, colour halo only */
+  [data-icon="glow"] .placed-cd.pcd-img { border:none; border-radius:9px; box-shadow:0 0 16px 0 var(--ec), 0 2px 8px rgba(0,0,0,0.5); }
 
-  /* sharp-ghost — ghost with sharp corners */
-  [data-icon="sharp-ghost"] .placed-cd { border-radius:2px; background:transparent !important; border:2px solid transparent; }
+  /* clean — dark border, plain shadow, no colour at all */
+  [data-icon="clean"] .placed-cd.pcd-img { border-color:#060402; border-radius:7px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
 
-  /* filled — full solid color */
-  [data-icon="filled"] .placed-cd { border-radius:8px; border:none; }
+  /* ring — 2px colour border + soft glow */
+  [data-icon="ring"] .placed-cd.pcd-img { border:2px solid var(--ec); border-radius:8px; box-shadow:0 0 10px -3px var(--ec), 0 2px 6px rgba(0,0,0,0.45); }
 
-  /* filled-sharp — solid, no radius */
-  [data-icon="filled-sharp"] .placed-cd { border-radius:0px; border:none; }
+  /* heavy-ring — thick colour border, no glow */
+  [data-icon="heavy-ring"] .placed-cd.pcd-img { border:3px solid var(--ec); border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.5); }
 
-  /* tag — left accent bar only */
-  [data-icon="tag"] .placed-cd { border-radius:3px; border:none; border-left:4px solid transparent; }
+  /* circle — round icon with colour ring */
+  [data-icon="circle"] .placed-cd.pcd-img { width:57px !important; min-width:57px; margin-left:9px; border-radius:50%; border:2px solid var(--ec); box-shadow:0 0 12px -3px var(--ec), 0 2px 6px rgba(0,0,0,0.5); }
+  [data-icon="circle"] .placed-cd.pcd-img .pcd-name { font-size:8.5px; padding:0 6px 7px; }
 
-  /* tag-ghost — transparent with left bar */
-  [data-icon="tag-ghost"] .placed-cd { border-radius:3px; background:transparent !important; border:none; border-left:4px solid transparent; }
+  /* squircle — big soft corners, thin colour border */
+  [data-icon="squircle"] .placed-cd.pcd-img { border:1.5px solid var(--ec); border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
 
-  /* top-bar — accent bar on top */
-  [data-icon="top-bar"] .placed-cd { border-radius:4px; border:none; border-top:4px solid transparent; }
+  /* underline — dark frame with colour bar underneath */
+  [data-icon="underline"] .placed-cd.pcd-img { border:1px solid #060402; border-bottom:3px solid var(--ec); border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
 
-  /* top-bar-ghost — transparent with top bar */
-  [data-icon="top-bar-ghost"] .placed-cd { border-radius:4px; background:transparent !important; border:none; border-top:4px solid transparent; }
+  /* topline — dark frame with colour bar on top */
+  [data-icon="topline"] .placed-cd.pcd-img { border:1px solid #060402; border-top:3px solid var(--ec); border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
 
-  /* bold-outline — thick border, no fill */
-  [data-icon="bold-outline"] .placed-cd { border-radius:8px; background:transparent !important; border:3px solid transparent; }
+  /* edge — colour tab on the left side */
+  [data-icon="edge"] .placed-cd.pcd-img { border:1px solid #060402; border-left:4px solid var(--ec); border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.45); }
 
-  /* notched — alternating corners */
-  [data-icon="notched"] .placed-cd { border-radius:10px 2px 10px 2px; border:1.5px solid transparent; }
+  /* gold — WoW-style gold frame, same for every CD */
+  [data-icon="gold"] .placed-cd.pcd-img { border:2px solid #c8a850; border-radius:6px; box-shadow:inset 0 0 6px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.5); }
 
-  /* notched-ghost — notched, no fill */
-  [data-icon="notched-ghost"] .placed-cd { border-radius:10px 2px 10px 2px; background:transparent !important; border:2px solid transparent; }
+  /* sticker — light border + lifted shadow */
+  [data-icon="sticker"] .placed-cd.pcd-img { border:2px solid #e8e0d0; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.55); }
 
-  /* cut-corner — one corner cut */
-  [data-icon="cut-corner"] .placed-cd { border-radius:10px 2px 10px 10px; border:1.5px solid transparent; }
+  /* hex — hexagon cut, colour glow */
+  [data-icon="hex"] .placed-cd.pcd-img { border:none; border-radius:0; clip-path:polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); box-shadow:none; filter:drop-shadow(0 0 5px var(--ec)); }
 
-  /* cut-corner-ghost */
-  [data-icon="cut-corner-ghost"] .placed-cd { border-radius:10px 2px 10px 10px; background:transparent !important; border:2px solid transparent; }
+  /* bevel — cut corners, colour glow */
+  [data-icon="bevel"] .placed-cd.pcd-img { border:none; border-radius:0; clip-path:polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); box-shadow:none; filter:drop-shadow(0 0 4px var(--ec)); }
 
-  /* double-border — thin inner + outer ring */
-  [data-icon="double-border"] .placed-cd { border-radius:8px; background:transparent !important; border:2px solid transparent; outline:1px solid; outline-offset:3px; }
+  /* shadow — pure black frame + deep drop shadow, zero colour */
+  [data-icon="shadow"] .placed-cd.pcd-img { border:1px solid #000; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.8); }
 
-  /* pill — rounded ends */
-  [data-icon="pill"] .placed-cd { border-radius:28px; border:1.5px solid transparent; }
+  /* faded — dimmed icons that light up on hover */
+  [data-icon="faded"] .placed-cd.pcd-img { border-color:#060402; border-radius:7px; box-shadow:0 2px 6px rgba(0,0,0,0.45); filter:saturate(0.75) brightness(0.78); }
+  [data-icon="faded"] .placed-cd.pcd-img:hover { filter:none; }
 
-  /* pill-ghost — pill outline only */
-  [data-icon="pill-ghost"] .placed-cd { border-radius:28px; background:transparent !important; border:2px solid transparent; }
+  /* glass — light frosted border with a gloss highlight */
+  [data-icon="glass"] .placed-cd.pcd-img { border:1px solid rgba(255,255,255,0.28); border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  [data-icon="glass"] .placed-cd.pcd-img::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,0.16), transparent 55%); pointer-events:none; }
 
-  /* flat — very subtle border, light fill */
-  [data-icon="flat"] .placed-cd { border-radius:7px; border:1px solid transparent; }
-
-  /* inset-shadow — filled with inner shadow effect via border */
-  [data-icon="inset-shadow"] .placed-cd { border-radius:8px; border:1px solid transparent; border-bottom:3px solid transparent; }
+  /* bare — nothing but the icon art */
+  [data-icon="bare"] .placed-cd.pcd-img { border:none; border-radius:3px; box-shadow:none; }
 
 
   /* ── ANIMATION SYSTEM ── */
@@ -1457,6 +1458,26 @@
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
+    <select class="boss-select" id="iconStyleSelect" title="Timeline icon style" style="min-width:0;width:auto;font-size:11px;padding:5px 8px;">
+      <option value="flat">Icons · Dark Frame</option>
+      <option value="glow">Icons · Glow</option>
+      <option value="clean">Icons · Clean</option>
+      <option value="ring">Icons · Colour Ring</option>
+      <option value="heavy-ring">Icons · Bold Ring</option>
+      <option value="circle">Icons · Circle</option>
+      <option value="squircle">Icons · Squircle</option>
+      <option value="underline">Icons · Underline</option>
+      <option value="topline">Icons · Top Bar</option>
+      <option value="edge">Icons · Side Tab</option>
+      <option value="gold">Icons · Gold Frame</option>
+      <option value="sticker">Icons · Sticker</option>
+      <option value="hex">Icons · Hexagon</option>
+      <option value="bevel">Icons · Beveled</option>
+      <option value="shadow">Icons · Shadow Box</option>
+      <option value="faded">Icons · Faded</option>
+      <option value="glass">Icons · Glass</option>
+      <option value="bare">Icons · No Frame</option>
+    </select>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
   </div>
   <div class="main">
@@ -2987,11 +3008,12 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     // Falls back to the sidebar-chip gradient fill when there's no icon at all.
     if (_iconUrl) {
       el.classList.add('pcd-img');
-      // Dark Frame: near-black border, colour carried by the glow.
+      // Frame look (border/radius/glow) lives in CSS keyed off [data-icon] so the
+      // icon-style dropdown can restyle it; --ec carries the CD colour into CSS.
       // background-clip:padding-box stops the icon art from bleeding out past the
       // border's anti-aliased inner edge (showed as a thin bright line at the
       // bottom middle of the pill).
-      el.style.cssText = `left:${left}px; background:url("${_iconUrl}") center/cover no-repeat #0a0806; background-clip:padding-box; color:${et}; border-color:#060402; border-radius:7px; box-shadow:0 0 12px -2px ${ec}, 0 2px 6px rgba(0,0,0,0.45);`;
+      el.style.cssText = `left:${left}px; --ec:${ec}; background:url("${_iconUrl}") center/cover no-repeat #0a0806; background-clip:padding-box; color:${et};`;
     } else {
       const cdBg = `linear-gradient(100deg, ${ec}30 0%, ${ec}0a 62%), linear-gradient(135deg, #14110c 0%, #100d09 100%)`;
       el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
@@ -5806,8 +5828,20 @@ initFirebase();
 
 
 
-// Icon style: flat (baked in)
-document.getElementById('app').setAttribute('data-icon','flat');
+// Timeline icon style — saved choice from the topbar dropdown
+const ICON_STYLE_KEY = 'tot_rcd_icon_style';
+(function initIconStyle() {
+  const saved = localStorage.getItem(ICON_STYLE_KEY) || 'flat';
+  document.getElementById('app').setAttribute('data-icon', saved);
+  const sel = document.getElementById('iconStyleSelect');
+  if (!sel) return;
+  sel.value = saved;
+  if (sel.selectedIndex === -1) sel.value = 'flat';
+  sel.addEventListener('change', () => {
+    document.getElementById('app').setAttribute('data-icon', sel.value);
+    localStorage.setItem(ICON_STYLE_KEY, sel.value);
+  });
+})();
 const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
 const WCL_REDIRECT = 'https://starplannercd.github.io';
 const WCL_AUTH_URL = 'https://www.warcraftlogs.com/oauth/authorize';
