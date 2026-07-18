@@ -1698,16 +1698,22 @@ const BOSSES = [
     id:'darkshaman', name:"Kor'kron Dark Shaman",
     desc:'Heroic · Gates of Retribution',
     duration: 480,
-    sections: [{ label: null, abilities: [
-      { name:'Encounter Start',  time:0,   color:'#ffffff', encounterStart:true },
-      { name:'Falling Ash 1',   time:173, color:'#c87820' },
-      { name:'Falling Ash 2',   time:206, color:'#c87820' },
-      { name:'Falling Ash 3',   time:237, color:'#c87820' },
-      { name:'Falling Ash 4',   time:269, color:'#c87820' },
-      { name:'Falling Ash 5',   time:301, color:'#c87820' },
-      { name:'Falling Ash 6',   time:333, color:'#c87820' },
-      { name:'Falling Ash 7',   time:366, color:'#c87820' },
-    ]}]
+    sections: [
+      { label: null, abilities: [
+        { name:'Encounter Start',  time:0,   color:'#ffffff', encounterStart:true },
+      ]},
+      { label: 'Top Side', abilities: [
+        { name:'Falling Ash 1',   time:173, color:'#c87820' },
+        { name:'Falling Ash 3',   time:237, color:'#c87820' },
+        { name:'Falling Ash 5',   time:301, color:'#c87820' },
+        { name:'Falling Ash 7',   time:366, color:'#c87820' },
+      ]},
+      { label: 'Bot Side', abilities: [
+        { name:'Falling Ash 2',   time:206, color:'#c87820' },
+        { name:'Falling Ash 4',   time:269, color:'#c87820' },
+        { name:'Falling Ash 6',   time:333, color:'#c87820' },
+      ]},
+    ]
   },
   {
     id:'generalnazmak', name:'General Nazgrim',
@@ -5833,6 +5839,20 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
 }
 // Ensure Symbiosis Tranquility is in the active set (disabled per boss) after local restore
 try { ensureSymbtranqInSet(); } catch(e) {}
+
+// Migrate Dark Shaman placements after Top/Bot Side section split (odd ashes → si 1, even → si 2)
+try {
+  var _ds = placedCDs.darkshaman;
+  if (_ds) Object.keys(_ds).forEach(function(k){
+    var m = k.match(/^0-(Falling%20Ash%20(\d+))$/);
+    if (m) {
+      var si = (parseInt(m[2], 10) % 2 === 1) ? 1 : 2;
+      var nk = si + '-' + m[1];
+      if (!_ds[nk]) { _ds[nk] = _ds[k]; }
+      delete _ds[k];
+    }
+  });
+} catch(e) {}
 
 // Migrate Garrosh Phase 3 placements after Intermission 2 section removal (section index 4 → 3)
 try {
