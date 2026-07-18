@@ -547,6 +547,27 @@
   }
   .boss-ready-wrap.ready:hover .boss-ready-label { background: #1a6a2f; color: #ffffff; }
 
+  /* Sync Kill — same pill language as the ready button */
+  .sync-kill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: none;
+    color: var(--text2);
+    background: rgba(255,255,255,0.07);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  }
+  .sync-kill-btn:hover { background: rgba(255,255,255,0.13); color: var(--text); }
+  .sync-kill-btn:active { transform: scale(0.96); }
+  .sync-kill-btn:disabled { opacity: 0.55; cursor: default; }
+
   .boss-name { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; text-transform: uppercase; }
   .boss-desc { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
 
@@ -2828,6 +2849,11 @@ function renderTimeline() {
   if (!BOSSES.some(b => b.id === currentBossId)) currentBossId = BOSSES[0].id;
   const boss = getBoss();
   const area = document.getElementById('timelineArea');
+  // Preserve scroll position across re-renders (moving a CD rebuilds the DOM),
+  // but start at the top when switching to a different boss.
+  const _sameBoss = renderTimeline._lastBossId === boss.id;
+  renderTimeline._lastBossId = boss.id;
+  const _scrollX = _sameBoss ? area.scrollLeft : 0, _scrollY = _sameBoss ? area.scrollTop : 0;
   area.innerHTML = '';
 
   // Boss title
@@ -2842,7 +2868,7 @@ function renderTimeline() {
       <input type="checkbox" id="bossReadyCheck" ${isReady ? 'checked' : ''}>
       <span class="boss-ready-label">${isReady ? '✓ Ready' : 'Mark Ready'}</span>
     </label>
-    <button class="btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults." style="font-size:10.5px;padding:4px 10px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>`;
+    <button class="sync-kill-btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults."><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>`;
   info.querySelector('#bossReadyCheck').addEventListener('change', e => {
     bossReady[boss.id] = e.target.checked;
     isDirty = true;
@@ -2882,6 +2908,8 @@ function renderTimeline() {
   });
 
   area.appendChild(grid);
+  area.scrollLeft = _scrollX;
+  area.scrollTop = _scrollY;
   buildPalette();
   renderBottomPanel();
 }
