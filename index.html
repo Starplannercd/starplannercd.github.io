@@ -2920,9 +2920,16 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  // Track ends exactly at the fight length — no excess squares, no scroll
-  const trackW = Math.ceil(boss.duration * pps);
+  // Track covers the fight length, padded to at least fill the visible area,
+  // and rounded up to whole 30s cells so the last square is never a sliver.
+  // flex is pinned so flexbox can't stretch it into one giant uneven cell.
+  const cellPx = 30 * pps;
+  const areaEl = document.getElementById('timelineArea');
+  const areaW = (areaEl && areaEl.clientWidth) || 1600;
+  let trackW = Math.max(boss.duration * pps, areaW - 212);
+  trackW = Math.ceil(trackW / cellPx) * cellPx;
   track.style.width = trackW + 'px';
+  track.style.flex = '0 0 auto';
 
   // Grid lines every 30s across the full track
   const gridEnd = trackW / pps;
