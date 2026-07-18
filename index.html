@@ -5864,6 +5864,13 @@ async function wclQuery(gql, variables) {
   if (data.errors) throw new Error(data.errors[0].message);
   return data.data;
 }
+// Classic host — guild/report data for MoP Classic lives here, not on www
+async function wclQueryClassic(gql, variables) {
+  var res = await fetch('https://classic.warcraftlogs.com/api/v2/user', {method:'POST',headers:{'Authorization':'Bearer '+wclGetToken(),'Content-Type':'application/json'},body:JSON.stringify({query:gql,variables:variables})});
+  var data = await res.json();
+  if (data.errors) throw new Error(data.errors[0].message);
+  return data.data;
+}
 
 var WCL_TOT_ZONE_ID = 1098; // Siege of Orgrimmar
 var WCL_ENCOUNTERS = {};
@@ -5892,33 +5899,30 @@ async function wclLoadEncounters() {
 }
 
 // ── Sync boss timeline from our guild's latest kill ──────────────────────────
-// Our guild on WCL — used when the logged-in account isn't linked to the guild
-var WCL_HOME_GUILD = { name: 'Professional', serverSlug: 'pagle', regions: ['US', 'us'] };
+// Our guild on WCL (classic host): Professional — Pagle (US)
+var WCL_HOME_GUILD_ID = 798050;
 
 async function wclFindLatestKill(bossName) {
-  var attempts = [];
+  var attempts = [
+    { q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: WCL_HOME_GUILD_ID} }
+  ];
+  // Also try guilds linked to the logged-in WCL account, then their personal logs
   try {
-    var d = await wclQuery('{userData{currentUser{id guilds{id name}}}}', {});
+    var d = await wclQueryClassic('{userData{currentUser{id guilds{id name}}}}', {});
     var cu = d && d.userData && d.userData.currentUser;
     if (cu) {
       (cu.guilds || []).forEach(function(g){
+        if (g.id === WCL_HOME_GUILD_ID) return;
         attempts.push({ q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: g.id} });
       });
       attempts.push({ q: 'query($i:Int!){reportData{reports(userID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: cu.id} });
     }
   } catch(e) { console.warn('WCL profile lookup failed:', e); }
-  // Fall back to searching our guild's logs directly by name
-  WCL_HOME_GUILD.regions.forEach(function(reg){
-    attempts.push({
-      q: 'query($n:String!,$s:String!,$r:String!){reportData{reports(guildName:$n,guildServerSlug:$s,guildServerRegion:$r,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}',
-      v: {n: WCL_HOME_GUILD.name, s: WCL_HOME_GUILD.serverSlug, r: reg}
-    });
-  });
 
   var bn = bossName.toLowerCase();
   for (var ai = 0; ai < attempts.length; ai++) {
     var r;
-    try { r = await wclQuery(attempts[ai].q, attempts[ai].v); }
+    try { r = await wclQueryClassic(attempts[ai].q, attempts[ai].v); }
     catch(e) { console.warn('WCL report search failed:', e.message); continue; }
     var reps = (r && r.reportData && r.reportData.reports && r.reportData.reports.data) || [];
     // Reports come newest first; match kills by boss name so zone/encounter-ID
@@ -5943,7 +5947,7 @@ async function wclFetchEnemyCasts(code, fight) {
     var q = first
       ? 'query($c:String!,$f:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){masterData{abilities{gameID name}} events(fightIDs:[$f],dataType:Casts,hostilityType:Enemies,startTime:$s,endTime:$e){data nextPageTimestamp}}}}'
       : 'query($c:String!,$f:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){events(fightIDs:[$f],dataType:Casts,hostilityType:Enemies,startTime:$s,endTime:$e){data nextPageTimestamp}}}}';
-    var d = await wclQuery(q, {c:code, f:fight.id, s:cursor, e:fight.endTime});
+    var d = await wclQueryClassic(q, {c:code, f:fight.id, s:cursor, e:fight.endTime});
     var rep = d.reportData.report;
     if (first && rep.masterData) (rep.masterData.abilities||[]).forEach(function(a){ abilityNames[a.gameID] = a.name; });
     first = false;
