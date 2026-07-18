@@ -1386,8 +1386,52 @@
   html[data-theme="alliance"] { --eui-accent: #3fa7ff; }
   html[data-theme="midnight"] { --eui-accent: #7841c8; }
   html[data-theme="eui-dark"] { --eui-accent: #ffffff; }
+  html[data-theme="fel"]      { --eui-accent: #55e055; }  /* fel green */
+  html[data-theme="frost"]    { --eui-accent: #6ad4f0; }  /* icy cyan */
+  html[data-theme="gold"]     { --eui-accent: #e0b050; }  /* warm gold */
+  html[data-theme="blood"]    { --eui-accent: #e04040; }  /* crimson */
+  html[data-theme="rose"]     { --eui-accent: #e86ca8; }  /* pink */
+
+  /* Native dropdown lists — keep them dark in every theme */
+  html[data-theme] { color-scheme: dark; }
+  .boss-select option { background: #14110c; color: var(--text); }
+  html[data-theme] .boss-select option { background: #101012; }
+
+  /* ── TOPBAR STYLES — data-topbar on <html>, accent follows the theme ────── */
+  :root { --bar-accent: #c83a20; }
+  html[data-theme] { --bar-accent: var(--eui-accent); }
+
+  /* clean — no stripe at all */
+  html[data-topbar="clean"] .topbar { border-top-color: transparent; box-shadow: 0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03); }
+
+  /* underline — stripe under the bar instead of on top */
+  html[data-topbar="underline"] .topbar { border-top-color: transparent; border-bottom: 3px solid var(--bar-accent); }
+
+  /* double — stripes top and bottom */
+  html[data-topbar="double"] .topbar { border-bottom: 3px solid var(--bar-accent); }
+
+  /* floating — detached rounded card */
+  html[data-topbar="float"] .topbar { margin: 10px 12px 4px; border-radius: 12px; border: 1px solid var(--border2); box-shadow: 0 4px 18px rgba(0,0,0,0.5); }
+
+  /* glass — translucent frosted bar */
+  html[data-topbar="glass"] .topbar { background: rgba(18,16,14,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top-color: transparent; border-bottom: 1px solid rgba(255,255,255,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.35); }
+  html[data-theme][data-topbar="glass"] .topbar { background: rgba(14,14,16,0.55); }
+
+  /* minimal — flat, thin hairline underneath */
+  html[data-topbar="minimal"] .topbar { background: var(--bg2); border-top-color: transparent; border-bottom: 1px solid var(--border); box-shadow: none; }
+
+  /* wash — accent colour bleeding in from the left, no stripe */
+  html[data-topbar="wash"] .topbar { border-top-color: transparent; background: linear-gradient(100deg, color-mix(in srgb, var(--bar-accent) 16%, #0c0a08) 0%, #0c0a08 65%); }
+
+  /* edge — thick accent tab on the left end */
+  html[data-topbar="edge"] .topbar { border-top-color: transparent; border-left: 4px solid var(--bar-accent); }
 </style>
-<script>try{var _t=localStorage.getItem('tot_rcd_theme');if(['eui','horde','alliance','midnight','eui-dark'].indexOf(_t)!==-1)document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
+<script>try{
+var _t=localStorage.getItem('tot_rcd_theme');
+if(['eui','horde','alliance','midnight','eui-dark','fel','frost','gold','blood','rose'].indexOf(_t)!==-1)document.documentElement.setAttribute('data-theme',_t);
+var _b=localStorage.getItem('tot_rcd_topbar');
+if(['clean','underline','double','float','glass','minimal','wash','edge'].indexOf(_b)!==-1)document.documentElement.setAttribute('data-topbar',_b);
+}catch(e){}</script>
 </head>
 <body>
 <div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -1425,6 +1469,22 @@
       <option value="alliance">Theme · Alliance</option>
       <option value="midnight">Theme · Midnight</option>
       <option value="eui-dark">Theme · Dark</option>
+      <option value="fel">Theme · Fel</option>
+      <option value="frost">Theme · Frost</option>
+      <option value="gold">Theme · Gold</option>
+      <option value="blood">Theme · Blood</option>
+      <option value="rose">Theme · Rose</option>
+    </select>
+    <select class="boss-select" id="barSelect" title="Topbar style" style="min-width:0;width:auto;font-size:11px;padding:5px 8px;">
+      <option value="">Bar · Stripe</option>
+      <option value="clean">Bar · Clean</option>
+      <option value="underline">Bar · Underline</option>
+      <option value="double">Bar · Double</option>
+      <option value="float">Bar · Floating</option>
+      <option value="glass">Bar · Glass</option>
+      <option value="minimal">Bar · Minimal</option>
+      <option value="wash">Bar · Wash</option>
+      <option value="edge">Bar · Edge</option>
     </select>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
@@ -5792,21 +5852,23 @@ initFirebase();
 
 
 
-// Theme picker — EllesmereUI themes (neutral dark surfaces + theme accent)
-const THEME_KEY = 'tot_rcd_theme';
-(function initTheme() {
-  var sel = document.getElementById('themeSelect');
-  sel.value = document.documentElement.getAttribute('data-theme') || '';
+// Theme + topbar pickers — attribute on <html>, persisted per key
+function wireStylePicker(selectId, attr, storageKey) {
+  var sel = document.getElementById(selectId);
+  sel.value = document.documentElement.getAttribute(attr) || '';
+  if (sel.selectedIndex === -1) sel.value = '';
   sel.addEventListener('change', function() {
     if (sel.value) {
-      document.documentElement.setAttribute('data-theme', sel.value);
-      localStorage.setItem(THEME_KEY, sel.value);
+      document.documentElement.setAttribute(attr, sel.value);
+      localStorage.setItem(storageKey, sel.value);
     } else {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.removeItem(THEME_KEY);
+      document.documentElement.removeAttribute(attr);
+      localStorage.removeItem(storageKey);
     }
   });
-})();
+}
+wireStylePicker('themeSelect', 'data-theme', 'tot_rcd_theme');
+wireStylePicker('barSelect', 'data-topbar', 'tot_rcd_topbar');
 
 const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
 const WCL_REDIRECT = 'https://starplannercd.github.io';
