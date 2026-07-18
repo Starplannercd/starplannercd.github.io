@@ -2920,11 +2920,11 @@ function buildAbilityRow(boss, rowKey, ab, totalW, pps, LABEL_W, bossData) {
 
   const track = document.createElement('div');
   track.className = 'track';
-  const isEncStart = !!(ab && ab.encounterStart);
-  const trackW = isEncStart ? Math.max(totalW + 400, 3200) : Math.max(totalW + 400, 1600);
+  // Track ends exactly at the fight length — no excess squares, no scroll
+  const trackW = Math.ceil(boss.duration * pps);
   track.style.width = trackW + 'px';
 
-  // Grid lines every 30s — cover the full track width, not just the fight length
+  // Grid lines every 30s across the full track
   const gridEnd = trackW / pps;
   for (let t = 30; t < gridEnd; t += 30) {
     const gl = document.createElement('div');
