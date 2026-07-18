@@ -1818,13 +1818,23 @@ const BOSSES = [
         { name:'Power Iron Star 1',   time:45, color:'#c84020' },
         { name:'Power Iron Star 2',   time:90, color:'#c84020' },
       ]},
-      { label: 'Intermission 1', abilities: [] },
+      { label: 'Intermission 1', abilities: [
+        { name:'Annihilate 1',  time:118, color:'#c848c8' },
+        { name:'Annihilate 2',  time:126, color:'#c848c8' },
+        { name:'Annihilate 3',  time:134, color:'#c848c8' },
+        { name:'Annihilate 4',  time:142, color:'#c848c8' },
+        { name:'Annihilate 5',  time:150, color:'#c848c8' },
+        { name:'Annihilate 6',  time:158, color:'#c848c8' },
+        { name:'Annihilate 7',  time:166, color:'#c848c8' },
+        { name:'Annihilate 8',  time:174, color:'#c848c8' },
+        { name:'Annihilate 9',  time:182, color:'#c848c8' },
+        { name:'Annihilate 10', time:190, color:'#c848c8' },
+      ]},
       { label: 'Phase 2', abilities: [
         { name:'Whirling Corruption P2 1', time:197, color:'#d83828' },
         { name:'Whirling Corruption P2 2', time:248, color:'#d83828' },
         { name:'Whirling Corruption P2 3', time:298, color:'#d83828' },
       ]},
-      { label: 'Intermission 2', abilities: [] },
       { label: 'Phase 3', abilities: [
         { name:'Whirling Corruption P3 1', time:419, color:'#c848c8' },
         { name:'Whirling Corruption P3 2', time:555, color:'#c848c8' },
@@ -5834,6 +5844,13 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.removeItem(BOSS_TIMING_KEY);
   localStorage.setItem('tot_rcd_timing_ver', '2');
 }
+// Migrate Garrosh Phase 3 placements after Intermission 2 section removal (section index 4 → 3)
+try {
+  var _g = placedCDs.garrosh;
+  if (_g) Object.keys(_g).forEach(function(k){
+    if (k.indexOf('4-') === 0 && !_g['3-' + k.slice(2)]) { _g['3-' + k.slice(2)] = _g[k]; delete _g[k]; }
+  });
+} catch(e) {}
 applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
