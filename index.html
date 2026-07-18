@@ -1338,8 +1338,10 @@
   .anim-timeline-fade { animation: anim-timeline-fade-in 0.15s ease forwards; }
   .anim-tab-slide { animation: anim-tab-slide 0.15s ease forwards; }
 
-  /* ── THEME: EllesmereUI "Dark" — neutral near-black, white accent ───────── */
-  html[data-theme="eui-dark"] {
+  /* ── THEMES: EllesmereUI ──────────────────────────────────────────────────
+     Shared recipe: neutral near-black surfaces, theme accent via --eui-accent.
+     Per-theme blocks below just set the accent colour. */
+  html[data-theme] {
     --bg: #0a0a0b;
     --bg2: #101012;
     --bg3: #161618;
@@ -1348,38 +1350,44 @@
     --text: #e8e8ea;
     --text2: #9a9aa2;
     --text3: #55555c;
-    --accent: #ffffff;
-    --accent2: #c8c8c8;
-    --forge: #ffffff;
-    --gold: #ffffff;
+    --accent: var(--eui-accent);
+    --accent2: color-mix(in srgb, var(--eui-accent) 70%, #000);
+    --forge: var(--eui-accent);
+    --gold: var(--eui-accent);
   }
-  html[data-theme="eui-dark"] .topbar {
+  html[data-theme] .topbar {
     background: linear-gradient(180deg, #17171a 0%, #09090a 100%);
-    border-top: 3px solid #ffffff;
-    box-shadow: 0 2px 12px rgba(255,255,255,0.10), inset 0 1px 0 rgba(255,255,255,0.03);
+    border-top: 3px solid var(--eui-accent);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--eui-accent) 14%, transparent), inset 0 1px 0 rgba(255,255,255,0.03);
   }
-  html[data-theme="eui-dark"] .topbar-title svg { color: #ffffff; filter: drop-shadow(0 0 4px #ffffff55); }
-  html[data-theme="eui-dark"] .topbar-title-text { color: #e8e8ea; text-shadow: 0 0 8px #ffffff44; }
-  html[data-theme="eui-dark"] .boss-select,
-  html[data-theme="eui-dark"] .btn,
-  html[data-theme="eui-dark"] .cd-chip,
-  html[data-theme="eui-dark"] .ability-label {
+  html[data-theme] .topbar-title svg { color: var(--eui-accent); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--eui-accent) 40%, transparent)); }
+  html[data-theme] .topbar-title-text { color: #e8e8ea; text-shadow: 0 0 8px color-mix(in srgb, var(--eui-accent) 30%, transparent); }
+  html[data-theme] .boss-select,
+  html[data-theme] .btn,
+  html[data-theme] .cd-chip,
+  html[data-theme] .ability-label {
     background: linear-gradient(135deg, #131315 0%, #0e0e10 100%);
   }
-  html[data-theme="eui-dark"] .btn {
+  html[data-theme] .btn {
     --btn-accent: #d0d0d4;
     border-color: #2e2e33;
   }
-  html[data-theme="eui-dark"] .boss-select { border-color: #2e2e33; }
-  html[data-theme="eui-dark"] .boss-select:focus { box-shadow: 0 0 0 2px rgba(255,255,255,0.14); }
-  html[data-theme="eui-dark"] .palette {
+  html[data-theme] .boss-select { border-color: #2e2e33; }
+  html[data-theme] .boss-select:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--eui-accent) 18%, transparent); }
+  html[data-theme] .palette {
     background: linear-gradient(180deg, #0c0c0d 0%, #0a0a0b 100%);
     border-right: 1px solid #202024;
   }
-  html[data-theme="eui-dark"] .cd-chip-timer { color: #7a7a82; }
-  html[data-theme="eui-dark"] .manage-item { background: #1a1a1d; border-color: #303036; }
+  html[data-theme] .cd-chip-timer { color: #7a7a82; }
+  html[data-theme] .manage-item { background: #1a1a1d; border-color: #303036; }
+
+  html[data-theme="eui"]      { --eui-accent: #0cd29d; }  /* EllesmereUI teal */
+  html[data-theme="horde"]    { --eui-accent: #ff5a1f; }
+  html[data-theme="alliance"] { --eui-accent: #3fa7ff; }
+  html[data-theme="midnight"] { --eui-accent: #7841c8; }
+  html[data-theme="eui-dark"] { --eui-accent: #ffffff; }
 </style>
-<script>try{if(localStorage.getItem('tot_rcd_theme')==='eui-dark')document.documentElement.setAttribute('data-theme','eui-dark');}catch(e){}</script>
+<script>try{var _t=localStorage.getItem('tot_rcd_theme');if(['eui','horde','alliance','midnight','eui-dark'].indexOf(_t)!==-1)document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
 <body>
 <div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -1410,7 +1418,14 @@
     <button class="btn btn-export" id="importFojiBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
     <button class="btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults."><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>
-    <button class="btn" id="themeBtn" title="Toggle the EllesmereUI Dark theme"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark</button>
+    <select class="boss-select" id="themeSelect" title="Site theme" style="min-width:0;width:auto;font-size:11px;padding:5px 8px;">
+      <option value="">Theme · Classic</option>
+      <option value="eui">Theme · Ellesmere</option>
+      <option value="horde">Theme · Horde</option>
+      <option value="alliance">Theme · Alliance</option>
+      <option value="midnight">Theme · Midnight</option>
+      <option value="eui-dark">Theme · Dark</option>
+    </select>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -5777,14 +5792,21 @@ initFirebase();
 
 
 
-// Theme toggle — EllesmereUI "Dark" (white accent, neutral near-black)
+// Theme picker — EllesmereUI themes (neutral dark surfaces + theme accent)
 const THEME_KEY = 'tot_rcd_theme';
-document.getElementById('themeBtn').addEventListener('click', function() {
-  var html = document.documentElement;
-  var dark = html.getAttribute('data-theme') === 'eui-dark';
-  if (dark) { html.removeAttribute('data-theme'); localStorage.removeItem(THEME_KEY); }
-  else { html.setAttribute('data-theme', 'eui-dark'); localStorage.setItem(THEME_KEY, 'eui-dark'); }
-});
+(function initTheme() {
+  var sel = document.getElementById('themeSelect');
+  sel.value = document.documentElement.getAttribute('data-theme') || '';
+  sel.addEventListener('change', function() {
+    if (sel.value) {
+      document.documentElement.setAttribute('data-theme', sel.value);
+      localStorage.setItem(THEME_KEY, sel.value);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.removeItem(THEME_KEY);
+    }
+  });
+})();
 
 const WCL_CLIENT_ID = 'a181f533-c14e-4f52-9b17-252b64aa1585';
 const WCL_REDIRECT = 'https://starplannercd.github.io';
