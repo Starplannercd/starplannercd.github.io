@@ -6019,21 +6019,17 @@ function rebuildBossFromCasts(boss, casts, killDurSec) {
     (castByName[k] = castByName[k] || []).push(c.t);
   });
 
-  var keepRows = [];
+  // First pass: group rows by base name and work out each group's cast times
   var groups = {};
+  function groupKey(ab) {
+    var key = ab.name.replace(/\s+\d+$/, '').toLowerCase();
+    return key === 'ds set' ? '__dsset__' : key;   // Thok screech sets
+  }
   sec.abilities.forEach(function(ab){
-    if (ab.encounterStart) { keepRows.push(Object.assign({}, ab)); return; }
+    if (ab.encounterStart) return;
+    var key = groupKey(ab);
+    if (groups[key]) return;
     var base = ab.name.replace(/\s+\d+$/, '');
-    var key = base.toLowerCase();
-    if (key === 'ds set') key = '__dsset__';   // Thok screech sets
-    if (!groups[key]) groups[key] = { base: base, template: ab, rows: [] };
-    groups[key].rows.push(ab);
-  });
-
-  var rebuilt = [];
-  var syncedCount = 0;
-  Object.keys(groups).forEach(function(key){
-    var g = groups[key];
     var times = null;
     if (key === '__dsset__') {
       // A gap of >60s between Deafening Screech casts starts a new set
@@ -6043,27 +6039,39 @@ function rebuildBossFromCasts(boss, casts, killDurSec) {
         for (var i=1; i<ds.length; i++) if (ds[i]-ds[i-1] > 60) times.push(ds[i]);
       }
     } else {
-      times = castByName[g.base.toLowerCase()] || null;
+      times = castByName[base.toLowerCase()] || null;
       if (times) times = times.slice().sort(function(a,b){return a-b;});
     }
-    if (!times || !times.length) {
-      g.rows.forEach(function(ab){ rebuilt.push(Object.assign({}, ab)); });
-      return;
-    }
+    groups[key] = { base: base, template: ab, times: times };
+  });
+
+  // Second pass: rebuild in the ORIGINAL row order. Matched groups get their
+  // new rows spliced in where the group first appeared; unmatched rows (e.g.
+  // abilities that never fired in this kill) stay exactly where they were.
+  var newAbilities = [];
+  var emitted = {};
+  var syncedCount = 0;
+  var maxSyncedT = 0;
+  sec.abilities.forEach(function(ab){
+    if (ab.encounterStart) { newAbilities.push(Object.assign({}, ab)); return; }
+    var key = groupKey(ab);
+    var g = groups[key];
+    if (!g || !g.times || !g.times.length) { newAbilities.push(Object.assign({}, ab)); return; }
+    if (emitted[key]) return;
+    emitted[key] = true;
     syncedCount++;
-    times.forEach(function(t, i){
+    g.times.forEach(function(t, i){
       var row = Object.assign({}, g.template);
-      row.name = times.length > 1 ? g.base + ' ' + (i+1) : g.base;
+      row.name = g.times.length > 1 ? g.base + ' ' + (i+1) : g.base;
       row.time = Math.round(t);
       if (key === '__dsset__' && row.hpLabel) row.hpLabel = row.name + ' — screech count';
-      rebuilt.push(row);
+      if (row.time > maxSyncedT) maxSyncedT = row.time;
+      newAbilities.push(row);
     });
   });
 
-  rebuilt.sort(function(a,b){ return a.time - b.time; });
-  sec.abilities = keepRows.concat(rebuilt);
-  var lastT = rebuilt.length ? rebuilt[rebuilt.length-1].time : 0;
-  boss.duration = Math.max(Math.ceil(killDurSec/30)*30, Math.ceil((lastT+30)/30)*30);
+  sec.abilities = newAbilities;
+  boss.duration = Math.max(Math.ceil(killDurSec/30)*30, Math.ceil((maxSyncedT+30)/30)*30);
   return syncedCount;
 }
 
