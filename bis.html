@@ -14,17 +14,18 @@
   }
 
   :root {
-    --bg: #0e0c0a;
-    --bg2: #141210;
-    --bg3: #1c1916;
-    --border: #2e2620;
-    --border2: #483830;
-    --text: #d8c8b0;
-    --text2: #8a7060;
-    --text3: #504038;
-    --accent: #c83a20;
-    --accent2: #8a2010;
-    --forge: #e07820;
+    /* Frost theme — matches the RCD planner */
+    --bg: #0a0a0b;
+    --bg2: #101012;
+    --bg3: #161618;
+    --border: #26262a;
+    --border2: #3a3a40;
+    --text: #e8e8ea;
+    --text2: #9a9aa2;
+    --text3: #55555c;
+    --accent: #6ad4f0;
+    --accent2: #3a8aa8;
+    --forge: #6ad4f0;
     --green: #48a868;
     --orange: #c87838;
     --yellow: #c8b838;
@@ -44,35 +45,44 @@
   a:hover { text-decoration: underline; }
 
   .topbar {
-    background: linear-gradient(180deg, #231b12 0%, #0c0a08 100%);
-    border-bottom: 1px solid var(--border2);
-    box-shadow: 0 4px 16px rgba(0,0,0,.55);
-    padding: 13px 24px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
     display: flex;
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand svg { flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
-  .topbar h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text);
-    line-height: 1.05;
+  /* Brand — same stacked briefcase + PROFESSIONAL as the RCD planner */
+  .topbar-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  .topbar h1 span {
-    color: var(--forge);
-    text-shadow: 0 0 12px rgba(224,120,32,.35);
+  .topbar-title svg {
+    display: block;
+    color: var(--accent);
+    filter: drop-shadow(0 0 4px rgba(106,212,240,0.5));
+  }
+  .topbar-title-text {
+    font-family: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(106,212,240,0.3);
+    line-height: 1;
   }
   .tabs { display: flex; gap: 8px; margin-left: auto; }
   .tab {
     padding: 7px 20px;
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 6px;
     color: var(--text2);
     cursor: pointer;
     font-size: 13px;
@@ -144,7 +154,7 @@
   table.dtable { width: 100%; border-collapse: collapse; }
   table.dtable th, table.dtable td { text-align: left; padding: 5px 10px; font-size: 12.5px; }
   table.dtable th { color: var(--text3); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-  table.dtable tr:nth-child(even) td { background: rgba(28,25,22,.5); }
+  table.dtable tr:nth-child(even) td { background: rgba(255,255,255,0.025); }
   .boss-detail { border-top: 1px solid var(--border); padding: 8px 16px 12px 54px; display: none; }
   .boss-card.open .boss-detail { display: block; }
   .need-row {
@@ -163,7 +173,7 @@
   .need-char { font-weight: 600; flex: 0 0 110px; }
   .need-slot { color: var(--text2); flex: 0 0 70px; }
   .need-cur { color: var(--text2); font-size: 12px; }
-  .muted-note { color: var(--text3); font-size: 11px; font-style: italic; margin: 14px 4px 6px; }
+  .muted-note { color: var(--text2); font-size: 13px; font-style: italic; margin: 14px 4px 6px; }
   .boss-card.extra { opacity: .75; }
 
   /* Raider view */
@@ -190,15 +200,10 @@
 </head>
 <body>
 <div class="topbar">
-  <div class="brand">
-    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M9.2 7V5.6A1.6 1.6 0 0 1 10.8 4h2.4a1.6 1.6 0 0 1 1.6 1.6V7" stroke="#e07820" stroke-width="1.5" stroke-linecap="round"/>
-      <rect x="2.8" y="7" width="18.4" height="13" rx="2" fill="#241c12" stroke="#e07820" stroke-width="1.5"/>
-      <path d="M2.8 12.2h18.4" stroke="#e07820" stroke-width="1.2"/>
-      <rect x="10.3" y="11" width="3.4" height="2.6" rx="0.7" fill="#c8b838" stroke="#e07820" stroke-width="0.8"/>
-    </svg>
-    <h1>Professional <span>BIS</span></h1>
-  </div>
+  <span class="topbar-title">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+    <span class="topbar-title-text">Professional</span>
+  </span>
   <div class="tabs">
     <div class="tab" data-view="bosses">Bosses</div>
     <div class="tab" data-view="raiders">Raiders</div>
