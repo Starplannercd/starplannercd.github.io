@@ -17,7 +17,7 @@
     --bg3: #1c1916;
     --border: #2e2620;
     --border2: #483830;
-    --text: #d8c8b0;
+    --text: #e8e8ea;
     --text2: #8a7060;
     --text3: #504038;
     --accent: #c83a20;
@@ -58,7 +58,7 @@
     flex-wrap: wrap;
     flex-shrink: 0;
     position: relative;
-    box-shadow: 0 2px 12px rgba(200,58,32,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+    box-shadow: 0 2px 12px rgba(106,212,240,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
   }
 
   .topbar-title {
@@ -75,7 +75,7 @@
   .topbar-title svg {
     display: block;
     color: #c83a20;
-    filter: drop-shadow(0 0 4px #c83a2088);
+    filter: drop-shadow(0 0 4px #6ad4f088);
   }
   .topbar-title-text {
     font-family: 'Cinzel', 'Palatino Linotype', Georgia, serif;
@@ -102,7 +102,7 @@
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .boss-select:hover { border-color: var(--accent); }
-  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(200,58,32,0.20); }
+  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(106,212,240,0.20); }
 
   /* Chip-style buttons: dark gradient base with the button's accent colour
      washing in from the left — same design language as the CD chips/pills. */
@@ -166,23 +166,23 @@
 
   /* Auth screen */
   #authScreen { position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0; }
-  .auth-box { background:#141008;border:1px solid #3a2e20;border-radius:12px;padding:36px 40px;width:380px;max-width:92vw;display:flex;flex-direction:column;align-items:center;gap:20px; }
-  .auth-title { font-size:18px;font-weight:800;color:#c83a20;letter-spacing:0.06em;text-align:center; }
-  .auth-sub { font-size:11px;color:#5a4838;text-align:center;letter-spacing:0.04em; }
-  .auth-google-btn { display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:6px;border:1px solid #4a3828;background:#241e14;color:#d8c8b0;font-size:13px;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:border-color 0.15s; }
-  .auth-google-btn:hover { border-color:#c83a20; }
+  .auth-box { background:#101012;border:1px solid #26262a;border-radius:12px;padding:36px 40px;width:380px;max-width:92vw;display:flex;flex-direction:column;align-items:center;gap:20px; }
+  .auth-title { font-size:18px;font-weight:800;color:#6ad4f0;letter-spacing:0.06em;text-align:center; }
+  .auth-sub { font-size:11px;color:#55555c;text-align:center;letter-spacing:0.04em; }
+  .auth-google-btn { display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:6px;border:1px solid #3a3a40;background:#161618;color:#e8e8ea;font-size:13px;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:border-color 0.15s; }
+  .auth-google-btn:hover { border-color:#6ad4f0; }
   .auth-google-btn svg { flex-shrink:0; }
   .auth-status { font-size:11px;color:#8a7060;text-align:center;min-height:16px; }
   .auth-error { font-size:11px;color:#c84848;text-align:center; }
   .auth-pending { background:#1a1610;border:1px solid #c83a2033;border-radius:8px;padding:16px;font-size:11px;color:#8a7060;text-align:center;line-height:1.7;width:100%; }
-  .auth-pending strong { color:#c83a20; }
-  .auth-signout { position:fixed;top:8px;right:12px;font-size:10px;color:#4a3828;background:transparent;border:none;cursor:pointer;letter-spacing:0.04em;z-index:10000; }
+  .auth-pending strong { color:#6ad4f0; }
+  .auth-signout { position:fixed;top:8px;right:12px;font-size:10px;color:#3a3a40;background:transparent;border:none;cursor:pointer;letter-spacing:0.04em;z-index:10000; }
   .auth-signout:hover { color:#8a7060; }
 
   /* Fill state indicators */
-  .fill-banner { background: linear-gradient(90deg,#c83a2022,#c83a2011,transparent); border-bottom: 2px solid #c83a20; padding: 5px 16px; display:flex; align-items:center; gap:10px; font-size:11px; font-weight:700; color:#c83a20; letter-spacing:0.06em; }
-  .fill-banner-pill { background:#c83a2022; border:1px solid #c83a2066; border-radius:20px; padding:2px 10px; font-size:10px; color:#c83a20; font-weight:700; }
-  .fill-stripe { height:3px; background:linear-gradient(90deg,#c83a20,#c83a2088,transparent); }
+  .fill-banner { background: linear-gradient(90deg,#c83a2022,#c83a2011,transparent); border-bottom: 2px solid #c83a20; padding: 5px 16px; display:flex; align-items:center; gap:10px; font-size:11px; font-weight:700; color:#6ad4f0; letter-spacing:0.06em; }
+  .fill-banner-pill { background:#c83a2022; border:1px solid #6ad4f066; border-radius:20px; padding:2px 10px; font-size:10px; color:#6ad4f0; font-weight:700; }
+  .fill-stripe { height:3px; background:linear-gradient(90deg,#c83a20,#6ad4f088,transparent); }
   .fill-sidebar-badge { position:fixed; left:0; top:50%; transform:translateY(-50%); background:#c83a20; color:#0e0c0a; font-size:9px; font-weight:900; letter-spacing:0.1em; writing-mode:vertical-rl; text-orientation:mixed; padding:12px 4px; border-radius:0 4px 4px 0; z-index:50; cursor:default; }
   .fill-topbar-badge { background:#c83a20; color:#0e0c0a; font-size:9px; font-weight:900; letter-spacing:0.08em; padding:3px 8px; border-radius:3px; text-transform:uppercase; }
   .fill-pulse-dot { width:9px; height:9px; border-radius:50%; background:#c83a20; animation:fill-pulse 1.8s ease-in-out infinite; flex-shrink:0; }
@@ -367,7 +367,7 @@
     font-weight: 800;
     color: #55432f;
     background: rgba(255,255,255,0.03);
-    border: 1px solid #241e14;
+    border: 1px solid #161618;
     border-radius: 8px;
     padding: 1px 6px;
     line-height: 1.5;
@@ -758,8 +758,8 @@
   .offset-popup {
     position: fixed;
     z-index: 99999;
-    background: var(--bg2, #1e1a12);
-    border: 1px solid var(--border2, #4a3828);
+    background: var(--bg2, #101012);
+    border: 1px solid var(--border2, #3a3a40);
     border-radius: 6px;
     padding: 10px 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.5);
@@ -774,9 +774,9 @@
   }
   .offset-popup input[type=number] {
     width: 100%;
-    background: #141008;
-    border: 1px solid #4a3828;
-    color: #d8c8b0;
+    background: #101012;
+    border: 1px solid #3a3a40;
+    color: #e8e8ea;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 13px;
@@ -791,9 +791,9 @@
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid #4a3828;
-    background: #241e14;
-    color: #d8c8b0;
+    border: 1px solid #3a3a40;
+    background: #161618;
+    color: #e8e8ea;
   }
   .offset-popup button.confirm {
     border-color: #c83a20;
@@ -803,13 +803,13 @@
 
   .btn-manage { --btn-accent: #58a890; }
   .btn-save { --btn-accent: #48a868; }
-  .btn-export { --btn-accent: #e05a3a; }
+  .btn-export { --btn-accent: #6ad4f0; }
   .btn-screenshot { --btn-accent: #c8cae0; }
 
   /* SCREENSHOT MODAL */
   .ss-modal {
-    background: #141008;
-    border: 1px solid #3a2e20;
+    background: #101012;
+    border: 1px solid #26262a;
     border-radius: 8px;
     padding: 0;
     width: 90vw;
@@ -824,16 +824,16 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    background: #1e1a12;
-    border-bottom: 1px solid #3a2e20;
+    background: #101012;
+    border-bottom: 1px solid #26262a;
     flex-shrink: 0;
   }
-  .ss-toolbar h3 { font-size:13px; font-weight:500; color:#c83a20; flex:1; }
+  .ss-toolbar h3 { font-size:13px; font-weight:500; color:#6ad4f0; flex:1; }
   .ss-mode-btn {
     padding: 4px 12px;
     border-radius: 3px;
-    border: 1px solid #4a3828;
-    background: #241e14;
+    border: 1px solid #3a3a40;
+    background: #161618;
     color: #8a7060;
     font-size: 11px;
     cursor: pointer;
@@ -884,7 +884,7 @@
   .ss-layout-l4 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l4 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l4 .ss-boss-header-text { padding:0 24px; }
-  .ss-layout-l4 .ss-boss-name-fancy { font-size:26px;font-weight:900;text-shadow:0 2px 16px #000,0 0 40px #c83a2066;letter-spacing:.02em; }
+  .ss-layout-l4 .ss-boss-name-fancy { font-size:26px;font-weight:900;text-shadow:0 2px 16px #000,0 0 40px #6ad4f066;letter-spacing:.02em; }
 
   /* L5 — portrait left, name right with bright white text */
   .ss-layout-l5 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
@@ -933,7 +933,7 @@
   .ss-layout-l12 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l12 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l12 .ss-boss-header-text { padding:0 20px; }
-  .ss-layout-l12 .ss-boss-header-text::after { content:"Throne of Thunder — Heroic 10"; display:block;font-size:9px;color:#5a4838;letter-spacing:.08em;text-transform:uppercase;margin-top:4px; }
+  .ss-layout-l12 .ss-boss-header-text::after { content:"Throne of Thunder — Heroic 10"; display:block;font-size:9px;color:#55555c;letter-spacing:.08em;text-transform:uppercase;margin-top:4px; }
   .ss-layout-l12 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000; }
 
   /* L13 — portrait left small, name large beside */
@@ -946,7 +946,7 @@
   .ss-layout-l14 .ss-boss-header-fancy { min-height:100px; flex-direction:row; align-items:center; background:#100e0a; border-bottom:1px solid #c83a2033; }
   .ss-layout-l14 .ss-boss-portrait { width:150px;height:100px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 55%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 55%,transparent 100%);filter:brightness(.9) saturate(.85); }
   .ss-layout-l14 .ss-boss-header-text { padding:0 20px; display:flex; flex-direction:column; gap:4px; }
-  .ss-layout-l14 .ss-boss-name-fancy { font-size:18px;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:#c83a20; }
+  .ss-layout-l14 .ss-boss-name-fancy { font-size:18px;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:#6ad4f0; }
 
   /* L15 — portrait left, name right, gradient gold-to-white text */
   .ss-layout-l15 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
@@ -957,7 +957,7 @@
   /* L16 — portrait left, name right, with divider line */
   .ss-layout-l16 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; }
   .ss-layout-l16 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
-  .ss-layout-l16 .ss-boss-header-text { padding:0 20px;border-left:2px solid #c83a2066; }
+  .ss-layout-l16 .ss-boss-header-text { padding:0 20px;border-left:2px solid #6ad4f066; }
   .ss-layout-l16 .ss-boss-name-fancy { font-size:20px;text-shadow:0 2px 12px #000; }
 
   /* L17 — portrait left, name right, dark bg with border glow */
@@ -977,20 +977,20 @@
   .ss-layout-l19 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.85); }
   .ss-layout-l19 .ss-boss-header-text { padding:0 20px; }
   .ss-layout-l19 .ss-boss-name-fancy { font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#8a7060;margin-bottom:2px; }
-  .ss-layout-l19 .ss-boss-header-text::after { content:attr(data-name);display:block;font-size:22px;font-weight:800;color:#c83a20;text-shadow:0 2px 8px #000; }
+  .ss-layout-l19 .ss-boss-header-text::after { content:attr(data-name);display:block;font-size:22px;font-weight:800;color:#6ad4f0;text-shadow:0 2px 8px #000; }
 
   /* L20 — portrait left, name right, stamped/engraved feel */
   .ss-layout-l20 .ss-boss-header-fancy { min-height:110px; flex-direction:row; align-items:center; background:linear-gradient(135deg,#0e0e14 0%,#141420 100%);border-bottom-color:#888; }
   .ss-layout-l20 .ss-boss-portrait { width:160px;height:110px;object-fit:cover;object-position:center top;mask-image:linear-gradient(to right,black 60%,transparent 100%);-webkit-mask-image:linear-gradient(to right,black 60%,transparent 100%);filter:brightness(.75) grayscale(.4); }
   .ss-layout-l20 .ss-boss-header-text { padding:0 20px; }
   .ss-layout-l20 .ss-boss-name-fancy { font-size:20px;color:#d4c89a;text-shadow:0 1px 0 #000,0 -1px 0 #fff2;letter-spacing:.06em; }
-  .ss-boss-block { margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: #0e0c0a; border: 1px solid #3a2e20; }
+  .ss-boss-block { margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: #0e0c0a; border: 1px solid #26262a; }
   .ss-boss-header-fancy {
     display: flex;
     align-items: center;
     gap: 0;
     background: linear-gradient(135deg, #1a1220 0%, #0e1830 100%);
-    border-bottom: 2px solid #c83a2044;
+    border-bottom: 2px solid #6ad4f044;
     position: relative;
     overflow: hidden;
     min-height: 80px;
@@ -1001,7 +1001,7 @@
     object-fit: contain;
     object-position: center;
     flex-shrink: 0;
-    filter: drop-shadow(0 0 8px #c83a2044);
+    filter: drop-shadow(0 0 8px #6ad4f044);
     padding: 4px;
   }
   .ss-boss-header-text {
@@ -1009,14 +1009,14 @@
     flex: 1;
   }
   .ss-boss-name-fancy { font-size: 17px; font-weight: 700; color: #c83a20; letter-spacing: 0.03em; }
-  .ss-boss-subtitle { font-size: 10px; color: #5a4838; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .ss-boss-subtitle { font-size: 10px; color: #55555c; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
   .ss-rows-wrap { padding: 4px 0; }
   .ss-rows-wrap > div:last-child { border-bottom: none !important; }
   .vrows > * + * { border-top: 1px solid #1f1a14; }
   .ss-boss-name { font-size: 16px; font-weight: 600; color: #c83a20; }
   .ss-boss-ready { font-size: 10px; color: #48a868; border: 1px solid #48a868; border-radius: 3px; padding: 1px 6px; }
-  .ss-row { display:flex; align-items:stretch; gap:0; border-bottom:1px solid #1e1a12; min-height:58px; }
-  .ss-label { width:200px; flex-shrink:0; display:flex; align-items:center; padding:0 0 0 0; border-right:1px solid #2a2218; overflow:hidden; }
+  .ss-row { display:flex; align-items:stretch; gap:0; border-bottom:1px solid #101012; min-height:58px; }
+  .ss-label { width:200px; flex-shrink:0; display:flex; align-items:center; padding:0 0 0 0; border-right:1px solid #26262a; overflow:hidden; }
   .ss-label-inner { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:0 12px; overflow:hidden; }
   .ss-label-marker { width:3px; align-self:stretch; flex-shrink:0; }
   .ss-label-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1024,7 +1024,7 @@
   .ss-icons { display:flex; gap:4px; align-items:center; flex-wrap:wrap; padding:6px 14px; }
   .ss-icon { width:46px; height:46px; border-radius:6px; border:none; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; letter-spacing:0.03em; }
   .ss-real-icon { width:46px; height:46px; border-radius:6px; border:none; flex-shrink:0; object-fit:cover; }
-  .ss-empty { font-size:11px; color:#4a3828; font-style:italic; }
+  .ss-empty { font-size:11px; color:#3a3a40; font-style:italic; }
 
   /* EXPORT MODAL */
   .modal-overlay {
@@ -1034,8 +1034,8 @@
     display: flex; align-items: center; justify-content: center;
   }
   .modal-box {
-    background: #1e1a12;
-    border: 1px solid #4a3828;
+    background: #101012;
+    border: 1px solid #3a3a40;
     border-radius: 8px;
     padding: 20px;
     width: 680px;
@@ -1046,16 +1046,16 @@
     gap: 12px;
   }
   .modal-box h3 { font-size: 14px; font-weight: 500; color: #c83a20; }
-  .modal-box .modal-sub { font-size: 11px; color: #5a4838; }
+  .modal-box .modal-sub { font-size: 11px; color: #55555c; }
   .modal-output {
     flex: 1;
-    background: #141008;
-    border: 1px solid #3a2e20;
+    background: #101012;
+    border: 1px solid #26262a;
     border-radius: 4px;
     padding: 10px;
     font-family: monospace;
     font-size: 11px;
-    color: #d8c8b0;
+    color: #e8e8ea;
     word-break: break-all;
     overflow-y: auto;
     min-height: 80px;
@@ -1066,10 +1066,10 @@
   .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
   .modal-footer button {
     padding: 5px 14px; border-radius: 4px; font-size: 12px;
-    cursor: pointer; border: 1px solid #4a3828;
-    background: #241e14; color: #d8c8b0;
+    cursor: pointer; border: 1px solid #3a3a40;
+    background: #161618; color: #e8e8ea;
   }
-  .modal-footer button.copy-btn { --btn-accent: #e05a3a; }
+  .modal-footer button.copy-btn { --btn-accent: #6ad4f0; }
   .modal-footer button:hover { opacity: 0.8; }
   .modal-warn { font-size: 11px; color: #c87838; }
 
@@ -1087,18 +1087,18 @@
     gap: 8px;
     padding: 6px 10px;
     border-radius: 4px;
-    background: #241e14;
-    border: 1px solid #3a2e20;
+    background: #161618;
+    border: 1px solid #26262a;
     cursor: pointer;
     user-select: none;
     transition: border-color 0.15s;
   }
-  .manage-item.active { border-color: #4a3828; background: #241e14; }
-  .manage-item:hover { border-color: #c83a2066; }
+  .manage-item.active { border-color: #3a3a40; background: #161618; }
+  .manage-item:hover { border-color: #6ad4f066; }
   .manage-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .manage-item-name { font-size:12px; color:#d8c8b0; flex:1; }
-  .manage-item-who { font-size:10px; color:#5a4838; }
-  .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #4a3828; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
+  .manage-item-name { font-size:12px; color:#e8e8ea; flex:1; }
+  .manage-item-who { font-size:10px; color:#55555c; }
+  .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #3a3a40; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
   .manage-item.active .manage-check { background:#38a8b8; border-color:#38a8b8; color:#fff; }
 
   /* ROSTER CONFIGS */
@@ -1117,29 +1117,29 @@
   .roster-cd-remove:hover { opacity:1; }
 
   /* ── SUB / SWAP MODAL ── */
-  .sub-modal { background:#1c1810; border:1px solid #4a3828; border-radius:10px; width:600px; max-width:95vw; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.55); }
-  .sub-modal-head { padding:17px 20px 14px; border-bottom:1px solid #2a2218; flex-shrink:0; }
+  .sub-modal { background:#1c1810; border:1px solid #3a3a40; border-radius:10px; width:600px; max-width:95vw; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.55); }
+  .sub-modal-head { padding:17px 20px 14px; border-bottom:1px solid #26262a; flex-shrink:0; }
   .sub-modal-title { font-size:15px; font-weight:600; color:#e6dac6; letter-spacing:0.01em; }
   .sub-modal-sub { font-size:11px; color:#6a5848; margin-top:4px; line-height:1.4; }
   .sub-modal-body { padding:14px 20px; overflow-y:auto; flex:1; }
-  .sub-modal-foot { padding:12px 20px; border-top:1px solid #2a2218; display:flex; justify-content:flex-end; flex-shrink:0; }
-  .sub-section-label { font-size:10px; font-weight:700; color:#5a4838; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; display:flex; align-items:center; justify-content:space-between; }
+  .sub-modal-foot { padding:12px 20px; border-top:1px solid #26262a; display:flex; justify-content:flex-end; flex-shrink:0; }
+  .sub-section-label { font-size:10px; font-weight:700; color:#55555c; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; display:flex; align-items:center; justify-content:space-between; }
   .sub-section-label:not(:first-child) { margin-top:18px; }
 
   /* plans */
-  .sub-plans { border:1px solid #2a2218; border-radius:7px; overflow:hidden; }
+  .sub-plans { border:1px solid #26262a; border-radius:7px; overflow:hidden; }
   .sub-plan-row { display:flex; align-items:center; gap:9px; padding:8px 11px; cursor:pointer; transition:background 0.12s; border-bottom:1px solid #221c14; }
   .sub-plan-row:last-child { border-bottom:none; }
-  .sub-plan-row:hover { background:#241e14; }
+  .sub-plan-row:hover { background:#161618; }
   .sub-plan-row.active { background:#c83a2014; }
   .sub-plan-name { flex:1; font-size:12.5px; color:#c2b6a2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .sub-plan-row.active .sub-plan-name { color:#eaa890; font-weight:600; }
   .sub-plan-dot { width:6px; height:6px; border-radius:50%; background:#c83a20; flex-shrink:0; }
-  .sub-plan-del { background:transparent; border:none; color:#4a3828; font-size:13px; cursor:pointer; padding:2px 5px; border-radius:4px; flex-shrink:0; opacity:0; transition:opacity 0.12s,color 0.12s,background 0.12s; }
+  .sub-plan-del { background:transparent; border:none; color:#3a3a40; font-size:13px; cursor:pointer; padding:2px 5px; border-radius:4px; flex-shrink:0; opacity:0; transition:opacity 0.12s,color 0.12s,background 0.12s; }
   .sub-plan-row:hover .sub-plan-del { opacity:1; }
   .sub-plan-del:hover { color:#ff9a8a; background:#c8484818; }
-  .sub-import-btn { font-size:9px; font-weight:600; padding:3px 9px; border-radius:4px; border:1px solid #3a2e20; background:transparent; color:#6a5848; cursor:pointer; letter-spacing:0.04em; text-transform:none; }
-  .sub-import-btn:hover { border-color:#5a4838; color:#a88a70; }
+  .sub-import-btn { font-size:9px; font-weight:600; padding:3px 9px; border-radius:4px; border:1px solid #26262a; background:transparent; color:#6a5848; cursor:pointer; letter-spacing:0.04em; text-transform:none; }
+  .sub-import-btn:hover { border-color:#55555c; color:#a88a70; }
 
   /* selection tray */
   .sub-tray { background:linear-gradient(180deg,#141a0e,#0f130b); border:1px solid #3a4a2c; border-radius:8px; padding:12px 14px; margin-bottom:18px; }
@@ -1154,9 +1154,9 @@
   .sub-create-btn:hover { background:#5a883844; border-color:#7ab85a; color:#bcec92; }
 
   /* roster */
-  .sub-role-label { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#5a4838; padding:14px 2px 6px; font-weight:700; }
+  .sub-role-label { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#55555c; padding:14px 2px 6px; font-weight:700; }
   .sub-role-label.first { padding-top:2px; }
-  .sub-player { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:7px; background:#171310; border:1px solid #2a2218; border-left:3px solid #2a2218; margin-bottom:6px; transition:border-color 0.12s,background 0.12s; }
+  .sub-player { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:7px; background:#171310; border:1px solid #26262a; border-left:3px solid #26262a; margin-bottom:6px; transition:border-color 0.12s,background 0.12s; }
   .sub-player.queued { border-color:#46603a; border-left-color:#7ab85a; background:#141a0e; }
   .sub-player.active-fill { border-color:#5e4682; border-left-color:#9a7ac8; background:#16121e; }
   .sub-player-info { flex:1; min-width:0; }
@@ -1174,7 +1174,7 @@
   .sub-empty-note { font-size:10px; color:#4a3e30; font-style:italic; }
   .sub-spec-pill { display:inline-flex; align-items:center; padding:2px 8px; border-radius:3px; font-size:10px; font-weight:700; border:1px solid; }
   .sub-act { display:flex; gap:6px; flex-shrink:0; }
-  .sub-btn { font-size:11px; padding:6px 13px; border-radius:6px; border:1px solid #4a3828; background:#241e14; color:#b8a890; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+  .sub-btn { font-size:11px; padding:6px 13px; border-radius:6px; border:1px solid #3a3a40; background:#161618; color:#b8a890; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
   .sub-btn:hover { border-color:#6a5238; color:#e6cca8; }
   .sub-btn.primary:hover { border-color:#7ab85a; color:#9ad072; background:#5a883818; }
   .sub-btn.danger { color:#c8847a; }
@@ -1183,41 +1183,41 @@
 
   /* fill picker */
   .sub-picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.58); z-index:99998; display:flex; align-items:center; justify-content:center; }
-  .sub-picker { background:#1e1a12; border:1px solid #4a3828; border-radius:11px; width:440px; max-width:94vw; overflow:hidden; box-shadow:0 14px 44px rgba(0,0,0,0.62); }
-  .sub-picker-head { padding:16px 18px 13px; border-bottom:1px solid #2a2218; }
+  .sub-picker { background:#101012; border:1px solid #3a3a40; border-radius:11px; width:440px; max-width:94vw; overflow:hidden; box-shadow:0 14px 44px rgba(0,0,0,0.62); }
+  .sub-picker-head { padding:16px 18px 13px; border-bottom:1px solid #26262a; }
   .sub-picker-title { font-size:14px; font-weight:600; color:#e6dac6; }
   .sub-picker-title b { color:#eaa890; }
   .sub-picker-out { font-size:11px; color:#6a5848; margin-top:4px; }
   .sub-picker-body { padding:14px 18px; display:flex; flex-direction:column; gap:12px; }
   .sub-picker-flabel { font-size:10px; font-weight:700; color:#6a5848; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px; }
-  .sub-picker-select { width:100%; background:#141008; border:1px solid #4a3828; color:#d8c8b0; padding:8px 10px; border-radius:6px; font-size:13px; }
-  .sub-picker-preview { background:#120f08; border:1px solid #2a2218; border-radius:6px; padding:11px; font-size:11px; min-height:44px; }
+  .sub-picker-select { width:100%; background:#101012; border:1px solid #3a3a40; color:#e8e8ea; padding:8px 10px; border-radius:6px; font-size:13px; }
+  .sub-picker-preview { background:#120f08; border:1px solid #26262a; border-radius:6px; padding:11px; font-size:11px; min-height:44px; }
   .sub-picker-foot { padding:0 18px 16px; display:flex; gap:8px; }
   .sub-picker-foot .sub-btn { flex:1; text-align:center; padding:9px; }
-  .sub-swap-head { color:#5a4838; margin-bottom:7px; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; }
+  .sub-swap-head { color:#55555c; margin-bottom:7px; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; }
   .sub-swap-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
   .sub-swap-from { color:#d08a82; flex:1; }
   .sub-swap-to { color:#88c870; flex:1; }
   .sub-swap-to.removed { color:#c86858; }
-  .sub-swap-mid { color:#5a4838; }
+  .sub-swap-mid { color:#55555c; }
 
   /* ── NEW / EDIT PLAN WIZARD ── */
-  .np-box { background:#1a1610; border:1px solid #4a3828; border-radius:12px; width:540px; max-width:96vw; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 18px 56px rgba(0,0,0,0.62); }
-  .np-head { padding:15px 20px 13px; border-bottom:1px solid #2a2218; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .np-box { background:#1a1610; border:1px solid #3a3a40; border-radius:12px; width:540px; max-width:96vw; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 18px 56px rgba(0,0,0,0.62); }
+  .np-head { padding:15px 20px 13px; border-bottom:1px solid #26262a; display:flex; align-items:center; gap:12px; flex-shrink:0; }
   .np-title { font-size:15px; font-weight:600; color:#e6dac6; flex:1; }
   .np-steps { display:flex; align-items:center; gap:6px; }
-  .np-step-dot { width:7px; height:7px; border-radius:50%; background:#3a2e20; transition:background 0.2s; }
+  .np-step-dot { width:7px; height:7px; border-radius:50%; background:#26262a; transition:background 0.2s; }
   .np-step-dot.active { background:#c83a20; box-shadow:0 0 7px #c83a2077; }
-  .np-step-bar { width:16px; height:2px; background:#2a2218; border-radius:1px; }
-  .np-close { background:transparent; border:none; color:#5a4838; font-size:20px; cursor:pointer; line-height:1; padding:0 2px; }
+  .np-step-bar { width:16px; height:2px; background:#26262a; border-radius:1px; }
+  .np-close { background:transparent; border:none; color:#55555c; font-size:20px; cursor:pointer; line-height:1; padding:0 2px; }
   .np-close:hover { color:#c8a890; }
-  .np-back { background:transparent; border:none; color:#7a6050; font-size:12px; cursor:pointer; padding:4px 9px; border-radius:5px; transition:all 0.12s; }
-  .np-back:hover { color:#c8a890; background:#241e14; }
+  .np-back { background:transparent; border:none; color:#9a9aa2; font-size:12px; cursor:pointer; padding:4px 9px; border-radius:5px; transition:all 0.12s; }
+  .np-back:hover { color:#c8a890; background:#161618; }
   .np-body { padding:16px 20px; overflow-y:auto; flex:1; }
   .np-hint { font-size:11px; color:#6a5848; margin-bottom:15px; line-height:1.45; }
-  .np-hint b { color:#d8c8b0; font-weight:600; }
-  .np-foot { padding:13px 20px; border-top:1px solid #2a2218; flex-shrink:0; }
-  .np-role { font-size:9px; font-weight:700; color:#5a4838; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; }
+  .np-hint b { color:#e8e8ea; font-weight:600; }
+  .np-foot { padding:13px 20px; border-top:1px solid #26262a; flex-shrink:0; }
+  .np-role { font-size:9px; font-weight:700; color:#55555c; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; }
   .np-role:not(:first-child) { margin-top:15px; }
   .np-players { display:flex; flex-wrap:wrap; gap:7px; }
   .np-pcard { display:flex; align-items:center; gap:9px; padding:8px 12px 8px 10px; border-radius:8px; cursor:pointer; border:1px solid #2e2820; background:#171310; min-width:128px; transition:border-color 0.12s,background 0.12s; }
@@ -1227,23 +1227,23 @@
   .np-pname { font-size:12.5px; font-weight:600; line-height:1.25; color:#c8d0e8; }
   .np-pspec { font-size:9px; color:#6a5848; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .np-summary { font-size:11px; color:#8a7665; margin-bottom:11px; line-height:1.4; }
-  .np-summary b { color:#d8c8b0; }
+  .np-summary b { color:#e8e8ea; }
   .np-srow { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid #221c14; }
   .np-srow:last-child { border-bottom:none; }
   .np-saccent { width:3px; align-self:stretch; min-height:40px; border-radius:2px; flex-shrink:0; }
   .np-sinfo { flex:1; min-width:0; }
   .np-sname { font-size:12.5px; font-weight:600; margin-bottom:6px; }
-  .np-sname span { font-size:9px; color:#5a4838; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-left:5px; }
-  .np-select { width:100%; background:#141008; border:1px solid #4a3828; color:#d8c8b0; padding:7px 9px; border-radius:6px; font-size:12px; cursor:pointer; }
+  .np-sname span { font-size:9px; color:#55555c; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-left:5px; }
+  .np-select { width:100%; background:#101012; border:1px solid #3a3a40; color:#e8e8ea; padding:7px 9px; border-radius:6px; font-size:12px; cursor:pointer; }
   .np-select:focus { outline:none; border-color:#6a5238; }
   .np-spreview { min-width:90px; max-width:140px; display:flex; flex-wrap:wrap; gap:3px; justify-content:flex-end; }
-  .np-name-input { width:100%; background:#141008; border:1px solid #4a3828; color:#d8c8b0; padding:9px 11px; border-radius:6px; font-size:12.5px; box-sizing:border-box; margin-bottom:11px; }
+  .np-name-input { width:100%; background:#101012; border:1px solid #3a3a40; color:#e8e8ea; padding:9px 11px; border-radius:6px; font-size:12.5px; box-sizing:border-box; margin-bottom:11px; }
   .np-name-input:focus { outline:none; border-color:#6a5238; }
   .np-actions { display:flex; gap:8px; }
-  .np-btn-primary { flex:1; padding:10px; border-radius:7px; border:1px solid #c83a2066; background:#c83a2022; color:#e8836a; font-size:12.5px; font-weight:700; cursor:pointer; transition:all 0.12s; }
-  .np-btn-primary:hover { background:#c83a2036; border-color:#c83a20; color:#ff9a7a; }
-  .np-btn-ghost { padding:10px 16px; border-radius:7px; border:1px solid #3a2e20; background:transparent; color:#8a7060; font-size:12.5px; cursor:pointer; transition:all 0.12s; }
-  .np-btn-ghost:hover { border-color:#5a4838; color:#c8a890; }
+  .np-btn-primary { flex:1; padding:10px; border-radius:7px; border:1px solid #6ad4f066; background:#c83a2022; color:#e8836a; font-size:12.5px; font-weight:700; cursor:pointer; transition:all 0.12s; }
+  .np-btn-primary:hover { background:#c83a2036; border-color:#6ad4f0; color:#ff9a7a; }
+  .np-btn-ghost { padding:10px 16px; border-radius:7px; border:1px solid #26262a; background:transparent; color:#8a7060; font-size:12.5px; cursor:pointer; transition:all 0.12s; }
+  .np-btn-ghost:hover { border-color:#55555c; color:#c8a890; }
 
   /* ── Polish ── */
 
@@ -1397,7 +1397,7 @@
 <body>
 <div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div class="auth-box">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12h20"/></svg>
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6ad4f0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12h20"/></svg>
     <div class="auth-title">&lt;Professional&gt;</div>
     <div class="auth-title" style="font-size:14px;margin-top:-10px;letter-spacing:0.08em;">RCD Planner</div>
     <div class="auth-sub">Guild Access Only</div>
@@ -1983,14 +1983,14 @@ function showFillStylePicker() {
   const ov = document.createElement('div');
   ov.id = 'fillStylePickerOverlay';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:flex;align-items:center;justify-content:center;';
-  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:20px;width:520px;max-height:88vh;overflow-y:auto;">
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #26262a;border-radius:12px;padding:20px;width:520px;max-height:88vh;overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="font-size:13px;font-weight:700;color:#c83a20;letter-spacing:0.08em;text-transform:uppercase;">Fill Style Options</h3>
+      <h3 style="font-size:13px;font-weight:700;color:#6ad4f0;letter-spacing:0.08em;text-transform:uppercase;">Fill Style Options</h3>
       <button id="fillStyleClose" style="background:transparent;border:none;color:#8a7060;font-size:20px;cursor:pointer;">×</button>
     </div>
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:8px;">Fill State Indicator</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#55555c;margin-bottom:8px;">Fill State Indicator</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:20px;" id="fillIndGrid"></div>
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:8px;">Saved Fill Menu Style</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#55555c;margin-bottom:8px;">Saved Fill Menu Style</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="fillMenuGrid"></div>
   </div>`;
   document.body.appendChild(ov);
@@ -2000,7 +2000,7 @@ function showFillStylePicker() {
   FILL_IND_STYLES.forEach(s => {
     const btn = document.createElement('button');
     const sel = s.id === fillIndicatorStyle;
-    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #3a2e20'};background:${sel?'#c83a2018':'#141008'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
+    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #26262a'};background:${sel?'#6ad4f018':'#101012'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
     btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
     btn.addEventListener('click', () => {
       fillIndicatorStyle = s.id;
@@ -2016,7 +2016,7 @@ function showFillStylePicker() {
   FILL_MENU_STYLES.forEach(s => {
     const btn = document.createElement('button');
     const sel = s.id === fillMenuStyle;
-    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #3a2e20'};background:${sel?'#c83a2018':'#141008'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
+    btn.style.cssText = `padding:8px 10px;border-radius:6px;border:${sel?'1px solid #c83a20':'1px solid #26262a'};background:${sel?'#6ad4f018':'#101012'};color:${sel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
     btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
     btn.addEventListener('click', () => {
       fillMenuStyle = s.id;
@@ -2090,12 +2090,12 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
       ov.className = 'modal-overlay';
-      ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+      ov.innerHTML = `<div style="background:#1a1610;border:1px solid #26262a;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
         <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:6px;">SAVED FILL DETECTED</div>
         <div style="font-size:12px;color:#8a7060;margin-bottom:20px;">You have a saved plan for <span style="color:${col};font-weight:700;">${short}</span> replacing <span style="color:#d0d8ec;font-weight:600;">${playerWho}</span> from ${savedDate} at ${savedTime}.</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <button id="sfLoad" style="padding:10px 16px;border-radius:6px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.04em;">Load Saved Plan</button>
-          <button id="sfFresh" style="padding:10px 16px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;font-weight:700;cursor:pointer;">Start Fresh</button>
+          <button id="sfFresh" style="padding:10px 16px;border-radius:6px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:12px;font-weight:700;cursor:pointer;">Start Fresh</button>
           <button id="sfDelete" style="padding:6px 16px;border-radius:6px;border:none;background:transparent;color:#c84848;font-size:11px;cursor:pointer;">Delete saved plan</button>
         </div>
       </div>`;
@@ -2114,7 +2114,7 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
       ov.style.cssText = `position:fixed;top:${rect.bottom+6}px;left:${rect.left}px;background:#1a1610;border:1px solid ${col}44;border-radius:8px;padding:12px;width:300px;z-index:2000;box-shadow:0 8px 32px rgba(0,0,0,0.8);`;
       ov.innerHTML = `<div style="font-size:11px;font-weight:700;color:${col};margin-bottom:8px;">Saved plan found — ${savedDate}</div>
         <button id="sfLoad" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:11px;font-weight:700;cursor:pointer;margin-bottom:6px;">Load Saved Plan</button>
-        <button id="sfFresh" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:11px;cursor:pointer;margin-bottom:4px;">Start Fresh</button>
+        <button id="sfFresh" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:11px;cursor:pointer;margin-bottom:4px;">Start Fresh</button>
         <button id="sfDelete" style="display:block;width:100%;padding:4px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">Delete saved</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -2129,7 +2129,7 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
       ov.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1610;border:1px solid ${col}44;border-radius:8px;padding:12px 20px;z-index:2000;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.8);min-width:360px;`;
       ov.innerHTML = `<div style="flex:1;font-size:11px;color:#8a7060;">Saved plan for <span style="color:${col};font-weight:700;">${short}</span> found (${savedDate})</div>
         <button id="sfLoad" style="padding:6px 12px;border-radius:4px;border:1px solid ${col};background:${col}18;color:${col};font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;">Load it</button>
-        <button id="sfFresh" style="padding:6px 12px;border-radius:4px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:10px;cursor:pointer;white-space:nowrap;">Start fresh</button>
+        <button id="sfFresh" style="padding:6px 12px;border-radius:4px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:10px;cursor:pointer;white-space:nowrap;">Start fresh</button>
         <button id="sfDelete" style="padding:6px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">✕</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -2140,11 +2140,11 @@ function showSavedFillMenu(playerWho, fillSpecName, saved, onLoad, onFresh) {
     case 'sidebar-panel': {
       const ov = document.createElement('div');
       ov.id = 'savedFillMenuEl';
-      ov.style.cssText = `position:fixed;top:0;right:0;bottom:0;width:280px;background:#141008;border-left:1px solid ${col}44;z-index:2000;display:flex;flex-direction:column;padding:24px 20px;box-shadow:-8px 0 32px rgba(0,0,0,0.8);`;
+      ov.style.cssText = `position:fixed;top:0;right:0;bottom:0;width:280px;background:#101012;border-left:1px solid ${col}44;z-index:2000;display:flex;flex-direction:column;padding:24px 20px;box-shadow:-8px 0 32px rgba(0,0,0,0.8);`;
       ov.innerHTML = `<div style="font-size:12px;font-weight:700;color:${col};margin-bottom:8px;letter-spacing:0.06em;">SAVED FILL FOUND</div>
-        <div style="font-size:11px;color:#8a7060;margin-bottom:24px;line-height:1.6;"><span style="color:${col};font-weight:700;">${short}</span> replacing ${playerWho}<br/><span style="color:#5a4838;">Saved ${savedDate} at ${savedTime}</span></div>
+        <div style="font-size:11px;color:#8a7060;margin-bottom:24px;line-height:1.6;"><span style="color:${col};font-weight:700;">${short}</span> replacing ${playerWho}<br/><span style="color:#55555c;">Saved ${savedDate} at ${savedTime}</span></div>
         <button id="sfLoad" style="padding:10px;border-radius:6px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px;">Load Saved Plan</button>
-        <button id="sfFresh" style="padding:10px;border-radius:6px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;margin-bottom:auto;">Start Fresh</button>
+        <button id="sfFresh" style="padding:10px;border-radius:6px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;margin-bottom:auto;">Start Fresh</button>
         <button id="sfDelete" style="padding:8px;border:none;background:transparent;color:#c84848;font-size:10px;cursor:pointer;">Delete saved plan</button>`;
       document.body.appendChild(ov);
       ov.querySelector('#sfLoad').addEventListener('click', () => { ov.remove(); onLoad(saved); });
@@ -2218,22 +2218,22 @@ function showSubPlanPrompt(playerWho, specName) {
   let existingHtml = '';
   if (existing.length) {
     existingHtml = `<div style="margin-bottom:12px;">
-      <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      <div style="font-size:10px;font-weight:700;color:#55555c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
       ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid ${col}44;background:${col}0d;color:${col};font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
-      <div style="font-size:10px;color:#3a2e20;text-align:center;margin:8px 0;">— or —</div>
+      <div style="font-size:10px;color:#26262a;text-align:center;margin:8px 0;">— or —</div>
     </div>`;
   }
 
-  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #26262a;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
     <div style="font-size:13px;font-weight:700;color:${col};letter-spacing:0.06em;margin-bottom:4px;">Sub: ${short} for ${playerWho}</div>
-    <div style="font-size:11px;color:#7a6050;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
+    <div style="font-size:11px;color:#9a9aa2;margin-bottom:16px;">Their CDs will be swapped across all bosses.</div>
     ${existingHtml}
-    <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <div style="font-size:10px;font-weight:700;color:#55555c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
     <input id="subPlanName" type="text" placeholder='Plan name (e.g. "Sub: Ret")' value="Sub: ${short}"
-      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+      style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
     <div style="display:flex;gap:8px;">
       <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid ${col};background:${col}18;color:${col};font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
-      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
     </div>
   </div>`;
 
@@ -2296,22 +2296,22 @@ function showMultiSubPlanPrompt(subs) {
   let existingHtml = '';
   if (existing.length) {
     existingHtml = `<div style="margin-bottom:12px;">
-      <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
+      <div style="font-size:10px;font-weight:700;color:#55555c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Load Existing Plan</div>
       ${existing.map(p => `<button class="load-sub-plan-btn" data-id="${p.id}" style="display:block;width:100%;padding:8px 12px;border-radius:5px;border:1px solid #6a884844;background:#6a884818;color:#88bb66;font-size:12px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:4px;">${p.name}</button>`).join('')}
-      <div style="font-size:10px;color:#3a2e20;text-align:center;margin:8px 0;">— or —</div>
+      <div style="font-size:10px;color:#26262a;text-align:center;margin:8px 0;">— or —</div>
     </div>`;
   }
 
-  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
+  ov.innerHTML = `<div style="background:#1a1610;border:1px solid #26262a;border-radius:12px;padding:24px;width:400px;max-width:92vw;">
     <div style="font-size:13px;font-weight:700;color:#88bb66;letter-spacing:0.06em;margin-bottom:4px;">New Sub Plan (${subs.length} player${subs.length>1?'s':''})</div>
     <div style="margin-bottom:14px;">${summaryLines}</div>
     ${existingHtml}
-    <div style="font-size:10px;font-weight:700;color:#5a4838;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
+    <div style="font-size:10px;font-weight:700;color:#55555c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Start New Plan</div>
     <input id="subPlanName" type="text" placeholder='Plan name' value="${defaultName}"
-      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
+      style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:8px 10px;border-radius:4px;font-size:12px;box-sizing:border-box;margin-bottom:10px;" />
     <div style="display:flex;gap:8px;">
       <button id="subPlanStart" style="flex:1;padding:9px;border-radius:5px;border:1px solid #6a8848;background:#6a884818;color:#88bb66;font-size:12px;font-weight:700;cursor:pointer;">Start New Plan</button>
-      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #3a2e20;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
+      <button id="subPlanCancel" style="padding:9px 16px;border-radius:5px;border:1px solid #26262a;background:transparent;color:#8a7060;font-size:12px;cursor:pointer;">Cancel</button>
     </div>
   </div>`;
 
@@ -2594,7 +2594,7 @@ function showRosterModal() {
       const outIds = player.cds;
       const inIds = spec?.cds || [];
       if (outIds.length === 0 && inIds.length === 0) {
-        preview.innerHTML = '<span style="color:#5a4838;">No cooldown changes — only the assignment label updates.</span>';
+        preview.innerHTML = '<span style="color:#55555c;">No cooldown changes — only the assignment label updates.</span>';
         return;
       }
       const maxLen = Math.max(outIds.length, inIds.length);
@@ -3355,11 +3355,11 @@ function buildTargetPickerHtml(currentTargetWhos) {
     return `<label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;">
       <input type="checkbox" class="tp-player" value="${r.who}" ${checked ? 'checked' : ''} style="accent-color:${r.color};cursor:pointer;width:13px;height:13px;">
       <span style="color:${r.color};font-weight:600;font-size:11px;">${r.name}</span>
-      <span style="color:#5a4838;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">${r.spec}</span>
+      <span style="color:#55555c;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;">${r.spec}</span>
     </label>`;
   }).join('');
   return `<div style="display:flex;flex-direction:column;gap:2px;">
-    <label style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5a4838;margin-bottom:2px;">Assign to</label>
+    <label style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#55555c;margin-bottom:2px;">Assign to</label>
     <label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;border-bottom:1px solid #2a2018;margin-bottom:3px;padding-bottom:6px;">
       <input type="checkbox" id="tp-all" ${isAll ? 'checked' : ''} style="cursor:pointer;width:13px;height:13px;">
       <span style="color:#c8a870;font-weight:600;font-size:11px;">All Players</span>
@@ -3406,34 +3406,34 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const hpVal = p.hpPct != null ? p.hpPct : hpDefault;
       const hpTitle = (ab && ab.hpLabel) ? ab.hpLabel : 'HP Assign — set health %';
       const hpSublabel = (ab && ab.hpLabel) ? 'Screech count' : 'Health % trigger';
-      const _countBlock = '<label style="font-size:12px;color:#c83a20;">' + hpTitle + '</label>'
+      const _countBlock = '<label style="font-size:12px;color:#6ad4f0;">' + hpTitle + '</label>'
         + '<label>' + hpSublabel + '</label>'
         + '<input type="number" id="hpPctInput" value="' + hpVal + '" min="1" max="' + hpMax + '" step="1"'
-        + ' style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />';
+        + ' style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />';
       if (isCustom) {
         popup.innerHTML = _countBlock + `
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Boss Ability</label>
-          <select id="customBossAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">${_bossAbOpts}</select>
+          <select id="customBossAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">${_bossAbOpts}</select>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Ability</label>
-          <select id="customAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+          <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
             ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
           </select>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;" id="customWhoWrap">${buildTargetPickerHtml(p.targetWhos)}</div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Overwrite TTS (optional)</label>
-          <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+          <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Custom Name (display on sheet)</label>
-          <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+          <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Offset (seconds)</label>
-          <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+          <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
         </div>
         <div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>`;
       } else {
@@ -3442,16 +3442,16 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       }
     } else {
     popup.innerHTML = isCustom ? `
-    <label style="font-size:12px;color:#c83a20;">Custom Assign — edit</label>
+    <label style="font-size:12px;color:#6ad4f0;">Custom Assign — edit</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Boss Ability</label>
-      <select id="customBossAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+      <select id="customBossAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${_bossAbOpts}
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Ability</label>
-      <select id="customAbility" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
+      <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
       </select>
     </div>
@@ -3460,34 +3460,34 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Overwrite TTS (optional)</label>
-      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="text" id="customTts" value="${p.customTts || ''}" placeholder="e.g. Drop Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Custom Name (display on sheet)</label>
-      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Offset (seconds)</label>
-      <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetCancel">Cancel</button>
     </div>` : isPersonals ? `
-    <label style="font-size:12px;color:#c83a20;">Personals — assign &amp; offset</label>
+    <label style="font-size:12px;color:#6ad4f0;">Personals — assign &amp; offset</label>
     <div id="personalsTargetWrap">${buildTargetPickerHtml(p.targetWhos)}</div>
     <label style="margin-top:4px;">Offset (seconds) — type or scroll</label>
     <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1"
-      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+      style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetClear">Clear</button>
       <button id="offsetCancel">Cancel</button>
     </div>` : `
-    <label style="font-size:12px;color:#c83a20;">${cd.short} — set offset</label>
+    <label style="font-size:12px;color:#6ad4f0;">${cd.short} — set offset</label>
     <label>Offset (seconds) — type or scroll</label>
     <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1"
-      style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+      style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetClear">Clear</button>
@@ -3608,7 +3608,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   if (offsetInputEl) {
     function colorOffsetInput() {
       const v = parseFloat(offsetInputEl.value) || 0;
-      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#d8c8b0';
+      offsetInputEl.style.color = v < 0 ? '#ff8888' : v > 0 ? '#88ff88' : '#e8e8ea';
     }
     colorOffsetInput();
     offsetInputEl.addEventListener('input', colorOffsetInput);
@@ -3844,7 +3844,7 @@ function showExportModal() {
   overlay.className = 'modal-overlay';
 
   const emptyHtml = !text
-    ? `<div style="font-size:12px;color:#5a4838;">No cooldowns placed yet. Place some cooldowns on the ability rows first.</div>`
+    ? `<div style="font-size:12px;color:#55555c;">No cooldowns placed yet. Place some cooldowns on the ability rows first.</div>`
     : '';
 
   overlay.innerHTML = `
@@ -3924,9 +3924,9 @@ function showManageModal() {
   const inactiveCDs = orderedCDs.filter(c => activeSetIds.has(c.id) && !isBossActive(c));
 
   const itemsHtml = `
-    <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #241e14;margin-bottom:4px;">● Active</div>
+    <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #161618;margin-bottom:4px;">● Active</div>
     ${activeCDs.map(makeCdItem).join('')}
-    <div style="font-size:11px;font-weight:600;color:#5a4838;padding:12px 4px 2px;grid-column:1/-1;border-bottom:1px solid #241e14;margin-bottom:4px;">○ Inactive</div>
+    <div style="font-size:11px;font-weight:600;color:#55555c;padding:12px 4px 2px;grid-column:1/-1;border-bottom:1px solid #161618;margin-bottom:4px;">○ Inactive</div>
     ${inactiveCDs.map(makeCdItem).join('')}
   `;
 
@@ -4240,7 +4240,7 @@ function buildSsIconEl(cd, p, ab) {
     case 'bracket':
       return `<div style="display:flex;align-items:center;gap:3px;">
         ${imgHtml}
-        <span style="font-size:10px;font-weight:700;color:#c83a20;white-space:nowrap;">[${info}]</span>
+        <span style="font-size:10px;font-weight:700;color:#6ad4f0;white-space:nowrap;">[${info}]</span>
       </div>`;
 
     case 'slash':
@@ -4252,7 +4252,7 @@ function buildSsIconEl(cd, p, ab) {
     case 'dot-prefix':
       return `<div style="display:flex;align-items:center;gap:3px;">
         ${imgHtml}
-        <span style="font-size:10px;color:#c83a20;white-space:nowrap;">· ${info}</span>
+        <span style="font-size:10px;color:#6ad4f0;white-space:nowrap;">· ${info}</span>
       </div>`;
 
     case 'box-outline':
@@ -4271,7 +4271,7 @@ function buildSsIconEl(cd, p, ab) {
       return `<div style="display:flex;align-items:center;gap:4px;">
         ${imgHtml}
         <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;">
-          <span style="font-size:9px;color:#5a4838;white-space:nowrap;">${cd.short}</span>
+          <span style="font-size:9px;color:#55555c;white-space:nowrap;">${cd.short}</span>
           <span style="font-size:11px;font-weight:700;color:#e8eaf2;white-space:nowrap;">${info}</span>
         </div>
       </div>`;
@@ -4343,7 +4343,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#55555c;font-size:9px;">starts at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -4352,7 +4352,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#55555c;font-size:9px;">~</span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -4361,7 +4361,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#55555c;font-size:9px;">cast at </span><span style="font-size:12px;font-weight:700;color:#fff;">${t}</span></span>
         </div>
       </div>`;
 
@@ -4379,7 +4379,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div style="padding:0 12px;overflow:hidden;display:flex;align-items:center;gap:6px;">
           <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-          <span style="color:#3a2e20;font-size:12px;">·</span>
+          <span style="color:#26262a;font-size:12px;">·</span>
           <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">${t}</span>
         </div>
       </div>`;
@@ -4418,7 +4418,7 @@ function buildSsLabel(ab) {
         <div class="ss-label-marker" style="background:${c};"></div>
         <div class="ss-label-inner">
           <span class="ss-label-name" style="color:${c};">${name}</span>
-          <span class="ss-label-time"><span style="color:#5a4838;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
+          <span class="ss-label-time"><span style="color:#55555c;font-size:9px;">starts at </span><span style="color:#fff;font-weight:600;">${t}</span></span>
         </div>
       </div>`;
   }
@@ -4433,19 +4433,19 @@ function buildSsRow(ab, iconsHtml) {
 
   switch(ssRowStyle) {
     case 'dark-cards':
-      return `<div style="display:flex;align-items:center;gap:0;margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #2a2218;overflow:hidden;">
+      return `<div style="display:flex;align-items:center;gap:0;margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #26262a;overflow:hidden;">
         <div style="width:4px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:10px 14px;border-right:1px solid #2a2218;">
+        <div style="width:180px;flex-shrink:0;padding:10px 14px;border-right:1px solid #26262a;">
           <div style="font-size:12px;font-weight:700;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-          <div style="font-size:10px;color:#7a6050;margin-top:3px;letter-spacing:0.04em;">${abTime}</div>
+          <div style="font-size:10px;color:#9a9aa2;margin-top:3px;letter-spacing:0.04em;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
     case 'pill-time':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #101012;min-height:56px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid #2a2218;">
+        <div style="width:180px;flex-shrink:0;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid #26262a;">
           <div style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
           <span style="display:inline-block;font-size:9px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;border-radius:10px;padding:2px 7px;letter-spacing:0.04em;align-self:flex-start;">${abTime}</span>
         </div>
@@ -4456,13 +4456,13 @@ function buildSsRow(ab, iconsHtml) {
       return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #0f1018;min-height:52px;">
         <div style="width:190px;flex-shrink:0;padding:0 16px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
           <div style="font-size:11px;font-weight:600;color:#a0a8c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;">${name}</div>
-          <div style="font-size:10px;color:#4a3828;letter-spacing:0.06em;">${abTime}</div>
+          <div style="font-size:10px;color:#3a3a40;letter-spacing:0.06em;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 14px;">${icons}</div>
       </div>`;
 
     case 'accent-left':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #101012;min-height:56px;">
         <div style="width:4px;align-self:stretch;background:${c};flex-shrink:0;margin-right:0;"></div>
         <div style="width:180px;flex-shrink:0;padding:0 14px;background:${c}0a;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:1px solid ${c}22;">
           <div style="font-size:12px;font-weight:700;color:#d0d8ec;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
@@ -4472,12 +4472,12 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'two-col':
-      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #1e1a12;min-height:52px;">
+      return `<div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid #101012;min-height:52px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:100px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #2a2218;">
+        <div style="width:100px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #26262a;">
           <div style="font-size:11px;font-weight:700;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
         </div>
-        <div style="width:56px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #2a2218;">
+        <div style="width:56px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;border-right:1px solid #26262a;">
           <div style="font-size:11px;font-weight:600;color:#e8eaf2;">${abTime}</div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:6px 12px;">${icons}</div>
@@ -4495,9 +4495,9 @@ function buildSsRow(ab, iconsHtml) {
       </div>`;
 
     case 'compact-inline':
-      return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #1e1a12;min-height:46px;">
+      return `<div style="display:flex;align-items:center;gap:0;border-bottom:1px solid #101012;min-height:46px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
-        <div style="width:190px;flex-shrink:0;padding:0 12px;display:flex;align-items:center;gap:6px;border-right:1px solid #2a2218;overflow:hidden;">
+        <div style="width:190px;flex-shrink:0;padding:0 12px;display:flex;align-items:center;gap:6px;border-right:1px solid #26262a;overflow:hidden;">
           <span style="font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">${name}</span>
           <span style="font-size:10px;font-weight:500;color:#8a7060;white-space:nowrap;flex-shrink:0;">${abTime}</span>
         </div>
@@ -4511,7 +4511,7 @@ function buildSsRow(ab, iconsHtml) {
           <div style="width:3px;align-self:stretch;flex-shrink:0;margin-right:8px;background:${c};"></div>
           <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden;flex:1;">
             <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-            <span style="font-size:10px;font-weight:500;color:#d8c8b0;letter-spacing:0.04em;">${abTime}</span>
+            <span style="font-size:10px;font-weight:500;color:#e8e8ea;letter-spacing:0.04em;">${abTime}</span>
           </div>
         </div>
         <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:14px 14px 8px;background:#0e0c0a;flex:1;">${icons}</div>
@@ -4566,7 +4566,7 @@ function bossImgHtml(v, h) {
   return `<img class="boss-banner-img" data-glow1="${v.glow[0]}" data-glow2="${v.glow[1]}" data-right="${v.right}" data-offset="${v.offset}" data-imgh="${ht}" src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
 }
 // Shared "Image for Disc" capture button (handler wired after render)
-const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #3a2e20;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#3a2e20';">Image for Disc</button>`;
+const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #26262a;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#26262a';">Image for Disc</button>`;
 
 function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const name = boss.name;
@@ -4586,8 +4586,8 @@ function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   }
 
   const p = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" ` : null;
-  return `<div style="display:flex;overflow:hidden;height:90px;background:#100e0a;border-bottom:1px solid #3a2e20;">
-    ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;" />` : ''}
+  return `<div style="display:flex;overflow:hidden;height:90px;background:#100e0a;border-bottom:1px solid #26262a;">
+    ${p ? p + `style="width:120px;height:90px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #26262a;" />` : ''}
     <div style="flex:1;display:flex;align-items:center;padding:0 18px;background:#0e0c0a;gap:12px;">
       <div><div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${bossColor}66;margin-bottom:5px;">Cooldowns</div><div style="font-size:19px;font-weight:800;color:${bossColor};letter-spacing:0.02em;text-shadow:0 0 14px ${bossColor}55;">${name}</div></div>
       ${imgBtn}
@@ -4614,7 +4614,7 @@ function renderSsBossBlock(boss, showImgBtn) {
     return buildSsRow(ab, iconsHtml);
   }).join('');
 
-  return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #2a2218;">
+  return `<div class="ss-boss-block" style="margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #26262a;">
     ${buildSsBossHeader(boss, portraitUrl, showImgBtn)}
     <div class="ss-rows-wrap">${rowsHtml}</div>
   </div>`;
@@ -4719,7 +4719,7 @@ function viewSpecBadge(parts) {
 // Fallback banner (only used if a boss has no image config)
 function viewBanner(boss, v, color, h, titleSize) {
   const imgH = h + 46;
-  return `<div class="boss-banner" style="position:relative;display:flex;align-items:center;overflow:hidden;height:${h}px;background:${v?v.bg:'#100e0a'};border-bottom:1px solid ${v?v.border:'#2a2218'};">
+  return `<div class="boss-banner" style="position:relative;display:flex;align-items:center;overflow:hidden;height:${h}px;background:${v?v.bg:'#100e0a'};border-bottom:1px solid ${v?v.border:'#26262a'};">
     ${v ? bossGlowHtml(v) : ''}
     <div style="flex:1;display:flex;align-items:center;gap:12px;padding:0 22px;position:relative;z-index:2;">
       <div>
@@ -4773,7 +4773,7 @@ function viewBlockSpotlight(boss, rows, v, color) {
       </div>
       <div style="position:absolute;top:14px;left:18px;z-index:3;">${VIEW_IMG_BTN}</div>
     </div>` : viewBanner(boss, v, color, 90, 24);
-  return `<div class="ss-boss-block" style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1px solid ${v?v.border:'#2a2218'};background:#0b0908;box-shadow:0 6px 24px rgba(0,0,0,0.5);">
+  return `<div class="ss-boss-block" style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1px solid ${v?v.border:'#26262a'};background:#0b0908;box-shadow:0 6px 24px rgba(0,0,0,0.5);">
     ${hero}
     <div class="vrows">${body}</div>
   </div>`;
@@ -4787,15 +4787,15 @@ function showScreenshotModal() {
 
   function buildContent() {
     return BOSSES.map(b => renderSsBossBlock(b)).filter(Boolean).join('') ||
-      '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed yet.</div>';
+      '<div style="color:#55555c;font-size:13px;padding:20px 0;">No assignments placed yet.</div>';
   }
 
   overlay.innerHTML = `
     <div class="ss-modal">
       <div class="ss-toolbar">
         <h3>Screenshot</h3>
-        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#c83a20;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
-        <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+        <button id="ssShareLinkBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#6ad4f0;font-size:11px;cursor:pointer;margin-left:auto;letter-spacing:0.04em;">🔗 Share Link</button>
+        <button id="ssClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
       </div>
       <div class="ss-content ss-page" id="ssContent"></div>
     </div>`;
@@ -4845,11 +4845,11 @@ function showScreenshotModal() {
     if (existing) { existing.remove(); return; }
     const picker = document.createElement('div');
     picker.id = 'ssIconInfoPicker';
-    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#1a1610;border:1px solid #3a2e20;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+    picker.style.cssText = 'position:absolute;top:42px;right:80px;background:#1a1610;border:1px solid #26262a;border-radius:8px;padding:10px;z-index:100;width:400px;display:grid;grid-template-columns:1fr 1fr;gap:6px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
     SS_ICON_INFO_STYLES.forEach(s => {
       const btn = document.createElement('button');
       const isSel = s.id === ssIconInfoStyle;
-      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c83a20':'1px solid #3a2e20'};background:${isSel?'#c83a2018':'#141008'};color:${isSel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
+      btn.style.cssText = `padding:8px 10px;border-radius:5px;border:${isSel?'1px solid #c83a20':'1px solid #26262a'};background:${isSel?'#6ad4f018':'#101012'};color:${isSel?'#c83a20':'#8a7060'};text-align:left;cursor:pointer;`;
       btn.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:2px;">${s.name}</div><div style="font-size:9px;opacity:0.5;">${s.desc}</div>`;
       btn.addEventListener('click', () => {
         ssIconInfoStyle = s.id;
@@ -5105,7 +5105,7 @@ function getPlayerName(who) {
 
 function getPlayerColor(who) {
   const p = DEFAULT_ROSTER.find(r => r.who === who);
-  return p ? p.color : '#d8c8b0';
+  return p ? p.color : '#e8e8ea';
 }
 
 function renderSheetPreview(el) {
@@ -5161,9 +5161,9 @@ function renderSheetPreview(el) {
   rows.forEach((r, i) => {
     const delayColor = r.offset < 0 ? '#ff8888' : r.offset > 0 ? '#88ff88' : '#8a7060';
     html += `<tr>
-      <td style="color:#5a4838;">${i + 1}</td>
+      <td style="color:#55555c;">${i + 1}</td>
       <td>${formatAbilityName(r.ab.name)}</td>
-      <td style="color:#d8c8b0;">${r.castNum}</td>
+      <td style="color:#e8e8ea;">${r.castNum}</td>
       <td style="color:${delayColor};font-weight:600;">${r.offset}</td>
       <td class="sp-who" style="color:${r.playerColor};">${r.who}</td>
       <td style="color:${r.playerColor};">${r.playerName}</td>
@@ -5230,7 +5230,7 @@ function showImportFojiModal() {
   overlay.innerHTML = `<div class="modal-box" style="width:560px;">
     <h3>Import Foji</h3>
     <div class="modal-sub" style="font-size:13px;margin-bottom:12px;">Paste your Foji export string below to import cooldown assignments.</div>
-    <textarea id="importFojiInput" style="width:100%;height:160px;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:10px;border-radius:6px;font-size:11px;font-family:monospace;resize:vertical;" placeholder="Paste Foji string here..."></textarea>
+    <textarea id="importFojiInput" style="width:100%;height:160px;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:10px;border-radius:6px;font-size:11px;font-family:monospace;resize:vertical;" placeholder="Paste Foji string here..."></textarea>
     <div id="importFojiStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
     <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
       <button id="importFojiConfirm" class="btn copy-btn">Import</button>
@@ -6156,7 +6156,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
   if (!spellMap) spellMap = WCL_SPELLS;
   if (!mode) mode = 'raid';
   if (!logsData || !logsData.length) {
-    container.innerHTML = '<div style="color:#5a4838;font-size:12px;padding:20px 0;">No data found.</div>';
+    container.innerHTML = '<div style="color:#55555c;font-size:12px;padding:20px 0;">No data found.</div>';
     return;
   }
 
@@ -6226,8 +6226,8 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       var isMajor = (ts % 60 === 0);
       var isHalf  = (ts % 30 === 0);
       var tickH   = isMajor ? 8 : isHalf ? 5 : 4;
-      var lineCol = isMajor ? '#6a5040' : isHalf ? '#c83a2066' : '#342818';
-      var txtCol  = isMajor ? '#d8c8b0' : isHalf ? '#806050' : '#6e5a48';
+      var lineCol = isMajor ? '#6a5040' : isHalf ? '#6ad4f066' : '#342818';
+      var txtCol  = isMajor ? '#e8e8ea' : isHalf ? '#806050' : '#6e5a48';
       var txtSize = isMajor ? '10' : '9';
       var fontW   = isMajor ? '700' : '400';
       html += '<div style="position:absolute;left:'+tx+'px;bottom:0;width:1px;height:'+tickH+'px;background:'+lineCol+';transform:translateX(-50%);"></div>';
@@ -6403,7 +6403,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
       // 13. Piano roll — thin vertical ticks on a baseline, height = count
       H = 32;
       html += '<div style="position:relative;width:'+W+'px;height:'+H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
-      html += '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:#2a2218;"></div>';
+      html += '<div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:#26262a;"></div>';
       for (var bi=0; bi<numBuckets; bi++) {
         if (!buckets[bi]) continue;
         var ph = Math.max(2, Math.round(intensity(buckets[bi])*(H-2)));
@@ -6453,7 +6453,7 @@ function renderWclDisplay(container, logsData, logCount, bossName, avgDuration, 
     var color = spell.color;
     var cdDurPx = ((CD_DURATIONS[+sid]||10)*sharedPps);
     var html = '<div style="display:flex;align-items:center;margin-bottom:2px;">';
-    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#2a2218')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
+    html += '<div style="width:'+LABEL_W+'px;flex-shrink:0;font-size:9px;font-weight:700;color:'+(active?color:'#26262a')+';text-align:right;padding-right:7px;white-space:nowrap;">'+spell.short+'</div>';
     html += '<div style="position:relative;width:'+W+'px;height:'+ROW_H+'px;background:#05060a;border-radius:2px;overflow:hidden;">';
     for (var ti=1; ti*tickEvery*1000<=maxDuration; ti++) {
       html += '<div style="position:absolute;left:'+Math.round(ti*tickEvery*sharedPps)+'px;top:0;bottom:0;border-left:1px solid #0e0c0a;pointer-events:none;"></div>';
@@ -6619,19 +6619,19 @@ function showWclModal() {
   ov.className = 'modal-overlay';
   ov.style.cssText = 'align-items:flex-start;padding:20px;';
   var box = document.createElement('div');
-  box.id = 'wclModalBox'; box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
+  box.id = 'wclModalBox'; box.style.cssText = 'background:#101012;border:1px solid #26262a;border-radius:12px;width:700px;max-width:96vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);';
   var connBadge = authed ? '<span style="font-size:9px;font-weight:700;color:#48a868;border:1px solid #48a86844;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">CONNECTED</span>' : '';
-  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #2a2218;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#c83a20;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#7a6050;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
+  var headerHtml = '<div style="padding:14px 18px;border-bottom:1px solid #26262a;display:flex;align-items:center;gap:10px;flex-shrink:0;"><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#6ad4f0;letter-spacing:0.06em;">SOO WCL DATA</div><div style="font-size:10px;color:#9a9aa2;margin-top:1px;font-weight:600;">Siege of Orgrimmar &middot; Heroic 10 &middot; CD Usage</div></div>'+connBadge+'<button id="wclClose" style="background:transparent;border:none;color:#55555c;font-size:20px;cursor:pointer;line-height:1;">&times;</button></div>';
   var bodyHtml;
   if (!authed) {
-    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#5a4838;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #c83a2066;background:#c83a2018;color:#c83a20;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
+    bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody"><div style="text-align:center;padding:40px 20px;"><div style="font-size:14px;color:#c8d0e8;margin-bottom:8px;">Connect to Warcraft Logs</div><div style="font-size:11px;color:#55555c;margin-bottom:24px;">You\'ll be redirected to authorize, then brought back here.</div><button id="wclLoginBtn" style="padding:12px 28px;border-radius:8px;border:1px solid #6ad4f066;background:#6ad4f018;color:#6ad4f0;font-size:13px;font-weight:700;cursor:pointer;">Connect Warcraft Logs</button></div></div>';
   } else {
     bodyHtml = '<div style="flex:1;overflow-y:auto;padding:20px;" id="wclBody">'
       // Boss selector row with label inline
       + '<div style="margin-bottom:14px;">'
       + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
       + '<span style="font-size:11px;font-weight:700;color:#a8b4d0;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Boss</span>'
-      + '<select id="wclBoss" style="flex:1;background:#100e0c;border:1px solid #3a2e20;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
+      + '<select id="wclBoss" style="flex:1;background:#101012;border:1px solid #26262a;color:#e8ecf8;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"><option value="">Loading bosses...</option></select>'
       + '</div>'
       + '</div>'
       // Mode buttons — glassy pill style
@@ -6651,7 +6651,7 @@ function showWclModal() {
       // Fetch button — prominent
       + '<button id="wclFetch" style="width:100%;padding:11px 0;border-radius:8px;border:1px solid rgba(255,140,0,0.6);background:linear-gradient(135deg,rgba(255,140,0,0.22),rgba(255,100,0,0.1));color:#ffaa33;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;box-shadow:0 4px 16px rgba(255,140,0,0.15);margin-bottom:16px;">FETCH CD TIMING DATA</button>'
       + '<div id="wclResults"></div>'
-      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#3a2e20;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
+      + '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a1c28;text-align:right;"><button id="wclLogout" style="background:transparent;border:none;color:#26262a;font-size:10px;cursor:pointer;letter-spacing:0.04em;">Disconnect</button></div>'
       + '</div>';
   }
   box.innerHTML = headerHtml + bodyHtml;
@@ -6750,7 +6750,7 @@ function showWclModal() {
     if (!encId) { alert('Please select a boss.'); return; }
     var btn = box.querySelector('#wclFetch'), results = box.querySelector('#wclResults');
     btn.textContent = 'Fetching...'; btn.disabled = true;
-    results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Querying Warcraft Logs...</div>';
+    results.innerHTML = '<div style="color:#55555c;font-size:12px;">Querying Warcraft Logs...</div>';
     try {
       var bossName = bossEl.options[bossEl.selectedIndex].text;
 
@@ -6760,7 +6760,7 @@ function showWclModal() {
       var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
 
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
-      results.innerHTML = '<div style="color:#5a4838;font-size:12px;">Fetching '+diffLabel+' 10-man rankings...</div>';
+      results.innerHTML = '<div style="color:#55555c;font-size:12px;">Fetching '+diffLabel+' 10-man rankings...</div>';
 
       var allRankEntries = [];
       var crawlPage = 1;
@@ -6942,7 +6942,7 @@ function showWclModal() {
             logsData.push({ duration: fDur, casts: logCasts, code: code, rank: ri+1, roles: roleCounts });
           }
           processed++;
-          results.innerHTML='<div style="color:#5a4838;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
+          results.innerHTML='<div style="color:#55555c;font-size:12px;">Processing rank '+(ri+1)+' of '+limit+'...</div>';
           if (processed >= 40) break;
         } catch(le){ console.warn('WCL log error ri='+ri+':', le); }
       }
@@ -7006,8 +7006,8 @@ function showPlanAnimPicker() {
   ov.id = 'planAnimPickerOv';
   ov.className = 'modal-overlay';
   const box = document.createElement('div');
-  box.style.cssText = 'background:#1a1610;border:1px solid #3a2e20;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
-  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#c83a20;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#5a4838;font-size:20px;cursor:pointer;">×</button></div>'
+  box.style.cssText = 'background:#1a1610;border:1px solid #26262a;border-radius:12px;padding:20px;width:400px;max-width:96vw;';
+  box.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><h3 style="margin:0;font-size:13px;color:#6ad4f0;">Plan Switch Animation</h3><button id="animClose" style="background:transparent;border:none;color:#55555c;font-size:20px;cursor:pointer;">×</button></div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="animGrid"></div>';
   ov.appendChild(box);
   document.body.appendChild(ov);
@@ -7015,7 +7015,7 @@ function showPlanAnimPicker() {
   PLAN_ANIM_STYLES.forEach(s => {
     const isSel = s.id === planAnimStyle;
     const btn = document.createElement('button');
-    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c83a20':'1px solid #3a2e20'};background:${isSel?'#c83a2018':'#141008'};color:${isSel?'#c83a20':'#8a7060'};cursor:pointer;font-size:12px;font-weight:600;`;
+    btn.style.cssText = `padding:10px;border-radius:6px;border:${isSel?'1px solid #c83a20':'1px solid #26262a'};background:${isSel?'#6ad4f018':'#101012'};color:${isSel?'#c83a20':'#8a7060'};cursor:pointer;font-size:12px;font-weight:600;`;
     btn.textContent = s.name;
     btn.addEventListener('click', () => {
       planAnimStyle = s.id;
@@ -7225,7 +7225,7 @@ function showPlansMenu(ev) {
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:flex-start;justify-content:center;padding-top:52px;';
 
   const box = document.createElement('div');
-  box.style.cssText = 'background:#141008;border:1px solid #3a2e20;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
+  box.style.cssText = 'background:#101012;border:1px solid #26262a;border-radius:12px;width:420px;max-width:96vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.9);transform:translateY(-8px);opacity:0;transition:transform 0.18s cubic-bezier(.22,1,.36,1),opacity 0.15s ease;';
 
   function buildBoxHtml() {
     const plans = getPlans();
@@ -7238,33 +7238,33 @@ function showPlansMenu(ev) {
       const isActive = activePlanId === plan.id;
       return `<div class="plan-card" data-id="${plan.id}" style="
         display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
-        border-bottom:1px solid #1e1a12;transition:background 0.1s;
+        border-bottom:1px solid #101012;transition:background 0.1s;
         background:${isActive ? '#c83a200f' : 'transparent'};
         position:relative;
       ">
         <div style="
           width:3px;height:36px;border-radius:2px;flex-shrink:0;
-          background:${isActive ? '#c83a20' : '#3a2e20'};
+          background:${isActive ? '#c83a20' : '#26262a'};
           transition:background 0.15s;
         "></div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:13px;font-weight:${isActive?'700':'500'};color:${isActive?'#c83a20':'#c8d0e8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s;">${plan.name}</div>
-          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#c83a2099;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#4a3828;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
+          ${isActive ? '<div style="font-size:9px;font-weight:700;color:#6ad4f099;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;">Active</div>' : (plan.savedAt ? `<div style="font-size:9px;color:#3a3a40;margin-top:2px;">${new Date(plan.savedAt).toLocaleDateString()}</div>` : '')}
         </div>
-        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c83a20;flex-shrink:0;box-shadow:0 0 8px #c83a2088;"></div>' : ''}
-        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#5a4838;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#3a2e20;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
+        ${isActive ? '<div style="width:8px;height:8px;border-radius:50%;background:#c83a20;flex-shrink:0;box-shadow:0 0 8px #6ad4f088;"></div>' : ''}
+        ${!plan.isFullRaid ? `<button class="plan-edit-btn" data-id="${plan.id}" style="background:transparent;border:none;color:#55555c;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Edit">✎</button><button class="plan-del-x" data-id="${plan.id}" style="background:transparent;border:none;color:#26262a;font-size:13px;cursor:pointer;padding:4px;flex-shrink:0;border-radius:4px;transition:color 0.1s;" title="Delete">✕</button>` : ''}
       </div>`;
     }).join('');
 
     return `
-      <div style="padding:14px 18px 10px;border-bottom:1px solid #2a2218;display:flex;align-items:center;gap:8px;">
-        <div style="font-size:12px;font-weight:700;color:#c83a20;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
-        <button id="plansCloseBtn" style="background:transparent;border:none;color:#5a4838;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
+      <div style="padding:14px 18px 10px;border-bottom:1px solid #26262a;display:flex;align-items:center;gap:8px;">
+        <div style="font-size:12px;font-weight:700;color:#6ad4f0;letter-spacing:0.08em;text-transform:uppercase;flex:1;">Plans</div>
+        <button id="plansCloseBtn" style="background:transparent;border:none;color:#55555c;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
-      <div style="padding:12px;border-top:1px solid #2a2218;display:flex;gap:8px;">
-        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#2a2218;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
-        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#2a2218;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
+      <div style="padding:12px;border-top:1px solid #26262a;display:flex;gap:8px;">
+        <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#26262a;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
+        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#26262a;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
       </div>`;
   }
 
@@ -7295,7 +7295,7 @@ function showPlansMenu(ev) {
     cards.forEach(c => {
       if (c.dataset.id === id) {
         c.style.transition = 'background 0.2s';
-        c.style.background = '#c83a2018';
+        c.style.background = '#6ad4f018';
       }
     });
     setTimeout(() => {
@@ -7318,7 +7318,7 @@ function showPlansMenu(ev) {
 
     box.querySelectorAll('.plan-edit-btn').forEach(btn => {
       btn.addEventListener('mouseenter', () => { btn.style.color = '#c83a20'; });
-      btn.addEventListener('mouseleave', () => { btn.style.color = '#5a4838'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#55555c'; });
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         close();
@@ -7328,7 +7328,7 @@ function showPlansMenu(ev) {
 
     box.querySelectorAll('.plan-del-x').forEach(btn => {
       btn.addEventListener('mouseenter', () => { btn.style.color = '#c84848'; });
-      btn.addEventListener('mouseleave', () => { btn.style.color = '#3a2e20'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = '#26262a'; });
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const planName = getPlans()[btn.dataset.id]?.name || 'this plan';
@@ -7340,10 +7340,10 @@ function showPlansMenu(ev) {
       });
     });
 
-    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#3a2e20'; });
-    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#2a2218'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#3a2e20'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#2a2218'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#26262a'; });
+    box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#26262a'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#26262a'; });
+    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#26262a'; });
     box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
       close();
       showNewPlanPicker();
@@ -7475,7 +7475,7 @@ function showNewPlanPicker() {
             <option value="">— No sub-in —</option>${specOptsHtml}
           </select>
         </div>
-        <div class="np-spreview">${subCdTags || '<span style="color:#3a2e20;font-size:10px;">no CDs</span>'}</div>
+        <div class="np-spreview">${subCdTags || '<span style="color:#26262a;font-size:10px;">no CDs</span>'}</div>
       </div>`;
     }).join('');
 
@@ -7719,7 +7719,7 @@ function showEditPlanPicker(planId) {
             <option value="">— No sub-in —</option>${specOptsHtml}
           </select>
         </div>
-        <div class="np-spreview">${subCdTags||'<span style="color:#3a2e20;font-size:10px;">no CDs</span>'}</div>
+        <div class="np-spreview">${subCdTags||'<span style="color:#26262a;font-size:10px;">no CDs</span>'}</div>
       </div>`;
     }).join('');
 
@@ -7807,8 +7807,8 @@ function showImportFojiAsPlan() {
   overlay.innerHTML = `<div class="modal-box" style="width:560px;">
     <h3>Import Foji as New Plan</h3>
     <div class="modal-sub" style="font-size:13px;margin-bottom:8px;">Give this plan a name, then paste your Foji string.</div>
-    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
-    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#141008;border:1px solid #4a3828;color:#d8c8b0;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
+    <input type="text" id="importPlanName" placeholder="Plan name (e.g. Sub: Ret)" style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:7px 10px;border-radius:4px;font-size:13px;margin-bottom:8px;box-sizing:border-box;" />
+    <textarea id="importFojiPlanInput" style="width:100%;height:140px;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:10px;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;box-sizing:border-box;" placeholder="Paste Foji string here…"></textarea>
     <div id="importPlanStatus" style="font-size:11px;color:#c84848;min-height:16px;margin-top:6px;"></div>
     <div class="modal-footer" style="margin-top:12px;display:flex;gap:8px;">
       <button id="importPlanConfirm" class="btn copy-btn">Import & Save</button>
@@ -7986,10 +7986,10 @@ async function initViewMode(viewId) {
 
   // Single combined top bar + content — Frost / minimal, matching the planner
   viewEl.innerHTML = `
-    <div style="background:#101012;border-bottom:1px solid #26262a;padding:0 32px;display:flex;align-items:center;gap:20px;height:48px;">
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6ad4f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.9;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
-        <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#6ad4f0;letter-spacing:0.3em;text-transform:uppercase;opacity:0.9;">Professional</span>
+    <div style="background:#101012;border-bottom:1px solid #26262a;padding:8px 32px;display:flex;align-items:center;gap:20px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex-shrink:0;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6ad4f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px rgba(106,212,240,0.5));"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+        <span style="font-family:Cinzel,Georgia,serif;font-size:14px;font-weight:700;color:#e8e8ea;letter-spacing:0.38em;text-transform:uppercase;text-shadow:0 0 8px rgba(106,212,240,0.3);line-height:1;">Professional</span>
       </div>
     </div>
     <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
@@ -8168,20 +8168,20 @@ function buildHPalaRow(ab, sorted, style) {
 
   switch(style) {
     case 'badge-row':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:56px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:56px;">
         <div style="background:${c}22;border-right:1px solid ${c}44;min-width:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <span style="font-size:11px;font-weight:700;color:${c};">${abTime}</span>
         </div>
-        <div style="width:150px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;border-right:1px solid #2a2218;">
+        <div style="width:150px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;border-right:1px solid #26262a;">
           <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
       </div>`;
 
     case 'pill-icons':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:60px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:60px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #2a2218;">
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid #26262a;">
           <span style="font-size:12px;font-weight:600;color:${c};">${name}</span>
           <span style="display:inline-block;margin-top:4px;font-size:9px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;border-radius:10px;padding:1px 8px;align-self:flex-start;">${abTime}</span>
         </div>
@@ -8191,7 +8191,7 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'accent-left':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:56px;background:${c}0a;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:56px;background:${c}0a;">
         <div style="width:4px;background:${c};flex-shrink:0;"></div>
         <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
           <span style="font-size:12px;font-weight:700;color:#d0d8ec;">${name}</span>
@@ -8201,15 +8201,15 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'two-col':
-      return `<div style="display:flex;align-items:center;border-bottom:1px solid #1e1a12;min-height:48px;">
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #101012;min-height:48px;">
         <div style="width:3px;align-self:stretch;background:${c};flex-shrink:0;"></div>
         <div style="width:130px;flex-shrink:0;padding:0 12px;font-size:11px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
-        <div style="width:48px;flex-shrink:0;padding:0 10px;font-size:11px;font-weight:600;color:#e8eaf2;border-right:1px solid #2a2218;">${abTime}</div>
+        <div style="width:48px;flex-shrink:0;padding:0 10px;font-size:11px;font-weight:600;color:#e8eaf2;border-right:1px solid #26262a;">${abTime}</div>
         <div style="display:flex;gap:5px;align-items:center;padding:6px 12px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'36px'):''}).join('')}</div>
       </div>`;
 
     case 'icon-grid':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:72px;background:${c}08;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:72px;background:${c}08;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
         <div style="width:155px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid ${c}22;">
           <span style="font-size:13px;font-weight:700;color:${c};">${name}</span>
@@ -8221,30 +8221,30 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'dark-card':
-      return `<div style="margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #2a2218;overflow:hidden;display:flex;align-items:stretch;">
+      return `<div style="margin:4px 0;border-radius:6px;background:#1a1610;border:1px solid #26262a;overflow:hidden;display:flex;align-items:stretch;">
         <div style="width:4px;background:${c};flex-shrink:0;border-radius:6px 0 0 6px;"></div>
-        <div style="width:155px;flex-shrink:0;padding:10px 14px;border-right:1px solid #2a2218;">
+        <div style="width:155px;flex-shrink:0;padding:10px 14px;border-right:1px solid #26262a;">
           <div style="font-size:12px;font-weight:700;color:${c};">${name}</div>
-          <div style="font-size:10px;color:#7a6050;margin-top:3px;">${abTime}</div>
+          <div style="font-size:10px;color:#9a9aa2;margin-top:3px;">${abTime}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'40px'):''}).join('')}</div>
       </div>`;
 
     case 'slash':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:54px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:54px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="display:flex;align-items:center;gap:0;padding:0 14px;width:200px;flex-shrink:0;border-right:1px solid #2a2218;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:0;padding:0 14px;width:200px;flex-shrink:0;border-right:1px solid #26262a;overflow:hidden;">
           <span style="font-size:11px;font-weight:600;color:#e8eaf2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
-          <span style="font-size:14px;color:#3a2e20;margin:0 8px;flex-shrink:0;">/</span>
+          <span style="font-size:14px;color:#26262a;margin:0 8px;flex-shrink:0;">/</span>
           <span style="font-size:11px;font-weight:700;color:${c};flex-shrink:0;">${abTime}</span>
         </div>
         <div style="display:flex;gap:6px;align-items:center;padding:8px 14px;flex-wrap:wrap;">${sorted.map(p=>{const cd=CD_POOL.find(c=>c.id===p.cdId);return cd?buildHPalaIconEl(cd,'38px'):''}).join('')}</div>
       </div>`;
 
     case 'bold-ability':
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:60px;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:60px;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
-        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid #2a2218;">
+        <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 14px;border-right:1px solid #26262a;">
           <span style="font-size:15px;font-weight:900;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;">${name}</span>
           <span style="font-size:10px;color:#e8eaf2;margin-top:2px;">${abTime}</span>
         </div>
@@ -8252,7 +8252,7 @@ function buildHPalaRow(ab, sorted, style) {
       </div>`;
 
     case 'chip':
-      return `<div style="display:flex;align-items:center;border-bottom:1px solid #1e1a12;min-height:54px;padding:8px 14px;gap:12px;">
+      return `<div style="display:flex;align-items:center;border-bottom:1px solid #101012;min-height:54px;padding:8px 14px;gap:12px;">
         <div style="display:flex;flex-direction:column;gap:5px;width:180px;flex-shrink:0;">
           <span style="display:inline-block;font-size:10px;font-weight:700;color:${c};background:${c}18;border:1px solid ${c}44;padding:3px 10px;border-radius:4px;align-self:flex-start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${name}</span>
           <span style="font-size:10px;font-weight:600;color:#e8eaf2;padding-left:2px;">${abTime}</span>
@@ -8280,7 +8280,7 @@ function buildHPalaRow(ab, sorted, style) {
 
     case 'timeline':
     default:
-      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #1e1a12;min-height:58px;background:${c}08;">
+      return `<div style="display:flex;align-items:stretch;border-bottom:1px solid #101012;min-height:58px;background:${c}08;">
         <div style="width:3px;background:${c};flex-shrink:0;"></div>
         <div style="width:160px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:0 12px;border-right:1px solid ${c}22;">
           <span style="font-size:12px;font-weight:600;color:${c};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
@@ -8310,20 +8310,20 @@ function buildHPalaContent() {
     if (!rows.length) return;
 
     const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
-    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;">` : '';
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #26262a;">` : '';
 
-    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #3a2e20;">
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #26262a;">
       ${pImg}
       <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0e0c0a;">
-        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#c83a2066;margin-bottom:3px;">Cooldowns</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6ad4f066;margin-bottom:3px;">Cooldowns</div>
         <div style="font-size:16px;font-weight:800;color:#c8d0e8;letter-spacing:0.02em;">${boss.name}</div>
       </div>
     </div>`;
 
     const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
-    html += `<div style="border:1px solid #2a2218;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+    html += `<div style="border:1px solid #26262a;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
   });
-  return html || '<div style="color:#5a4838;font-size:13px;padding:20px;">No holy paladin CDs placed yet.</div>';
+  return html || '<div style="color:#55555c;font-size:13px;padding:20px;">No holy paladin CDs placed yet.</div>';
 }
 
 function showHPalaView() {
@@ -8339,8 +8339,8 @@ function showHPalaView() {
   overlay.innerHTML = `<div class="ss-modal">
     <div class="ss-toolbar" style="position:relative;">
       <h3>Holy Paladin CDs</h3>
-      <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-      <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+      <button id="hpalaSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="hpalaClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
     </div>
     <div class="ss-content" id="hpalaContent" style="background:#0a0804;padding:20px 24px;overflow-y:auto;flex:1;"></div>
   </div>`;
@@ -8397,9 +8397,9 @@ function buildShamanContent() {
     if (!rows.length) return;
 
     const portraitUrl = BOSS_PORTRAIT_URLS[boss.id] || null;
-    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #3a2e20;">` : '';
+    const pImg = portraitUrl ? `<img src="${portraitUrl}" onerror="this.style.display='none'" style="width:80px;height:60px;object-fit:cover;object-position:center top;flex-shrink:0;filter:brightness(0.75);border-right:1px solid #26262a;">` : '';
 
-    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #3a2e20;">
+    const header = `<div style="display:flex;overflow:hidden;height:60px;background:#100e0a;border-bottom:1px solid #26262a;">
       ${pImg}
       <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;background:#0e0c0a;">
         <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#0070de66;margin-bottom:3px;">Shaman Cooldowns</div>
@@ -8408,9 +8408,9 @@ function buildShamanContent() {
     </div>`;
 
     const rowsHtml = rows.map(({ab, sorted}) => buildHPalaRow(ab, sorted, hpalaViewStyle)).join('');
-    html += `<div style="border:1px solid #2a2218;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
+    html += `<div style="border:1px solid #26262a;border-radius:8px;overflow:hidden;margin-bottom:16px;">${header}<div>${rowsHtml}</div></div>`;
   });
-  return html || '<div style="color:#5a4838;font-size:13px;padding:20px;">No shaman CDs placed yet.</div>';
+  return html || '<div style="color:#55555c;font-size:13px;padding:20px;">No shaman CDs placed yet.</div>';
 }
 
 function showShamanView() {
@@ -8426,8 +8426,8 @@ function showShamanView() {
   overlay.innerHTML = `<div class="ss-modal">
     <div class="ss-toolbar" style="position:relative;">
       <h3>Shaman CDs</h3>
-      <button id="shamanSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
-      <button id="shamanClose" style="padding:4px 12px;border-radius:3px;border:1px solid #4a3828;background:#241e14;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
+      <button id="shamanSsBtn" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#48a868;font-size:11px;cursor:pointer;letter-spacing:0.04em;">📷 Screenshot</button>
+      <button id="shamanClose" style="padding:4px 12px;border-radius:3px;border:1px solid #3a3a40;background:#161618;color:#8a7060;font-size:11px;cursor:pointer;margin-left:8px;">✕ Close</button>
     </div>
     <div class="ss-content" id="shamanContent" style="background:#0a0804;padding:20px 24px;overflow-y:auto;flex:1;"></div>
   </div>`;
