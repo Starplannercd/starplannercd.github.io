@@ -6636,15 +6636,6 @@ function showWclModal() {
       + '<select id="wclBoss" class="boss-select" style="flex:1;min-width:0;"><option value="">Loading bosses...</option></select>'
       + '</div>'
       + '</div>'
-      // Mode buttons — glassy pill style
-      + '<div id="wclBossCfg" style="margin-bottom:12px;display:none;background:#0a0c18;border:1px solid #1a2030;border-radius:8px;padding:10px 12px;">'
-      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
-      + '<span style="font-size:10px;font-weight:700;color:#5a6080;text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;">Difficulty</span>'
-      + '<button id="wclDiffNormal" style="padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Normal</button>'
-      + '<button id="wclDiffHeroic" style="padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">Heroic</button>'
-      + '<span style="font-size:10px;color:#3a4060;margin-left:4px;">· clears cache on change</span>'
-      + '</div>'
-      + '</div>'
       // Mode toggle — Apple-style segmented control
       + '<div style="display:flex;gap:2px;margin-bottom:12px;background:#161618;border:1px solid #26262a;border-radius:10px;padding:3px;">'
       + '<button id="wclModeRaid" style="flex:1;padding:8px 0;border-radius:7px;border:none;background:rgba(255,255,255,0.09);color:#6ad4f0;font-size:11.5px;font-weight:700;cursor:pointer;letter-spacing:0.03em;box-shadow:0 1px 3px rgba(0,0,0,0.4);transition:background 0.15s,color 0.15s;">RCD Heatmap</button>'
@@ -6708,43 +6699,7 @@ function showWclModal() {
   }
 
   // ── Boss config panel logic ──────────────────────────────────────────────────
-  var cfgPanel = box.querySelector('#wclBossCfg');
-  var diffNormalBtn = box.querySelector('#wclDiffNormal');
-  var diffHeroicBtn = box.querySelector('#wclDiffHeroic');
-  var _cfgEncId = null;
-
-  function setCfgDiff(diff) {
-    var on = 'padding:4px 12px;border-radius:4px;border:1px solid #3a4060;background:#1a2030;color:#a0b8e8;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
-    var off = 'padding:4px 12px;border-radius:4px;border:1px solid #2a3040;background:transparent;color:#3a4060;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.05em;';
-    diffNormalBtn.style.cssText = diff===3 ? on : off;
-    diffHeroicBtn.style.cssText = diff===4 ? on : off;
-  }
-
-  function loadCfgPanel(encId) {
-    _cfgEncId = encId;
-    if (!encId) { cfgPanel.style.display='none'; return; }
-    cfgPanel.style.display='block';
-    var cfg = getBossCfg(encId);
-    var diff = cfg.difficulty || 4;
-    setCfgDiff(diff);
-  }
-
-  function saveCurrentCfg() {
-    if (!_cfgEncId) return;
-    var diff = diffNormalBtn.style.color === 'rgb(160, 184, 232)' ? 3 : 4;
-    saveBossCfg(_cfgEncId, { difficulty: diff });
-  }
-
-  diffNormalBtn.addEventListener('click', function(){
-    setCfgDiff(3); saveCurrentCfg();
-    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
-  });
-  diffHeroicBtn.addEventListener('click', function(){
-    setCfgDiff(4); saveCurrentCfg();
-    if (_cfgEncId) { try { localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_raid'); localStorage.removeItem('wcl_soo_cache_'+_cfgEncId+'_personal'); } catch(e){} }
-  });
   bossEl.addEventListener('change', function() {
-    loadCfgPanel(parseInt(bossEl.value));
     loadCachedOrBlank(parseInt(bossEl.value), wclMode);
   });
   box.querySelector('#wclFetch').addEventListener('click', async function(){
@@ -6756,10 +6711,9 @@ function showWclModal() {
     try {
       var bossName = bossEl.options[bossEl.selectedIndex].text;
 
-      // Load per-boss config: difficulty
-      var bossCfg = getBossCfg(encId);
-      var fetchDifficulty = bossCfg.difficulty || 4;
-      var diffLabel = fetchDifficulty === 3 ? 'normal' : 'heroic';
+      // Heroic only
+      var fetchDifficulty = 4;
+      var diffLabel = 'heroic';
 
       var cacheKey2 = 'wcl_soo_cache_'+encId+'_'+wclMode;
       results.innerHTML = '<div style="color:#55555c;font-size:12px;">Fetching '+diffLabel+' 10-man rankings...</div>';
