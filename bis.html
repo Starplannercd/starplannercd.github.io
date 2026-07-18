@@ -196,6 +196,50 @@
   .footer a { color: var(--text2); }
 
   #selftest { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 18px; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+
+  /* ── Motion layer — Apple-feel easing, no visual redesign ── */
+  html { scroll-behavior: smooth; }
+
+  @keyframes bisFadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  @keyframes bisSegGrow { from { transform: scaleY(0); } to { transform: none; } }
+
+  /* Re-rendered content glides in instead of popping */
+  #content > * { animation: bisFadeUp .28s cubic-bezier(.2,.8,.2,1) both; }
+  #content > *:nth-child(2) { animation-delay: .03s; }
+  #content > *:nth-child(3) { animation-delay: .06s; }
+  #content > *:nth-child(4) { animation-delay: .09s; }
+
+  /* Tabs: eased hover + press-down */
+  .tab { transition: background-color .18s cubic-bezier(.2,.8,.2,1), border-color .18s cubic-bezier(.2,.8,.2,1), color .18s cubic-bezier(.2,.8,.2,1), transform .12s ease; }
+  .tab:hover { background: var(--bg3); }
+  .tab:active { transform: scale(0.96); }
+
+  /* Cards + clickable rows respond softly */
+  .boss-card, .raider-card { transition: border-color .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s cubic-bezier(.2,.8,.2,1); }
+  .boss-card:hover, .raider-card:hover { border-color: var(--border2); }
+  .boss-head { transition: background-color .18s cubic-bezier(.2,.8,.2,1); }
+  .boss-head:hover { background-color: rgba(255,255,255,0.03); }
+  .boss-head:active { transform: scale(0.995); }
+
+  /* Chart columns: smooth ring + lift; bars grow up on render */
+  .col-item { transition: transform .18s cubic-bezier(.2,.8,.2,1), opacity .18s ease; }
+  .col-item:hover { transform: translateY(-2px); }
+  .col-item:active { transform: translateY(0) scale(0.97); }
+  .col-bar { transition: box-shadow .18s cubic-bezier(.2,.8,.2,1); }
+  .col-bar .seg { animation: bisSegGrow .35s cubic-bezier(.2,.8,.2,1) both; transform-origin: bottom; }
+
+  /* Detail panel slides open */
+  .boss-card.open .boss-detail { animation: bisFadeUp .25s cubic-bezier(.2,.8,.2,1) both; }
+
+  /* Links and badges ease instead of snapping */
+  a { transition: color .15s ease, opacity .15s ease; }
+  .badge { transition: opacity .15s ease; }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    #content > *, .col-bar .seg, .boss-card.open .boss-detail { animation: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
