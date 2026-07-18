@@ -7982,14 +7982,14 @@ async function initViewMode(viewId) {
 
   const viewEl = document.createElement('div');
   viewEl.id = 'viewPage';
-  viewEl.style.cssText = 'min-height:100vh;background:#080604;font-family:var(--app-font, Inter, system-ui, sans-serif);';
+  viewEl.style.cssText = 'min-height:100vh;background:#0a0a0b;font-family:var(--app-font, Inter, system-ui, sans-serif);';
 
-  // Single combined top bar + content
+  // Single combined top bar + content — Frost / minimal, matching the planner
   viewEl.innerHTML = `
-    <div style="background:linear-gradient(180deg,#181410 0%,#0c0a08 100%);border-bottom:2px solid #c83a2044;padding:0 32px;display:flex;align-items:center;gap:20px;height:48px;box-shadow:0 2px 16px rgba(0,0,0,0.5);">
+    <div style="background:#101012;border-bottom:1px solid #26262a;padding:0 32px;display:flex;align-items:center;gap:20px;height:48px;">
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c83a20" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
-        <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#c83a20;letter-spacing:0.3em;text-transform:uppercase;opacity:0.8;">Raid CDs</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6ad4f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.9;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+        <span style="font-family:Cinzel,Georgia,serif;font-size:10px;font-weight:700;color:#6ad4f0;letter-spacing:0.3em;text-transform:uppercase;opacity:0.9;">Professional</span>
       </div>
     </div>
     <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
@@ -7999,7 +7999,7 @@ async function initViewMode(viewId) {
   let viewRoster = DEFAULT_ROSTER;
 
   const viewContent = viewEl.querySelector('#viewContent');
-  viewContent.innerHTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">Loading…</div>';
+  viewContent.innerHTML = '<div style="color:#55555c;font-size:13px;padding:20px 0;">Loading…</div>';
 
   try {
     const db = firebase.database();
@@ -8038,7 +8038,7 @@ async function initViewMode(viewId) {
       return rosterWhos.has(cd.who);
     }));
 
-    const EMPTY_HTML = '<div style="color:#5a4838;font-size:13px;padding:20px 0;">No assignments placed.</div>';
+    const EMPTY_HTML = '<div style="color:#55555c;font-size:13px;padding:20px 0;">No assignments placed.</div>';
 
     viewContent.innerHTML = BOSSES.map(b => buildViewBossBlock(b)).filter(Boolean).join('') || EMPTY_HTML;
     attachSsIconErrors(viewContent);
