@@ -1465,6 +1465,7 @@ const CD_POOL = [
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
   { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',    core:false },
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
+  { id:'symbtranq', name:'Symbiosis Tranquility', short:'SymbT', palShort:'Symb Tranq', cd:480, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'SPRIEST1', core:false },
   { id:'xuen',      name:'Invoke Xuen',   short:'Xuen',  cd:180, dur:45,color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'revival',   name:'Revival',       short:'Revival',cd:180,dur:0, color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
   { id:'devo3',    name:'Ret Devotion Aura',    short:'RDevo', pillShort:'Ret', cd:180, dur:6,  color:'#c85890', textColor:'#ffb8d8', who:'RETPALA1',  core:false },
@@ -2664,6 +2665,7 @@ const CD_ICON_URLS = {
   'revival':    'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_blessingofeternals.jpg',
   'xuen':       'https://wow.zamimg.com/images/wow/icons/large/ability_monk_summontigerstatue.jpg',
   'tranq':      'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
+  'symbtranq':  'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'ftranq':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'custom':     'https://wow.zamimg.com/images/wow/icons/large/inv_misc_note_01.jpg',
   'hstone':     'https://wow.zamimg.com/images/wow/icons/large/warlock_-healthstone.jpg',
@@ -3713,6 +3715,7 @@ const CD_SPELL_IDS = {
   'personals': 'nil',
   'tranq':     '740',
   'ftranq':    '740',
+  'symbtranq': '740',
   'xuen':      '123904',
   'revival':   '115310',
 };
