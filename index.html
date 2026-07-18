@@ -89,20 +89,27 @@
   }
 
   .boss-select {
-    background: linear-gradient(135deg, #14110c 0%, #100d09 100%) #100d09;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: rgba(255,255,255,0.06);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%239a9aa2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
     color-scheme: dark;
-    border: 1px solid #2e2620;
+    border: 1px solid rgba(255,255,255,0.08);
     color: var(--text);
-    padding: 6px 10px;
-    border-radius: 7px;
-    font-size: 12px;
+    padding: 7px 32px 7px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
     font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
     min-width: 200px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
   }
-  .boss-select:hover { border-color: var(--accent); }
-  .boss-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(106,212,240,0.20); }
+  .boss-select:hover { background-color: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.14); }
+  .boss-select:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+  .boss-select:active { transform: scale(0.99); }
 
   /* Chip-style buttons: dark gradient base with the button's accent colour
      washing in from the left — same design language as the CD chips/pills. */
@@ -1363,7 +1370,6 @@
   }
   html[data-theme] .topbar-title svg { color: var(--eui-accent); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--eui-accent) 40%, transparent)); }
   html[data-theme] .topbar-title-text { color: #e8e8ea; text-shadow: 0 0 8px color-mix(in srgb, var(--eui-accent) 30%, transparent); }
-  html[data-theme] .boss-select,
   html[data-theme] .btn,
   html[data-theme] .cd-chip,
   html[data-theme] .ability-label {
@@ -1373,8 +1379,6 @@
     --btn-accent: #d0d0d4;
     border-color: #2e2e33;
   }
-  html[data-theme] .boss-select { border-color: #2e2e33; }
-  html[data-theme] .boss-select:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--eui-accent) 18%, transparent); }
   html[data-theme] .palette {
     background: linear-gradient(180deg, #0c0c0d 0%, #0a0a0b 100%);
     border-right: 1px solid #202024;
@@ -1420,11 +1424,9 @@
     <button class="btn btn-manage" id="manageBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Manage CDs</button>
     <button class="btn btn-roster" id="rosterBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Sub</button>
     <button class="btn btn-export" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export Foji</button>
-    <button class="btn btn-export" id="importFojiBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
-    <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
-    <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
+    <div id="syncIndicator" style="position:fixed;top:26px;right:12px;display:flex;align-items:center;gap:4px;z-index:10000;"></div>
   </div>
   <div class="main">
     <div class="main-top">
@@ -2682,7 +2684,7 @@ function buildPalette() {
   const cds = getCDS();
   el.innerHTML = `<div class="palette-header">
     <span class="palette-label">Raid Cooldowns</span>
-    <span class="palette-count">${cds.length}</span>
+    
     <button id="fadeModeBtn" class="palette-fade-btn${fadeActive ? ' fade-on' : ''}" title="Fade raid cooldowns when placed in the timeline">◑ Fade</button>
   </div>
   <div class="palette-chips" id="paletteChips"></div>`;
@@ -5222,7 +5224,7 @@ document.getElementById('manageBtn').addEventListener('click', showManageModal);
 document.getElementById('rosterBtn').addEventListener('click', showPlansMenu);
 document.getElementById('saveBtn')?.addEventListener('click', saveToFile);
 document.getElementById('exportBtn').addEventListener('click', showExportModal);
-document.getElementById('importFojiBtn').addEventListener('click', showImportFojiModal);
+
 
 function showImportFojiModal() {
   const overlay = document.createElement('div');
