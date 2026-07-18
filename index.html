@@ -70,6 +70,7 @@
     margin-right: 8px;
     flex-shrink: 0;
     text-decoration: none;
+    transform: translateY(-3px);
   }
   .topbar-title svg {
     display: block;
@@ -525,7 +526,7 @@
     font-weight: 600;
     letter-spacing: 0.01em;
     padding: 5px 14px;
-    border-radius: 999px;
+    border-radius: 6px;
     border: none;
     color: var(--text2);
     background: rgba(255,255,255,0.07);
@@ -1461,7 +1462,6 @@ if(['clean','underline','double','float','glass','minimal','wash','edge'].indexO
     <button class="btn btn-export" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
-    <button class="btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults."><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>
     <select class="boss-select" id="themeSelect" title="Site theme" style="min-width:0;width:auto;font-size:11px;padding:5px 8px;">
       <option value="">Theme · Classic</option>
       <option value="eui">Theme · Ellesmere</option>
@@ -1635,25 +1635,6 @@ function getCDS() {
 Object.defineProperty(window, 'CDS', { get: getCDS });
 
 const BOSSES = [
-  {
-    id:'immerseus', name:'Immerseus',
-    desc:'Heroic · Vale of Eternal Sorrows',
-    duration: 406,
-    sections: [
-      {
-        label: null,
-        abilities: [
-          { name:'Encounter Start',          time:0,   color:'#ffffff', encounterStart:true },
-          { name:'Split 1',                  time:48,  color:'#8868c8' },
-          { name:'Split 2',                  time:136, color:'#8868c8' },
-          { name:'Split 3',                  time:217, color:'#8868c8' },
-          { name:'Split 4',                  time:271, color:'#8868c8' },
-          { name:'Split 5',                  time:331, color:'#8868c8' },
-          { name:'Split 6',                  time:379, color:'#8868c8' },
-        ]
-      }
-    ]
-  },
   {
     id:'fallenprotectors', name:'The Fallen Protectors',
     desc:'Heroic · Vale of Eternal Sorrows',
@@ -2858,9 +2839,10 @@ function buildPalette() {
 }
 
 // ---- Render timeline ----
-function getBoss() { return BOSSES.find(b => b.id === currentBossId); }
+function getBoss() { return BOSSES.find(b => b.id === currentBossId) || BOSSES[0]; }
 
 function renderTimeline() {
+  if (!BOSSES.some(b => b.id === currentBossId)) currentBossId = BOSSES[0].id;
   const boss = getBoss();
   const area = document.getElementById('timelineArea');
   area.innerHTML = '';
@@ -2869,13 +2851,15 @@ function renderTimeline() {
   const info = document.createElement('div');
   info.className = 'boss-info';
   const isReady = bossReady[boss.id] || false;
+  const bossColor = (typeof BOSS_VIS !== 'undefined' && BOSS_VIS[boss.id] && BOSS_VIS[boss.id].color) || 'var(--accent)';
   info.innerHTML = `
-    <span class="boss-name">${boss.name}</span>
+    <span class="boss-name" style="color:${bossColor};">${boss.name}</span>
     <span class="boss-desc">~${Math.floor(boss.duration/60)}:${String(boss.duration%60).padStart(2,'0')} avg</span>
     <label class="boss-ready-wrap${isReady ? ' ready' : ''}" title="Mark as ready for export">
       <input type="checkbox" id="bossReadyCheck" ${isReady ? 'checked' : ''}>
       <span class="boss-ready-label">${isReady ? '✓ Ready' : 'Mark Ready'}</span>
-    </label>`;
+    </label>
+    <button class="btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults." style="font-size:10.5px;padding:4px 10px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>`;
   info.querySelector('#bossReadyCheck').addEventListener('change', e => {
     bossReady[boss.id] = e.target.checked;
     isDirty = true;
@@ -2885,6 +2869,7 @@ function renderTimeline() {
     else { wrap.classList.remove('ready'); lbl.textContent = 'Mark Ready'; }
     refreshBossSelectLabels();
   });
+  info.querySelector('#syncKillBtn').addEventListener('click', onSyncKillClick);
   area.appendChild(info);
 
   const grid = document.createElement('div');
@@ -6109,7 +6094,8 @@ async function syncBossFromLogs() {
   btn.disabled = false;
 }
 
-document.getElementById('syncKillBtn').addEventListener('click', function(e){
+// Bound per-render on the boss header's Sync Kill button
+function onSyncKillClick(e){
   if (e.shiftKey) {
     var boss = getBoss();
     if (confirm('Reset ' + boss.name + ' back to the default timeline timings?')) {
@@ -6119,7 +6105,7 @@ document.getElementById('syncKillBtn').addEventListener('click', function(e){
     return;
   }
   syncBossFromLogs();
-});
+}
 
 // Tracked spells — NO Tranq (740) and NO Hymn (64843)
 var WCL_SPELLS = {
