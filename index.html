@@ -7932,13 +7932,15 @@ function buildShareData() {
     });
   });
 
-  return {
+  // JSON round-trip strips undefined-valued properties (e.g. a placement's
+  // hpPct that was never set) — Firebase set() rejects undefined outright.
+  return JSON.parse(JSON.stringify({
     placedCDs: filteredPlaced,
-    bossReady: JSON.parse(JSON.stringify(bossReady)),
+    bossReady,
     roster: finalRoster,
     activeSetIds: [...activeSetIds],
     createdAt: Date.now(),
-  };
+  }));
 }
 
 async function createShareLink(btn) {
