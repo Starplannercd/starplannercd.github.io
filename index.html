@@ -5819,19 +5819,31 @@ async function wclLoadEncounters() {
 }
 
 // ── Sync boss timeline from our guild's latest kill ──────────────────────────
-async function wclFindLatestKill(encId) {
-  var d = await wclQuery('{userData{currentUser{guilds{id name}}}}', {});
-  var guilds = (d && d.userData && d.userData.currentUser && d.userData.currentUser.guilds) || [];
-  if (!guilds.length) throw new Error('Your WarcraftLogs account is not linked to a guild.');
-  for (var gi = 0; gi < guilds.length; gi++) {
-    var r = await wclQuery(
-      'query($g:Int!,$e:Int!){reportData{reports(guildID:$g,limit:15){data{code startTime fights(encounterID:$e,killType:Kills){id startTime endTime}}}}}',
-      {g:guilds[gi].id, e:encId}
-    );
+async function wclFindLatestKill(bossName) {
+  var d = await wclQuery('{userData{currentUser{id guilds{id name}}}}', {});
+  var cu = d && d.userData && d.userData.currentUser;
+  if (!cu) throw new Error('Could not read your WarcraftLogs profile.');
+  // Search guild logs first, then the user's personal logs
+  var sources = (cu.guilds || []).map(function(g){ return { arg: 'guildID', id: g.id }; });
+  sources.push({ arg: 'userID', id: cu.id });
+  var bn = bossName.toLowerCase();
+  for (var si = 0; si < sources.length; si++) {
+    var s = sources[si];
+    var r;
+    try {
+      r = await wclQuery(
+        'query($i:Int!){reportData{reports(' + s.arg + ':$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}',
+        {i: s.id}
+      );
+    } catch(e) { continue; }
     var reps = (r && r.reportData && r.reportData.reports && r.reportData.reports.data) || [];
-    // Reports come newest first; take the most recent kill in the newest report that has one
+    // Reports come newest first; match kills by boss name so zone/encounter-ID
+    // differences can't hide them. Take the most recent matching kill.
     for (var ri = 0; ri < reps.length; ri++) {
-      var fights = reps[ri].fights || [];
+      var fights = (reps[ri].fights || []).filter(function(f){
+        var fn = (f.name || '').toLowerCase();
+        return fn === bn || fn.indexOf(bn) !== -1 || bn.indexOf(fn) !== -1;
+      });
       if (fights.length) return { code: reps[ri].code, fight: fights[fights.length-1] };
     }
   }
@@ -5927,18 +5939,8 @@ async function syncBossFromLogs() {
   btn.disabled = true;
   var origHtml = btn.innerHTML;
   try {
-    btn.textContent = 'Syncing…';
-    await wclLoadEncounters();
-    var encId = WCL_ENCOUNTERS[boss.name];
-    if (!encId) {
-      var bn = boss.name.toLowerCase();
-      Object.keys(WCL_ENCOUNTERS).forEach(function(k){
-        if (!encId && (k.toLowerCase().indexOf(bn) !== -1 || bn.indexOf(k.toLowerCase()) !== -1)) encId = WCL_ENCOUNTERS[k];
-      });
-    }
-    if (!encId) throw new Error('No WCL encounter matches "'+boss.name+'".');
     btn.textContent = 'Finding kill…';
-    var kill = await wclFindLatestKill(encId);
+    var kill = await wclFindLatestKill(boss.name);
     if (!kill) throw new Error('No kill of '+boss.name+' found in your guild\'s recent logs.');
     btn.textContent = 'Reading casts…';
     var casts = await wclFetchEnemyCasts(kill.code, kill.fight);
