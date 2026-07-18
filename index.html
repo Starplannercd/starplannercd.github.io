@@ -1368,6 +1368,7 @@
     <button class="btn btn-export" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export Foji</button>
     <button class="btn btn-export" id="importFojiBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
+    <button class="btn" id="syncKillBtn" title="Retime this boss's timeline from your guild's latest kill on WarcraftLogs. Shift-click to reset to defaults."><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>Sync Kill</button>
     <button class="btn btn-screenshot" id="screenshotBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Share Link</button>
     <div id="syncIndicator" style="display:flex;align-items:center;gap:4px;padding:0 8px;"></div>
     <span class="hint">Drag to place · Right-click to edit · Middle-click to remove</span>
@@ -5348,11 +5349,37 @@ function applyBossTimingOverrides() {
       var ov = all[boss.id];
       if (!ov) return;
       if (ov.duration) boss.duration = ov.duration;
+      // Full ability-list override (from log sync) — replaces section 0 wholesale
+      // so row counts can shrink/grow to match the actual kill.
+      if (ov.abilities && boss.sections[0]) {
+        boss.sections[0].abilities = ov.abilities.map(function(a){ return Object.assign({}, a); });
+        return;
+      }
       (ov.abTimes || []).forEach(function(entry) {
         var sec = boss.sections[entry[0]];
         if (sec && sec.abilities[entry[1]]) sec.abilities[entry[1]].time = entry[2];
       });
     });
+  } catch(e) {}
+}
+
+function saveBossAbilityOverride(boss) {
+  try {
+    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
+    all[boss.id] = {
+      duration: boss.duration,
+      abilities: (boss.sections[0].abilities || []).map(function(a){ return Object.assign({}, a); }),
+      syncedAt: Date.now()
+    };
+    localStorage.setItem(BOSS_TIMING_KEY, JSON.stringify(all));
+  } catch(e) {}
+}
+
+function clearBossAbilityOverride(bossId) {
+  try {
+    var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
+    delete all[bossId];
+    localStorage.setItem(BOSS_TIMING_KEY, JSON.stringify(all));
   } catch(e) {}
 }
 
@@ -5790,6 +5817,157 @@ async function wclLoadEncounters() {
   console.warn('WCL: Using hardcoded SoO encounter IDs');
   WCL_ENCOUNTERS = {"Immerseus":1132,"The Fallen Protectors":1133,"Norushen":1134,"Sha of Pride":1135,"Galakras":1136,"Iron Juggernaut":1137,"Kor'kron Dark Shaman":1138,"General Nazgrim":1139,"Malkorok":1140,"Spoils of Pandaria":1141,"Thok the Bloodthirsty":1142,"Siegecrafter Blackfuse":1143,"Paragons of the Klaxxi":1144,"Garrosh Hellscream":1145};
 }
+
+// ── Sync boss timeline from our guild's latest kill ──────────────────────────
+async function wclFindLatestKill(encId) {
+  var d = await wclQuery('{userData{currentUser{guilds{id name}}}}', {});
+  var guilds = (d && d.userData && d.userData.currentUser && d.userData.currentUser.guilds) || [];
+  if (!guilds.length) throw new Error('Your WarcraftLogs account is not linked to a guild.');
+  for (var gi = 0; gi < guilds.length; gi++) {
+    var r = await wclQuery(
+      'query($g:Int!,$e:Int!){reportData{reports(guildID:$g,limit:15){data{code startTime fights(encounterID:$e,killType:Kills){id startTime endTime}}}}}',
+      {g:guilds[gi].id, e:encId}
+    );
+    var reps = (r && r.reportData && r.reportData.reports && r.reportData.reports.data) || [];
+    // Reports come newest first; take the most recent kill in the newest report that has one
+    for (var ri = 0; ri < reps.length; ri++) {
+      var fights = reps[ri].fights || [];
+      if (fights.length) return { code: reps[ri].code, fight: fights[fights.length-1] };
+    }
+  }
+  return null;
+}
+
+async function wclFetchEnemyCasts(code, fight) {
+  var abilityNames = {};
+  var casts = [];
+  var cursor = fight.startTime;
+  var first = true;
+  while (cursor != null) {
+    var q = first
+      ? 'query($c:String!,$f:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){masterData{abilities{gameID name}} events(fightIDs:[$f],dataType:Casts,hostilityType:Enemies,startTime:$s,endTime:$e){data nextPageTimestamp}}}}'
+      : 'query($c:String!,$f:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){events(fightIDs:[$f],dataType:Casts,hostilityType:Enemies,startTime:$s,endTime:$e){data nextPageTimestamp}}}}';
+    var d = await wclQuery(q, {c:code, f:fight.id, s:cursor, e:fight.endTime});
+    var rep = d.reportData.report;
+    if (first && rep.masterData) (rep.masterData.abilities||[]).forEach(function(a){ abilityNames[a.gameID] = a.name; });
+    first = false;
+    (rep.events.data||[]).forEach(function(ev){
+      if (ev.type !== 'cast') return;
+      casts.push({ name: abilityNames[ev.abilityGameID] || '', t: (ev.timestamp - fight.startTime)/1000 });
+    });
+    cursor = rep.events.nextPageTimestamp;
+  }
+  return casts;
+}
+
+// Rebuild the boss's ability rows from actual cast times. Rows whose base name
+// matches a logged enemy cast get replaced with one row per cast (so counts
+// shrink or grow to match the kill); unmatched rows are left untouched.
+function rebuildBossFromCasts(boss, casts, killDurSec) {
+  var sec = boss.sections[0];
+  var castByName = {};
+  casts.forEach(function(c){
+    if (!c.name) return;
+    var k = c.name.toLowerCase();
+    (castByName[k] = castByName[k] || []).push(c.t);
+  });
+
+  var keepRows = [];
+  var groups = {};
+  sec.abilities.forEach(function(ab){
+    if (ab.encounterStart) { keepRows.push(Object.assign({}, ab)); return; }
+    var base = ab.name.replace(/\s+\d+$/, '');
+    var key = base.toLowerCase();
+    if (key === 'ds set') key = '__dsset__';   // Thok screech sets
+    if (!groups[key]) groups[key] = { base: base, template: ab, rows: [] };
+    groups[key].rows.push(ab);
+  });
+
+  var rebuilt = [];
+  var syncedCount = 0;
+  Object.keys(groups).forEach(function(key){
+    var g = groups[key];
+    var times = null;
+    if (key === '__dsset__') {
+      // A gap of >60s between Deafening Screech casts starts a new set
+      var ds = (castByName['deafening screech'] || []).slice().sort(function(a,b){return a-b;});
+      if (ds.length) {
+        times = [ds[0]];
+        for (var i=1; i<ds.length; i++) if (ds[i]-ds[i-1] > 60) times.push(ds[i]);
+      }
+    } else {
+      times = castByName[g.base.toLowerCase()] || null;
+      if (times) times = times.slice().sort(function(a,b){return a-b;});
+    }
+    if (!times || !times.length) {
+      g.rows.forEach(function(ab){ rebuilt.push(Object.assign({}, ab)); });
+      return;
+    }
+    syncedCount++;
+    times.forEach(function(t, i){
+      var row = Object.assign({}, g.template);
+      row.name = times.length > 1 ? g.base + ' ' + (i+1) : g.base;
+      row.time = Math.round(t);
+      if (key === '__dsset__' && row.hpLabel) row.hpLabel = row.name + ' — screech count';
+      rebuilt.push(row);
+    });
+  });
+
+  rebuilt.sort(function(a,b){ return a.time - b.time; });
+  sec.abilities = keepRows.concat(rebuilt);
+  var lastT = rebuilt.length ? rebuilt[rebuilt.length-1].time : 0;
+  boss.duration = Math.max(Math.ceil(killDurSec/30)*30, Math.ceil((lastT+30)/30)*30);
+  return syncedCount;
+}
+
+async function syncBossFromLogs() {
+  var btn = document.getElementById('syncKillBtn');
+  var boss = getBoss();
+  if (!wclIsAuthed()) { alert('Log in with WarcraftLogs first (open the WCL tab and log in), then try again.'); return; }
+  btn.disabled = true;
+  var origHtml = btn.innerHTML;
+  try {
+    btn.textContent = 'Syncing…';
+    await wclLoadEncounters();
+    var encId = WCL_ENCOUNTERS[boss.name];
+    if (!encId) {
+      var bn = boss.name.toLowerCase();
+      Object.keys(WCL_ENCOUNTERS).forEach(function(k){
+        if (!encId && (k.toLowerCase().indexOf(bn) !== -1 || bn.indexOf(k.toLowerCase()) !== -1)) encId = WCL_ENCOUNTERS[k];
+      });
+    }
+    if (!encId) throw new Error('No WCL encounter matches "'+boss.name+'".');
+    btn.textContent = 'Finding kill…';
+    var kill = await wclFindLatestKill(encId);
+    if (!kill) throw new Error('No kill of '+boss.name+' found in your guild\'s recent logs.');
+    btn.textContent = 'Reading casts…';
+    var casts = await wclFetchEnemyCasts(kill.code, kill.fight);
+    var killDur = (kill.fight.endTime - kill.fight.startTime)/1000;
+    var n = rebuildBossFromCasts(boss, casts, killDur);
+    saveBossAbilityOverride(boss);
+    refreshBossSelectLabels();
+    renderTimeline();
+    var mins = Math.floor(killDur/60), secs = Math.round(killDur%60);
+    alert('Synced '+boss.name+' to your latest kill ('+mins+':'+String(secs).padStart(2,'0')+').\n'+n+' abilit'+(n===1?'y':'ies')+' retimed from the log.');
+  } catch(e) {
+    alert('Sync failed: ' + e.message);
+    console.error(e);
+  }
+  btn.innerHTML = origHtml;
+  btn.disabled = false;
+}
+
+document.getElementById('syncKillBtn').addEventListener('click', function(e){
+  if (e.shiftKey) {
+    var boss = getBoss();
+    if (confirm('Reset ' + boss.name + ' back to the default timeline timings?')) {
+      clearBossAbilityOverride(boss.id);
+      location.reload();
+    }
+    return;
+  }
+  syncBossFromLogs();
+});
 
 // Tracked spells — NO Tranq (740) and NO Hymn (64843)
 var WCL_SPELLS = {
