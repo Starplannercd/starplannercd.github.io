@@ -5817,6 +5817,20 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.removeItem(BOSS_TIMING_KEY);
   localStorage.setItem('tot_rcd_timing_ver', '2');
 }
+// One-time seed: put Symbiosis Tranquility into the saved active set so it
+// shows in Manage CDs, but disabled on every boss by default.
+try {
+  if (!localStorage.getItem('tot_rcd_symbtranq_seeded')) {
+    activeSetIds.add('symbtranq');
+    BOSSES.forEach(function(b){
+      if (!bossDisabledIds[b.id]) bossDisabledIds[b.id] = new Set();
+      bossDisabledIds[b.id].add('symbtranq');
+    });
+    localStorage.setItem('tot_rcd_symbtranq_seeded', '1');
+    isDirty = true;
+  }
+} catch(e) {}
+
 // Migrate Garrosh Phase 3 placements after Intermission 2 section removal (section index 4 → 3)
 try {
   var _g = placedCDs.garrosh;
