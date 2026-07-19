@@ -3434,14 +3434,48 @@ const FOJI_ABILITY_KEYS = {
 };
 
 
+// swapped-out playerWho -> {who, spec} of the sub, from live fills AND the active plan
+function activeSubMap() {
+  const map = {};
+  Object.entries(activeRosterFills).forEach(([who, fill]) => {
+    if (fill && fill.fillWho) map[who] = { who: fill.fillWho, spec: fill.fillSpec };
+  });
+  const planId = getActivePlanId();
+  if (planId !== FULL_RAID_ID) {
+    const plan = getPlans()[planId];
+    const subs = plan ? (plan.subs || (plan.subWho ? [{ who: plan.subWho, spec: plan.subSpec }] : [])) : [];
+    subs.forEach(s => {
+      const fw = s && s.spec && SPEC_CD_MAP[s.spec] && SPEC_CD_MAP[s.spec].who;
+      if (fw && s.who) map[s.who] = { who: fw, spec: s.spec };
+    });
+  }
+  return map;
+}
+
+// Point custom-assign targets at the subs (used when loading a plan, so plans
+// saved before targets followed swaps get migrated too)
+function retargetCustomAssignsToSubs() {
+  const map = activeSubMap();
+  if (!Object.keys(map).length) return;
+  Object.values(placedCDs).forEach(rows => {
+    Object.values(rows).forEach(placements => {
+      placements.forEach(p => {
+        if (Array.isArray(p.targetWhos)) p.targetWhos = p.targetWhos.map(w => map[w] ? map[w].who : w);
+        if (p.customWho && map[p.customWho]) p.customWho = map[p.customWho].who;
+      });
+    });
+  });
+}
+
 function buildTargetPickerHtml(currentTargetWhos) {
   const isAll = !Array.isArray(currentTargetWhos) || currentTargetWhos.length === 0;
-  // Show the effective roster: a subbed-in fill replaces the original player's row
+  // Show the effective roster: a subbed-in player replaces the original's row
+  const subMap = activeSubMap();
   const pickerRoster = DEFAULT_ROSTER.map(r => {
-    const fill = activeRosterFills[r.who];
-    if (fill && fill.fillWho) {
-      const color = SPEC_CLASS_COLORS[fill.fillSpec] || r.color;
-      return { ...r, name: SPEC_SHORT_NAMES[fill.fillSpec] || fill.fillSpec, spec: fill.fillSpec, who: fill.fillWho, color };
+    const sub = subMap[r.who];
+    if (sub) {
+      const color = SPEC_CLASS_COLORS[sub.spec] || r.color;
+      return { ...r, name: SPEC_SHORT_NAMES[sub.spec] || sub.spec, spec: sub.spec, who: sub.who, color };
     }
     return r;
   });
@@ -7275,6 +7309,8 @@ function switchToPlan(id) {
     const plan = plans[id];
     if (plan && plan.placedCDs) {
       applyTimelineSnapshot(plan.placedCDs);
+      retargetCustomAssignsToSubs();
+      renderTimeline();
     }
   }
   renderBottomPanel();
