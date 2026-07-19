@@ -1744,7 +1744,6 @@ const BOSSES = [
     duration: 420,
     sections: [{ label: null, abilities: [
       { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
-      { name:'HP Assign',       time:0,   color:'#c8a84b', hpAssign:true },
       { name:'War Song 1',      time:60,  color:'#c8a227' },
       { name:'War Song 2',      time:150, color:'#c8a227' },
       { name:'War Song 3',      time:240, color:'#c8a227' },
@@ -1755,6 +1754,7 @@ const BOSSES = [
       { name:'ADD CD (NAZ) 4',  time:184, color:'#33c8c8' },
       { name:'ADD CD (NAZ) 5',  time:230, color:'#33c8c8' },
       { name:'ADD CD (NAZ) 6',  time:277, color:'#33c8c8' },
+      { name:'HP Assign',       time:0,   color:'#c8a84b', hpAssign:true },
     ]}]
   },
   {
@@ -5491,6 +5491,12 @@ function applyBossTimingOverrides() {
         if (sec && sec.abilities[entry[1]]) sec.abilities[entry[1]].time = entry[2];
       });
     });
+    // Nazgrim always keeps an HP Assign row at the bottom, even after a log sync
+    // (which replaces the ability list wholesale and would otherwise drop it).
+    var naz = BOSSES.find(function(b){ return b.id === 'generalnazmak'; });
+    if (naz && naz.sections[0] && !naz.sections[0].abilities.some(function(a){ return a.hpAssign; })) {
+      naz.sections[0].abilities.push({ name:'HP Assign', time:0, color:'#c8a84b', hpAssign:true });
+    }
   } catch(e) {}
 }
 
