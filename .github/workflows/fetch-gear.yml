@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "gear-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/gear.json
+          git add data/gear.json data/ilvl-history.json data/item-levels.json
           if git diff --cached --quiet; then
             echo "No gear changes."
           else

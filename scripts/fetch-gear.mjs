@@ -17,6 +17,9 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ROSTER = path.join(root, 'data', 'roster.json');
 const GEAR = path.join(root, 'data', 'gear.json');
 const ILVL_CACHE = path.join(root, 'data', 'item-levels.json');
+const ILVL_HISTORY = path.join(root, 'data', 'ilvl-history.json');
+// upgrade_id -> +ilvl from the game's ItemUpgrade table (wago.tools, build 5.5.4)
+const UPGRADE_LEVELS = JSON.parse(fs.readFileSync(path.join(root, 'data', 'upgrade-levels.json'), 'utf8'));
 
 const clientId = process.env.BLIZZARD_CLIENT_ID;
 const clientSecret = process.env.BLIZZARD_CLIENT_SECRET;
@@ -63,6 +66,7 @@ async function fetchCharacter(token, region, realm, name) {
     id: it.item && it.item.id,
     name: typeof it.name === 'string' ? it.name : (it.name && it.name.en_US) || '',
     ilvl: 0, // the classic equipment API has no item level — filled in below from static item data
+    upgrade: UPGRADE_LEVELS[it.upgrade_id] || 0, // valor upgrade bonus (+8/+14 etc.)
     quality: (it.quality && it.quality.type) || '',
     invType: (it.inventory_type && it.inventory_type.type) || '', // TWOHWEAPON = fills both weapon slots
   })).filter((it) => it.slot && it.id);
@@ -97,7 +101,8 @@ async function fillItemLevels(token, region, characters) {
   }
   if (fetched) fs.writeFileSync(ILVL_CACHE, JSON.stringify(cache, null, 2) + '\n');
   for (const entry of Object.values(characters)) {
-    for (const it of entry.items || []) it.ilvl = cache[it.id] || 0;
+    // effective ilvl = base item level + valor upgrade bonus
+    for (const it of entry.items || []) it.ilvl = (cache[it.id] || 0) && (cache[it.id] + (it.upgrade || 0));
   }
   console.log(`Item levels: ${fetched} newly fetched, ${Object.keys(cache).length} cached total`);
 }
@@ -158,3 +163,30 @@ if (changed) out.fetchedAt = new Date().toISOString();
 
 fs.writeFileSync(GEAR, JSON.stringify(out, null, 2) + '\n');
 console.log(`Wrote data/gear.json (${okCount}/${roster.characters.length} characters OK, changed=${changed})`);
+
+// ── ilvl history: one entry per calendar day, latest run wins ──
+// Records each raider's average equipped ilvl so bis.html can chart progress.
+{
+  let history = [];
+  try { history = JSON.parse(fs.readFileSync(ILVL_HISTORY, 'utf8')); } catch { /* first run */ }
+  const day = new Date().toISOString().slice(0, 10);
+  const chars = {};
+  for (const [name, entry] of Object.entries(out.characters)) {
+    const ilvls = (entry.items || [])
+      .filter((it) => it.slot !== 'SHIRT' && it.slot !== 'TABARD')
+      .map((it) => it.ilvl).filter((n) => n > 0);
+    if (ilvls.length) chars[name] = +(ilvls.reduce((a, b) => a + b, 0) / ilvls.length).toFixed(1);
+  }
+  const avgs = Object.values(chars);
+  if (avgs.length) {
+    const point = {
+      date: day,
+      team: +(avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(1),
+      chars,
+    };
+    const idx = history.findIndex((h) => h.date === day);
+    if (idx >= 0) history[idx] = point; else history.push(point);
+    fs.writeFileSync(ILVL_HISTORY, JSON.stringify(history, null, 2) + '\n');
+    console.log(`Wrote data/ilvl-history.json (${history.length} days, team avg ${point.team})`);
+  }
+}
