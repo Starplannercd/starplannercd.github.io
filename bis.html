@@ -181,6 +181,7 @@
   .raider-head { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .raider-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; }
   .raider-score { margin-left: auto; font-weight: 700; }
+  .raider-ilvl { color: var(--text2); font-weight: 600; font-size: 12px; margin-right: 14px; font-variant-numeric: tabular-nums; }
   .badge {
     font-size: 11px;
     font-weight: 700;
@@ -586,7 +587,12 @@ function renderRaiders() {
       const counted = rows.filter((r) => r.status !== 'needsId' && r.bis.source !== GOAL_BOSS);
       const got = counted.filter((r) => r.status === 'obtained' || r.status === 'good').length;
       const total = counted.length;
-      html += '<span class="raider-score" style="color:' + col + '" title="Garrosh items not counted (final boss)">' + got + ' / ' + total + ' BiS</span>';
+      // equipped average ilvl (skip items whose ilvl lookup failed)
+      const ilvls = (entry.items || []).map((it) => it.ilvl).filter((n) => n > 0);
+      const avg = ilvls.length ? (ilvls.reduce((a, b) => a + b, 0) / ilvls.length).toFixed(1) : null;
+      html += '<span class="raider-score" style="color:' + col + '" title="Garrosh items not counted (final boss)">' +
+        (avg ? '<span class="raider-ilvl" title="Average equipped item level">' + avg + ' ilvl</span>' : '') +
+        got + ' / ' + total + ' BiS</span>';
     } else {
       html += '<span class="raider-score" style="color:var(--text3)">no gear data</span>';
     }
