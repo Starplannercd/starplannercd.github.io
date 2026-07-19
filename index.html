@@ -2229,6 +2229,19 @@ function applyFill(playerWho, fillSpecName) {
     swapPlacementsAllBosses(cdId, replacementId, fillWho);
   });
 
+  // Retarget custom assigns aimed at the swapped-out player to the fill
+  // (revertFill restores the full placedCDs snapshot, so no undo logic needed)
+  Object.values(placedCDs).forEach(rows => {
+    Object.values(rows).forEach(placements => {
+      placements.forEach(p => {
+        if (Array.isArray(p.targetWhos) && p.targetWhos.includes(playerWho)) {
+          p.targetWhos = p.targetWhos.map(w => w === playerWho ? fillWho : w);
+        }
+        if (p.customWho === playerWho) p.customWho = fillWho;
+      });
+    });
+  });
+
   activeRosterFills[playerWho] = { fillSpec: fillSpecName, originalCds, fillCds, fillWho, placedSnapshot };
   updateFillIndicator();
   isDirty = true;
@@ -3423,7 +3436,16 @@ const FOJI_ABILITY_KEYS = {
 
 function buildTargetPickerHtml(currentTargetWhos) {
   const isAll = !Array.isArray(currentTargetWhos) || currentTargetWhos.length === 0;
-  const rows = DEFAULT_ROSTER.map(r => {
+  // Show the effective roster: a subbed-in fill replaces the original player's row
+  const pickerRoster = DEFAULT_ROSTER.map(r => {
+    const fill = activeRosterFills[r.who];
+    if (fill && fill.fillWho) {
+      const color = SPEC_CLASS_COLORS[fill.fillSpec] || r.color;
+      return { ...r, name: SPEC_SHORT_NAMES[fill.fillSpec] || fill.fillSpec, spec: fill.fillSpec, who: fill.fillWho, color };
+    }
+    return r;
+  });
+  const rows = pickerRoster.map(r => {
     const checked = !isAll && currentTargetWhos.includes(r.who);
     return `<label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;">
       <input type="checkbox" class="tp-player" value="${r.who}" ${checked ? 'checked' : ''} style="accent-color:${r.color};cursor:pointer;width:13px;height:13px;">
