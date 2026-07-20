@@ -1,9 +1,9 @@
 {
-  "fetchedAt": "2026-07-19T12:03:18.471Z",
+  "fetchedAt": "2026-07-20T13:55:37.340Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:14.851Z",
+      "fetchedAt": "2026-07-20T13:55:29.167Z",
       "items": [
         {
           "slot": "HEAD",
@@ -70,8 +70,8 @@
         },
         {
           "slot": "WRIST",
-          "id": 104415,
-          "name": "Bubble-Burst Bracers",
+          "id": 104514,
+          "name": "Wall-Borer Bracers",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -88,8 +88,8 @@
         },
         {
           "slot": "FINGER_1",
-          "id": 103896,
-          "name": "Devilfang Band",
+          "id": 103794,
+          "name": "Asgorathian Blood Seal",
           "ilvl": 567,
           "upgrade": 14,
           "quality": "EPIC",
@@ -97,9 +97,9 @@
         },
         {
           "slot": "FINGER_2",
-          "id": 96448,
-          "name": "Spinescale Seal",
-          "ilvl": 549,
+          "id": 103896,
+          "name": "Devilfang Band",
+          "ilvl": 567,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -115,8 +115,8 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 96398,
-          "name": "Spark of Zandalar",
+          "id": 96501,
+          "name": "Primordius' Talisman of Rage",
           "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
@@ -153,14 +153,14 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:15.209Z",
+      "fetchedAt": "2026-07-20T13:55:29.635Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 104413,
-          "name": "Hood of Blackened Tears",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99421,
+          "name": "Headguard of the Shattered Vale",
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "HEAD"
         },
@@ -220,9 +220,9 @@
         },
         {
           "slot": "WRIST",
-          "id": 96392,
-          "name": "Bindings of Multiplicative Strikes",
-          "ilvl": 549,
+          "id": 104509,
+          "name": "Laser Burn Bracers",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "WRIST"
@@ -238,9 +238,9 @@
         },
         {
           "slot": "FINGER_1",
-          "id": 96368,
-          "name": "Sign of the Bloodied God",
-          "ilvl": 549,
+          "id": 104455,
+          "name": "Reality Ripper Ring",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -256,9 +256,9 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 96546,
-          "name": "Rune of Re-Origination",
-          "ilvl": 549,
+          "id": 104518,
+          "name": "Juggernaut's Focusing Crystal",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
@@ -274,8 +274,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102248,
-          "name": "Fen-Yu, Fury of Xuen",
+          "id": 102245,
+          "name": "Qian-Le, Courage of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -303,7 +303,7 @@
     },
     "Starship": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:15.554Z",
+      "fetchedAt": "2026-07-20T13:55:30.117Z",
       "items": [
         {
           "slot": "HEAD",
@@ -442,27 +442,18 @@
         },
         {
           "slot": "MAIN_HAND",
-          "id": 104545,
-          "name": "Kardris' Scepter",
+          "id": 104503,
+          "name": "Drakebinder Greatstaff",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
-          "invType": "WEAPON"
-        },
-        {
-          "slot": "OFF_HAND",
-          "id": 96454,
-          "name": "Fetish of the Hydra",
-          "ilvl": 549,
-          "upgrade": 14,
-          "quality": "EPIC",
-          "invType": "HOLDABLE"
+          "invType": "TWOHWEAPON"
         }
       ]
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:15.912Z",
+      "fetchedAt": "2026-07-20T13:55:30.554Z",
       "items": [
         {
           "slot": "HEAD",
@@ -475,10 +466,10 @@
         },
         {
           "slot": "NECK",
-          "id": 94754,
-          "name": "Horridon's Tusk Fragment",
-          "ilvl": 536,
-          "upgrade": 14,
+          "id": 104597,
+          "name": "Lost Necklace of the Mogu Empress",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "NECK"
         },
@@ -529,10 +520,10 @@
         },
         {
           "slot": "WRIST",
-          "id": 96758,
-          "name": "Infinitely Conducting Bracers",
-          "ilvl": 549,
-          "upgrade": 8,
+          "id": 104429,
+          "name": "Bracers of Purified Spirit",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "WRIST"
         },
@@ -601,10 +592,10 @@
         },
         {
           "slot": "OFF_HAND",
-          "id": 105023,
-          "name": "Juggernaut's Power Core",
-          "ilvl": 542,
-          "upgrade": 14,
+          "id": 104448,
+          "name": "Purehearted Cricket Cage",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "HOLDABLE"
         },
@@ -621,7 +612,7 @@
     },
     "Ixiom": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:16.303Z",
+      "fetchedAt": "2026-07-20T13:55:31.031Z",
       "items": [
         {
           "slot": "HEAD",
@@ -643,9 +634,9 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99005,
+          "id": 99111,
           "name": "Shoulderguards of the Ternion Glory",
-          "ilvl": 536,
+          "ilvl": 561,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
@@ -760,21 +751,12 @@
         },
         {
           "slot": "MAIN_HAND",
-          "id": 104545,
-          "name": "Kardris' Scepter",
+          "id": 104479,
+          "name": "Gaze of Arrogance",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
-          "invType": "WEAPON"
-        },
-        {
-          "slot": "OFF_HAND",
-          "id": 96530,
-          "name": "Orb of Arcing Lightning",
-          "ilvl": 549,
-          "upgrade": 14,
-          "quality": "EPIC",
-          "invType": "HOLDABLE"
+          "invType": "TWOHWEAPON"
         },
         {
           "slot": "TABARD",
@@ -948,7 +930,7 @@
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:17.050Z",
+      "fetchedAt": "2026-07-20T13:55:31.964Z",
       "items": [
         {
           "slot": "HEAD",
@@ -979,10 +961,10 @@
         },
         {
           "slot": "CHEST",
-          "id": 96728,
-          "name": "Robes of the Thousandfold Hells",
-          "ilvl": 543,
-          "upgrade": 8,
+          "id": 103803,
+          "name": "Mantid Vizier's Robes",
+          "ilvl": 567,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "ROBE"
         },
@@ -1015,10 +997,10 @@
         },
         {
           "slot": "WRIST",
-          "id": 96804,
-          "name": "Azure Shell Bracers",
-          "ilvl": 549,
-          "upgrade": 8,
+          "id": 104465,
+          "name": "Bracers of Broken Causation",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "WRIST"
         },
@@ -1098,7 +1080,7 @@
     },
     "Nothot": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:17.429Z",
+      "fetchedAt": "2026-07-20T13:55:32.396Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1185,8 +1167,8 @@
           "slot": "FINGER_1",
           "id": 104447,
           "name": "Petrified Pennyroyal Ring",
-          "ilvl": 573,
-          "upgrade": 7,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
         },
