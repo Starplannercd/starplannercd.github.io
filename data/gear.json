@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-07-20T13:55:37.340Z",
+  "fetchedAt": "2026-07-24T02:11:37.494Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
@@ -153,7 +153,7 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:29.635Z",
+      "fetchedAt": "2026-07-24T02:11:33.225Z",
       "items": [
         {
           "slot": "HEAD",
@@ -274,8 +274,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102245,
-          "name": "Qian-Le, Courage of Niuzao",
+          "id": 102248,
+          "name": "Fen-Yu, Fury of Xuen",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -1230,13 +1230,13 @@
     },
     "Beantotem": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:17.800Z",
+      "fetchedAt": "2026-07-24T02:11:36.274Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 99093,
+          "id": 99332,
           "name": "Headpiece of Celestial Harmony",
-          "ilvl": 561,
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "HEAD"
@@ -1281,8 +1281,8 @@
           "slot": "LEGS",
           "id": 99094,
           "name": "Leggings of Celestial Harmony",
-          "ilvl": 557,
-          "upgrade": 4,
+          "ilvl": 561,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
         },
@@ -1306,9 +1306,9 @@
         },
         {
           "slot": "HANDS",
-          "id": 103764,
-          "name": "Marco's Crackling Gloves",
-          "ilvl": 567,
+          "id": 104505,
+          "name": "Grips of Tidal Force",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
