@@ -1744,10 +1744,6 @@ const BOSSES = [
     duration: 420,
     sections: [{ label: null, abilities: [
       { name:'Encounter Start', time:0,   color:'#ffffff', encounterStart:true },
-      { name:'War Song 1',      time:60,  color:'#c8a227' },
-      { name:'War Song 2',      time:150, color:'#c8a227' },
-      { name:'War Song 3',      time:240, color:'#c8a227' },
-      { name:'War Song 4',      time:330, color:'#c8a227' },
       { name:'ADD CD (NAZ) 1',  time:45,  color:'#33c8c8' },
       { name:'ADD CD (NAZ) 2',  time:93,  color:'#33c8c8' },
       { name:'ADD CD (NAZ) 3',  time:138, color:'#33c8c8' },
@@ -3854,7 +3850,7 @@ const FOJI_ABILITY_NAME_MAP = {
   'galakras': { 'Flames': 'GALAKRAS_FLAMES', 'Pulsing': 'GALAKRAS_PULSING' },
   'ironjuggernaut': { 'Shock Pulse': 'JUGGERNAUT_SHOCK_PULSE', 'Electromagnetic': 'JUGGERNAUT_SHOCK_PULSE' },
   'darkshaman': { 'Toxic Mist': 'KORKRON_TOXIC_MIST', 'Falling Ash': 'KORKRON_FALLING_ASH' },
-  'generalnazmak': { 'ADD CD (NAZ)': 'NAZGRIM_ADDS', 'War Song': 'NAZGRIM_WAR_SONG' },
+  'generalnazmak': { 'ADD CD (NAZ)': 'NAZGRIM_ADDS' },
   'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
   'spoils': {},
   'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH', 'DS Set 1': 'THOK_DEAFENING_SCREECH_1', 'DS Set 2': 'THOK_DEAFENING_SCREECH_2', 'DS Set 3': 'THOK_DEAFENING_SCREECH_3' },
@@ -5518,7 +5514,11 @@ const BOSS_TIMING_KEY = 'tot_rcd_boss_timings';
 // Timeline rows should always follow fight time. Encounter Start is a header-like
 // row, while Nazgrim's untimed HP assignment row intentionally stays at the end.
 function sortBossAbilitiesByTime(boss, abilities) {
-  return (abilities || []).map(function(ab, index) {
+  return (abilities || []).filter(function(ab) {
+    // War Song is intentionally not part of the Nazgrim planner. Filtering
+    // here also cleans it out of timing overrides saved by older versions.
+    return boss.id !== 'generalnazmak' || !/^War Song(?:\s+\d+)?$/i.test(ab.name || '');
+  }).map(function(ab, index) {
     return { ab: ab, index: index };
   }).sort(function(a, b) {
     if (!!a.ab.encounterStart !== !!b.ab.encounterStart) return a.ab.encounterStart ? -1 : 1;
