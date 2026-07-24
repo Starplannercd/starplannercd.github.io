@@ -7292,7 +7292,11 @@ function switchToPlan(id) {
   } else {
     const plans = getPlans();
     if (plans[currentId]) {
-      plans[currentId].placedCDs = captureCurrentTimeline();
+      const snapshot = captureCurrentTimeline();
+      plans[currentId].placedCDs = snapshot.placedCDs;
+      plans[currentId].activeSetIds = snapshot.activeSetIds;
+      plans[currentId].paletteOrder = snapshot.paletteOrder;
+      plans[currentId].cdWho = snapshot.cdWho;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -7886,9 +7890,13 @@ function showEditPlanPicker(planId) {
       const name = (box.querySelector('#npName')?.value || '').trim() || plan.name;
       const subbedWhos = [...selectedOut];
       const fullSnap = getFullRaidSnapshot();
-      const newPlacedCDs = JSON.parse(JSON.stringify(plan.placedCDs || {}));
-      let newActiveSetIds = [...(fullSnap.activeSetIds || [...activeSetIds])];
-      const newCdWho = JSON.parse(JSON.stringify(fullSnap.cdWho || {}));
+      // Older builds could accidentally store captureCurrentTimeline() as the
+      // placedCDs value itself. Normalize both shapes so existing plans remain
+      // editable and are repaired the next time they are saved.
+      const savedSnapshot = plan.placedCDs?.placedCDs ? plan.placedCDs : plan;
+      const newPlacedCDs = JSON.parse(JSON.stringify(savedSnapshot.placedCDs || {}));
+      let newActiveSetIds = [...(savedSnapshot.activeSetIds || fullSnap.activeSetIds || [...activeSetIds])];
+      const newCdWho = JSON.parse(JSON.stringify(savedSnapshot.cdWho || fullSnap.cdWho || {}));
       const removedCdIds = new Set();
       subbedWhos.forEach(who => {
         const player = DEFAULT_ROSTER.find(r => r.who === who);
@@ -7909,6 +7917,11 @@ function showEditPlanPicker(planId) {
       const allPlans = getPlans();
       allPlans[planId].name = name;
       allPlans[planId].subbedOut = subbedWhos;
+      allPlans[planId].subs = subbedWhos
+        .filter(who => subIns[who])
+        .map(who => ({ who, spec: subIns[who] }));
+      allPlans[planId].subWho = allPlans[planId].subs[0]?.who || null;
+      allPlans[planId].subSpec = allPlans[planId].subs[0]?.spec || null;
       allPlans[planId].placedCDs = newPlacedCDs;
       allPlans[planId].activeSetIds = newActiveSetIds;
       allPlans[planId].cdWho = newCdWho;
