@@ -5838,6 +5838,7 @@ document.getElementById('screenshotBtn').addEventListener('click', () => createS
 // ---- localStorage auto-save ----
 const LS_KEY = 'tot_rcd_autosave';
 const PLANS_KEY = 'tot_rcd_plans';
+const PLAN_BACKUPS_KEY = 'tot_rcd_plan_backups';
 const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
 const FULL_RAID_ID = '__full_raid__';
 const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
@@ -7590,7 +7591,18 @@ function getPlans() {
 }
 
 function savePlans(plans) {
-  localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
+  const next = JSON.stringify(plans);
+  try {
+    const previous = localStorage.getItem(PLANS_KEY);
+    if (previous && previous !== next) {
+      const backups = JSON.parse(localStorage.getItem(PLAN_BACKUPS_KEY) || '[]');
+      if (!backups.length || JSON.stringify(backups[0].plans) !== previous) {
+        backups.unshift({ savedAt: Date.now(), plans: JSON.parse(previous) });
+        localStorage.setItem(PLAN_BACKUPS_KEY, JSON.stringify(backups.slice(0, 10)));
+      }
+    }
+  } catch(e) {}
+  localStorage.setItem(PLANS_KEY, next);
 }
 
 function getActivePlanId() {
@@ -9084,9 +9096,67 @@ async function initViewMode(viewId) {
   }
 }
 
+async function recoverPlanFromShare(shareId, requestedName) {
+  if (!/^[a-z0-9_-]{8,32}$/i.test(shareId || '')) return;
+  try {
+    const snap = await firebase.database().ref(FB_SHARES_PATH + '/' + shareId).once('value');
+    const data = snap.val();
+    if (!data || !data.placedCDs || !Array.isArray(data.activeSetIds)) {
+      throw new Error('Recovery copy is missing or incomplete.');
+    }
+
+    const plans = getPlans();
+    const existing = Object.values(plans).find(plan => plan.recoveredFromShare === shareId);
+    if (existing) {
+      setActivePlanId(existing.id);
+      applyTimelineSnapshot(existing);
+      renderBottomPanel();
+      updatePlansBtn();
+      history.replaceState(null, '', window.location.pathname);
+      alert(`"${existing.name}" is already restored and has been opened.`);
+      return;
+    }
+
+    const safeName = String(requestedName || 'Recovered Plan').trim().slice(0, 60) || 'Recovered Plan';
+    const id = 'plan_recovered_' + Date.now();
+    const cdWho = { ...BASE_CD_WHO };
+    (data.roster || []).forEach(player => {
+      if (!player || !player.who || !Array.isArray(player.cds)) return;
+      player.cds.forEach(cdId => { if (CD_POOL.some(cd => cd.id === cdId)) cdWho[cdId] = player.who; });
+    });
+
+    plans[id] = {
+      id,
+      name: safeName,
+      subs: [],
+      subWho: null,
+      subSpec: null,
+      subbedOut: [],
+      placedCDs: JSON.parse(JSON.stringify(data.placedCDs)),
+      activeSetIds: data.activeSetIds.filter(cdId => CD_POOL.some(cd => cd.id === cdId)),
+      paletteOrder: {},
+      cdWho,
+      bossDisabledIds: {},
+      recoveredFromShare: shareId,
+      recoveredAt: Date.now(),
+      savedAt: data.createdAt || Date.now(),
+    };
+    savePlans(plans);
+    setActivePlanId(id);
+    applyTimelineSnapshot(plans[id]);
+    renderBottomPanel();
+    updatePlansBtn();
+    history.replaceState(null, '', window.location.pathname);
+    alert(`Recovered "${safeName}" from the saved share copy.`);
+  } catch(e) {
+    alert('Plan recovery failed: ' + e.message);
+  }
+}
+
 // Check for view mode on load
 const _urlParams = new URLSearchParams(window.location.search);
 const _viewId = _urlParams.get('view');
+const _recoverShareId = _urlParams.get('recover');
 if (_viewId) {
   // Immediately hide auth/app so nothing flashes
   const _authEl = document.getElementById('authScreen');
@@ -9101,6 +9171,14 @@ if (_viewId) {
     }
   }, 100);
   setTimeout(() => clearInterval(_waitForFb), 10000);
+} else if (_recoverShareId) {
+  const _waitForRecoveryFb = setInterval(() => {
+    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+      clearInterval(_waitForRecoveryFb);
+      recoverPlanFromShare(_recoverShareId, _urlParams.get('name'));
+    }
+  }, 100);
+  setTimeout(() => clearInterval(_waitForRecoveryFb), 10000);
 }
 
 
