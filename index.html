@@ -1591,7 +1591,7 @@ const CD_POOL = [
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
   { id:'hstone',    name:'Healthstone', short:'HS', cd:0,   dur:15, color:'#40c060', textColor:'#88e8a0', who:'ALL',    core:true  },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
-  { id:'tranq',     name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1',    core:false },
+  { id:'tranq',     name:'Resto Druid Tranquility', short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1', core:false },
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
   { id:'symbtranq', name:'Symbiosis Tranquility', short:'SymbT', palShort:'Symb Tranq', cd:480, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'SPRIEST1', core:false },
   { id:'xuen',      name:'Invoke Xuen',   short:'Xuen',  cd:180, dur:45,color:'#00ff96', textColor:'#00ff96', who:'MWMONK1',  core:false },
@@ -4342,7 +4342,7 @@ function showManageModal() {
   overlay.innerHTML = `
     <div class="modal-box" style="width:520px;">
       <h3>Manage Raid Cooldowns</h3>
-      <div class="modal-sub">Showing CDs for <strong>${boss?.name ?? bossId}</strong>. Changes apply to this boss only — all CDs are on by default for every boss.</div>
+      <div class="modal-sub">Showing CDs for <strong>${boss?.name ?? bossId}</strong>. Changes apply to this boss only. Optional cooldowns can be enabled per encounter.</div>
       <div class="manage-grid" id="manageGrid">${itemsHtml}</div>
       <div class="modal-footer">
         <button id="manageDone" class="copy-btn">Done</button>
@@ -4474,7 +4474,7 @@ function loadFromFile(file) {
       if (data.activeSetIds) {
         const coreIds = CD_POOL.filter(c => c.core).map(c => c.id);
         activeSetIds = new Set([...data.activeSetIds, ...coreIds]);
-        ensureSymbtranqInSet();
+        ensureManageOptionalCdsInSet();
       }
       if (data.paletteOrder && !Array.isArray(data.paletteOrder)) Object.assign(paletteOrder, data.paletteOrder);
       if (data.fadeModeByBoss) Object.assign(fadeModeByBoss, data.fadeModeByBoss);
@@ -5995,15 +5995,18 @@ function migrateRowKeys(cds) {
   return migrated;
 }
 
-// Keep Symbiosis Tranquility selectable in Manage CDs even when restored
-// state predates it: add to the active set, disabled on every boss, the
-// first time a given restore doesn't know about it. Idempotent.
-function ensureSymbtranqInSet() {
-  if (activeSetIds.has('symbtranq')) return;
-  activeSetIds.add('symbtranq');
-  BOSSES.forEach(function(b){
-    if (!bossDisabledIds[b.id]) bossDisabledIds[b.id] = new Set();
-    bossDisabledIds[b.id].add('symbtranq');
+// Keep manual/optional abilities selectable in Manage CDs even when restored
+// state predates them. Newly introduced entries start disabled on every boss;
+// existing plans that already use one keep their current state. Idempotent.
+const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz'];
+function ensureManageOptionalCdsInSet() {
+  MANAGE_OPTIONAL_CD_IDS.forEach(function(cdId) {
+    if (activeSetIds.has(cdId)) return;
+    activeSetIds.add(cdId);
+    BOSSES.forEach(function(b) {
+      if (!bossDisabledIds[b.id]) bossDisabledIds[b.id] = new Set();
+      bossDisabledIds[b.id].add(cdId);
+    });
   });
 }
 
@@ -6024,7 +6027,7 @@ function fbApplyData(data) {
     bossDisabledIds = {};
     Object.entries(data.bossDisabledIds).forEach(([k, v]) => { bossDisabledIds[k] = new Set(v); });
   }
-  ensureSymbtranqInSet();
+  ensureManageOptionalCdsInSet();
   return true;
 }
 
@@ -6291,8 +6294,8 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.removeItem(BOSS_TIMING_KEY);
   localStorage.setItem('tot_rcd_timing_ver', '2');
 }
-// Ensure Symbiosis Tranquility is in the active set (disabled per boss) after local restore
-try { ensureSymbtranqInSet(); } catch(e) {}
+// Ensure manual Manage CDs entries exist (disabled per boss) after local restore
+try { ensureManageOptionalCdsInSet(); } catch(e) {}
 
 // Migrate Dark Shaman placements to the Top/Bot Side layout (6 ashes per side).
 // Old single-list ashes 1-7: odd ashes land on Top Side, even on Bot Side, at
@@ -7592,7 +7595,7 @@ function applyTimelineSnapshot(snapshot) {
     const utilIds = CD_POOL.filter(c => c.who === 'ALL').map(c => c.id);
     activeSetIds = new Set([...snapshot.activeSetIds, ...utilIds]);
   }
-  ensureSymbtranqInSet();
+  ensureManageOptionalCdsInSet();
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
   // Restore paletteOrder
@@ -8089,7 +8092,7 @@ function showNewPlanPicker() {
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
     Object.assign(placedCDs, newPlacedCDs);
     activeSetIds = new Set(newActiveSetIds);
-    ensureSymbtranqInSet();
+    ensureManageOptionalCdsInSet();
     CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
     paletteOrder = JSON.parse(JSON.stringify(srcSnap.paletteOrder));
 
@@ -8343,7 +8346,7 @@ function showEditPlanPicker(planId) {
         Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
         Object.assign(placedCDs, newPlacedCDs);
         activeSetIds = new Set(finalActiveSetIds);
-        ensureSymbtranqInSet();
+        ensureManageOptionalCdsInSet();
         CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
         buildPalette(); renderTimeline();
       }
