@@ -3395,10 +3395,12 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Mass Spell Reflection': '114028',
   'Mass Dispel':           '32375',
   'Life Cocoon':           '116849',
-  'Capacitor Totem':       '192058',
+  'Capacitor Totem':       '108269',
   'Vigilance':             '114030',
   'Hand of Sacrifice':     '6940',
   'Hand of Freedom':       '1044',
+  'Blessing of Protection':'1022',
+  'Pain Suppression':      '33206',
   'Guardian Spirit':       '47788',
   'Grounding Totem':       '8177',
   'Tremor Totem':          '8143',
@@ -4459,7 +4461,11 @@ function buildSummaryForBoss(boss) {
       if (!placements || !placements.length) return;
       const _bossDisabled = bossDisabledIds[boss.id];
       const sorted = [...placements]
-        .filter(p => p.cdId !== 'custom' && !['lhammer','lhammer2','divfavor'].includes(p.cdId) && activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId)))
+        .filter(p => {
+          if (['lhammer','lhammer2','divfavor'].includes(p.cdId)) return false;
+          if (p.cdId === 'custom') return true;
+          return activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId));
+        })
         .sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
       if (sorted.length) rows.push({ ab, sorted });
     });
