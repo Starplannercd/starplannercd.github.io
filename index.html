@@ -3218,21 +3218,21 @@ function onDragUp(e) {
       // Snapshot custom meta before removing so we can restore it
       const _draggedRow = (placedCDs[drag.moveBossId] || {})[drag.moveRowKey] || [];
       const _draggedP = _draggedRow.find(p => p.id === drag.movePlacedId);
-      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, hpPct: _draggedP.hpPct, targetWhos: _draggedP.targetWhos } : null;
+      const _dragMeta = _draggedP ? { customWho: _draggedP.customWho, customTts: _draggedP.customTts, customName: _draggedP.customName, customAbility: _draggedP.customAbility, customSpellId: _draggedP.customSpellId, customBossAbility: _draggedP.customBossAbility, customBossCount: _draggedP.customBossCount, hpPct: _draggedP.hpPct, targetWhos: _draggedP.targetWhos } : null;
       __rawRemove(drag.moveBossId, drag.moveRowKey, drag.movePlacedId);
 
       if (displaced && (drag.moveBossId !== bossId || drag.moveRowKey !== rowKey)) {
         // Move displaced CD to source position (different row swap)
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, customBossCount: displaced.customBossCount, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(drag.moveBossId, drag.moveRowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       } else if (displaced && drag.moveRowKey === rowKey) {
         // Same row swap: remove displaced then move it to source cell
         const srcCellIndex = drag.moveCell;
         const srcCellCenter = (srcCellIndex * 30) + 15;
-        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
+        const displacedMeta = { customWho: displaced.customWho, customTts: displaced.customTts, customName: displaced.customName, customAbility: displaced.customAbility, customSpellId: displaced.customSpellId, customBossAbility: displaced.customBossAbility, customBossCount: displaced.customBossCount, hpPct: displaced.hpPct, targetWhos: displaced.targetWhos };
         __rawRemove(bossId, rowKey, displaced.id);
         placeCdWithOffset(bossId, rowKey, displaced.cdId, srcCellCenter, displaced.offset, srcCellIndex, displacedMeta);
       }
@@ -3738,6 +3738,10 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Count</label>
+      <input type="number" id="customBossCount" value="${p.customBossCount != null ? p.customBossCount : 1}" min="1" max="99" step="1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Ability</label>
       <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
@@ -3838,6 +3842,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const ability = popup.querySelector('#customAbility') ? popup.querySelector('#customAbility').value : '';
       const targetWhos = getCustomAbilityTargetWhos(popup, ability);
       const bossAbility = popup.querySelector('#customBossAbility') ? popup.querySelector('#customBossAbility').value : '';
+      const bossCount = Math.max(1, parseInt(popup.querySelector('#customBossCount')?.value || '1', 10) || 1);
       let customName = popup.querySelector('#customName').value.trim();
       let tts = popup.querySelector('#customTts').value.trim();
       if (ability && !customName) customName = ability;
@@ -3849,6 +3854,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       if (placedItem) {
         if (ability) placedItem.customAbility = ability;
         placedItem.customBossAbility = bossAbility || null;
+        placedItem.customBossCount = bossCount;
         placedItem.targetWhos = targetWhos;
       }
       renderTimeline();
@@ -4105,6 +4111,9 @@ function buildFojiExport() {
           if (_customBossEntry) {
             _bossAbKey = _customBossEntry[1];
             _castNum = getCastNumber(_customBossEntry[0]);
+          }
+          if (isCustomPlacement && p.customBossCount != null) {
+            _castNum = Math.max(1, parseInt(p.customBossCount, 10) || 1);
           }
           const isPersonals = p.cdId === 'personals';
           const isHstone = p.cdId === 'hstone';
@@ -8907,7 +8916,8 @@ document.addEventListener('keydown', e => {
     if (!p) return;
     _cdClipboard = { cdId: p.cdId, offset: p.offset, hpPct: p.hpPct,
       customWho: p.customWho, customTts: p.customTts, customName: p.customName,
-      customAbility: p.customAbility, customSpellId: p.customSpellId, customBossAbility: p.customBossAbility };
+      customAbility: p.customAbility, customSpellId: p.customSpellId, customBossAbility: p.customBossAbility,
+      customBossCount: p.customBossCount, targetWhos: p.targetWhos };
     placedEl.style.outline = '2px solid #fff8';
     setTimeout(() => { if (placedEl.isConnected) placedEl.style.outline = ''; }, 350);
   }
@@ -8927,6 +8937,7 @@ document.addEventListener('keydown', e => {
     const meta = { customWho: _cdClipboard.customWho, customTts: _cdClipboard.customTts,
       customName: _cdClipboard.customName, customAbility: _cdClipboard.customAbility,
       customSpellId: _cdClipboard.customSpellId, customBossAbility: _cdClipboard.customBossAbility,
+      customBossCount: _cdClipboard.customBossCount, targetWhos: _cdClipboard.targetWhos,
       hpPct: _cdClipboard.hpPct };
     placeCdWithOffset(bossId, rowKey, _cdClipboard.cdId, time, _cdClipboard.offset, cellIndex, meta);
   }
