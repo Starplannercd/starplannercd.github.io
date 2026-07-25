@@ -6125,7 +6125,17 @@ function startFirebaseSync() {
     _fbListening = true;
     fbApplyData(data);
     try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
-    renderTimeline();
+    // Firebase stores the shared Full Raid state. If a local plan is active,
+    // retain the incoming Full Raid snapshot for later but immediately restore
+    // the local plan so its roster and Manage CDs state are not overwritten.
+    const activePlanId = getActivePlanId();
+    const activePlan = activePlanId !== FULL_RAID_ID ? getPlans()[activePlanId] : null;
+    if (activePlan) {
+      try { localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(captureCurrentTimeline())); } catch(e) {}
+      applyTimelineSnapshot(activePlan);
+    } else {
+      renderTimeline();
+    }
     renderBottomPanel();
     refreshBossSelectLabels();
     updateNotesTabIcon();
@@ -6185,6 +6195,25 @@ function _initFirebaseCore() {
 }
 
 function autoSave() {
+  const activePlanId = getActivePlanId();
+  if (activePlanId !== FULL_RAID_ID) {
+    // Custom plans are local snapshots with their own roster/CD state. Saving
+    // them into the shared Full Raid record causes roster-excluded CDs to leak
+    // back in on refresh and can overwrite the guild-wide Full Raid timeline.
+    const plans = getPlans();
+    if (plans[activePlanId]) {
+      const snapshot = captureCurrentTimeline();
+      plans[activePlanId].placedCDs = snapshot.placedCDs;
+      plans[activePlanId].activeSetIds = snapshot.activeSetIds;
+      plans[activePlanId].paletteOrder = snapshot.paletteOrder;
+      plans[activePlanId].cdWho = snapshot.cdWho;
+      plans[activePlanId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[activePlanId].savedAt = Date.now();
+      savePlans(plans);
+    }
+    return;
+  }
+
   const data = fbGetData();
   // Always save locally
   try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
@@ -6311,6 +6340,15 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
 }
 // Ensure manual Manage CDs entries exist (disabled per boss) after local restore
 try { ensureManageOptionalCdsInSet(); } catch(e) {}
+// The general autosave above represents Full Raid. A selected custom plan has
+// its own timeline, roster and per-boss Manage CDs snapshot and must win after
+// refresh.
+try {
+  const _activePlanId = getActivePlanId();
+  const _activePlan = _activePlanId !== FULL_RAID_ID ? getPlans()[_activePlanId] : null;
+  if (_activePlan) applyTimelineSnapshot(_activePlan);
+  else if (_activePlanId !== FULL_RAID_ID) setActivePlanId(FULL_RAID_ID);
+} catch(e) {}
 
 // Migrate Dark Shaman placements to the Top/Bot Side layout (6 ashes per side).
 // Old single-list ashes 1-7: odd ashes land on Top Side, even on Bot Side, at
