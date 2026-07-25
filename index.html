@@ -3399,6 +3399,7 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Vigilance':             '114030',
   'Hand of Sacrifice':     '6940',
   'Hand of Freedom':       '1044',
+  'Guardian Spirit':       '47788',
   'Grounding Totem':       '8177',
   'Tremor Totem':          '8143',
   'Fist of Justice':       '105593',
@@ -4028,7 +4029,10 @@ const FOJI_ABILITY_NAME_MAP = {
 
 // Determine which boss ability key to use for a row
 function getBossAbilityKey(boss, rowKey, abName) {
-  if (abName && abName.startsWith('HP Assign')) return boss.id.toUpperCase() + '_HEALTH';
+  if (abName && abName.startsWith('HP Assign')) {
+    const healthEntry = (FOJI_BOSS_ABILITIES[boss.id] || []).find(item => /_HEALTH$/.test(item[1]));
+    return healthEntry ? healthEntry[1] : boss.id.toUpperCase() + '_HEALTH';
+  }
   if (abName && abName.startsWith('Encounter Start')) return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
 
   // Check ability name map for this boss
@@ -4123,7 +4127,13 @@ function buildFojiExport() {
             ? p.targetWhos.map(w => _whoRemap[w] || w)
             : [baseWho];
           _targetWhos.forEach(who => {
-            lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+            // Foji's health-assignment rows use a distinct 10-field format:
+            // boss health key / health % / player / offset / spell / NPC name.
+            if (ab.hpAssign && !ab.hpLabel) {
+              lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/${boss.name}/nil/nil/nil/nil`);
+            } else {
+              lines.push(`${_bossAbKey}/${_castNum}/${who}/${_exportOffset}/${spellId}/nil/${ttsText}/${displayText}/${iconId}`);
+            }
           });
         });
       });
