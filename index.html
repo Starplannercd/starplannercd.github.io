@@ -3417,31 +3417,157 @@ const CUSTOM_ABILITY_SPELL_IDS = {
 let activePopup = null;
 
 const FOJI_BOSS_ABILITIES = {
-  immerseus:       ['Encounter Start','Health %'],
-  fallenprotectors:['Encounter Start','Health %'],
-  norushen:        ['Encounter Start','Health %'],
-  sha:             ['Encounter Start','Health %'],
-  galakras:        ['Encounter Start','Health %'],
-  ironjuggernaut:  ['Encounter Start','Health %'],
-  darkshaman:      ['Encounter Start','Health %'],
-  generalnazmak:   ['Encounter Start','Health %'],
-  malkorok:        ['Encounter Start','Health %'],
-  spoils:          ['Encounter Start','Health %'],
-  thok:            ['Encounter Start','Health %'],
-  siegecrafter:    ['Encounter Start','Health %'],
-  paragons:        ['Encounter Start','Health %'],
-  garrosh:         ['Encounter Start','Health %','Phase 2','Phase 3','Intermission 1','Intermission 2'],
+  immerseus: [
+    ['Encounter Start (IMM)','IMMERSEUS_ENC_START'], ['Health % (IMM)','IMMERSEUS_HEALTH'],
+    ['Corrosive Blast','IMMERSEUS_BLAST'], ['Swirl','IMMERSEUS_SWIRL'],
+    ['Swelling Corruption','IMMERSEUS_SWELLING_CORRUPTION'], ['Reform','IMMERSEUS_REFORM'],
+    ['Split','IMMERSEUS_SPLIT'], ['Sha Bolt','IMMERSEUS_SHA_BOLT'],
+  ],
+  fallenprotectors: [
+    ['Encounter Start (FAL)','FALLEN_ENC_START'], ['Health % (FAL)','FALLEN_HEALTH'],
+    ['Vengeful Strikes','FALLEN_VENGEFUL_STRIKES'], ['Corrupted Brew','FALLEN_CORRUPTED_BREW'],
+    ['Clash','FALLEN_CLASH'], ['Defiled Ground','FALLEN_DEFILED_GROUND'],
+    ['Inferno Strike','FALLEN_INFERNO_STRIKE'], ['Gouge (FAL)','FALLEN_GOUGE'],
+    ['Garrote','FALLEN_GARROTE'], ['Shadow Word: Bane','FALLEN_BANE'],
+    ['Calamity','FALLEN_CALAMITY'], ['Desperate Measures Rook','FALLEN_DESPERATE_MEASURES_ROOK'],
+    ['Desperate Measures He','FALLEN_DESPERATE_MEASURES_HE'], ['Desperate Measures Sun','FALLEN_DESPERATE_MEASURES_SUN'],
+    ['Mark of Anguish','FALLEN_MARK'],
+  ],
+  norushen: [
+    ['Encounter Start (NOR)','NORUSHEN_ENC_START'], ['Health % (NOR)','NORUSHEN_HEALTH'],
+    ['Unleashed Anger','NORUSHEN_UNLEASHED_ANGER'], ['Blind Hatred','NORUSHEN_BLIND_HATRED'],
+    ['Disheartening Laugh','NORUSHEN_DISHEARTENING_LAUGH'], ['Lingering Corruption','NORUSHEN_LINGERING_CORRUPTION'],
+    ['Titanic Smash','NORUSHEN_TITANIC_SMASH'], ['Piercing Corruption','NORUSHEN_PIERCING_CORRUPTION'],
+    ['Hurl Corruption','NORUSHEN_HURL_CORRUPTION'], ['Manifestation','NORUSHEN_MANIFESTATION'],
+    ['Self Doubt','NORUSHEN_SELF_DOUBT'],
+  ],
+  sha: [
+    ['Encounter Start (SHA)','SHAPRIDE_ENC_START'], ['Health % (SHA)','SHAPRIDE_HEALTH'],
+    ['Mark of Arrogance','SHAPRIDE_MARK_OF_ARROGANCE'], ['Self-Reflection','SHAPRIDE_SELF_REFLECTION'],
+    ['Wounded Pride','SHAPRIDE_WOUNDED_PRIDE'], ['Banishment','SHAPRIDE_BANISHMENT'],
+    ['Corrupted Prison','SHAPRIDE_CORRUPTED_PRISON'], ['Swelling Pride','SHAPRIDE_SWELLING_PRIDE'],
+    ['Unleashed','SHAPRIDE_UNLEASHED'], ['Manifestation of Pride','SHAPRIDE_MANIFESTATION'],
+    ['Phase 2 Start (SHA)','SHAPRIDE_P2'],
+  ],
+  galakras: [
+    ['Encounter Start (GAL)','GALAKRAS_ENC_START'], ['Health % (GAL)','GALAKRAS_HEALTH'],
+    ['Shattering Cleave','GALAKRAS_SHATTERING_CLEAVE'], ["Crusher's Call",'GALAKRAS_CRUSHERS_CALL'],
+    ['Phase 2 Start (GAL)','GALAKRAS_P2'], ['Flames of Galakrond','GALAKRAS_FLAMES'],
+    ['Pulsing Flames','GALAKRAS_PULSING'], ['Adds CD (GAL)','GALAKRAS_ADDS'],
+    ['Tower Grunt CD','GALAKRAS_TOWER_GRUNT'], ['Demolisher CD','GALAKRAS_DEMOLISHER'],
+  ],
+  ironjuggernaut: [
+    ['Encounter Start (JUG)','JUGGERNAUT_ENC_START'], ['Health % (JUG)','JUGGERNAUT_HEALTH'],
+    ['Assault Mode','JUGGERNAUT_ASSAULT_MODE'], ['Ignite Armor','JUGGERNAUT_IGNITE_ARMOR'],
+    ['Borer Drill','JUGGERNAUT_BORER_DRILL'], ['Crawler Mine','JUGGERNAUT_CRAWLER_MINE'],
+    ['Ricochet','JUGGERNAUT_RICOCHET'], ['Deploy Siege Mode','JUGGERNAUT_SIEGE_MODE'],
+    ['Cutter Laser Target','JUGGERNAUT_CUTTER_LASER'], ['Shock Pulse','JUGGERNAUT_SHOCK_PULSE'],
+    ['Explosive Tar','JUGGERNAUT_EXPLOSIVE_TAR'],
+  ],
+  darkshaman: [
+    ['Encounter Start (KOR)','KORKRON_ENC_START'], ['Health % (KOR)','KORKRON_HEALTH'],
+    ['Toxic Mist','KORKRON_TOXIC_MIST'], ['Foul Stream','KORKRON_FOUL_STREAM'],
+    ['Ashen Wall','KORKRON_ASHEN_WALL'], ['Iron Tomb','KORKRON_IRON_TOMB'],
+    ['Toxic Storm','KORKRON_TOXIC_STORM'], ['Foul Geyser','KORKRON_FOUL_GEYSER'],
+    ['Falling Ash','KORKRON_FALLING_ASH'], ['Iron Prison','KORKRON_IRON_PRISON'],
+    ['Phase 1 Start (KOR)','KORKRON_P1'], ['Phase 2 Start (KOR)','KORKRON_P2'],
+    ['Phase 3 Start (KOR)','KORKRON_P3'], ['Phase 4 Start (KOR)','KORKRON_P4'],
+  ],
+  generalnazmak: [
+    ['Encounter Start (NAZ)','NAZGRIM_ENC_START'], ['Health % (NAZ)','NAZGRIM_HEALTH'],
+    ['Sundering Blow','NAZGRIM_SUNDERING_BLOW'], ['Execute','NAZGRIM_EXECUTE'],
+    ['Bonecracker','NAZGRIM_BONECRACKER'], ['Battle Stance','NAZGRIM_BATTLE_STANCE'],
+    ['Berserker Stance','NAZGRIM_BERSERKER_STANCE'], ['Defensive Stance','NAZGRIM_DEFENSIVE_STANCE'],
+    ['Heroic Shockwave','NAZGRIM_HEROIC_SHOCKWAVE'], ['War Song','NAZGRIM_WAR_SONG'],
+    ['Ravager','NAZGRIM_RAVAGER'], ['Banner','NAZGRIM_BANNER'],
+    ['Rage Ability','NAZGRIM_RAGE_ABILITY'], ['Adds CD (NAZ)','NAZGRIM_ADDS'],
+  ],
+  malkorok: [
+    ['Encounter Start (MAL)','MALKOROK_ENC_START'], ['Health % (MAL)','MALKOROK_HEALTH'],
+    ['Blood Rage','MALKOROK_BLOOD_RAGE'], ['Displaced Energy','MALKOROK_DISPLACED_ENERGY'],
+    ['Arcing Smash','MALKOROK_ARCING_SMASH'], ['Imploding Energy','MALKOROK_IMPLODING_ENERGY'],
+    ['Seismic Slam','MALKOROK_SEISMIC_SLAM'], ["Breath of Y'Shaarj",'MALKOROK_BREATH'],
+    ['Expel Miasma','MALKOROK_EXPEL_MIASMA'],
+  ],
+  spoils: [
+    ['Encounter Start (SPO)','SPOILS_ENC_START'], ['Health % (SPO)','SPOILS_HEALTH'],
+    ['Phase 2 Start (SPO)','SPOILS_P2'], ['Set to Blow','SPOILS_SET_TO_BLOW'],
+    ['Matter Scramble','SPOILS_MATTER_SCRAMBLE'], ['Crimson Reconstitution','SPOILS_CRIMSON_RECON'],
+    ['Mantid Swarm','SPOILS_MANTID_SWARM'], ['Residue','SPOILS_RESIDUE'],
+    ['Windstorm','SPOILS_WINDSTORM'], ['Rage of the Empress','SPOILS_RAGE'],
+    ['Gusting Bomb','SPOILS_GUSTING_CHARGE'], ['Gusting Crane Kick','SPOILS_GUSTING_CRANE_KICK'],
+    ['Path of Blossoms','SPOILS_PATH_OF_BLOSSOMS'], ['Return to Stone','SPOILS_RETURN_TO_STONE'],
+  ],
+  thok: [
+    ['Encounter Start (THO)','THOK_ENC_START'], ['Health % (THO)','THOK_HEALTH'],
+    ['Deafening Screech 1','THOK_DEAFENING_SCREECH_1'], ['Blood Frenzy','THOK_BLOOD_FRENZY'],
+    ['Acid Breath','THOK_ACID_BREATH'], ['Freezing Breath','THOK_FREEZING_BREATH'],
+    ['Scorching Breath','THOK_SCORCHING_BREATH'], ['Burning Blood','THOK_BURNING_BLOOD'],
+    ['Fearsome Roar','THOK_FEARSOME_ROAR'], ['Phase 1 Akolik','THOK_P1_AKOLIK'],
+    ['Phase 1 Gorai','THOK_P1_GORAI'], ['Phase 1 Montak','THOK_P1_MONTAK'],
+    ['Phase 2 Start (THO)','THOK_P2'], ['Deafening Screech 2','THOK_DEAFENING_SCREECH_2'],
+    ['Deafening Screech 3','THOK_DEAFENING_SCREECH_3'], ['Deafening Screech 4','THOK_DEAFENING_SCREECH_4'],
+    ['Yeti','THOK_YETI'], ['Bats','THOK_BATS'],
+  ],
+  siegecrafter: [
+    ['Encounter Start (BLA)','BLACKFUSE_ENC_START'], ['Health % (BLA)','BLACKFUSE_HEALTH'],
+    ['Protective Frenzy','BLACKFUSE_PROTECTIVE_FRENZY'], ['Electrostatic Charge','BLACKFUSE_ELECTRO_STATIC'],
+    ['Launch Sawblade','BLACKFUSE_SAWBLADE'], ['Shredder','BLACKFUSE_SHREDDER'],
+    ['Mines','BLACKFUSE_MINES'], ['Death From Above (BLA)','BLACKFUSE_DEATH_FROM_ABOVE'],
+    ['Assembly Line CD','BLACKFUSE_ASSEMBLY'], ['Magnetic Crush','BLACKFUSE_MAGNETIC_CRUSH'],
+    ['Shockwave Missile','BLACKFUSE_MISSILE'], ['Overcharge Mine','BLACKFUSE_OVERCHARGE_MINE'],
+    ['Overcharge Missile','BLACKFUSE_OVERCHARGE_MISSILE'], ['Overcharge Turret','BLACKFUSE_OVERCHARGE_TURRET'],
+    ['Overcharge Electro','BLACKFUSE_OVERCHARGE_ELECTRO'], ['Overcharge Laser','BLACKFUSE_OVERCHARGE_LASER'],
+    ['Overload 1','BLACKFUSE_OVERLOAD_1'], ['Overload 2','BLACKFUSE_OVERLOAD_2'],
+    ['Overload 3','BLACKFUSE_OVERLOAD_3'], ['Overload 4','BLACKFUSE_OVERLOAD_4'],
+    ['Overload 5','BLACKFUSE_OVERLOAD_5'], ['Overload 6','BLACKFUSE_OVERLOAD_6'],
+    ['Overload 7','BLACKFUSE_OVERLOAD_7'], ['Overload 8','BLACKFUSE_OVERLOAD_8'],
+    ['Overload 9','BLACKFUSE_OVERLOAD_9'], ['Overload 10','BLACKFUSE_OVERLOAD_10'],
+  ],
+  paragons: [
+    ['Encounter Start (PAR)','PARAGONS_ENC_START'], ['Health % (PAR)','PARAGONS_HEALTH'],
+    ["Kil'ruk",'PARAGONS_KILRUK'], ['Gouge (PAR)','PARAGONS_GOUGE'],
+    ['Reave','PARAGONS_REAVE'], ['Death from Above (PAR)','PARAGONS_DEATH_FROM_ABOVE'],
+    ['Xaril','PARAGONS_XARIL'], ['Toxic Catalyst CD','PARAGONS_CATALYST'],
+    ['Toxic Injection','PARAGONS_TOXIC_INJECTION'], ["Kaz'tik",'PARAGONS_KAZTIK'],
+    ['Mesmerize','PARAGONS_MESMERIZE'], ['Korven','PARAGONS_KORVEN'],
+    ['Shield Bash','PARAGONS_SHIELD_BASH'], ['Encase in Amber','PARAGONS_ENCASE_IN_AMBER'],
+    ['Iyyokuk','PARAGONS_IYYOKUK'], ['Insane Calculation: Fiery Edge','PARAGONS_INSANE_CALCULATION'],
+    ["Ka'roz",'PARAGONS_KAROZ'], ['Whirling','PARAGONS_FLASH'],
+    ['Hurl Amber','PARAGONS_HURL_AMBER'], ['Skeer','PARAGONS_SKEER'],
+    ['Bloodletting','PARAGONS_BLOODLETTING'], ["Rik'kal",'PARAGONS_RIKKAL'],
+    ['Mutate','PARAGONS_MUTATE'], ['Injection','PARAGONS_INJECTION'],
+    ['Hisek','PARAGONS_HISEK'], ['Aim','PARAGONS_AIM'], ['Rapid Fire','PARAGONS_RAPID_FIRE'],
+  ],
+  garrosh: [
+    ['Encounter Start (GAR)','GARROSH_ENC_START'], ['Health % (GAR)','GARROSH_HEALTH'],
+    ['Desecrate P1','GARROSH_DESECRATE_P1'], ['Desecrate P2','GARROSH_DESECRATE_P2'],
+    ['Desecrate P3','GARROSH_DESECRATE_P3'], ["Hellscream's Warsong",'GARROSH_HELLSCREAM_WARSONG'],
+    ['Warbringers','GARROSH_WARBRINGERS'], ['Farseer Wolf Rider CD','GARROSH_SHAMANS'],
+    ['Siege Engineer CD','GARROSH_ENGINEERS'], ['Power Iron Star','GARROSH_IRON_STAR'],
+    ["Enter Realm of Y'Shaarj",'GARROSH_DESPAIR_P2'], ["Y'Shaarj's Protection",'GARROSH_DESPAIR_P3'],
+    ['Whirling Corruption P2','GARROSH_WHIRLING_P2'], ['Whirling Corruption P3','GARROSH_WHIRLING_P3'],
+    ["Touch of Y'Shaarj P2",'GARROSH_TOUCH_P2'], ["Touch of Y'Shaarj P3",'GARROSH_TOUCH_P3'],
+    ['Malice','GARROSH_MALICE'], ['Call Bombardment','GARROSH_BOMBARDMENT'],
+    ['Clump Check','GARROSH_CLUMP_CHECK'], ['Fixate','GARROSH_FIXATE'],
+    ['Intermission','GARROSH_INTERMISSION'], ['Phase 2 Start','GARROSH_P2'],
+    ['Phase 3 Start','GARROSH_P3'], ['Phase 4 Start','GARROSH_P4'],
+    ['Annihilate 1','GARROSH_ANNIHILATE_I1'], ['Annihilate 2','GARROSH_ANNIHILATE_I2'],
+    ['Annihilate 3','GARROSH_ANNIHILATE_I3'], ['Manifest Rage','GARROSH_MANIFEST_RAGE'],
+  ],
 };
 
-// Also map display name -> Foji key for export
-const FOJI_ABILITY_KEYS = {
-  'Encounter Start': 'ENC_START',
-  'Health %': 'HEALTH',
-  'Phase 2': 'PHASE_2',
-  'Phase 3': 'PHASE_3',
-  'Intermission 1': 'INT_1',
-  'Intermission 2': 'INT_2',
-};
+function getFojiBossAbilityEntry(bossId, abilityName) {
+  const entries = FOJI_BOSS_ABILITIES[bossId] || [];
+  let entry = entries.find(item => item[0] === abilityName);
+  if (entry) return entry;
+  // Migrate the short labels used by older saved custom assignments.
+  if (abilityName === 'Encounter Start') return entries.find(item => /_ENC_START$/.test(item[1])) || null;
+  if (abilityName === 'Health %') return entries.find(item => /_HEALTH$/.test(item[1])) || null;
+  if (abilityName === 'Phase 2') return entries.find(item => /_P2$/.test(item[1])) || null;
+  if (abilityName === 'Phase 3') return entries.find(item => /_P3$/.test(item[1])) || null;
+  return null;
+}
 
 
 // swapped-out playerWho -> {who, spec} of the sub, from live fills AND the active plan
@@ -3553,8 +3679,13 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const isPersonals = cd.id === 'personals';
 
   // Full Foji sheet boss ability lists per boss
-    const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
-  const _bossAbOpts = ['', ..._bossAbOptions].map(a => `<option value="${a}" ${(p.customBossAbility||'')=== a ? 'selected':''}>${a||'— Any row —'}</option>`).join('');
+  const _bossAbOptions = FOJI_BOSS_ABILITIES[bossId] || [];
+  const _savedBossAb = getFojiBossAbilityEntry(bossId, p.customBossAbility || '');
+  const _savedBossAbName = _savedBossAb ? _savedBossAb[0] : '';
+  const _bossAbOpts = [
+    `<option value="" ${!_savedBossAbName ? 'selected' : ''}>— Use timeline row —</option>`,
+    ..._bossAbOptions.map(item => `<option value="${item[0]}" ${_savedBossAbName === item[0] ? 'selected' : ''}>${item[0]}</option>`),
+  ].join('');
 
     if (isHpAssign) {
       const hpMax = (ab && ab.hpMax) ? ab.hpMax : 40;
@@ -3964,9 +4095,12 @@ function buildFojiExport() {
           }
           let _bossAbKey = bossAbKey;
           let _castNum = _pCastNum;
-          if (isCustomPlacement && p.customBossAbility && FOJI_ABILITY_KEYS[p.customBossAbility]) {
-            _bossAbKey = FOJI_ABILITY_KEYS[p.customBossAbility];
-            _castNum = getCastNumber(p.customBossAbility);
+          const _customBossEntry = isCustomPlacement && p.customBossAbility
+            ? getFojiBossAbilityEntry(boss.id, p.customBossAbility)
+            : null;
+          if (_customBossEntry) {
+            _bossAbKey = _customBossEntry[1];
+            _castNum = getCastNumber(_customBossEntry[0]);
           }
           const isPersonals = p.cdId === 'personals';
           const isHstone = p.cdId === 'hstone';
@@ -5441,11 +5575,6 @@ function parseFojiImport(raw) {
       });
     });
   });
-  // Also add FOJI_ABILITY_KEYS reverse lookup for custom entries
-  Object.entries(FOJI_ABILITY_KEYS).forEach(([name, key]) => {
-    // already handled above via getBossAbilityKey
-  });
-
   // Reverse CD lookup: spellId → cdId
   const spellToCd = {};
   Object.entries(CD_SPELL_IDS).forEach(([cdId, spellId]) => {
