@@ -7363,7 +7363,7 @@ function switchToPlan(id) {
     const plans = getPlans();
     const plan = plans[id];
     if (plan && plan.placedCDs) {
-      applyTimelineSnapshot(plan.placedCDs);
+      applyTimelineSnapshot(plan);
       retargetCustomAssignsToSubs();
       renderTimeline();
     }
@@ -7799,6 +7799,10 @@ function showEditPlanPicker(planId) {
   // Pre-populate from saved plan
   const preSelectedOut = new Set(plan.subbedOut || []);
   const preSubIns = {};
+  const savedSubs = plan.subs || (plan.subWho ? [{ who: plan.subWho, spec: plan.subSpec }] : []);
+  savedSubs.forEach(sub => {
+    if (sub && sub.who && sub.spec) preSubIns[sub.who] = sub.spec;
+  });
   // Try to infer sub-ins from saved cdWho vs full raid cdWho
   const fullSnap = getFullRaidSnapshot();
   const fullCdWho = fullSnap.cdWho || {};
@@ -7810,7 +7814,7 @@ function showEditPlanPicker(planId) {
       if (spec) {
         // Find which original player owns this cd slot
         preSelectedOut.forEach(outWho => {
-          preSubIns[outWho] = preSubIns[outWho] || spec[0];
+          if (!preSubIns[outWho]) preSubIns[outWho] = spec[0];
         });
       }
     }
@@ -7941,29 +7945,67 @@ function showEditPlanPicker(planId) {
       const name = (box.querySelector('#npName')?.value || '').trim() || plan.name;
       const subbedWhos = [...selectedOut];
       const fullSnap = getFullRaidSnapshot();
+      const currentIsThisPlan = getActivePlanId() === planId;
       // Older builds could accidentally store captureCurrentTimeline() as the
       // placedCDs value itself. Normalize both shapes so existing plans remain
       // editable and are repaired the next time they are saved.
-      const savedSnapshot = plan.placedCDs?.placedCDs ? plan.placedCDs : plan;
+      const savedSnapshot = currentIsThisPlan
+        ? captureCurrentTimeline()
+        : (plan.placedCDs?.placedCDs ? plan.placedCDs : plan);
       const newPlacedCDs = JSON.parse(JSON.stringify(savedSnapshot.placedCDs || {}));
-      let newActiveSetIds = [...(savedSnapshot.activeSetIds || fullSnap.activeSetIds || [...activeSetIds])];
+      const newActiveSetIds = new Set(savedSnapshot.activeSetIds || fullSnap.activeSetIds || [...activeSetIds]);
       const newCdWho = JSON.parse(JSON.stringify(savedSnapshot.cdWho || fullSnap.cdWho || {}));
-      const removedCdIds = new Set();
-      subbedWhos.forEach(who => {
-        const player = DEFAULT_ROSTER.find(r => r.who === who);
-        if (!player) return;
-        player.cds.forEach(cdId => { newActiveSetIds = newActiveSetIds.filter(id => id !== cdId); removedCdIds.add(cdId); });
+
+      // Remove the old substitute roster first. The selected roster below then
+      // adds back returning raiders and applies the newly chosen substitutes.
+      const oldSubs = plan.subs || (plan.subWho ? [{ who: plan.subWho, spec: plan.subSpec }] : []);
+      const rosterControlledIds = new Set();
+      oldSubs.forEach(sub => {
+        const spec = SPEC_CD_MAP[sub && sub.spec];
+        if (!spec) return;
+        spec.cds.forEach(cdId => {
+          newActiveSetIds.delete(cdId);
+          rosterControlledIds.add(cdId);
+        });
       });
+
+      // Reconcile every default raider against the edited roster. This is what
+      // restores a returning player's CDs without rebuilding the timeline.
+      const subbedSet = new Set(subbedWhos);
+      DEFAULT_ROSTER.forEach(player => {
+        player.cds.forEach(cdId => {
+          rosterControlledIds.add(cdId);
+          if (subbedSet.has(player.who)) {
+            newActiveSetIds.delete(cdId);
+          } else {
+            newActiveSetIds.add(cdId);
+            newCdWho[cdId] = (fullSnap.cdWho && fullSnap.cdWho[cdId]) || player.who;
+          }
+        });
+      });
+
       Object.entries(subIns).forEach(([who, specName]) => {
-        if (!specName) return;
+        if (!subbedSet.has(who) || !specName) return;
         const spec = SPEC_CD_MAP[specName];
         if (!spec || !spec.cds.length) return;
-        spec.cds.forEach(cdId => { if (!newActiveSetIds.includes(cdId)) newActiveSetIds.push(cdId); newCdWho[cdId] = spec.who; });
+        spec.cds.forEach(cdId => {
+          rosterControlledIds.add(cdId);
+          newActiveSetIds.add(cdId);
+          newCdWho[cdId] = spec.who;
+        });
       });
+
+      // Keep all existing assignments except CDs that genuinely left the
+      // edited roster. Other players' work and every timing stay untouched.
       Object.keys(newPlacedCDs).forEach(bossId => {
         const bd = newPlacedCDs[bossId]; if (!bd) return;
-        Object.keys(bd).forEach(rk => { bd[rk] = (bd[rk]||[]).filter(p => !removedCdIds.has(p.cdId)); });
+        Object.keys(bd).forEach(rk => {
+          bd[rk] = (bd[rk] || []).filter(p =>
+            !rosterControlledIds.has(p.cdId) || newActiveSetIds.has(p.cdId)
+          );
+        });
       });
+      const finalActiveSetIds = [...newActiveSetIds];
       // Update plan in place
       const allPlans = getPlans();
       allPlans[planId].name = name;
@@ -7974,15 +8016,16 @@ function showEditPlanPicker(planId) {
       allPlans[planId].subWho = allPlans[planId].subs[0]?.who || null;
       allPlans[planId].subSpec = allPlans[planId].subs[0]?.spec || null;
       allPlans[planId].placedCDs = newPlacedCDs;
-      allPlans[planId].activeSetIds = newActiveSetIds;
+      allPlans[planId].activeSetIds = finalActiveSetIds;
+      allPlans[planId].paletteOrder = JSON.parse(JSON.stringify(savedSnapshot.paletteOrder || {}));
       allPlans[planId].cdWho = newCdWho;
       allPlans[planId].savedAt = Date.now();
       savePlans(allPlans);
       // If this is the active plan, apply changes
-      if (getActivePlanId() === planId) {
+      if (currentIsThisPlan) {
         Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
         Object.assign(placedCDs, newPlacedCDs);
-        activeSetIds = new Set(newActiveSetIds);
+        activeSetIds = new Set(finalActiveSetIds);
         ensureSymbtranqInSet();
         CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
         buildPalette(); renderTimeline();
