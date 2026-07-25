@@ -5220,17 +5220,12 @@ function viewBlockSpotlight(boss, rows, v, color) {
       <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:center;padding:10px 18px;flex:1;">${cells}</div>
     </div>`;
   }).join('');
-  const assignmentLabel = `${rows.length} assignment ${rows.length === 1 ? 'window' : 'windows'}`;
   const hero = v ? `<div class="boss-banner share-boss-hero" style="background:${v.bg};">
       ${bossGlowHtml(v)}
       ${bossImgHtml(v, 250)}
       <div class="share-boss-copy">
         <div class="share-boss-kicker">Siege of Orgrimmar · Cooldown plan</div>
         <div class="share-boss-title">${boss.name}</div>
-        <div class="share-boss-detail">
-          <span class="share-boss-detail-dot" style="color:${color};background:${color};"></span>
-          ${assignmentLabel}
-        </div>
       </div>
       <div class="share-boss-actions">${VIEW_IMG_BTN}</div>
     </div>` : viewBanner(boss, v, color, 90, 24);
