@@ -1519,6 +1519,12 @@
       linear-gradient(0deg,rgba(4,4,5,.52),transparent 44%);
   }
   .share-boss-copy { position:absolute;left:28px;bottom:22px;z-index:2; }
+  .share-boss-briefcase {
+    width:30px;height:30px;margin-bottom:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:#6ad4f0;
+    filter:drop-shadow(0 0 8px rgba(106,212,240,.28));
+  }
   .share-boss-kicker { margin-bottom:7px;color:#8d8d96;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase; }
   .share-boss-title { color:#f3f3f5;font-size:31px;font-weight:780;letter-spacing:-.025em;line-height:1.05;text-shadow:0 2px 18px #000; }
   .share-boss-detail { display:flex;align-items:center;gap:8px;margin-top:10px;color:#84848d;font-size:10px;font-weight:650; }
@@ -5260,6 +5266,9 @@ function viewBlockSpotlight(boss, rows, v, color) {
       ${bossGlowHtml(v)}
       ${bossImgHtml(v, 250)}
       <div class="share-boss-copy">
+        <div class="share-boss-briefcase">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+        </div>
         <div class="share-boss-kicker">Siege of Orgrimmar · Cooldown plan</div>
         <div class="share-boss-title">${boss.name}</div>
       </div>
