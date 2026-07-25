@@ -3756,7 +3756,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Count</label>
-      <input type="number" id="customBossCount" value="${p.customBossCount != null ? p.customBossCount : 1}" min="1" max="99" step="1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
+      <input type="number" id="customBossCount" value="${p.customBossCount != null ? p.customBossCount : 1}" min="-1" max="99" step="1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Offset (seconds)</label>
@@ -3842,7 +3842,8 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       const ability = popup.querySelector('#customAbility') ? popup.querySelector('#customAbility').value : '';
       const targetWhos = getCustomAbilityTargetWhos(popup, ability);
       const bossAbility = popup.querySelector('#customBossAbility') ? popup.querySelector('#customBossAbility').value : '';
-      const bossCount = Math.max(1, parseInt(popup.querySelector('#customBossCount')?.value || '1', 10) || 1);
+      const bossCountRaw = parseInt(popup.querySelector('#customBossCount')?.value || '1', 10);
+      const bossCount = Number.isNaN(bossCountRaw) ? 1 : Math.max(-1, bossCountRaw);
       let customName = popup.querySelector('#customName').value.trim();
       let tts = popup.querySelector('#customTts').value.trim();
       if (ability && !customName) customName = ability;
@@ -4113,7 +4114,8 @@ function buildFojiExport() {
             _castNum = getCastNumber(_customBossEntry[0]);
           }
           if (isCustomPlacement && p.customBossCount != null) {
-            _castNum = Math.max(1, parseInt(p.customBossCount, 10) || 1);
+            const _customCount = parseInt(p.customBossCount, 10);
+            _castNum = Number.isNaN(_customCount) ? 1 : Math.max(-1, _customCount);
           }
           const isPersonals = p.cdId === 'personals';
           const isHstone = p.cdId === 'hstone';
