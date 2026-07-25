@@ -6025,6 +6025,7 @@ function fbGetData() {
   return {
     version: 1,
     defaultOffV2: true,
+    defaultOffV3: true,
     placedCDs,
     bossReady,
     bossNotes,
@@ -6067,7 +6068,7 @@ function migrateRowKeys(cds) {
 // Keep manual/optional abilities selectable in Manage CDs even when restored
 // state predates them. Newly introduced entries start disabled on every boss;
 // existing plans that already use one keep their current state. Idempotent.
-const DEFAULT_OFF_CD_IDS = ['ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holyavenger', 'pwb2', 'ss2'];
+const DEFAULT_OFF_CD_IDS = ['ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holyavenger', 'pwb2', 'ss2', 'dh', 'xuen'];
 const DEFAULT_OFF_CD_SET = new Set(DEFAULT_OFF_CD_IDS);
 const REMOVED_CD_IDS = new Set(['lhammer2']);
 const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz', ...DEFAULT_OFF_CD_IDS];
@@ -6130,7 +6131,7 @@ function fbApplyData(data) {
     Object.entries(data.bossDisabledIds).forEach(([k, v]) => { bossDisabledIds[k] = new Set(v); });
   }
   removeRetiredCooldownsFromLiveState();
-  if (!data.defaultOffV2) seedDefaultOffCooldowns();
+  if (!data.defaultOffV3) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
   return true;
 }
@@ -6299,6 +6300,7 @@ function autoSave() {
       plans[activePlanId].bossDisabledIds = snapshot.bossDisabledIds;
       plans[activePlanId].bossReady = snapshot.bossReady;
       plans[activePlanId].defaultOffV2 = true;
+      plans[activePlanId].defaultOffV3 = true;
       plans[activePlanId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -7728,6 +7730,7 @@ function normalizeStoredPlanDefaults(snapshot) {
   });
   REMOVED_CD_IDS.forEach(cdId => { if (snapshot.cdWho) delete snapshot.cdWho[cdId]; });
   snapshot.defaultOffV2 = true;
+  snapshot.defaultOffV3 = true;
   return snapshot;
 }
 
@@ -7735,7 +7738,7 @@ function migrateStoredPlanDefaults() {
   const plans = getPlans();
   const before = JSON.stringify(plans);
   Object.values(plans).forEach(plan => {
-    if (!plan.defaultOffV2 || JSON.stringify(plan).includes('lhammer2')) {
+    if (!plan.defaultOffV3 || JSON.stringify(plan).includes('lhammer2')) {
       normalizeStoredPlanDefaults(plan);
     }
   });
@@ -7745,7 +7748,7 @@ function migrateStoredPlanDefaults() {
     const raw = localStorage.getItem(FULL_RAID_SNAPSHOT_KEY);
     if (raw) {
       const snapshot = JSON.parse(raw);
-      if (!snapshot.defaultOffV2 || JSON.stringify(snapshot).includes('lhammer2')) {
+      if (!snapshot.defaultOffV3 || JSON.stringify(snapshot).includes('lhammer2')) {
         const normalized = normalizeStoredPlanDefaults(snapshot);
         localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(normalized));
       }
@@ -7788,6 +7791,7 @@ function getFullRaidSnapshot() {
 function captureCurrentTimeline() {
   return {
     defaultOffV2: true,
+    defaultOffV3: true,
     placedCDs: JSON.parse(JSON.stringify(placedCDs)),
     activeSetIds: [...activeSetIds],
     paletteOrder: JSON.parse(JSON.stringify(paletteOrder)),
@@ -7822,7 +7826,7 @@ function applyTimelineSnapshot(snapshot) {
     Object.assign(bossReady, JSON.parse(JSON.stringify(snapshot.bossReady)));
   }
   removeRetiredCooldownsFromLiveState();
-  if (!snapshot.defaultOffV2) seedDefaultOffCooldowns();
+  if (!snapshot.defaultOffV3) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
@@ -7852,6 +7856,7 @@ function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
     bossDisabledIds: snapshot.bossDisabledIds,
     bossReady: snapshot.bossReady,
     defaultOffV2: true,
+    defaultOffV3: true,
     rosterSpecs: Array.isArray(rosterSpecs) ? rosterSpecs : null,
     savedAt: Date.now(),
   };
@@ -7875,6 +7880,7 @@ function updatePlanSnapshot(id) {
   plans[id].bossDisabledIds = snapshot.bossDisabledIds;
   plans[id].bossReady = snapshot.bossReady;
   plans[id].defaultOffV2 = true;
+  plans[id].defaultOffV3 = true;
   plans[id].savedAt = Date.now();
   savePlans(plans);
 }
@@ -7904,6 +7910,7 @@ function switchToPlan(id) {
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
       plans[currentId].bossReady = snapshot.bossReady;
       plans[currentId].defaultOffV2 = true;
+      plans[currentId].defaultOffV3 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -8195,6 +8202,7 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
 
   return {
     defaultOffV2: true,
+    defaultOffV3: true,
     rosterSpecs: selectedSpecs,
     placedCDs: filteredPlaced,
     activeSetIds: [...activeIds],
@@ -8632,6 +8640,7 @@ function showCustomRosterPlanEditor(planId, plan) {
       updated.bossDisabledIds = rosterSnapshot.bossDisabledIds;
       updated.bossReady = rosterSnapshot.bossReady;
       updated.defaultOffV2 = true;
+      updated.defaultOffV3 = true;
       updated.savedAt = Date.now();
       savePlans(allPlans);
       if (currentIsThisPlan) {
@@ -8883,6 +8892,7 @@ function showEditPlanPicker(planId) {
       allPlans[planId].cdWho = newCdWho;
       allPlans[planId].bossDisabledIds = JSON.parse(JSON.stringify(savedSnapshot.bossDisabledIds || plan.bossDisabledIds || {}));
       allPlans[planId].defaultOffV2 = true;
+      allPlans[planId].defaultOffV3 = true;
       allPlans[planId].savedAt = Date.now();
       savePlans(allPlans);
       // If this is the active plan, apply changes
@@ -9072,6 +9082,7 @@ async function createShareLink(btn) {
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
       plans[currentId].bossReady = snapshot.bossReady;
       plans[currentId].defaultOffV2 = true;
+      plans[currentId].defaultOffV3 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
