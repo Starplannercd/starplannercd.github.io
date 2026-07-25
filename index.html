@@ -3302,11 +3302,12 @@ function handleRightClick(e, boss, rowKey, bossData) {
 
 
 // ---- Offset popup ----
-const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Mass Dispel','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
+const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Mass Dispel','Life Cocoon','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
 
 // Abilities owned by one specific raider automatically target that player.
 const CUSTOM_ABILITY_DEFAULT_WHOS = {
   'Mass Dispel': 'SPRIEST1',
+  'Life Cocoon': 'MISTWEAVE1',
 };
 
 // Class colours per ability for custom assignments
@@ -3315,6 +3316,7 @@ const CUSTOM_ABILITY_COLORS = {
   'Windwalk Totem':       { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Mass Spell Reflection':{ color:'#c79c6e', textColor:'#e8c87a' }, // Warrior brown
   'Mass Dispel':           { color:'#6840b8', textColor:'#d0a8ff' }, // Shadow Priest purple
+  'Life Cocoon':           { color:'#00ff96', textColor:'#80ffd0' }, // Monk green
   'Capacitor Totem':      { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Vigilance':            { color:'#c79c6e', textColor:'#e8c87a' }, // Warrior brown
   'Hand of Sacrifice':    { color:'#f58cba', textColor:'#ffccee' }, // Paladin pink
@@ -3340,6 +3342,7 @@ const CUSTOM_ABILITY_SHORTS = {
   'Windwalk Totem':        'WW',
   'Mass Spell Reflection': 'MSR',
   'Mass Dispel':           'MD',
+  'Life Cocoon':           'LC',
   'Capacitor Totem':       'Cap',
   'Vigilance':             'Vig',
   'Hand of Sacrifice':     'HoS',
@@ -3365,6 +3368,7 @@ const CUSTOM_ABILITY_ICONS = {
   'Windwalk Totem':        'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_windwalktotem.jpg',
   'Mass Spell Reflection': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shieldreflection.jpg',
   'Mass Dispel':           'https://wow.zamimg.com/images/wow/icons/large/spell_arcane_massdispel.jpg',
+  'Life Cocoon':           'https://wow.zamimg.com/images/wow/icons/large/ability_monk_chicocoon.jpg',
   'Capacitor Totem':       'https://wow.zamimg.com/images/wow/icons/large/spell_nature_brilliance.jpg',
   'Vigilance':             'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_vigilance.jpg',
   'Hand of Sacrifice':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofsacrifice.jpg',
@@ -3390,6 +3394,7 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Windwalk Totem':        '108273',
   'Mass Spell Reflection': '114028',
   'Mass Dispel':           '32375',
+  'Life Cocoon':           '116849',
   'Capacitor Totem':       '192058',
   'Vigilance':             '114030',
   'Hand of Sacrifice':     '6940',
