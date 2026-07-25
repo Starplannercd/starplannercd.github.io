@@ -1587,9 +1587,9 @@
 // Full pool of all possible raid CDs
 const CD_POOL = [
   { id:'pwb',   name:'Power Word: Barrier (Disc)',   short:'PWB', palShort:'PWB (Disc)', cd:180, dur:10, color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:true  },
-  { id:'pwb2',  name:'Power Word: Barrier (Shadow)', short:'PWB', palShort:'PWB (Shadow)', cd:180, dur:10, color:'#6840b8', textColor:'#d0a8ff',  who:'SPRIEST1',  core:true },
+  { id:'pwb2',  name:'Power Word: Barrier (Shadow)', short:'PWB', palShort:'PWB (Shadow)', cd:180, dur:10, color:'#6840b8', textColor:'#d0a8ff',  who:'SPRIEST1',  core:false },
   { id:'ss',    name:'Spirit Shell (Disc)',           short:'SS',  palShort:'SS (Disc)',  cd:60,  dur:15, color:'#d0e8ff', textColor:'#ffffff',  who:'DISC1',     core:true  },
-  { id:'ss2',   name:'Spirit Shell (Shadow)',         short:'SS',  palShort:'SS (Shadow)',  cd:60,  dur:15, color:'#6840b8', textColor:'#d0a8ff',  who:'SPRIEST1',  core:true },
+  { id:'ss2',   name:'Spirit Shell (Shadow)',         short:'SS',  palShort:'SS (Shadow)',  cd:60,  dur:15, color:'#6840b8', textColor:'#d0a8ff',  who:'SPRIEST1',  core:false },
   { id:'dh',    name:'Divine Hymn',          short:'Hymn',  cd:180, dur:8,  color:'#c8c8c8', textColor:'#ffffff',  who:'DISC1',     core:false },
   { id:'dem',   name:'Demoralizing Banner',  short:'Demo',cd:180,dur:15, color:'#8b5e3c', textColor:'#d4956a', who:'DPSWARR1',  core:true  },
   { id:'devo1', name:'Holy Devotion Aura',   short:'HDevo', cd:180, dur:6,  color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:true  },
@@ -1616,7 +1616,6 @@ const CD_POOL = [
   { id:'holyavenger', name:'Holy Avenger',           short:'HA',   cd:180, dur:18, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
   { id:'avwrath',  name:'Avenging Wrath',            short:'AW',   cd:180, dur:20, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
   { id:'lhammer',  name:"Light's Hammer",            short:'LH',   cd:60,  dur:14, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
-  { id:'lhammer2', name:"Light's Hammer (Prot)",     short:'LH',   cd:60,  dur:14, color:'#a83888', textColor:'#ff99cc', who:'PROTPALA1', core:false },
 ];
 const BASE_CD_WHO = Object.fromEntries(CD_POOL.map(cd => [cd.id, cd.who]));
 
@@ -2816,7 +2815,6 @@ const CD_ICON_URLS = {
   'dh':          'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divinehymn.jpg',
   'personals':   'https://wow.zamimg.com/images/wow/icons/large/inv_shield_05.jpg',
   'lhammer':     'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
-  'lhammer2':    'https://wow.zamimg.com/images/wow/icons/large/spell_paladin_lightshammer.jpg',
   'avwrath':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_avenginewrath.jpg',
   'goak':        'https://wow.zamimg.com/images/wow/icons/large/spell_holy_heroism.jpg',
   'holyavenger': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_holyavenger.jpg',
@@ -4103,7 +4101,6 @@ const CD_SPELL_IDS = {
   'holyavenger':'105809',
   'avwrath':   '31884',
   'lhammer':   '114158',
-  'lhammer2':  '114158',
   'divfavor':  '86150',
   'ah':        '115213',
   'rc':        '97462',
@@ -4322,7 +4319,7 @@ function showManageModal() {
   overlay.className = 'modal-overlay';
 
   // Ordered flat list — similar CDs grouped together
-  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','lhammer2','pwb','pwb2','ss','ss2','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','hstone','custom','tranq','xuen','revival'];
+  const cdOrder = ['devo1','devo2','devo3','goak','holyavenger','avwrath','lhammer','pwb','pwb2','ss','ss2','dh','htt','ag','ascend','slt','dem','rc','ve','ah','smoke','amz','personals','hstone','custom','tranq','xuen','revival'];
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
@@ -4567,7 +4564,7 @@ function buildSummaryForBoss(boss) {
       const _bossDisabled = bossDisabledIds[boss.id];
       const sorted = [...placements]
         .filter(p => {
-          if (['lhammer','lhammer2','divfavor'].includes(p.cdId)) return false;
+          if (['lhammer','divfavor'].includes(p.cdId)) return false;
           if (p.cdId === 'custom') return true;
           return activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId));
         })
@@ -5972,6 +5969,7 @@ const FB_SHARES_PATH = 'tot_rcd/shares';
 function fbGetData() {
   return {
     version: 1,
+    defaultOffV1: true,
     placedCDs,
     bossReady,
     bossNotes,
@@ -6014,9 +6012,42 @@ function migrateRowKeys(cds) {
 // Keep manual/optional abilities selectable in Manage CDs even when restored
 // state predates them. Newly introduced entries start disabled on every boss;
 // existing plans that already use one keep their current state. Idempotent.
-const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz'];
+const DEFAULT_OFF_CD_IDS = ['ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holyavenger', 'pwb2', 'ss2'];
+const DEFAULT_OFF_CD_SET = new Set(DEFAULT_OFF_CD_IDS);
+const REMOVED_CD_IDS = new Set(['lhammer2']);
+const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz', ...DEFAULT_OFF_CD_IDS];
+
+function removeRetiredCooldownsFromLiveState() {
+  REMOVED_CD_IDS.forEach(cdId => {
+    activeSetIds.delete(cdId);
+    Object.values(bossDisabledIds).forEach(ids => ids && ids.delete(cdId));
+    Object.values(placedCDs).forEach(rows => {
+      Object.keys(rows || {}).forEach(rowKey => {
+        rows[rowKey] = (rows[rowKey] || []).filter(placement => placement.cdId !== cdId);
+      });
+    });
+    Object.keys(paletteOrder).forEach(bossId => {
+      if (Array.isArray(paletteOrder[bossId])) {
+        paletteOrder[bossId] = paletteOrder[bossId].filter(id => id !== cdId);
+      }
+    });
+  });
+}
+
+function seedDefaultOffCooldowns() {
+  DEFAULT_OFF_CD_IDS.forEach(cdId => {
+    if (!CD_POOL.some(cd => cd.id === cdId)) return;
+    activeSetIds.add(cdId);
+    BOSSES.forEach(boss => {
+      if (!bossDisabledIds[boss.id]) bossDisabledIds[boss.id] = new Set();
+      bossDisabledIds[boss.id].add(cdId);
+    });
+  });
+}
+
 function ensureManageOptionalCdsInSet() {
   MANAGE_OPTIONAL_CD_IDS.forEach(function(cdId) {
+    if (!CD_POOL.some(cd => cd.id === cdId)) return;
     if (activeSetIds.has(cdId)) return;
     activeSetIds.add(cdId);
     BOSSES.forEach(function(b) {
@@ -6043,6 +6074,8 @@ function fbApplyData(data) {
     bossDisabledIds = {};
     Object.entries(data.bossDisabledIds).forEach(([k, v]) => { bossDisabledIds[k] = new Set(v); });
   }
+  removeRetiredCooldownsFromLiveState();
+  if (!data.defaultOffV1) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
   return true;
 }
@@ -6209,6 +6242,7 @@ function autoSave() {
       plans[activePlanId].paletteOrder = snapshot.paletteOrder;
       plans[activePlanId].cdWho = snapshot.cdWho;
       plans[activePlanId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[activePlanId].defaultOffV1 = true;
       plans[activePlanId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -6341,6 +6375,9 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
 }
 // Ensure manual Manage CDs entries exist (disabled per boss) after local restore
 try { ensureManageOptionalCdsInSet(); } catch(e) {}
+// One-time normalization for every saved plan: seed the newly default-off CDs
+// as disabled on all bosses and permanently remove retired cooldown variants.
+try { migrateStoredPlanDefaults(); } catch(e) {}
 // The general autosave above represents Full Raid. A selected custom plan has
 // its own timeline, roster and per-boss Manage CDs snapshot and must win after
 // refresh.
@@ -7605,6 +7642,61 @@ function savePlans(plans) {
   localStorage.setItem(PLANS_KEY, next);
 }
 
+function normalizeStoredPlanDefaults(snapshot) {
+  if (!snapshot || typeof snapshot !== 'object') return snapshot;
+  const active = new Set(Array.isArray(snapshot.activeSetIds) ? snapshot.activeSetIds : []);
+  REMOVED_CD_IDS.forEach(cdId => active.delete(cdId));
+  DEFAULT_OFF_CD_IDS.forEach(cdId => active.add(cdId));
+  snapshot.activeSetIds = [...active];
+
+  if (!snapshot.bossDisabledIds || typeof snapshot.bossDisabledIds !== 'object') {
+    snapshot.bossDisabledIds = {};
+  }
+  BOSSES.forEach(boss => {
+    const disabled = new Set(snapshot.bossDisabledIds[boss.id] || []);
+    REMOVED_CD_IDS.forEach(cdId => disabled.delete(cdId));
+    DEFAULT_OFF_CD_IDS.forEach(cdId => disabled.add(cdId));
+    snapshot.bossDisabledIds[boss.id] = [...disabled];
+  });
+
+  const placementMap = snapshot.placedCDs?.placedCDs || snapshot.placedCDs;
+  Object.values(placementMap || {}).forEach(rows => {
+    Object.keys(rows || {}).forEach(rowKey => {
+      rows[rowKey] = (rows[rowKey] || []).filter(placement => !REMOVED_CD_IDS.has(placement.cdId));
+    });
+  });
+  Object.keys(snapshot.paletteOrder || {}).forEach(bossId => {
+    if (Array.isArray(snapshot.paletteOrder[bossId])) {
+      snapshot.paletteOrder[bossId] = snapshot.paletteOrder[bossId].filter(cdId => !REMOVED_CD_IDS.has(cdId));
+    }
+  });
+  REMOVED_CD_IDS.forEach(cdId => { if (snapshot.cdWho) delete snapshot.cdWho[cdId]; });
+  snapshot.defaultOffV1 = true;
+  return snapshot;
+}
+
+function migrateStoredPlanDefaults() {
+  const plans = getPlans();
+  const before = JSON.stringify(plans);
+  Object.values(plans).forEach(plan => {
+    if (!plan.defaultOffV1 || JSON.stringify(plan).includes('lhammer2')) {
+      normalizeStoredPlanDefaults(plan);
+    }
+  });
+  if (JSON.stringify(plans) !== before) savePlans(plans);
+
+  try {
+    const raw = localStorage.getItem(FULL_RAID_SNAPSHOT_KEY);
+    if (raw) {
+      const snapshot = JSON.parse(raw);
+      if (!snapshot.defaultOffV1 || JSON.stringify(snapshot).includes('lhammer2')) {
+        const normalized = normalizeStoredPlanDefaults(snapshot);
+        localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(normalized));
+      }
+    }
+  } catch(e) {}
+}
+
 function getActivePlanId() {
   return localStorage.getItem(ACTIVE_PLAN_KEY) || FULL_RAID_ID;
 }
@@ -7639,6 +7731,7 @@ function getFullRaidSnapshot() {
 
 function captureCurrentTimeline() {
   return {
+    defaultOffV1: true,
     placedCDs: JSON.parse(JSON.stringify(placedCDs)),
     activeSetIds: [...activeSetIds],
     paletteOrder: JSON.parse(JSON.stringify(paletteOrder)),
@@ -7667,6 +7760,8 @@ function applyTimelineSnapshot(snapshot) {
       bossDisabledIds[bossId] = new Set(ids || []);
     });
   }
+  removeRetiredCooldownsFromLiveState();
+  if (!snapshot.defaultOffV1) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
@@ -7696,6 +7791,7 @@ function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
     paletteOrder: snapshot.paletteOrder,
     cdWho: snapshot.cdWho,
     bossDisabledIds: snapshot.bossDisabledIds,
+    defaultOffV1: true,
     rosterSpecs: Array.isArray(rosterSpecs) ? rosterSpecs : null,
     savedAt: Date.now(),
   };
@@ -7717,6 +7813,7 @@ function updatePlanSnapshot(id) {
   plans[id].paletteOrder = snapshot.paletteOrder;
   plans[id].cdWho = snapshot.cdWho;
   plans[id].bossDisabledIds = snapshot.bossDisabledIds;
+  plans[id].defaultOffV1 = true;
   plans[id].savedAt = Date.now();
   savePlans(plans);
 }
@@ -7744,6 +7841,7 @@ function switchToPlan(id) {
       plans[currentId].paletteOrder = snapshot.paletteOrder;
       plans[currentId].cdWho = snapshot.cdWho;
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[currentId].defaultOffV1 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -8009,7 +8107,8 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
     disabled[boss.id] = new Set(sourceDisabled[boss.id] || []);
     MANAGE_OPTIONAL_CD_IDS.forEach(cdId => {
       activeIds.add(cdId);
-      if (selectedRosterCdIds.has(cdId)) disabled[boss.id].delete(cdId);
+      if (DEFAULT_OFF_CD_SET.has(cdId)) disabled[boss.id].add(cdId);
+      else if (selectedRosterCdIds.has(cdId)) disabled[boss.id].delete(cdId);
       else disabled[boss.id].add(cdId);
     });
   });
@@ -8025,12 +8124,14 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
   Object.values(filteredPlaced).forEach(rows => {
     Object.keys(rows || {}).forEach(rowKey => {
       rows[rowKey] = (rows[rowKey] || []).filter(placement =>
-        !rosterControlledIds.has(placement.cdId) || activeIds.has(placement.cdId)
+        !REMOVED_CD_IDS.has(placement.cdId) &&
+        (!rosterControlledIds.has(placement.cdId) || activeIds.has(placement.cdId))
       );
     });
   });
 
   return {
+    defaultOffV1: true,
     rosterSpecs: selectedSpecs,
     placedCDs: filteredPlaced,
     activeSetIds: [...activeIds],
@@ -8464,6 +8565,7 @@ function showCustomRosterPlanEditor(planId, plan) {
       updated.cdWho = rosterSnapshot.cdWho;
       updated.paletteOrder = rosterSnapshot.paletteOrder;
       updated.bossDisabledIds = rosterSnapshot.bossDisabledIds;
+      updated.defaultOffV1 = true;
       updated.savedAt = Date.now();
       savePlans(allPlans);
       if (currentIsThisPlan) {
@@ -8714,6 +8816,7 @@ function showEditPlanPicker(planId) {
       allPlans[planId].paletteOrder = JSON.parse(JSON.stringify(savedSnapshot.paletteOrder || {}));
       allPlans[planId].cdWho = newCdWho;
       allPlans[planId].bossDisabledIds = JSON.parse(JSON.stringify(savedSnapshot.bossDisabledIds || plan.bossDisabledIds || {}));
+      allPlans[planId].defaultOffV1 = true;
       allPlans[planId].savedAt = Date.now();
       savePlans(allPlans);
       // If this is the active plan, apply changes
@@ -8901,6 +9004,7 @@ async function createShareLink(btn) {
       plans[currentId].placedCDs = snapshot.placedCDs;
       plans[currentId].activeSetIds = snapshot.activeSetIds;
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[currentId].defaultOffV1 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -8981,9 +9085,6 @@ async function initViewMode(viewId) {
     } else {
       activeSetIds = new Set(CD_POOL.filter(c => c.core).map(c => c.id));
     }
-    // Always allow these in the view (only render if actually assigned to a row)
-    ['ascend', 'slt'].forEach(id => activeSetIds.add(id));
-
     // Use the roster that was active when the share was created
     if (data.roster && Array.isArray(data.roster) && data.roster.length) {
       viewRoster = data.roster;
@@ -8993,10 +9094,8 @@ async function initViewMode(viewId) {
     // Filter activeSetIds to only CDs whose WHO is in the roster (removes stale/removed players' CDs)
     // Also exclude CDs that should never appear in the share view (VIEW_EXCLUDE_IDS)
     const rosterWhos = new Set(viewRoster.map(p => p.who));
-    const VIEW_ALWAYS_IDS = new Set(['ascend', 'slt']);
     activeSetIds = new Set([...activeSetIds].filter(id => {
       if (VIEW_EXCLUDE_IDS.has(id)) return false;
-      if (VIEW_ALWAYS_IDS.has(id)) return true;
       const cd = CD_POOL.find(c => c.id === id);
       if (!cd) return false;
       if (cd.who === 'ALL') return true;
