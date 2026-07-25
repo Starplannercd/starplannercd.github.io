@@ -3738,10 +3738,6 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Count</label>
-      <input type="number" id="customBossCount" value="${p.customBossCount != null ? p.customBossCount : 1}" min="1" max="99" step="1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Ability</label>
       <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
         ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
@@ -3757,6 +3753,10 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Custom Name (display on sheet)</label>
       <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Count</label>
+      <input type="number" id="customBossCount" value="${p.customBossCount != null ? p.customBossCount : 1}" min="1" max="99" step="1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Offset (seconds)</label>
