@@ -4600,7 +4600,7 @@ function buildSummaryForBoss(boss) {
       const _bossDisabled = bossDisabledIds[boss.id];
       const sorted = [...placements]
         .filter(p => {
-          if (['lhammer','divfavor'].includes(p.cdId)) return false;
+          if (p.cdId === 'divfavor') return false;
           if (p.cdId === 'custom') return true;
           return activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId));
         })
