@@ -1289,6 +1289,19 @@
   .np-btn-primary:hover { background:#c83a2036; border-color:#6ad4f0; color:#ff9a7a; }
   .np-btn-ghost { padding:10px 16px; border-radius:7px; border:1px solid #26262a; background:transparent; color:#8a7060; font-size:12.5px; cursor:pointer; transition:all 0.12s; }
   .np-btn-ghost:hover { border-color:#55555c; color:#c8a890; }
+  .np-mode-tabs { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 15px;padding:4px;border:1px solid #2e2820;border-radius:9px;background:#12100e; }
+  .np-mode-btn { padding:8px 10px;border:1px solid transparent;border-radius:6px;background:transparent;color:#6a5848;font-size:11px;font-weight:700;cursor:pointer;transition:.12s ease; }
+  .np-mode-btn.active { color:#dcecf0;border-color:#6ad4f04d;background:#6ad4f012;box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
+  .np-roster-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px; }
+  .np-roster-card { display:flex;align-items:center;gap:9px;min-width:0;padding:8px 10px;border-radius:8px;border:1px solid #2e2820;background:#171310;cursor:pointer;transition:.12s ease; }
+  .np-roster-card:hover { border-color:#4a3e30;background:#1c1712; }
+  .np-roster-card.selected { border-color:var(--spec-color);background:color-mix(in srgb,var(--spec-color) 10%,#171310); }
+  .np-roster-check { width:16px;height:16px;border-radius:5px;border:1.5px solid #4a3e30;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#0d0b08;font-size:10px;font-weight:900; }
+  .np-roster-card.selected .np-roster-check { background:var(--spec-color);border-color:var(--spec-color); }
+  .np-roster-info { min-width:0;display:flex;flex-direction:column;gap:2px; }
+  .np-roster-name { color:#c8d0e8;font-size:11.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .np-roster-cds { color:#6a5848;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  @media(max-width:560px){ .np-roster-grid{grid-template-columns:1fr;} }
 
   /* ── Polish ── */
 
@@ -1605,6 +1618,7 @@ const CD_POOL = [
   { id:'lhammer',  name:"Light's Hammer",            short:'LH',   cd:60,  dur:14, color:'#f58cba', textColor:'#ffccee', who:'HPALA1',    core:false },
   { id:'lhammer2', name:"Light's Hammer (Prot)",     short:'LH',   cd:60,  dur:14, color:'#a83888', textColor:'#ff99cc', who:'PROTPALA1', core:false },
 ];
+const BASE_CD_WHO = Object.fromEntries(CD_POOL.map(cd => [cd.id, cd.who]));
 
 // Active set — IDs of CDs currently shown on timeline and palette
 let activeSetIds = new Set(CD_POOL.filter(c => c.core).map(c => c.id));
@@ -7578,6 +7592,7 @@ function captureCurrentTimeline() {
     activeSetIds: [...activeSetIds],
     paletteOrder: JSON.parse(JSON.stringify(paletteOrder)),
     cdWho: Object.fromEntries(CD_POOL.map(c => [c.id, c.who])),
+    bossDisabledIds: Object.fromEntries(Object.entries(bossDisabledIds).map(([bossId, ids]) => [bossId, [...ids]])),
   };
 }
 
@@ -7595,6 +7610,12 @@ function applyTimelineSnapshot(snapshot) {
     const utilIds = CD_POOL.filter(c => c.who === 'ALL').map(c => c.id);
     activeSetIds = new Set([...snapshot.activeSetIds, ...utilIds]);
   }
+  if (snapshot.bossDisabledIds) {
+    bossDisabledIds = {};
+    Object.entries(snapshot.bossDisabledIds).forEach(([bossId, ids]) => {
+      bossDisabledIds[bossId] = new Set(ids || []);
+    });
+  }
   ensureManageOptionalCdsInSet();
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
@@ -7606,7 +7627,7 @@ function applyTimelineSnapshot(snapshot) {
   playPlanSwitchAnim();
 }
 
-function saveCurrentAsPlan(name, subs, subbedOut) {
+function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
   const plans = getPlans();
   const id = 'plan_' + Date.now();
   const snapshot = captureCurrentTimeline();
@@ -7623,6 +7644,8 @@ function saveCurrentAsPlan(name, subs, subbedOut) {
     activeSetIds: snapshot.activeSetIds,
     paletteOrder: snapshot.paletteOrder,
     cdWho: snapshot.cdWho,
+    bossDisabledIds: snapshot.bossDisabledIds,
+    rosterSpecs: Array.isArray(rosterSpecs) ? rosterSpecs : null,
     savedAt: Date.now(),
   };
   savePlans(plans);
@@ -7642,6 +7665,7 @@ function updatePlanSnapshot(id) {
   plans[id].activeSetIds = snapshot.activeSetIds;
   plans[id].paletteOrder = snapshot.paletteOrder;
   plans[id].cdWho = snapshot.cdWho;
+  plans[id].bossDisabledIds = snapshot.bossDisabledIds;
   plans[id].savedAt = Date.now();
   savePlans(plans);
 }
@@ -7668,6 +7692,7 @@ function switchToPlan(id) {
       plans[currentId].activeSetIds = snapshot.activeSetIds;
       plans[currentId].paletteOrder = snapshot.paletteOrder;
       plans[currentId].cdWho = snapshot.cdWho;
+      plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
@@ -7867,6 +7892,104 @@ function showPlansMenu(ev) {
 }
 
 
+const PLAN_ROSTER_SPEC_GROUPS = {
+  'Healers': ['Holy Paladin','Discipline','Holy Priest','Restoration Sham','Restoration Dru','Mistweaver'],
+  'Tanks': ['Brewmaster','Protection Pal','Protection War','Blood DK','Guardian Dru'],
+  'Ranged': ['Shadow Priest','Elemental','Enhancement','Balance Dru','Frost Mage','Fire Mage','Arcane Mage','Destruction','Affliction','Demonology','Survival Hunt','Marksmanship','Beast Mastery'],
+  'Melee': ['Arms Warrior','Fury Warrior','Assassination','Combat Rogue','Subtlety','Unholy DK','Frost DK','Windwalker','Feral Dru','Retribution'],
+};
+const PLAN_ROSTER_SPEC_ORDER = Object.values(PLAN_ROSTER_SPEC_GROUPS).flat();
+
+function normalizePlanRosterSpecs(specNames) {
+  const requested = new Set(Array.isArray(specNames) ? specNames : []);
+  const usedWhos = new Set();
+  return PLAN_ROSTER_SPEC_ORDER.filter(specName => {
+    if (!requested.has(specName)) return false;
+    const spec = SPEC_CD_MAP[specName];
+    if (!spec || !spec.who || usedWhos.has(spec.who)) return false;
+    usedWhos.add(spec.who);
+    return true;
+  });
+}
+
+function planRosterEntries(specNames) {
+  return normalizePlanRosterSpecs(specNames).map(specName => {
+    const spec = SPEC_CD_MAP[specName];
+    const defaultPlayer = DEFAULT_ROSTER.find(player => player.spec === specName || player.who === spec.who);
+    const roleGroup = Object.entries(PLAN_ROSTER_SPEC_GROUPS).find(([, names]) => names.includes(specName))?.[0] || 'Ranged';
+    return {
+      name: defaultPlayer?.name || specName,
+      spec: specName,
+      who: spec.who,
+      cds: [...spec.cds],
+      color: SPEC_CLASS_COLORS[specName] || defaultPlayer?.color || '#8a8a92',
+      role: roleGroup === 'Healers' ? 'healer' : roleGroup === 'Tanks' ? 'tank' : roleGroup === 'Melee' ? 'melee' : 'ranged',
+    };
+  });
+}
+
+function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
+  const selectedSpecs = normalizePlanRosterSpecs(specNames);
+  const selectedWhos = new Set(selectedSpecs.map(name => SPEC_CD_MAP[name].who));
+  const selectedRosterCdIds = new Set();
+  const activeIds = new Set();
+
+  CD_POOL.forEach(cd => {
+    const baseWho = BASE_CD_WHO[cd.id] || cd.who;
+    if (baseWho === 'ALL') activeIds.add(cd.id);
+    if (selectedWhos.has(baseWho) && (cd.core || (sourceSnapshot.activeSetIds || []).includes(cd.id))) {
+      activeIds.add(cd.id);
+    }
+  });
+
+  const cdWho = { ...BASE_CD_WHO };
+  selectedSpecs.forEach(specName => {
+    const spec = SPEC_CD_MAP[specName];
+    spec.cds.forEach(cdId => {
+      activeIds.add(cdId);
+      selectedRosterCdIds.add(cdId);
+      cdWho[cdId] = spec.who;
+    });
+  });
+
+  const disabled = {};
+  const sourceDisabled = sourceSnapshot.bossDisabledIds || {};
+  BOSSES.forEach(boss => {
+    disabled[boss.id] = new Set(sourceDisabled[boss.id] || []);
+    MANAGE_OPTIONAL_CD_IDS.forEach(cdId => {
+      activeIds.add(cdId);
+      if (selectedRosterCdIds.has(cdId)) disabled[boss.id].delete(cdId);
+      else disabled[boss.id].add(cdId);
+    });
+  });
+
+  const rosterControlledIds = new Set();
+  CD_POOL.forEach(cd => {
+    if ((BASE_CD_WHO[cd.id] || cd.who) !== 'ALL') rosterControlledIds.add(cd.id);
+  });
+  Object.values(SPEC_CD_MAP).forEach(spec => spec.cds.forEach(cdId => rosterControlledIds.add(cdId)));
+
+  const sourcePlaced = sourceSnapshot.placedCDs || {};
+  const filteredPlaced = JSON.parse(JSON.stringify(sourcePlaced));
+  Object.values(filteredPlaced).forEach(rows => {
+    Object.keys(rows || {}).forEach(rowKey => {
+      rows[rowKey] = (rows[rowKey] || []).filter(placement =>
+        !rosterControlledIds.has(placement.cdId) || activeIds.has(placement.cdId)
+      );
+    });
+  });
+
+  return {
+    rosterSpecs: selectedSpecs,
+    placedCDs: filteredPlaced,
+    activeSetIds: [...activeIds],
+    cdWho,
+    paletteOrder: JSON.parse(JSON.stringify(sourceSnapshot.paletteOrder || {})),
+    bossDisabledIds: Object.fromEntries(Object.entries(disabled).map(([bossId, ids]) => [bossId, [...ids]])),
+  };
+}
+
+
 function showNewPlanPicker() {
   const ov = document.createElement('div');
   ov.className = 'modal-overlay';
@@ -7877,6 +8000,9 @@ function showNewPlanPicker() {
 
   const selectedOut = new Set();       // who values subbed out
   const subIns = {};                    // who -> specName (sub-in spec)
+  const rosterSpecs = new Set(normalizePlanRosterSpecs(DEFAULT_ROSTER.map(player => player.spec)));
+  let planMode = 'roster';              // 'roster' | 'subs'
+  let rosterPlanName = 'New Roster Plan';
   let step = 1;
   let sourceId = FULL_RAID_ID;         // which plan the new one copies from
 
@@ -7921,6 +8047,23 @@ function showNewPlanPicker() {
     const planEntries = Object.values(getPlans()).sort((a,b) => a.savedAt - b.savedAt);
     const sourceOptsHtml = `<option value="${FULL_RAID_ID}" ${sourceId===FULL_RAID_ID?'selected':''}>Full Raid</option>` +
       planEntries.map(p => `<option value="${p.id}" ${sourceId===p.id?'selected':''}>${p.name}</option>`).join('');
+    const rosterHtml = Object.entries(PLAN_ROSTER_SPEC_GROUPS).map(([group, specs]) => {
+      const cards = specs.map(specName => {
+        const spec = SPEC_CD_MAP[specName];
+        const selected = rosterSpecs.has(specName);
+        const color = SPEC_CLASS_COLORS[specName] || '#8a8a92';
+        const cdNames = spec.cds.map(id => CD_POOL.find(cd => cd.id === id)?.short || id).join(', ');
+        return `<div class="np-roster-card ${selected ? 'selected' : ''}" data-spec="${specName}" style="--spec-color:${color};">
+          <span class="np-roster-check">${selected ? '✓' : ''}</span>
+          <span class="np-roster-info">
+            <span class="np-roster-name">${specName}</span>
+            <span class="np-roster-cds">${cdNames || 'No raid cooldowns'}</span>
+          </span>
+        </div>`;
+      }).join('');
+      return `<div class="np-role">${group}</div><div class="np-roster-grid">${cards}</div>`;
+    }).join('');
+    const selectedRosterCount = normalizePlanRosterSpecs([...rosterSpecs]).length;
 
     box.innerHTML = `
       <div class="np-head">
@@ -7931,14 +8074,26 @@ function showNewPlanPicker() {
       <div class="np-body">
         <div class="np-role" style="margin:0 0 6px;">Start from</div>
         <select id="npSource" class="np-select" style="margin-bottom:6px;">${sourceOptsHtml}</select>
-        <div style="font-size:10px;color:#6a5848;margin-bottom:15px;line-height:1.4;">The new plan copies this plan's timeline, then applies your subs on top.</div>
-        <div class="np-hint">Select players who are <b>subbing out</b> — pick as many as you need.</div>
-        ${playersHtml}
+        <div style="font-size:10px;color:#6a5848;margin-bottom:13px;line-height:1.4;">The new plan copies this timeline, then applies the roster you choose below.</div>
+        <div class="np-mode-tabs">
+          <button class="np-mode-btn ${planMode === 'roster' ? 'active' : ''}" data-mode="roster">Build Roster</button>
+          <button class="np-mode-btn ${planMode === 'subs' ? 'active' : ''}" data-mode="subs">Adjust Subs</button>
+        </div>
+        ${planMode === 'roster' ? `
+          <div class="np-hint">Choose the classes and specs that should be the <b>default roster</b> for this plan. Their raid cooldowns will populate the palette and Manage CDs.</div>
+          ${rosterHtml}
+        ` : `
+          <div class="np-hint">Select players who are <b>subbing out</b> — pick as many as you need.</div>
+          ${playersHtml}
+        `}
       </div>
       <div class="np-foot">
-        <div class="np-summary">${anySelected?'Subbing out: <b>'+selectedNames+'</b>':'Nothing selected — you can still create a plain copy of '+getSourceName()+'.'}</div>
+        ${planMode === 'roster'
+          ? `<input id="npRosterName" type="text" class="np-name-input" placeholder="Plan name…" value="${rosterPlanName}" />
+             <div class="np-summary"><b>${selectedRosterCount}</b> roster specs selected.</div>`
+          : `<div class="np-summary">${anySelected?'Subbing out: <b>'+selectedNames+'</b>':'Nothing selected — you can still create a plain copy of '+getSourceName()+'.'}</div>`}
         <div class="np-actions">
-          <button id="npNext" class="np-btn-primary">${anySelected?'Next →':'Create Copy of '+getSourceName()}</button>
+          <button id="npNext" class="np-btn-primary">${planMode === 'roster' ? 'Create Plan' : (anySelected?'Next →':'Create Copy of '+getSourceName())}</button>
           <button id="npCancel" class="np-btn-ghost">Cancel</button>
         </div>
       </div>`;
@@ -7946,6 +8101,30 @@ function showNewPlanPicker() {
     box.querySelector('#npSource')?.addEventListener('change', e => {
       sourceId = e.target.value;
       renderStep1();
+    });
+    box.querySelector('#npRosterName')?.addEventListener('input', e => { rosterPlanName = e.target.value; });
+    box.querySelectorAll('.np-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        planMode = btn.dataset.mode;
+        renderStep1();
+      });
+    });
+    box.querySelectorAll('.np-roster-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const specName = card.dataset.spec;
+        if (rosterSpecs.has(specName)) {
+          rosterSpecs.delete(specName);
+        } else {
+          const chosenWho = SPEC_CD_MAP[specName]?.who;
+          if (chosenWho) {
+            [...rosterSpecs].forEach(existing => {
+              if (SPEC_CD_MAP[existing]?.who === chosenWho) rosterSpecs.delete(existing);
+            });
+          }
+          rosterSpecs.add(specName);
+        }
+        renderStep1();
+      });
     });
     box.querySelectorAll('.sub-player-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -7958,6 +8137,11 @@ function showNewPlanPicker() {
     box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
     box.querySelector('#npNext')?.addEventListener('click', () => {
+      if (planMode === 'roster') {
+        const name = (box.querySelector('#npRosterName')?.value || '').trim() || 'New Roster Plan';
+        createRosterPlan(name, [...rosterSpecs]);
+        return;
+      }
       if (selectedOut.size === 0) { createPlan('Copy of ' + getSourceName(), [], {}); return; }
       step = 2; renderStep2();
     });
@@ -8036,6 +8220,7 @@ function showNewPlanPicker() {
           activeSetIds: (nested ? nested.activeSetIds : src.activeSetIds) || [...activeSetIds],
           cdWho:        (nested ? nested.cdWho : src.cdWho) || {},
           paletteOrder: (nested ? nested.paletteOrder : src.paletteOrder) || {},
+          bossDisabledIds: (nested ? nested.bossDisabledIds : src.bossDisabledIds) || {},
         };
       }
     }
@@ -8045,7 +8230,30 @@ function showNewPlanPicker() {
       activeSetIds: fullSnap.activeSetIds || [...activeSetIds],
       cdWho:        fullSnap.cdWho || {},
       paletteOrder: fullSnap.paletteOrder || {},
+      bossDisabledIds: fullSnap.bossDisabledIds || {},
     };
+  }
+
+  function createRosterPlan(name, selectedSpecs) {
+    const rosterSnapshot = buildRosterPlanSnapshot(getSourceSnapshot(), selectedSpecs);
+
+    Object.keys(placedCDs).forEach(key => delete placedCDs[key]);
+    Object.assign(placedCDs, rosterSnapshot.placedCDs);
+    activeSetIds = new Set(rosterSnapshot.activeSetIds);
+    bossDisabledIds = {};
+    Object.entries(rosterSnapshot.bossDisabledIds).forEach(([bossId, ids]) => {
+      bossDisabledIds[bossId] = new Set(ids || []);
+    });
+    CD_POOL.forEach(cd => { cd.who = rosterSnapshot.cdWho[cd.id] || BASE_CD_WHO[cd.id] || cd.who; });
+    paletteOrder = rosterSnapshot.paletteOrder;
+
+    const id = saveCurrentAsPlan(name, [], [], rosterSnapshot.rosterSpecs);
+    setActivePlanId(id);
+    buildPalette();
+    renderTimeline();
+    renderBottomPanel();
+    updatePlansBtn();
+    ov.remove();
   }
 
   function createPlan(name, subbedWhos, subInMap) {
@@ -8092,6 +8300,10 @@ function showNewPlanPicker() {
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
     Object.assign(placedCDs, newPlacedCDs);
     activeSetIds = new Set(newActiveSetIds);
+    bossDisabledIds = {};
+    Object.entries(srcSnap.bossDisabledIds || {}).forEach(([bossId, ids]) => {
+      bossDisabledIds[bossId] = new Set(ids || []);
+    });
     ensureManageOptionalCdsInSet();
     CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
     paletteOrder = JSON.parse(JSON.stringify(srcSnap.paletteOrder));
@@ -8111,10 +8323,121 @@ function showNewPlanPicker() {
   ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
 }
 
+function showCustomRosterPlanEditor(planId, plan) {
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+  const box = document.createElement('div');
+  box.className = 'np-box';
+  const selectedSpecs = new Set(normalizePlanRosterSpecs(plan.rosterSpecs || []));
+  let planName = plan.name || 'Roster Plan';
+
+  function render() {
+    const rosterHtml = Object.entries(PLAN_ROSTER_SPEC_GROUPS).map(([group, specs]) => {
+      const cards = specs.map(specName => {
+        const spec = SPEC_CD_MAP[specName];
+        const selected = selectedSpecs.has(specName);
+        const color = SPEC_CLASS_COLORS[specName] || '#8a8a92';
+        const cdNames = spec.cds.map(id => CD_POOL.find(cd => cd.id === id)?.short || id).join(', ');
+        return `<div class="np-roster-card ${selected ? 'selected' : ''}" data-spec="${specName}" style="--spec-color:${color};">
+          <span class="np-roster-check">${selected ? '✓' : ''}</span>
+          <span class="np-roster-info">
+            <span class="np-roster-name">${specName}</span>
+            <span class="np-roster-cds">${cdNames || 'No raid cooldowns'}</span>
+          </span>
+        </div>`;
+      }).join('');
+      return `<div class="np-role">${group}</div><div class="np-roster-grid">${cards}</div>`;
+    }).join('');
+
+    box.innerHTML = `
+      <div class="np-head">
+        <div class="np-title">Edit Plan Roster</div>
+        <button id="npClose" class="np-close">×</button>
+      </div>
+      <div class="np-body">
+        <div class="np-hint">Adjust the plan's <b>default roster</b>. Cooldowns from removed specs leave the palette; newly selected specs add theirs.</div>
+        ${rosterHtml}
+      </div>
+      <div class="np-foot">
+        <input id="npRosterName" type="text" class="np-name-input" placeholder="Plan name…" value="${planName}" />
+        <div class="np-summary"><b>${normalizePlanRosterSpecs([...selectedSpecs]).length}</b> roster specs selected.</div>
+        <div class="np-actions">
+          <button id="npSaveRoster" class="np-btn-primary">Save Changes</button>
+          <button id="npCancel" class="np-btn-ghost">Cancel</button>
+        </div>
+      </div>`;
+
+    box.querySelector('#npRosterName')?.addEventListener('input', e => { planName = e.target.value; });
+    box.querySelectorAll('.np-roster-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const specName = card.dataset.spec;
+        if (selectedSpecs.has(specName)) {
+          selectedSpecs.delete(specName);
+        } else {
+          const chosenWho = SPEC_CD_MAP[specName]?.who;
+          if (chosenWho) {
+            [...selectedSpecs].forEach(existing => {
+              if (SPEC_CD_MAP[existing]?.who === chosenWho) selectedSpecs.delete(existing);
+            });
+          }
+          selectedSpecs.add(specName);
+        }
+        render();
+      });
+    });
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npSaveRoster')?.addEventListener('click', () => {
+      const currentIsThisPlan = getActivePlanId() === planId;
+      const nested = plan.placedCDs?.placedCDs ? plan.placedCDs : null;
+      const sourceSnapshot = currentIsThisPlan ? captureCurrentTimeline() : {
+        placedCDs: (nested ? nested.placedCDs : plan.placedCDs) || {},
+        activeSetIds: (nested ? nested.activeSetIds : plan.activeSetIds) || [],
+        cdWho: (nested ? nested.cdWho : plan.cdWho) || {},
+        paletteOrder: (nested ? nested.paletteOrder : plan.paletteOrder) || {},
+        bossDisabledIds: (nested ? nested.bossDisabledIds : plan.bossDisabledIds) || {},
+      };
+      const rosterSnapshot = buildRosterPlanSnapshot(sourceSnapshot, [...selectedSpecs]);
+      const allPlans = getPlans();
+      const updated = allPlans[planId];
+      if (!updated) return;
+      updated.name = planName.trim() || plan.name || 'Roster Plan';
+      updated.rosterSpecs = rosterSnapshot.rosterSpecs;
+      updated.subbedOut = [];
+      updated.subs = [];
+      updated.subWho = null;
+      updated.subSpec = null;
+      updated.placedCDs = rosterSnapshot.placedCDs;
+      updated.activeSetIds = rosterSnapshot.activeSetIds;
+      updated.cdWho = rosterSnapshot.cdWho;
+      updated.paletteOrder = rosterSnapshot.paletteOrder;
+      updated.bossDisabledIds = rosterSnapshot.bossDisabledIds;
+      updated.savedAt = Date.now();
+      savePlans(allPlans);
+      if (currentIsThisPlan) {
+        applyTimelineSnapshot(rosterSnapshot);
+        renderBottomPanel();
+      }
+      updatePlansBtn();
+      ov.remove();
+    });
+  }
+
+  render();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
 function showEditPlanPicker(planId) {
   const plans = getPlans();
   const plan = plans[planId];
   if (!plan) return;
+  if (Array.isArray(plan.rosterSpecs)) {
+    showCustomRosterPlanEditor(planId, plan);
+    return;
+  }
 
   // Pre-populate from saved plan
   const preSelectedOut = new Set(plan.subbedOut || []);
@@ -8339,6 +8662,7 @@ function showEditPlanPicker(planId) {
       allPlans[planId].activeSetIds = finalActiveSetIds;
       allPlans[planId].paletteOrder = JSON.parse(JSON.stringify(savedSnapshot.paletteOrder || {}));
       allPlans[planId].cdWho = newCdWho;
+      allPlans[planId].bossDisabledIds = JSON.parse(JSON.stringify(savedSnapshot.bossDisabledIds || plan.bossDisabledIds || {}));
       allPlans[planId].savedAt = Date.now();
       savePlans(allPlans);
       // If this is the active plan, apply changes
@@ -8346,6 +8670,12 @@ function showEditPlanPicker(planId) {
         Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
         Object.assign(placedCDs, newPlacedCDs);
         activeSetIds = new Set(finalActiveSetIds);
+        if (allPlans[planId].bossDisabledIds) {
+          bossDisabledIds = {};
+          Object.entries(allPlans[planId].bossDisabledIds).forEach(([bossId, ids]) => {
+            bossDisabledIds[bossId] = new Set(ids || []);
+          });
+        }
         ensureManageOptionalCdsInSet();
         CD_POOL.forEach(c => { if (newCdWho[c.id]) c.who = newCdWho[c.id]; });
         buildPalette(); renderTimeline();
@@ -8432,8 +8762,10 @@ function buildShareData() {
   const plan = currentId !== FULL_RAID_ID ? plans[currentId] : null;
   const subbedOut = new Set(plan?.subbedOut || []);
 
-  const effectiveRoster = DEFAULT_ROSTER
-    .filter(p => !subbedOut.has(p.who))
+  const baseShareRoster = Array.isArray(plan?.rosterSpecs)
+    ? planRosterEntries(plan.rosterSpecs)
+    : DEFAULT_ROSTER.filter(p => !subbedOut.has(p.who));
+  const effectiveRoster = baseShareRoster
     .map(p => {
       const fill = activeRosterFills[p.who];
       if (fill) {
@@ -8517,6 +8849,7 @@ async function createShareLink(btn) {
       const snapshot = captureCurrentTimeline();
       plans[currentId].placedCDs = snapshot.placedCDs;
       plans[currentId].activeSetIds = snapshot.activeSetIds;
+      plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
     }
