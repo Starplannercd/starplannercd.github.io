@@ -3302,13 +3302,19 @@ function handleRightClick(e, boss, rowKey, bossData) {
 
 
 // ---- Offset popup ----
-const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
+const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Mass Dispel','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
+
+// Abilities owned by one specific raider automatically target that player.
+const CUSTOM_ABILITY_DEFAULT_WHOS = {
+  'Mass Dispel': 'SPRIEST1',
+};
 
 // Class colours per ability for custom assignments
 const CUSTOM_ABILITY_COLORS = {
   'Bloodlust':          { color:'#c79c6e', textColor:'#ffcc55' }, // Shaman/bloodlust gold
   'Windwalk Totem':       { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Mass Spell Reflection':{ color:'#c79c6e', textColor:'#e8c87a' }, // Warrior brown
+  'Mass Dispel':           { color:'#6840b8', textColor:'#d0a8ff' }, // Shadow Priest purple
   'Capacitor Totem':      { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Vigilance':            { color:'#c79c6e', textColor:'#e8c87a' }, // Warrior brown
   'Hand of Sacrifice':    { color:'#f58cba', textColor:'#ffccee' }, // Paladin pink
@@ -3333,6 +3339,7 @@ const CUSTOM_ABILITY_SHORTS = {
   'Bloodlust':             'BL',
   'Windwalk Totem':        'WW',
   'Mass Spell Reflection': 'MSR',
+  'Mass Dispel':           'MD',
   'Capacitor Totem':       'Cap',
   'Vigilance':             'Vig',
   'Hand of Sacrifice':     'HoS',
@@ -3357,6 +3364,7 @@ const CUSTOM_ABILITY_ICONS = {
   'Bloodlust':             'https://wow.zamimg.com/images/wow/icons/large/spell_nature_bloodlust.jpg',
   'Windwalk Totem':        'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_windwalktotem.jpg',
   'Mass Spell Reflection': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shieldreflection.jpg',
+  'Mass Dispel':           'https://wow.zamimg.com/images/wow/icons/large/spell_arcane_massdispel.jpg',
   'Capacitor Totem':       'https://wow.zamimg.com/images/wow/icons/large/spell_nature_brilliance.jpg',
   'Vigilance':             'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_vigilance.jpg',
   'Hand of Sacrifice':     'https://wow.zamimg.com/images/wow/icons/large/spell_holy_sealofsacrifice.jpg',
@@ -3381,6 +3389,7 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Bloodlust':             '2825',
   'Windwalk Totem':        '108273',
   'Mass Spell Reflection': '114028',
+  'Mass Dispel':           '32375',
   'Capacitor Totem':       '192058',
   'Vigilance':             '114030',
   'Hand of Sacrifice':     '6940',
@@ -3513,6 +3522,23 @@ function readTargetWhos(popup) {
   return checked.length > 0 ? checked : null;
 }
 
+function getCustomAbilityTargetWhos(popup, ability) {
+  const tiedWho = CUSTOM_ABILITY_DEFAULT_WHOS[ability];
+  return tiedWho ? [tiedWho] : readTargetWhos(popup);
+}
+
+function applyCustomAbilityDefaultWho(popup) {
+  const abilitySelect = popup.querySelector('#customAbility');
+  if (!abilitySelect) return;
+  const tiedWho = CUSTOM_ABILITY_DEFAULT_WHOS[abilitySelect.value];
+  if (!tiedWho) return;
+  const allBox = popup.querySelector('#tp-all');
+  if (allBox) allBox.checked = false;
+  popup.querySelectorAll('.tp-player').forEach(box => {
+    box.checked = box.value === tiedWho;
+  });
+}
+
 function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const isHpAssign = !!(ab && ab.hpAssign);
   closeOffsetPopup();
@@ -3625,6 +3651,11 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   popup.style.visibility = 'hidden';
   document.body.appendChild(popup);
   wireTargetPicker(popup);
+  const customAbilitySelect = popup.querySelector('#customAbility');
+  if (customAbilitySelect) {
+    customAbilitySelect.addEventListener('change', () => applyCustomAbilityDefaultWho(popup));
+    applyCustomAbilityDefaultWho(popup);
+  }
   var popH = popup.offsetHeight || 200;
   var topPos = e.clientY + 8;
   if (topPos + popH > window.innerHeight - 8) topPos = e.clientY - popH - 8;
@@ -3644,8 +3675,8 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
       if (isCustom) {
         const offsetInput = popup.querySelector('#offsetInput');
         const offVal = parseFloat(offsetInput ? offsetInput.value : 0);
-        const targetWhos = readTargetWhos(popup);
         const ability = popup.querySelector('#customAbility') ? popup.querySelector('#customAbility').value : '';
+        const targetWhos = getCustomAbilityTargetWhos(popup, ability);
         const bossAbility = popup.querySelector('#customBossAbility') ? popup.querySelector('#customBossAbility').value : '';
         let customName = popup.querySelector('#customName') ? popup.querySelector('#customName').value.trim() : '';
         let tts = popup.querySelector('#customTts') ? popup.querySelector('#customTts').value.trim() : '';
@@ -3666,9 +3697,9 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     const offsetInput = popup.querySelector('#offsetInput');
     const offVal = parseFloat(offsetInput.value);
     if (isCustom) {
-      const targetWhos = readTargetWhos(popup);
       const spellId = 'nil';
       const ability = popup.querySelector('#customAbility') ? popup.querySelector('#customAbility').value : '';
+      const targetWhos = getCustomAbilityTargetWhos(popup, ability);
       const bossAbility = popup.querySelector('#customBossAbility') ? popup.querySelector('#customBossAbility').value : '';
       let customName = popup.querySelector('#customName').value.trim();
       let tts = popup.querySelector('#customTts').value.trim();
