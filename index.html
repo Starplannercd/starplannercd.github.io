@@ -3709,20 +3709,47 @@ function retargetCustomAssignsToSubs() {
   });
 }
 
-function buildTargetPickerHtml(currentTargetWhos) {
-  const isAll = !Array.isArray(currentTargetWhos) || currentTargetWhos.length === 0;
-  // Show the effective roster: a subbed-in player replaces the original's row
+function getActivePlanTargetRoster() {
+  const planId = getActivePlanId();
+  const plan = planId !== FULL_RAID_ID ? getPlans()[planId] : null;
+  const subbedOut = new Set(plan?.subbedOut || []);
   const subMap = activeSubMap();
-  const pickerRoster = DEFAULT_ROSTER.map(r => {
-    const sub = subMap[r.who];
+  const baseRoster = Array.isArray(plan?.rosterSpecs)
+    ? planRosterEntries(plan.rosterSpecs)
+    : DEFAULT_ROSTER;
+  const seenWhos = new Set();
+
+  return baseRoster.map(player => {
+    const sub = subMap[player.who];
     if (sub) {
-      const color = SPEC_CLASS_COLORS[sub.spec] || r.color;
-      return { ...r, name: SPEC_SHORT_NAMES[sub.spec] || sub.spec, spec: sub.spec, who: sub.who, color };
+      const color = SPEC_CLASS_COLORS[sub.spec] || player.color;
+      return {
+        ...player,
+        name: SPEC_SHORT_NAMES[sub.spec] || sub.spec,
+        spec: sub.spec,
+        who: sub.who,
+        cds: SPEC_CD_MAP[sub.spec]?.cds || [],
+        color,
+      };
     }
-    return r;
+    if (subbedOut.has(player.who)) return null;
+    return player;
+  }).filter(player => {
+    if (!player || !player.who || seenWhos.has(player.who)) return false;
+    seenWhos.add(player.who);
+    return true;
   });
+}
+
+function buildTargetPickerHtml(currentTargetWhos) {
+  const pickerRoster = getActivePlanTargetRoster();
+  const rosterWhos = new Set(pickerRoster.map(player => player.who));
+  const selectedWhos = Array.isArray(currentTargetWhos)
+    ? currentTargetWhos.filter(who => rosterWhos.has(who))
+    : [];
+  const isAll = selectedWhos.length === 0;
   const rows = pickerRoster.map(r => {
-    const checked = !isAll && currentTargetWhos.includes(r.who);
+    const checked = !isAll && selectedWhos.includes(r.who);
     return `<label class="tp-row" style="display:flex;align-items:center;gap:7px;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;">
       <input type="checkbox" class="tp-player" value="${r.who}" ${checked ? 'checked' : ''} style="accent-color:${r.color};cursor:pointer;width:13px;height:13px;">
       <span style="color:${r.color};font-weight:600;font-size:11px;">${r.name}</span>
@@ -3760,14 +3787,23 @@ function readTargetWhos(popup) {
 }
 
 function getCustomAbilityTargetWhos(popup, ability) {
-  const tiedWho = CUSTOM_ABILITY_DEFAULT_WHOS[ability];
+  const tiedWho = getCustomAbilityDefaultWho(ability);
   return tiedWho ? [tiedWho] : readTargetWhos(popup);
+}
+
+function getCustomAbilityDefaultWho(ability) {
+  const tiedWho = CUSTOM_ABILITY_DEFAULT_WHOS[ability];
+  if (!tiedWho) return null;
+  const roster = getActivePlanTargetRoster();
+  if (roster.some(player => player.who === tiedWho)) return tiedWho;
+  const tiedSpec = DEFAULT_ROSTER.find(player => player.who === tiedWho)?.spec;
+  return roster.find(player => player.spec === tiedSpec)?.who || tiedWho;
 }
 
 function applyCustomAbilityDefaultWho(popup) {
   const abilitySelect = popup.querySelector('#customAbility');
   if (!abilitySelect) return;
-  const tiedWho = CUSTOM_ABILITY_DEFAULT_WHOS[abilitySelect.value];
+  const tiedWho = getCustomAbilityDefaultWho(abilitySelect.value);
   if (!tiedWho) return;
   const allBox = popup.querySelector('#tp-all');
   if (allBox) allBox.checked = false;
