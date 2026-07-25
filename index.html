@@ -3007,6 +3007,7 @@ function renderTimeline() {
     if (e.target.checked) { wrap.classList.add('ready'); lbl.textContent = '✓ Ready'; }
     else { wrap.classList.remove('ready'); lbl.textContent = 'Mark Ready'; }
     refreshBossSelectLabels();
+    scheduleAutoSave();
   });
   info.querySelector('#syncKillBtn').addEventListener('click', onSyncKillClick);
   area.appendChild(info);
@@ -6296,6 +6297,7 @@ function autoSave() {
       plans[activePlanId].paletteOrder = snapshot.paletteOrder;
       plans[activePlanId].cdWho = snapshot.cdWho;
       plans[activePlanId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[activePlanId].bossReady = snapshot.bossReady;
       plans[activePlanId].defaultOffV2 = true;
       plans[activePlanId].savedAt = Date.now();
       savePlans(plans);
@@ -7791,6 +7793,7 @@ function captureCurrentTimeline() {
     paletteOrder: JSON.parse(JSON.stringify(paletteOrder)),
     cdWho: Object.fromEntries(CD_POOL.map(c => [c.id, c.who])),
     bossDisabledIds: Object.fromEntries(Object.entries(bossDisabledIds).map(([bossId, ids]) => [bossId, [...ids]])),
+    bossReady: JSON.parse(JSON.stringify(bossReady)),
   };
 }
 
@@ -7814,6 +7817,10 @@ function applyTimelineSnapshot(snapshot) {
       bossDisabledIds[bossId] = new Set(ids || []);
     });
   }
+  if (snapshot.bossReady) {
+    Object.keys(bossReady).forEach(bossId => delete bossReady[bossId]);
+    Object.assign(bossReady, JSON.parse(JSON.stringify(snapshot.bossReady)));
+  }
   removeRetiredCooldownsFromLiveState();
   if (!snapshot.defaultOffV2) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
@@ -7823,8 +7830,6 @@ function applyTimelineSnapshot(snapshot) {
   paletteOrder = snapshot.paletteOrder && !Array.isArray(snapshot.paletteOrder) ? snapshot.paletteOrder : {};
   buildPalette();
   renderTimeline();
-  // Animate plan switch
-  playPlanSwitchAnim();
 }
 
 function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
@@ -7845,6 +7850,7 @@ function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
     paletteOrder: snapshot.paletteOrder,
     cdWho: snapshot.cdWho,
     bossDisabledIds: snapshot.bossDisabledIds,
+    bossReady: snapshot.bossReady,
     defaultOffV2: true,
     rosterSpecs: Array.isArray(rosterSpecs) ? rosterSpecs : null,
     savedAt: Date.now(),
@@ -7867,6 +7873,7 @@ function updatePlanSnapshot(id) {
   plans[id].paletteOrder = snapshot.paletteOrder;
   plans[id].cdWho = snapshot.cdWho;
   plans[id].bossDisabledIds = snapshot.bossDisabledIds;
+  plans[id].bossReady = snapshot.bossReady;
   plans[id].defaultOffV2 = true;
   plans[id].savedAt = Date.now();
   savePlans(plans);
@@ -7895,6 +7902,7 @@ function switchToPlan(id) {
       plans[currentId].paletteOrder = snapshot.paletteOrder;
       plans[currentId].cdWho = snapshot.cdWho;
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[currentId].bossReady = snapshot.bossReady;
       plans[currentId].defaultOffV2 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
@@ -7918,6 +7926,7 @@ function switchToPlan(id) {
   }
   renderBottomPanel();
   updatePlansBtn();
+  playPlanSwitchAnim();
 }
 
 
@@ -8192,6 +8201,7 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
     cdWho,
     paletteOrder: JSON.parse(JSON.stringify(sourceSnapshot.paletteOrder || {})),
     bossDisabledIds: Object.fromEntries(Object.entries(disabled).map(([bossId, ids]) => [bossId, [...ids]])),
+    bossReady: JSON.parse(JSON.stringify(sourceSnapshot.bossReady || {})),
   };
 }
 
@@ -8603,6 +8613,7 @@ function showCustomRosterPlanEditor(planId, plan) {
         cdWho: (nested ? nested.cdWho : plan.cdWho) || {},
         paletteOrder: (nested ? nested.paletteOrder : plan.paletteOrder) || {},
         bossDisabledIds: (nested ? nested.bossDisabledIds : plan.bossDisabledIds) || {},
+        bossReady: (nested ? nested.bossReady : plan.bossReady) || {},
       };
       const rosterSnapshot = buildRosterPlanSnapshot(sourceSnapshot, [...selectedSpecs]);
       const allPlans = getPlans();
@@ -8619,6 +8630,7 @@ function showCustomRosterPlanEditor(planId, plan) {
       updated.cdWho = rosterSnapshot.cdWho;
       updated.paletteOrder = rosterSnapshot.paletteOrder;
       updated.bossDisabledIds = rosterSnapshot.bossDisabledIds;
+      updated.bossReady = rosterSnapshot.bossReady;
       updated.defaultOffV2 = true;
       updated.savedAt = Date.now();
       savePlans(allPlans);
@@ -9058,6 +9070,7 @@ async function createShareLink(btn) {
       plans[currentId].placedCDs = snapshot.placedCDs;
       plans[currentId].activeSetIds = snapshot.activeSetIds;
       plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
+      plans[currentId].bossReady = snapshot.bossReady;
       plans[currentId].defaultOffV2 = true;
       plans[currentId].savedAt = Date.now();
       savePlans(plans);
@@ -9102,7 +9115,6 @@ async function initViewMode(viewId) {
             <div class="view-brand-sub">Raid Tools</div>
           </div>
         </div>
-        <div class="view-readonly"><span class="view-readonly-dot"></span>Shared view · Read only</div>
       </div>
     </nav>
     <main class="view-plan-shell">
