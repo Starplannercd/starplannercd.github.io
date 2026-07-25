@@ -5018,14 +5018,45 @@ function blendHex(a, b, t) {
 function viewCdParts(p, ab) {
   const cd = CD_POOL.find(c => c.id === p.cdId);
   if (!cd) return null;
+  let viewCd = cd;
+  let url = getCdIconUrl(cd.id);
+  let specIcon = getSpecIconUrl(cd);
+  let who = VIEW_CD_NAMES[cd.id] || cd.short;
+  let color = cd.color;
+  let textColor = cd.textColor;
+
+  // Custom assignments should look the same in shared links as they do on the
+  // planner timeline: use the selected ability's real icon, label and colour.
+  if (cd.customType && p.customAbility) {
+    const abilityStyle = CUSTOM_ABILITY_COLORS[p.customAbility];
+    const assignedWho = Array.isArray(p.targetWhos) && p.targetWhos.length
+      ? p.targetWhos[0]
+      : p.customWho;
+    const assignedPlayer = assignedWho && VIEW_ROSTER.find(pl => pl.who === assignedWho);
+    const assignedSpecIcon = assignedPlayer && SPEC_ICONS[assignedPlayer.spec];
+
+    viewCd = {
+      ...cd,
+      name: p.customAbility,
+      short: CUSTOM_ABILITY_SHORTS[p.customAbility] || 'CUST',
+    };
+    url = CUSTOM_ABILITY_ICONS[p.customAbility] || url;
+    specIcon = assignedSpecIcon ? SPEC_ICON_CDN + assignedSpecIcon + '.jpg' : null;
+    who = assignedPlayer?.name || assignedWho || viewCd.short;
+    if (abilityStyle) {
+      color = abilityStyle.color;
+      textColor = abilityStyle.textColor;
+    }
+  }
+
   return {
-    cd,
-    url:      getCdIconUrl(cd.id),
-    specIcon: getSpecIconUrl(cd),
-    who:      VIEW_CD_NAMES[cd.id] || cd.short,
+    cd:       viewCd,
+    url,
+    specIcon,
+    who,
     info:     getSsInfoLabel(cd, p, ab),
-    color:    cd.color,
-    textColor: cd.textColor,
+    color,
+    textColor,
   };
 }
 function viewIconImg(parts, size) {
