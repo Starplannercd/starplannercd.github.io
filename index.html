@@ -1433,6 +1433,96 @@
 
   /* Topbar: minimal — flat, thin hairline underneath (baked in) */
   html[data-topbar="minimal"] .topbar { background: var(--bg2); border-top-color: transparent; border-bottom: 1px solid var(--border); box-shadow: none; }
+
+  /* Shared plan — presentation shell (kept separate from the planner UI) */
+  #viewPage {
+    min-height: 100vh;
+    color: #ececf0;
+    background:
+      radial-gradient(circle at 50% -20%, rgba(106,212,240,.09), transparent 34rem),
+      linear-gradient(180deg, #0b0b0d 0%, #070708 100%);
+    font-family: var(--app-font, Inter, system-ui, sans-serif);
+  }
+  .view-nav {
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background: rgba(12,12,14,.86);
+    box-shadow: 0 8px 32px rgba(0,0,0,.22);
+    backdrop-filter: blur(14px);
+  }
+  .view-nav-inner {
+    width: min(1080px, calc(100% - 40px));
+    height: 66px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .view-brand { display:flex;align-items:center;gap:12px;min-width:0; }
+  .view-brand-mark {
+    width:36px;height:36px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:#78dcf4;border:1px solid rgba(106,212,240,.24);
+    background:linear-gradient(145deg,rgba(106,212,240,.14),rgba(106,212,240,.025));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 22px rgba(106,212,240,.08);
+  }
+  .view-brand-name {
+    font-family:Cinzel,Georgia,serif;font-size:14px;font-weight:700;
+    color:#f0f0f2;letter-spacing:.23em;text-transform:uppercase;line-height:1.1;
+  }
+  .view-brand-sub { margin-top:3px;font-size:9px;font-weight:700;color:#686871;letter-spacing:.18em;text-transform:uppercase; }
+  .view-readonly {
+    display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+    color:#9898a2;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);
+    font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .view-readonly-dot { width:6px;height:6px;border-radius:50%;background:#6ad4f0;box-shadow:0 0 10px rgba(106,212,240,.75); }
+  .view-plan-shell { width:min(1040px,calc(100% - 40px));margin:0 auto;padding:38px 0 72px; }
+  .view-plan-head { display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px 26px; }
+  .view-plan-eyebrow {
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    color:#79d9f0;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  }
+  .view-plan-eyebrow-line { width:24px;height:1px;background:linear-gradient(90deg,#6ad4f0,transparent); }
+  .view-plan-title { margin:0;color:#f1f1f3;font-size:30px;font-weight:760;letter-spacing:-.025em;line-height:1.12; }
+  .view-plan-meta { margin-top:9px;color:#777780;font-size:12px;font-weight:500; }
+  .view-plan-note { max-width:310px;color:#666670;font-size:11px;line-height:1.55;text-align:right; }
+  .view-copy-btn {
+    padding:7px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.11);
+    background:rgba(10,10,12,.68);color:#b6b6be;font-size:10px;font-weight:750;
+    font-family:inherit;cursor:pointer;letter-spacing:.06em;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);transition:.16s ease;
+  }
+  .view-copy-btn:hover { color:#fff;border-color:rgba(255,255,255,.24);background:rgba(24,24,28,.82);transform:translateY(-1px); }
+  .share-boss-card {
+    margin-bottom:22px;border-radius:15px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(17,17,19,.98),rgba(9,9,10,.98));
+    box-shadow:0 18px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  .share-boss-hero { position:relative;overflow:hidden;height:168px; }
+  .share-boss-hero::after {
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:
+      linear-gradient(90deg,rgba(4,4,5,.95) 0%,rgba(4,4,5,.72) 42%,rgba(4,4,5,.05) 76%),
+      linear-gradient(0deg,rgba(4,4,5,.52),transparent 44%);
+  }
+  .share-boss-copy { position:absolute;left:28px;bottom:22px;z-index:2; }
+  .share-boss-kicker { margin-bottom:7px;color:#8d8d96;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase; }
+  .share-boss-title { color:#f3f3f5;font-size:31px;font-weight:780;letter-spacing:-.025em;line-height:1.05;text-shadow:0 2px 18px #000; }
+  .share-boss-detail { display:flex;align-items:center;gap:8px;margin-top:10px;color:#84848d;font-size:10px;font-weight:650; }
+  .share-boss-detail-dot { width:5px;height:5px;border-radius:50%;box-shadow:0 0 10px currentColor; }
+  .share-boss-actions { position:absolute;left:28px;top:18px;z-index:3; }
+  .share-boss-card .vrows > div + div { border-top:1px solid rgba(255,255,255,.055); }
+  @media (max-width: 700px) {
+    .view-nav-inner,.view-plan-shell { width:min(100% - 24px,1040px); }
+    .view-plan-shell { padding-top:26px; }
+    .view-plan-head { align-items:flex-start;flex-direction:column;gap:10px;padding-bottom:20px; }
+    .view-plan-note { text-align:left; }
+    .view-plan-title { font-size:26px; }
+    .view-readonly { display:none; }
+    .share-boss-hero { height:154px; }
+    .share-boss-copy,.share-boss-actions { left:20px; }
+    .share-boss-title { font-size:27px; }
+  }
 </style>
 <script>document.documentElement.setAttribute('data-theme','frost');document.documentElement.setAttribute('data-topbar','minimal');</script>
 </head>
@@ -4890,7 +4980,7 @@ function bossImgHtml(v, h) {
   return `<img class="boss-banner-img" data-glow1="${v.glow[0]}" data-glow2="${v.glow[1]}" data-right="${v.right}" data-offset="${v.offset}" data-imgh="${ht}" src="${v.file}" onerror="this.style.display='none'" style="position:absolute;right:${v.right};bottom:${v.offset};height:${ht}px;pointer-events:none;filter:drop-shadow(0 0 10px ${v.glow[0]}) drop-shadow(0 0 28px ${v.glow[1]});opacity:0.92;z-index:1;" />`;
 }
 // Shared "Image for Disc" capture button (handler wired after render)
-const VIEW_IMG_BTN = `<button class="view-img-btn" style="padding:6px 16px;border-radius:4px;border:1px solid #26262a;background:#181410cc;color:#a88a70;font-size:13px;font-family:inherit;cursor:pointer;letter-spacing:0.05em;flex-shrink:0;" onmouseover="this.style.color='#e8c8a0';this.style.borderColor='#6a4a30';" onmouseout="this.style.color='#a88a70';this.style.borderColor='#26262a';">Image for Disc</button>`;
+const VIEW_IMG_BTN = `<button class="view-img-btn view-copy-btn">Image for Disc</button>`;
 
 function buildSsBossHeader(boss, portraitUrl, showImgBtn) {
   const name = boss.name;
@@ -5118,17 +5208,21 @@ function viewBlockSpotlight(boss, rows, v, color) {
       <div style="display:flex;gap:13px;flex-wrap:wrap;align-items:center;padding:10px 18px;flex:1;">${cells}</div>
     </div>`;
   }).join('');
-  const hero = v ? `<div class="boss-banner" style="position:relative;overflow:hidden;height:150px;background:${v.bg};">
+  const assignmentLabel = `${rows.length} assignment ${rows.length === 1 ? 'window' : 'windows'}`;
+  const hero = v ? `<div class="boss-banner share-boss-hero" style="background:${v.bg};">
       ${bossGlowHtml(v)}
-      ${bossImgHtml(v, 230)}
-      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#000a 0%,#0007 42%,transparent 72%);z-index:1;"></div>
-      <div style="position:absolute;left:0;bottom:0;padding:0 26px 18px;z-index:2;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${color}99;margin-bottom:6px;">Cooldowns</div>
-        <div style="font-size:30px;font-weight:900;color:${color};letter-spacing:0.01em;text-shadow:0 2px 14px #000,0 0 26px ${color}55;">${boss.name}</div>
+      ${bossImgHtml(v, 250)}
+      <div class="share-boss-copy">
+        <div class="share-boss-kicker">Siege of Orgrimmar · Cooldown plan</div>
+        <div class="share-boss-title">${boss.name}</div>
+        <div class="share-boss-detail">
+          <span class="share-boss-detail-dot" style="color:${color};background:${color};"></span>
+          ${assignmentLabel}
+        </div>
       </div>
-      <div style="position:absolute;top:14px;left:18px;z-index:3;">${VIEW_IMG_BTN}</div>
+      <div class="share-boss-actions">${VIEW_IMG_BTN}</div>
     </div>` : viewBanner(boss, v, color, 90, 24);
-  return `<div class="ss-boss-block" style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1px solid ${v?v.border:'#26262a'};background:#0b0908;box-shadow:0 6px 24px rgba(0,0,0,0.5);">
+  return `<div class="ss-boss-block share-boss-card" style="border:1px solid ${v?v.border:'#26262a'};">
     ${hero}
     <div class="vrows">${body}</div>
   </div>`;
@@ -8448,17 +8542,35 @@ async function initViewMode(viewId) {
 
   const viewEl = document.createElement('div');
   viewEl.id = 'viewPage';
-  viewEl.style.cssText = 'min-height:100vh;background:#0a0a0b;font-family:var(--app-font, Inter, system-ui, sans-serif);';
 
-  // Single combined top bar + content — Frost / minimal, matching the planner
+  // Shared-plan shell: visually related to the planner, but optimized for
+  // scanning and presenting a read-only raid plan.
   viewEl.innerHTML = `
-    <div style="background:#101012;border-bottom:1px solid #26262a;padding:8px 32px;display:flex;align-items:center;gap:20px;">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex-shrink:0;">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6ad4f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px rgba(106,212,240,0.5));"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
-        <span style="font-family:Cinzel,Georgia,serif;font-size:14px;font-weight:700;color:#e8e8ea;letter-spacing:0.38em;text-transform:uppercase;text-shadow:0 0 8px rgba(106,212,240,0.3);line-height:1;">Professional</span>
+    <nav class="view-nav">
+      <div class="view-nav-inner">
+        <div class="view-brand">
+          <div class="view-brand-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+          </div>
+          <div>
+            <div class="view-brand-name">Professional</div>
+            <div class="view-brand-sub">Raid Tools</div>
+          </div>
+        </div>
+        <div class="view-readonly"><span class="view-readonly-dot"></span>Shared view · Read only</div>
       </div>
-    </div>
-    <div id="viewContent" style="max-width:980px;margin:0 auto;padding:24px 28px;"></div>`;
+    </nav>
+    <main class="view-plan-shell">
+      <header class="view-plan-head">
+        <div>
+          <div class="view-plan-eyebrow"><span class="view-plan-eyebrow-line"></span>Shared raid plan</div>
+          <h1 class="view-plan-title">Siege of Orgrimmar</h1>
+          <div class="view-plan-meta" id="viewPlanMeta">Loading plan details…</div>
+        </div>
+        <div class="view-plan-note">Cooldown assignments organized by encounter and mechanic for quick raid-side reference.</div>
+      </header>
+      <div id="viewContent"></div>
+    </main>`;
 
   document.body.appendChild(viewEl);
 
@@ -8506,7 +8618,16 @@ async function initViewMode(viewId) {
 
     const EMPTY_HTML = '<div style="color:#55555c;font-size:13px;padding:20px 0;">No assignments placed.</div>';
 
-    viewContent.innerHTML = BOSSES.map(b => buildViewBossBlock(b)).filter(Boolean).join('') || EMPTY_HTML;
+    const renderedBosses = BOSSES.filter(b => buildSummaryForBoss(b).length > 0);
+    viewContent.innerHTML = renderedBosses.map(b => buildViewBossBlock(b)).filter(Boolean).join('') || EMPTY_HTML;
+    const viewPlanMeta = viewEl.querySelector('#viewPlanMeta');
+    if (viewPlanMeta) {
+      const encounterText = `${renderedBosses.length} ${renderedBosses.length === 1 ? 'encounter' : 'encounters'}`;
+      const sharedText = data.createdAt
+        ? `Shared ${new Date(data.createdAt).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' })}`
+        : 'Shared plan';
+      viewPlanMeta.textContent = `${encounterText} · ${sharedText}`;
+    }
     attachSsIconErrors(viewContent);
 
     // Image buttons — capture the parent boss block via html2canvas (normal mode), then
@@ -8542,6 +8663,7 @@ async function initViewMode(viewId) {
 
             // Glow pass: redraw boss image with canvas shadowBlur to replicate CSS drop-shadow.
             if (imgEl && imgEl.src) {
+              const bannerEl = block.querySelector('.boss-banner');
               const freshImg = new Image();
               freshImg.crossOrigin = 'anonymous';
               await new Promise(res => { freshImg.onload = res; freshImg.onerror = res; freshImg.src = imgEl.src; });
@@ -8555,7 +8677,8 @@ async function initViewMode(viewId) {
                 const g1s = (g1 || '#fff').replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
                 const g2s = (g2 || g1s).replace(/^(#[0-9a-f]{6})[0-9a-f]{2}$/i, '$1');
                 const bx = Math.round(1 * SCALE), by = Math.round(1 * SCALE);
-                const bw = out.width - 2 * bx, bh = Math.round(150 * SCALE);
+                const bannerHeight = bannerEl ? bannerEl.getBoundingClientRect().height : 168;
+                const bw = out.width - 2 * bx, bh = Math.round(bannerHeight * SCALE);
                 const ix = bx + bw + (-rightVal) * SCALE - imgWcss * SCALE;
                 const iy = by + bh + (-offsetVal) * SCALE - imgHcss * SCALE;
                 const iw = imgWcss * SCALE, ih = imgHcss * SCALE;
