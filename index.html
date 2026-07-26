@@ -7745,18 +7745,25 @@ function keepPlacedCooldownsEnabled(snapshot) {
   if (!snapshot || typeof snapshot !== 'object') return snapshot;
   const placementMap = snapshot.placedCDs?.placedCDs || snapshot.placedCDs;
   const disabledMap = snapshot.placedCDs?.bossDisabledIds || snapshot.bossDisabledIds;
-  if (!placementMap || !disabledMap) return snapshot;
+  const activeListOwner = snapshot.placedCDs?.placedCDs ? snapshot.placedCDs : snapshot;
+  if (!placementMap) return snapshot;
+  const activeIds = new Set(Array.isArray(activeListOwner.activeSetIds) ? activeListOwner.activeSetIds : []);
 
   Object.entries(placementMap).forEach(([bossId, rows]) => {
-    if (!Array.isArray(disabledMap[bossId])) return;
     const placedIds = new Set();
     Object.values(rows || {}).forEach(placements => {
       (placements || []).forEach(placement => {
-        if (placement && placement.cdId) placedIds.add(placement.cdId);
+        if (placement && placement.cdId) {
+          placedIds.add(placement.cdId);
+          activeIds.add(placement.cdId);
+        }
       });
     });
-    disabledMap[bossId] = disabledMap[bossId].filter(cdId => !placedIds.has(cdId));
+    if (disabledMap && Array.isArray(disabledMap[bossId])) {
+      disabledMap[bossId] = disabledMap[bossId].filter(cdId => !placedIds.has(cdId));
+    }
   });
+  activeListOwner.activeSetIds = [...activeIds];
   return snapshot;
 }
 
