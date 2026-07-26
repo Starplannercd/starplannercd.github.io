@@ -7741,8 +7741,21 @@ function normalizeStoredPlanDefaults(snapshot) {
 // A placed assignment must never be hidden by that boss's Manage CDs toggle.
 // Default-off migrations may disable unassigned optional cooldowns, but an
 // existing timeline placement is an explicit user choice and always wins.
+function keepRosterCooldownsAvailable(snapshot) {
+  if (!snapshot || typeof snapshot !== 'object' || !Array.isArray(snapshot.rosterSpecs)) return snapshot;
+  const activeListOwner = snapshot.placedCDs?.placedCDs ? snapshot.placedCDs : snapshot;
+  const activeIds = new Set(Array.isArray(activeListOwner.activeSetIds) ? activeListOwner.activeSetIds : []);
+  normalizePlanRosterSpecs(snapshot.rosterSpecs).forEach(specName => {
+    const spec = SPEC_CD_MAP[specName];
+    if (spec) spec.cds.forEach(cdId => activeIds.add(cdId));
+  });
+  activeListOwner.activeSetIds = [...activeIds];
+  return snapshot;
+}
+
 function keepPlacedCooldownsEnabled(snapshot) {
   if (!snapshot || typeof snapshot !== 'object') return snapshot;
+  keepRosterCooldownsAvailable(snapshot);
   const placementMap = snapshot.placedCDs?.placedCDs || snapshot.placedCDs;
   const disabledMap = snapshot.placedCDs?.bossDisabledIds || snapshot.bossDisabledIds;
   const activeListOwner = snapshot.placedCDs?.placedCDs ? snapshot.placedCDs : snapshot;
