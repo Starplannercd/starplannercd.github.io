@@ -4288,7 +4288,7 @@ function buildFojiExport() {
             : (isXuen || isHstone) ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
-          const _whoRemap = { 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
+          const _whoRemap = { 'ALL':'All', 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
           const baseWho = _whoRemap[_whoRaw] || _whoRaw;
           const ttsText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
@@ -5811,7 +5811,8 @@ function parseFojiImport(raw) {
   lines.forEach(line => {
     const parts = line.split('/');
     if (parts.length < 9) return;
-    const [bossAbKey, castNumStr, who, offsetStr, spellId, , tts, displayText] = parts;
+    const [bossAbKey, castNumStr, whoRaw, offsetStr, spellId, , tts, displayText] = parts;
+    const who = whoRaw === 'All' ? 'ALL' : whoRaw;
     const castNum = parseInt(castNumStr) || 1;
     const offset = parseInt(offsetStr) || 0;
 
