@@ -6100,6 +6100,39 @@ const DEFAULT_OFF_CD_IDS = ['ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holy
 const DEFAULT_OFF_CD_SET = new Set(DEFAULT_OFF_CD_IDS);
 const REMOVED_CD_IDS = new Set(['lhammer2']);
 const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz', ...DEFAULT_OFF_CD_IDS];
+const OPTIONAL_CD_SPEC_OWNERS = {
+  symbtranq: ['Shadow Priest'],
+  smoke: ['Assassination', 'Combat Rogue', 'Subtlety'],
+  tranq: ['Restoration Dru'],
+  amz: ['Blood DK', 'Unholy DK', 'Frost DK'],
+  ascend: ['Elemental'],
+  slt: ['Elemental'],
+  lhammer: ['Holy Paladin'],
+  goak: ['Holy Paladin'],
+  avwrath: ['Holy Paladin'],
+  holyavenger: ['Holy Paladin'],
+  pwb2: ['Shadow Priest'],
+  ss2: ['Shadow Priest'],
+  dh: ['Discipline', 'Holy Priest'],
+  xuen: ['Mistweaver'],
+};
+
+function optionalCdAllowedForRoster(cdId, rosterSpecs) {
+  if (!Array.isArray(rosterSpecs)) return true;
+  const selected = new Set(normalizePlanRosterSpecs(rosterSpecs));
+  const owners = OPTIONAL_CD_SPEC_OWNERS[cdId] || [];
+  return owners.some(specName => selected.has(specName));
+}
+
+function cdAllowedForRoster(cdId, rosterSpecs) {
+  if (!Array.isArray(rosterSpecs)) return true;
+  const selected = new Set(normalizePlanRosterSpecs(rosterSpecs));
+  const owners = new Set(OPTIONAL_CD_SPEC_OWNERS[cdId] || []);
+  Object.entries(SPEC_CD_MAP).forEach(([specName, spec]) => {
+    if (spec.cds.includes(cdId)) owners.add(specName);
+  });
+  return owners.size === 0 || [...owners].some(specName => selected.has(specName));
+}
 
 function removeRetiredCooldownsFromLiveState() {
   REMOVED_CD_IDS.forEach(cdId => {
@@ -6129,15 +6162,21 @@ function seedDefaultOffCooldowns() {
   });
 }
 
-function ensureManageOptionalCdsInSet() {
+function ensureManageOptionalCdsInSet(rosterSpecs) {
   MANAGE_OPTIONAL_CD_IDS.forEach(function(cdId) {
     if (!CD_POOL.some(cd => cd.id === cdId)) return;
+    if (!optionalCdAllowedForRoster(cdId, rosterSpecs)) {
+      activeSetIds.delete(cdId);
+      return;
+    }
     if (activeSetIds.has(cdId)) return;
     activeSetIds.add(cdId);
-    BOSSES.forEach(function(b) {
-      if (!bossDisabledIds[b.id]) bossDisabledIds[b.id] = new Set();
-      bossDisabledIds[b.id].add(cdId);
-    });
+    if (DEFAULT_OFF_CD_SET.has(cdId)) {
+      BOSSES.forEach(function(b) {
+        if (!bossDisabledIds[b.id]) bossDisabledIds[b.id] = new Set();
+        bossDisabledIds[b.id].add(cdId);
+      });
+    }
   });
 }
 
@@ -7771,6 +7810,9 @@ function keepRosterCooldownsAvailable(snapshot) {
   if (!snapshot || typeof snapshot !== 'object' || !Array.isArray(snapshot.rosterSpecs)) return snapshot;
   const activeListOwner = snapshot.placedCDs?.placedCDs ? snapshot.placedCDs : snapshot;
   const activeIds = new Set(Array.isArray(activeListOwner.activeSetIds) ? activeListOwner.activeSetIds : []);
+  [...activeIds].forEach(cdId => {
+    if (!cdAllowedForRoster(cdId, snapshot.rosterSpecs)) activeIds.delete(cdId);
+  });
   normalizePlanRosterSpecs(snapshot.rosterSpecs).forEach(specName => {
     const spec = SPEC_CD_MAP[specName];
     if (spec) spec.cds.forEach(cdId => activeIds.add(cdId));
@@ -7792,7 +7834,7 @@ function keepPlacedCooldownsEnabled(snapshot) {
     const placedIds = new Set();
     Object.values(rows || {}).forEach(placements => {
       (placements || []).forEach(placement => {
-        if (placement && placement.cdId) {
+        if (placement && placement.cdId && cdAllowedForRoster(placement.cdId, snapshot.rosterSpecs)) {
           placedIds.add(placement.cdId);
           activeIds.add(placement.cdId);
         }
@@ -7902,7 +7944,7 @@ function applyTimelineSnapshot(snapshot) {
   }
   removeRetiredCooldownsFromLiveState();
   if (!snapshot.defaultOffV3) seedDefaultOffCooldowns();
-  ensureManageOptionalCdsInSet();
+  ensureManageOptionalCdsInSet(snapshot.rosterSpecs);
   // Restore cdWho
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
   // Restore paletteOrder
@@ -8225,7 +8267,6 @@ function planRosterEntries(specNames) {
 function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
   const selectedSpecs = normalizePlanRosterSpecs(specNames);
   const selectedWhos = new Set(selectedSpecs.map(name => SPEC_CD_MAP[name].who));
-  const selectedRosterCdIds = new Set();
   const activeIds = new Set();
 
   CD_POOL.forEach(cd => {
@@ -8241,7 +8282,6 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
     const spec = SPEC_CD_MAP[specName];
     spec.cds.forEach(cdId => {
       activeIds.add(cdId);
-      selectedRosterCdIds.add(cdId);
       cdWho[cdId] = spec.who;
     });
   });
@@ -8251,10 +8291,13 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
   BOSSES.forEach(boss => {
     disabled[boss.id] = new Set(sourceDisabled[boss.id] || []);
     MANAGE_OPTIONAL_CD_IDS.forEach(cdId => {
+      if (!optionalCdAllowedForRoster(cdId, selectedSpecs)) {
+        activeIds.delete(cdId);
+        return;
+      }
       activeIds.add(cdId);
       if (DEFAULT_OFF_CD_SET.has(cdId)) disabled[boss.id].add(cdId);
-      else if (selectedRosterCdIds.has(cdId)) disabled[boss.id].delete(cdId);
-      else disabled[boss.id].add(cdId);
+      else disabled[boss.id].delete(cdId);
     });
   });
 
