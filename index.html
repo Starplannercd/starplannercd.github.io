@@ -4234,7 +4234,7 @@ function getCastNumber(abName) {
 
 function getFojiPlayerKey(rawWho) {
   const directRemap = {
-    ALL:'All', DK1:'UHDK1', MWMONK1:'MISTWEAVE1', HPRIEST1:'HOLYPRIEST1',
+    DK1:'UHDK1', MWMONK1:'MISTWEAVE1', HPRIEST1:'HOLYPRIEST1',
     WWMONK1:'WINDWALK1', BOOMKIN1:'BOOMIE1', ARCMAGE1:'MAGE1',
     FROSTMAGE1:'MAGE1', FIREMAGE1:'MAGE1', DESTLOCK1:'LOCK1',
     AFFLLOCK1:'LOCK1', DEMOLOCK1:'LOCK1', GUARDDRUID1:'FERALTANK1',
@@ -4318,12 +4318,6 @@ function buildFojiExport() {
           let _targetWhos = (isPersonals || isHstone || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
             ? p.targetWhos.map(getFojiPlayerKey)
             : [baseWho];
-          // Although "All" appears in Foji's validation dropdown, its importer
-          // rejects that aggregate value. Export one line per active roster
-          // member instead, which is equivalent and uses accepted player keys.
-          if (_targetWhos.includes('All')) {
-            _targetWhos = getActivePlanTargetRoster().map(player => getFojiPlayerKey(player.who));
-          }
           _targetWhos = [...new Set(_targetWhos)];
           _targetWhos.forEach(who => {
             // Foji's health-assignment rows use a distinct 10-field format:
