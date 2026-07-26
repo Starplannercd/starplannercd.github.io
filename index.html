@@ -1901,7 +1901,10 @@ const BOSSES = [
     id:'siegecrafter', name:'Siegecrafter Blackfuse',
     desc:'Heroic · Pinnacle of Storms',
     duration: 480,
-    sections: [{ label: null, abilities: [] }]
+    sections: [{ label: null, abilities: [
+      { name:'Overcharge Electro 1', time:145, color:'#c848c8' },
+      { name:'Overcharge Electro 2', time:218, color:'#c848c8' },
+    ]}]
   },
   {
     id:'paragons', name:'Paragons of the Klaxxi',
@@ -6005,6 +6008,20 @@ function applyBossTimingOverrides() {
         if (!boss.sections[0].abilities.some(function(a){ return a.hpAssign && !a.hpLabel; })) {
           boss.sections[0].abilities.push({ name:'HP Assign', time:0, color:'#c8a84b', hpAssign:true });
         }
+        boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
+      }
+
+      // Preserve the two planned Overcharged Electromagnet windows when an
+      // older saved timing override predates these Blackfuse timeline rows.
+      if (boss.id === 'siegecrafter' && boss.sections[0]) {
+        [
+          { name:'Overcharge Electro 1', time:145, color:'#c848c8' },
+          { name:'Overcharge Electro 2', time:218, color:'#c848c8' },
+        ].forEach(function(defaultRow) {
+          if (!boss.sections[0].abilities.some(function(a){ return a.name === defaultRow.name; })) {
+            boss.sections[0].abilities.push(Object.assign({}, defaultRow));
+          }
+        });
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
     });
