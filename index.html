@@ -4229,6 +4229,25 @@ function getCastNumber(abName) {
   return m ? parseInt(m[1]) : 1;
 }
 
+function getFojiPlayerKey(rawWho) {
+  const directRemap = {
+    ALL:'All', DK1:'UHDK1', MWMONK1:'MISTWEAVE1', HPRIEST1:'HOLYPRIEST1',
+    WWMONK1:'WINDWALK1', BOOMKIN1:'BOOMIE1', ARCMAGE1:'MAGE1',
+    FROSTMAGE1:'MAGE1', FIREMAGE1:'MAGE1', DESTLOCK1:'LOCK1',
+    AFFLLOCK1:'LOCK1', DEMOLOCK1:'LOCK1', GUARDDRUID1:'FERALTANK1',
+  };
+  const specRemap = {
+    'Holy Priest':'HOLYPRIEST1', 'Mistweaver':'MISTWEAVE1',
+    'Windwalker':'WINDWALK1', 'Balance Dru':'BOOMIE1',
+    'Beast Mastery':'BM1', 'Survival Hunt':'SURVIVAL1',
+    'Marksmanship':'MM1', 'Arcane Mage':'MAGE1', 'Frost Mage':'MAGE1',
+    'Fire Mage':'MAGE1', 'Destruction':'LOCK1', 'Affliction':'LOCK1',
+    'Demonology':'LOCK1', 'Guardian Dru':'FERALTANK1',
+  };
+  const rosterPlayer = getActivePlanTargetRoster().find(player => player.who === rawWho);
+  return (rosterPlayer && specRemap[rosterPlayer.spec]) || directRemap[rawWho] || rawWho;
+}
+
 function buildFojiExport() {
   const lines = [];
 
@@ -4288,15 +4307,21 @@ function buildFojiExport() {
             : (isXuen || isHstone) ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
           const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
-          const _whoRemap = { 'ALL':'All', 'DK1':'UHDK1', 'RSHAM1':'ELE1', 'MWMONK1':'MISTWEAVE1' };
-          const baseWho = _whoRemap[_whoRaw] || _whoRaw;
+          const baseWho = getFojiPlayerKey(_whoRaw);
           const ttsText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
           const displayText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
           const iconId = (isPersonals || isHstone) ? '134951' : customIconId;
           // Expand multi-target assignments into one line per player
-          const _targetWhos = (isPersonals || isHstone || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
-            ? p.targetWhos.map(w => _whoRemap[w] || w)
+          let _targetWhos = (isPersonals || isHstone || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
+            ? p.targetWhos.map(getFojiPlayerKey)
             : [baseWho];
+          // Although "All" appears in Foji's validation dropdown, its importer
+          // rejects that aggregate value. Export one line per active roster
+          // member instead, which is equivalent and uses accepted player keys.
+          if (_targetWhos.includes('All')) {
+            _targetWhos = getActivePlanTargetRoster().map(player => getFojiPlayerKey(player.who));
+          }
+          _targetWhos = [...new Set(_targetWhos)];
           _targetWhos.forEach(who => {
             // Foji's health-assignment rows use a distinct 10-field format:
             // boss health key / health % / player / offset / spell / NPC name.
