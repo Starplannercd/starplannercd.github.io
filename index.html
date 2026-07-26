@@ -6117,6 +6117,7 @@ function ensureManageOptionalCdsInSet() {
 
 function fbApplyData(data) {
   if (!data) return false;
+  keepPlacedCooldownsEnabled(data);
   if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
@@ -7733,6 +7734,29 @@ function normalizeStoredPlanDefaults(snapshot) {
   REMOVED_CD_IDS.forEach(cdId => { if (snapshot.cdWho) delete snapshot.cdWho[cdId]; });
   snapshot.defaultOffV2 = true;
   snapshot.defaultOffV3 = true;
+  keepPlacedCooldownsEnabled(snapshot);
+  return snapshot;
+}
+
+// A placed assignment must never be hidden by that boss's Manage CDs toggle.
+// Default-off migrations may disable unassigned optional cooldowns, but an
+// existing timeline placement is an explicit user choice and always wins.
+function keepPlacedCooldownsEnabled(snapshot) {
+  if (!snapshot || typeof snapshot !== 'object') return snapshot;
+  const placementMap = snapshot.placedCDs?.placedCDs || snapshot.placedCDs;
+  const disabledMap = snapshot.placedCDs?.bossDisabledIds || snapshot.bossDisabledIds;
+  if (!placementMap || !disabledMap) return snapshot;
+
+  Object.entries(placementMap).forEach(([bossId, rows]) => {
+    if (!Array.isArray(disabledMap[bossId])) return;
+    const placedIds = new Set();
+    Object.values(rows || {}).forEach(placements => {
+      (placements || []).forEach(placement => {
+        if (placement && placement.cdId) placedIds.add(placement.cdId);
+      });
+    });
+    disabledMap[bossId] = disabledMap[bossId].filter(cdId => !placedIds.has(cdId));
+  });
   return snapshot;
 }
 
@@ -7743,6 +7767,7 @@ function migrateStoredPlanDefaults() {
     if (!plan.defaultOffV3 || JSON.stringify(plan).includes('lhammer2')) {
       normalizeStoredPlanDefaults(plan);
     }
+    keepPlacedCooldownsEnabled(plan);
   });
   if (JSON.stringify(plans) !== before) savePlans(plans);
 
@@ -7751,9 +7776,10 @@ function migrateStoredPlanDefaults() {
     if (raw) {
       const snapshot = JSON.parse(raw);
       if (!snapshot.defaultOffV3 || JSON.stringify(snapshot).includes('lhammer2')) {
-        const normalized = normalizeStoredPlanDefaults(snapshot);
-        localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(normalized));
+        normalizeStoredPlanDefaults(snapshot);
       }
+      keepPlacedCooldownsEnabled(snapshot);
+      localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(snapshot));
     }
   } catch(e) {}
 }
@@ -7805,6 +7831,7 @@ function captureCurrentTimeline() {
 
 function applyTimelineSnapshot(snapshot) {
   if (!snapshot) return;
+  keepPlacedCooldownsEnabled(snapshot);
   // Restore placedCDs
   const pCDs = snapshot.placedCDs || snapshot; // backwards compat
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
