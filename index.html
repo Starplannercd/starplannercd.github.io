@@ -6370,6 +6370,25 @@ function autoSave() {
     const plans = getPlans();
     if (plans[activePlanId]) {
       const snapshot = captureCurrentTimeline();
+      const savedPlacementCount = countSnapshotPlacements(plans[activePlanId]);
+      const livePlacementCount = countSnapshotPlacements(snapshot);
+      // A plan can briefly render with an empty/incomplete timeline while
+      // asynchronous startup work finishes. Never let that transient state
+      // destroy a healthy saved plan. Restore the saved snapshot instead.
+      if (
+        savedPlacementCount >= 50 &&
+        livePlacementCount < savedPlacementCount * 0.6
+      ) {
+        console.error(
+          'Blocked destructive plan autosave:',
+          livePlacementCount,
+          'of',
+          savedPlacementCount,
+          'placements'
+        );
+        applyTimelineSnapshot(plans[activePlanId]);
+        return;
+      }
       plans[activePlanId].placedCDs = snapshot.placedCDs;
       plans[activePlanId].activeSetIds = snapshot.activeSetIds;
       plans[activePlanId].paletteOrder = snapshot.paletteOrder;
@@ -7902,7 +7921,7 @@ function countSnapshotPlacements(snapshot) {
 // contains the complete 251-placement plan; restore it once while preserving
 // the current plan identity, roster, and ready-state metadata.
 function recoverActualRaidPlacementsFromBackup() {
-  const markerKey = 'tot_rcd_recovered_actual_raid_20260727';
+  const markerKey = 'tot_rcd_recovered_actual_raid_20260727_v2';
   if (localStorage.getItem(markerKey)) return false;
   const activeId = getActivePlanId();
   if (activeId === FULL_RAID_ID) return false;
