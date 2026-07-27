@@ -2681,7 +2681,6 @@ function showRosterModal() {
     entries.forEach(plan => { rows += planRow(plan.id, plan.name, activePlanId === plan.id); });
     return `<div class="sub-section-label">
         <span>Plans</span>
-        <button id="planImportBtn" class="sub-import-btn">↓ Import Foji</button>
       </div>
       <div class="sub-plans">${rows}</div>`;
   }
@@ -2732,8 +2731,6 @@ function showRosterModal() {
         updatePlansBtn();
       });
     });
-    const importBtn = overlay.querySelector('#planImportBtn');
-    if (importBtn) importBtn.addEventListener('click', () => { overlay.remove(); showImportFojiAsPlan(); });
   }
 
   function wireRosterButtons() {
@@ -8338,9 +8335,8 @@ function showPlansMenu(ev) {
         <button id="plansCloseBtn" style="background:transparent;border:none;color:#55555c;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
       </div>
       <div style="overflow-y:auto;flex:1;" id="plansList">${plansHtml}</div>
-      <div style="padding:12px;border-top:1px solid #26262a;display:flex;gap:8px;">
+      <div style="padding:12px;border-top:1px solid #26262a;display:flex;">
         <button id="newPlanBtn" style="flex:1;padding:10px;border-radius:6px;border:none;background:#26262a;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">+ New Plan</button>
-        <button id="importPlanBtnMenu" style="flex:1;padding:10px;border-radius:6px;border:none;background:#26262a;color:#c8d0e8;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;">↓ Import Foji</button>
       </div>`;
   }
 
@@ -8418,16 +8414,9 @@ function showPlansMenu(ev) {
 
     box.querySelector('#newPlanBtn')?.addEventListener('mouseenter', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#26262a'; });
     box.querySelector('#newPlanBtn')?.addEventListener('mouseleave', () => { const b = box.querySelector('#newPlanBtn'); if(b) b.style.background='#26262a'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseenter', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#26262a'; });
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('mouseleave', () => { const b = box.querySelector('#importPlanBtnMenu'); if(b) b.style.background='#26262a'; });
     box.querySelector('#newPlanBtn')?.addEventListener('click', () => {
       close();
       showNewPlanPicker();
-    });
-
-    box.querySelector('#importPlanBtnMenu')?.addEventListener('click', () => {
-      close();
-      showImportFojiAsPlan();
     });
   }
 
