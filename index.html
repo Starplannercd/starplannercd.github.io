@@ -516,7 +516,7 @@
   .boss-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 7px;
     margin-bottom: 14px;
     flex-wrap: wrap;
     padding: 2px 0;
@@ -569,7 +569,6 @@
   .sync-kill-btn:disabled { opacity: 0.55; cursor: default; }
 
   .boss-name { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; text-transform: uppercase; }
-  .boss-desc { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
 
   /* TIMELINE GRID */
   .timeline-grid { position: relative; }
@@ -1122,29 +1121,84 @@
   .manage-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    max-height: 320px;
+    gap: 7px;
+    max-height: 390px;
     overflow-y: auto;
+    padding-right: 4px;
   }
   .manage-item {
+    --chip-color: #8a8a92;
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 4px;
-    background: #161618;
-    border: 1px solid #26262a;
+    gap: 9px;
+    min-width: 0;
+    padding: 7px 8px 7px 7px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #131315 0%, #0e0e10 100%);
+    border: 1px solid rgba(255,255,255,.055);
     cursor: pointer;
     user-select: none;
-    transition: border-color 0.15s;
+    overflow: hidden;
+    transition: border-color .15s, box-shadow .15s, opacity .15s, transform .1s;
   }
-  .manage-item.active { border-color: #3a3a40; background: #161618; }
-  .manage-item:hover { border-color: #6ad4f066; }
-  .manage-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .manage-item-name { font-size:12px; color:#e8e8ea; flex:1; }
-  .manage-item-who { font-size:10px; color:#55555c; }
-  .manage-check { width:14px; height:14px; border-radius:3px; border:1px solid #3a3a40; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
-  .manage-item.active .manage-check { background:#38a8b8; border-color:#38a8b8; color:#fff; }
+  .manage-item::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,var(--chip-color) 0%,transparent 65%);
+    opacity:.055;
+    pointer-events:none;
+  }
+  .manage-item.active {
+    border-color:color-mix(in srgb,var(--chip-color) 30%,#303036);
+    box-shadow:0 2px 10px rgba(0,0,0,.2);
+  }
+  .manage-item:not(.active) { opacity:.52; }
+  .manage-item:hover {
+    opacity:1;
+    border-color:color-mix(in srgb,var(--chip-color) 58%,#303036);
+    box-shadow:0 3px 14px rgba(0,0,0,.32);
+    transform:translateY(-1px);
+  }
+  .manage-item-icon {
+    position:relative;
+    width:34px;
+    height:34px;
+    flex:0 0 34px;
+    overflow:hidden;
+    border-radius:7px;
+    border:1px solid color-mix(in srgb,var(--chip-color) 48%,#303036);
+    background:#09090a;
+    box-shadow:0 0 9px -3px var(--chip-color);
+  }
+  .manage-item-icon img { width:100%;height:100%;display:block;object-fit:cover;transform:scale(1.08); }
+  .manage-item-icon-fb { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--chip-color); }
+  .manage-item-copy { flex:1;min-width:0;display:flex;flex-direction:column;gap:2px; }
+  .manage-item-name { font-size:10.5px;font-weight:800;letter-spacing:.045em;text-transform:uppercase;color:var(--chip-text,#e8e8ea);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .manage-item-meta { display:flex;align-items:center;gap:6px;min-width:0; }
+  .manage-item-full { font-size:9px;color:#777780;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .manage-item-who { font-size:8px;font-weight:700;letter-spacing:.06em;color:#55555c;white-space:nowrap; }
+  .manage-item-timer { flex:0 0 auto;font-size:8.5px;font-weight:800;color:#777780;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);padding:2px 5px;border-radius:5px; }
+  .manage-check { width:17px;height:17px;border-radius:5px;border:1px solid #3a3a40;flex:0 0 17px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#09090a; }
+  .manage-item.active .manage-check { background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px color-mix(in srgb,var(--accent) 42%,transparent); }
+  .manage-section {
+    grid-column:1/-1;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin:4px 0 1px;
+    padding:0 2px 7px;
+    border-bottom:1px solid #242428;
+    color:#72727a;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .manage-section:first-child { margin-top:0; }
+  .manage-section.active { color:#65c980; }
+  .manage-section-dot { width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 7px currentColor; }
 
   /* ROSTER CONFIGS */
   .btn-roster { --btn-accent: #9878d8; }
@@ -1247,21 +1301,21 @@
   .sub-swap-mid { color:#55555c; }
 
   /* ── NEW / EDIT PLAN WIZARD ── */
-  .np-box { background:#1a1610; border:1px solid #3a3a40; border-radius:12px; width:640px; max-width:96vw; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 18px 56px rgba(0,0,0,0.62); }
-  .np-head { padding:15px 20px 13px; border-bottom:1px solid #26262a; display:flex; align-items:center; gap:12px; flex-shrink:0; }
-  .np-title { font-size:15px; font-weight:600; color:#e6dac6; flex:1; }
+  .np-box { background:var(--bg2); border:1px solid var(--border2); border-radius:13px; width:680px; max-width:96vw; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 22px 70px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.018); }
+  .np-head { padding:16px 20px 14px; border-bottom:1px solid var(--border); background:linear-gradient(180deg,#151517 0%,#101012 100%); display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .np-title { font-size:15px; font-weight:700; color:var(--text); letter-spacing:.01em; flex:1; }
   .np-steps { display:flex; align-items:center; gap:6px; }
   .np-step-dot { width:7px; height:7px; border-radius:50%; background:#26262a; transition:background 0.2s; }
   .np-step-dot.active { background:#c83a20; box-shadow:0 0 7px #c83a2077; }
   .np-step-bar { width:16px; height:2px; background:#26262a; border-radius:1px; }
-  .np-close { background:transparent; border:none; color:#55555c; font-size:20px; cursor:pointer; line-height:1; padding:0 2px; }
-  .np-close:hover { color:#c8a890; }
+  .np-close { background:transparent; border:none; color:var(--text3); font-size:20px; cursor:pointer; line-height:1; padding:0 2px; }
+  .np-close:hover { color:var(--text); }
   .np-back { background:transparent; border:none; color:#9a9aa2; font-size:12px; cursor:pointer; padding:4px 9px; border-radius:5px; transition:all 0.12s; }
   .np-back:hover { color:#c8a890; background:#161618; }
-  .np-body { padding:16px 20px; overflow-y:auto; flex:1; }
-  .np-hint { font-size:11px; color:#6a5848; margin-bottom:15px; line-height:1.45; }
+  .np-body { padding:17px 20px 19px; overflow-y:auto; flex:1; background:var(--bg2); }
+  .np-hint { font-size:11px; color:var(--text2); margin-bottom:15px; line-height:1.45; }
   .np-hint b { color:#e8e8ea; font-weight:600; }
-  .np-foot { padding:13px 20px; border-top:1px solid #26262a; flex-shrink:0; }
+  .np-foot { padding:13px 20px 15px; border-top:1px solid var(--border); background:#0d0d0f; flex-shrink:0; }
   .np-role { font-size:9px; font-weight:700; color:#55555c; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px; }
   .np-role:not(:first-child) { margin-top:15px; }
   .np-players { display:flex; flex-wrap:wrap; gap:7px; }
@@ -1271,8 +1325,8 @@
   .np-ptext { display:flex; flex-direction:column; min-width:0; }
   .np-pname { font-size:12.5px; font-weight:600; line-height:1.25; color:#c8d0e8; }
   .np-pspec { font-size:9px; color:#6a5848; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .np-summary { font-size:11px; color:#8a7665; margin-bottom:11px; line-height:1.4; }
-  .np-summary b { color:#e8e8ea; }
+  .np-summary { font-size:10px; color:var(--text2); margin-bottom:11px; line-height:1.4; }
+  .np-summary b { color:var(--accent); }
   .np-srow { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid #221c14; }
   .np-srow:last-child { border-bottom:none; }
   .np-saccent { width:3px; align-self:stretch; min-height:40px; border-radius:2px; flex-shrink:0; }
@@ -1282,38 +1336,40 @@
   .np-select { width:100%; background:#101012; border:1px solid #3a3a40; color:#e8e8ea; padding:7px 9px; border-radius:6px; font-size:12px; cursor:pointer; }
   .np-select:focus { outline:none; border-color:#6a5238; }
   .np-spreview { min-width:90px; max-width:140px; display:flex; flex-wrap:wrap; gap:3px; justify-content:flex-end; }
-  .np-name-input { width:100%; background:#101012; border:1px solid #3a3a40; color:#e8e8ea; padding:9px 11px; border-radius:6px; font-size:12.5px; box-sizing:border-box; margin-bottom:11px; }
-  .np-name-input:focus { outline:none; border-color:#6a5238; }
+  .np-name-input { width:100%; background:#0b0b0d; border:1px solid var(--border2); color:var(--text); padding:9px 11px; border-radius:7px; font-size:12.5px; box-sizing:border-box; margin-bottom:11px; }
+  .np-name-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent); }
   .np-actions { display:flex; gap:8px; }
-  .np-btn-primary { flex:1; padding:10px; border-radius:7px; border:1px solid #6ad4f066; background:#c83a2022; color:#e8836a; font-size:12.5px; font-weight:700; cursor:pointer; transition:all 0.12s; }
-  .np-btn-primary:hover { background:#c83a2036; border-color:#6ad4f0; color:#ff9a7a; }
-  .np-btn-ghost { padding:10px 16px; border-radius:7px; border:1px solid #26262a; background:transparent; color:#8a7060; font-size:12.5px; cursor:pointer; transition:all 0.12s; }
-  .np-btn-ghost:hover { border-color:#55555c; color:#c8a890; }
+  .np-btn-primary { flex:1; padding:10px; border-radius:7px; border:1px solid color-mix(in srgb,var(--accent) 58%,#303036); background:color-mix(in srgb,var(--accent) 11%,#111113); color:var(--accent); font-size:12.5px; font-weight:750; cursor:pointer; transition:all 0.12s; }
+  .np-btn-primary:hover { background:color-mix(in srgb,var(--accent) 18%,#111113); border-color:var(--accent); color:#dff8ff; box-shadow:0 0 14px color-mix(in srgb,var(--accent) 13%,transparent); }
+  .np-btn-ghost { padding:10px 16px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--text2); font-size:12.5px; cursor:pointer; transition:all 0.12s; }
+  .np-btn-ghost:hover { border-color:var(--border2); color:var(--text); background:rgba(255,255,255,.025); }
   .np-mode-tabs { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 15px;padding:4px;border:1px solid #2e2820;border-radius:9px;background:#12100e; }
   .np-mode-btn { padding:8px 10px;border:1px solid transparent;border-radius:6px;background:transparent;color:#6a5848;font-size:11px;font-weight:700;cursor:pointer;transition:.12s ease; }
   .np-mode-btn.active { color:#dcecf0;border-color:#6ad4f04d;background:#6ad4f012;box-shadow:inset 0 1px 0 rgba(255,255,255,.03); }
-  .np-roster-sections { display:flex;flex-direction:column;gap:14px; }
-  .np-roster-section { padding:11px;border:1px solid #2b251f;border-radius:11px;background:linear-gradient(145deg,#15120f,#12100e); }
-  .np-role-head { display:flex;align-items:center;gap:8px;margin:0 2px 10px; }
-  .np-role-symbol { width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--role-color);background:color-mix(in srgb,var(--role-color) 13%,#11100e);border:1px solid color-mix(in srgb,var(--role-color) 30%,#2b251f);box-shadow:inset 0 1px 0 rgba(255,255,255,.04); }
-  .np-role-symbol svg { width:15px;height:15px;display:block; }
+  .np-roster-sections { display:flex;flex-direction:column;gap:11px; }
+  .np-roster-section { position:relative;padding:12px;border:1px solid var(--border);border-top:2px solid color-mix(in srgb,var(--role-color) 74%,#303036);border-radius:10px;background:linear-gradient(145deg,#141416,#101012);overflow:hidden; }
+  .np-roster-section::before { content:"";position:absolute;inset:0;background:radial-gradient(circle at 0 0,color-mix(in srgb,var(--role-color) 7%,transparent),transparent 38%);pointer-events:none; }
+  .np-role-head { position:relative;display:flex;align-items:center;gap:9px;margin:0 1px 11px; }
+  .np-role-symbol { width:31px;height:31px;flex:0 0 31px;display:flex;align-items:center;justify-content:center;color:var(--role-color);filter:drop-shadow(0 0 6px color-mix(in srgb,var(--role-color) 34%,transparent)); }
+  .np-role-symbol svg { width:27px;height:27px;display:block;overflow:visible; }
   .np-role-copy { min-width:0;display:flex;align-items:baseline;gap:7px; }
-  .np-role-title { color:#d9d0c4;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase; }
-  .np-role-count { margin-left:auto;color:var(--role-color);font-size:9px;font-weight:750;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--role-color) 10%,transparent);border:1px solid color-mix(in srgb,var(--role-color) 24%,#2b251f); }
+  .np-role-title { color:var(--role-color);font-size:11px;font-weight:800;letter-spacing:.095em;text-transform:uppercase; }
+  .np-role-count { margin-left:auto;display:inline-flex;align-items:baseline;gap:3px;color:#66666f;font-size:8.5px;font-weight:650;letter-spacing:.035em;text-transform:uppercase; }
+  .np-role-count-value { color:var(--text);font-size:12px;font-weight:800;letter-spacing:0; }
   .np-roster-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px; }
-  .np-roster-card { position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:9px 10px;border-radius:9px;border:1px solid #302921;background:#191511;cursor:pointer;transition:transform .12s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease;overflow:hidden; }
+  .np-roster-card { position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:9px 10px;border-radius:9px;border:1px solid #29292e;background:#18181b;cursor:pointer;transition:transform .12s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease;overflow:hidden; }
   .np-roster-card::before { content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:0 2px 2px 0;background:transparent;transition:.12s ease; }
-  .np-roster-card:hover { transform:translateY(-1px);border-color:#514438;background:#1e1914;box-shadow:0 5px 16px rgba(0,0,0,.2); }
-  .np-roster-card.selected { border-color:color-mix(in srgb,var(--spec-color) 68%,#40362d);background:linear-gradient(110deg,color-mix(in srgb,var(--spec-color) 13%,#191511),#191511 72%);box-shadow:0 0 0 1px color-mix(in srgb,var(--spec-color) 11%,transparent),0 5px 18px rgba(0,0,0,.22); }
+  .np-roster-card:hover { transform:translateY(-1px);border-color:#46464d;background:#1c1c20;box-shadow:0 5px 16px rgba(0,0,0,.2); }
+  .np-roster-card.selected { border-color:color-mix(in srgb,var(--spec-color) 58%,#3a3a40);background:linear-gradient(110deg,color-mix(in srgb,var(--spec-color) 12%,#18181b),#18181b 72%);box-shadow:0 0 0 1px color-mix(in srgb,var(--spec-color) 9%,transparent),0 5px 18px rgba(0,0,0,.22); }
   .np-roster-card.selected::before { background:var(--spec-color);box-shadow:0 0 9px var(--spec-color); }
   .np-roster-icon { position:relative;width:38px;height:38px;flex:0 0 38px;border-radius:9px; }
-  .np-roster-main-icon { width:38px;height:38px;display:block;object-fit:cover;border-radius:9px;border:1px solid #493d32;filter:saturate(.82) brightness(.88);box-shadow:0 2px 8px rgba(0,0,0,.4);transition:.12s ease; }
+  .np-roster-main-icon { width:38px;height:38px;display:block;object-fit:cover;border-radius:9px;border:1px solid #3a3a40;filter:saturate(.82) brightness(.88);box-shadow:0 2px 8px rgba(0,0,0,.4);transition:.12s ease; }
   .np-roster-card.selected .np-roster-main-icon { border-color:var(--spec-color);filter:saturate(1) brightness(1);box-shadow:0 0 11px color-mix(in srgb,var(--spec-color) 38%,transparent); }
   .np-roster-info { min-width:0;display:flex;flex-direction:column;gap:3px; }
-  .np-roster-name { color:#d5cdc2;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .np-roster-name { color:#d5d5da;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   .np-roster-card.selected .np-roster-name { color:#fff; }
-  .np-roster-cds { color:#716457;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-  .np-roster-check { margin-left:auto;width:19px;height:19px;border-radius:6px;border:1.5px solid #50443a;background:#12100e;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#0d0b08;transition:all .12s ease; }
+  .np-roster-cds { color:#66666f;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .np-roster-check { margin-left:auto;width:19px;height:19px;border-radius:6px;border:1.5px solid #44444b;background:#101012;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#0d0b08;transition:all .12s ease; }
   .np-roster-check svg { width:11px;height:11px;stroke-width:2.8; }
   .np-roster-card.selected .np-roster-check { color:#10100f;background:var(--spec-color);border-color:var(--spec-color);box-shadow:0 0 8px color-mix(in srgb,var(--spec-color) 42%,transparent); }
   @media(max-width:560px){ .np-roster-grid{grid-template-columns:1fr;} .np-roster-section{padding:9px;} }
@@ -1450,7 +1506,7 @@
     border-right: 1px solid #202024;
   }
   html[data-theme] .cd-chip-timer { color: #7a7a82; }
-  html[data-theme] .manage-item { background: #1a1a1d; border-color: #303036; }
+  html[data-theme] .manage-item { background: linear-gradient(135deg, #131315 0%, #0e0e10 100%); }
 
   html[data-theme="frost"]    { --eui-accent: #6ad4f0; }  /* icy cyan — baked in */
 
@@ -3012,7 +3068,6 @@ function renderTimeline() {
   const bossColor = (typeof BOSS_VIS !== 'undefined' && BOSS_VIS[boss.id] && BOSS_VIS[boss.id].color) || 'var(--accent)';
   info.innerHTML = `
     <span class="boss-name" style="color:${bossColor};">${boss.name}</span>
-    <span class="boss-desc">~${Math.floor(boss.duration/60)}:${String(boss.duration%60).padStart(2,'0')} avg</span>
     <label class="boss-ready-wrap${isReady ? ' ready' : ''}" title="Mark as ready for export">
       <input type="checkbox" id="bossReadyCheck" ${isReady ? 'checked' : ''}>
       <span class="boss-ready-label">${isReady ? '✓ Ready' : 'Mark Ready'}</span>
@@ -4428,12 +4483,23 @@ function showManageModal() {
 
   function makeCdItem(cd) {
     const isActive = isBossActive(cd);
-    return `<div class="manage-item ${isActive ? 'active' : ''}" data-cdid="${cd.id}">
-      <div class="manage-item-dot" style="background:${cd.color}"></div>
-      <div style="flex:1;">
-        <div class="manage-item-name">${cd.name}</div>
-        <div class="manage-item-who">${cd.who}</div>
+    const iconUrl = getCdIconUrl(cd.id);
+    const cdTime = cd.cd > 0 ? (cd.cd % 60 === 0 ? `${cd.cd / 60}m` : `${cd.cd}s`) : '';
+    const displayName = cd.palShort || cd.short || cd.name;
+    return `<div class="manage-item ${isActive ? 'active' : ''}" data-cdid="${cd.id}" style="--chip-color:${cd.color};--chip-text:${cd.textColor};">
+      <div class="manage-item-icon">
+        ${iconUrl
+          ? `<img src="${iconUrl}" alt="" loading="lazy" draggable="false">`
+          : `<span class="manage-item-icon-fb">${String(displayName).slice(0, 3)}</span>`}
       </div>
+      <div class="manage-item-copy">
+        <div class="manage-item-name">${displayName}</div>
+        <div class="manage-item-meta">
+          <span class="manage-item-full">${cd.name}</span>
+          <span class="manage-item-who">${cd.who}</span>
+        </div>
+      </div>
+      ${cdTime ? `<span class="manage-item-timer">${cdTime}</span>` : ''}
       <div class="manage-check">${isActive ? '✓' : ''}</div>
     </div>`;
   }
@@ -4442,9 +4508,9 @@ function showManageModal() {
   const inactiveCDs = orderedCDs.filter(c => activeSetIds.has(c.id) && !isBossActive(c));
 
   const itemsHtml = `
-    <div style="font-size:11px;font-weight:600;color:#48a868;padding:4px 4px 2px;grid-column:1/-1;border-bottom:1px solid #161618;margin-bottom:4px;">● Active</div>
+    <div class="manage-section active"><span class="manage-section-dot"></span>Active</div>
     ${activeCDs.map(makeCdItem).join('')}
-    <div style="font-size:11px;font-weight:600;color:#55555c;padding:12px 4px 2px;grid-column:1/-1;border-bottom:1px solid #161618;margin-bottom:4px;">○ Inactive</div>
+    <div class="manage-section"><span class="manage-section-dot"></span>Inactive</div>
     ${inactiveCDs.map(makeCdItem).join('')}
   `;
 
@@ -6086,6 +6152,7 @@ function fbGetData() {
     version: 1,
     defaultOffV2: true,
     defaultOffV3: true,
+    defaultOffV4: true,
     placedCDs,
     bossReady,
     bossNotes,
@@ -6128,10 +6195,10 @@ function migrateRowKeys(cds) {
 // Keep manual/optional abilities selectable in Manage CDs even when restored
 // state predates them. Newly introduced entries start disabled on every boss;
 // existing plans that already use one keep their current state. Idempotent.
-const DEFAULT_OFF_CD_IDS = ['ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holyavenger', 'pwb2', 'ss2', 'dh', 'xuen'];
+const DEFAULT_OFF_CD_IDS = ['symbtranq', 'ascend', 'slt', 'lhammer', 'goak', 'avwrath', 'holyavenger', 'pwb2', 'ss2', 'dh', 'xuen'];
 const DEFAULT_OFF_CD_SET = new Set(DEFAULT_OFF_CD_IDS);
 const REMOVED_CD_IDS = new Set(['lhammer2']);
-const MANAGE_OPTIONAL_CD_IDS = ['symbtranq', 'smoke', 'tranq', 'amz', ...DEFAULT_OFF_CD_IDS];
+const MANAGE_OPTIONAL_CD_IDS = ['smoke', 'tranq', 'amz', ...DEFAULT_OFF_CD_IDS];
 const OPTIONAL_CD_SPEC_OWNERS = {
   symbtranq: ['Shadow Priest'],
   smoke: ['Assassination', 'Combat Rogue', 'Subtlety'],
@@ -6194,6 +6261,19 @@ function seedDefaultOffCooldowns() {
   });
 }
 
+function keepLivePlacedCooldownsEnabled() {
+  Object.entries(placedCDs).forEach(([bossId, rows]) => {
+    if (!bossDisabledIds[bossId]) bossDisabledIds[bossId] = new Set();
+    Object.values(rows || {}).forEach(placements => {
+      (placements || []).forEach(placement => {
+        if (!placement?.cdId) return;
+        activeSetIds.add(placement.cdId);
+        bossDisabledIds[bossId].delete(placement.cdId);
+      });
+    });
+  });
+}
+
 function ensureManageOptionalCdsInSet(rosterSpecs) {
   MANAGE_OPTIONAL_CD_IDS.forEach(function(cdId) {
     if (!CD_POOL.some(cd => cd.id === cdId)) return;
@@ -6231,8 +6311,9 @@ function fbApplyData(data) {
     Object.entries(data.bossDisabledIds).forEach(([k, v]) => { bossDisabledIds[k] = new Set(v); });
   }
   removeRetiredCooldownsFromLiveState();
-  if (!data.defaultOffV3) seedDefaultOffCooldowns();
+  if (!data.defaultOffV4) seedDefaultOffCooldowns();
   ensureManageOptionalCdsInSet();
+  keepLivePlacedCooldownsEnabled();
   return true;
 }
 
@@ -7826,6 +7907,7 @@ function canonicalTimelineSnapshot(source) {
   return {
     defaultOffV2: true,
     defaultOffV3: true,
+    defaultOffV4: true,
     rosterSpecs: Array.isArray(source.rosterSpecs)
       ? normalizePlanRosterSpecs(source.rosterSpecs)
       : (Array.isArray(state.rosterSpecs) ? normalizePlanRosterSpecs(state.rosterSpecs) : null),
@@ -7850,6 +7932,7 @@ function writeSnapshotToPlan(plan, snapshot) {
   plan.bossReady = state.bossReady;
   plan.defaultOffV2 = true;
   plan.defaultOffV3 = true;
+  plan.defaultOffV4 = true;
   if (Array.isArray(state.rosterSpecs)) plan.rosterSpecs = state.rosterSpecs;
   plan.savedAt = Date.now();
   return plan;
@@ -7937,6 +8020,7 @@ function normalizeStoredPlanDefaults(snapshot) {
   REMOVED_CD_IDS.forEach(cdId => { if (snapshot.cdWho) delete snapshot.cdWho[cdId]; });
   snapshot.defaultOffV2 = true;
   snapshot.defaultOffV3 = true;
+  snapshot.defaultOffV4 = true;
   keepPlacedCooldownsEnabled(snapshot);
   return snapshot;
 }
@@ -7991,7 +8075,7 @@ function migrateStoredPlanDefaults() {
   const before = JSON.stringify(plans);
   Object.values(plans).forEach(plan => {
     const previousSavedAt = plan.savedAt;
-    const needsDefaultMigration = !plan.defaultOffV3 || JSON.stringify(plan).includes('lhammer2');
+    const needsDefaultMigration = !plan.defaultOffV4 || JSON.stringify(plan).includes('lhammer2');
     writeSnapshotToPlan(plan, canonicalTimelineSnapshot(plan));
     plan.savedAt = previousSavedAt;
     if (needsDefaultMigration) {
@@ -8005,7 +8089,7 @@ function migrateStoredPlanDefaults() {
     const raw = localStorage.getItem(FULL_RAID_SNAPSHOT_KEY);
     if (raw) {
       const snapshot = JSON.parse(raw);
-      if (!snapshot.defaultOffV3 || JSON.stringify(snapshot).includes('lhammer2')) {
+      if (!snapshot.defaultOffV4 || JSON.stringify(snapshot).includes('lhammer2')) {
         normalizeStoredPlanDefaults(snapshot);
       }
       keepPlacedCooldownsEnabled(snapshot);
@@ -8122,6 +8206,7 @@ function captureCurrentTimeline() {
   return {
     defaultOffV2: true,
     defaultOffV3: true,
+    defaultOffV4: true,
     placedCDs: JSON.parse(JSON.stringify(placedCDs)),
     activeSetIds: [...activeSetIds],
     paletteOrder: JSON.parse(JSON.stringify(paletteOrder)),
@@ -8189,6 +8274,7 @@ function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
     bossReady: snapshot.bossReady,
     defaultOffV2: true,
     defaultOffV3: true,
+    defaultOffV4: true,
     rosterSpecs: Array.isArray(rosterSpecs) ? rosterSpecs : null,
     savedAt: Date.now(),
   };
@@ -8434,23 +8520,23 @@ const PLAN_ROSTER_UI_GROUP_ORDER = ['Tanks', 'Healers', 'Ranged', 'Melee'];
 const PLAN_ROLE_META = {
   Tanks: {
     label: 'Tanks',
-    color: '#4e9cff',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 19 6v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3Z"/><path d="M12 7v9"/></svg>',
+    color: '#ff4d52',
+    icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.8 26 7v7.2c0 7-4.1 11.9-10 15-5.9-3.1-10-8-10-15V7l10-4.2Z" fill="#f0f1f4" stroke="#fff" stroke-width="1.2"/><path d="M16 4.3 7.7 7.8v6.4c0 5.7 3.1 9.8 8.3 12.8V4.3Z" fill="#ef3942"/><path d="M16 2.8 26 7v7.2c0 7-4.1 11.9-10 15-5.9-3.1-10-8-10-15V7l10-4.2Z" fill="none" stroke="#0a0a0b" stroke-opacity=".7" stroke-width="1.5"/></svg>',
   },
   Healers: {
     label: 'Healers',
-    color: '#4ecb79',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>',
+    color: '#36df70',
+    icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 28.2 5.1 17.8C-1 11.5 3.1 3.7 10 4.2c2.7.2 4.7 1.7 6 3.8 1.3-2.1 3.3-3.6 6-3.8 6.9-.5 11 7.3 4.9 13.6L16 28.2Z" fill="#35e86e" stroke="#071c0d" stroke-width="1.7"/><path d="M8.2 8.1c2.2-1.7 5.2-.8 6.3 1.3" fill="none" stroke="#baffc9" stroke-width="1.5" stroke-linecap="round" opacity=".8"/></svg>',
   },
   Ranged: {
     label: 'Ranged DPS',
-    color: '#b47cff',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
+    color: '#429dff',
+    icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="14.5" cy="17.5" r="11.2" fill="#e9f3ff" stroke="#07131f" stroke-width="1.5"/><circle cx="14.5" cy="17.5" r="7.2" fill="#399cff"/><circle cx="14.5" cy="17.5" r="3.4" fill="#ff4b4f"/><path d="m16.4 15.6 11-11M22.3 4.5h5.2v5.2" fill="none" stroke="#eef8ff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m16.4 15.6 11-11" fill="none" stroke="#173657" stroke-width="1.1" stroke-linecap="round"/></svg>',
   },
   Melee: {
     label: 'Melee DPS',
-    color: '#f07167',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 11 11M14 16l5 5M3 5l2-2 2 4-2 2-2-4Z"/><path d="m19 3-8 8M13 15l-2-2M16 6l3-3 2 2-3 3M5 21l4-4"/></svg>',
+    color: '#ff815c',
+    icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m5 3 14.2 14.2-3 3L2 6l3-3Zm12.4 16 3-3 3 3-3 3-3-3Z" fill="#f1f2f4" stroke="#111216" stroke-width="1.2" stroke-linejoin="round"/><path d="m27 3-14.2 14.2 3 3L30 6l-3-3ZM14.6 19l-3-3-3 3 3 3 3-3Z" fill="#ff7753" stroke="#111216" stroke-width="1.2" stroke-linejoin="round"/><path d="m17.6 22.3 4.8 4.8M22.4 22.3l-4.8 4.8" stroke="#f1f2f4" stroke-width="3.2" stroke-linecap="round"/></svg>',
   },
 };
 
@@ -8487,7 +8573,7 @@ function buildPlanRosterSections(selectedSpecs) {
         <span class="np-role-copy">
           <span class="np-role-title">${meta.label}</span>
         </span>
-        <span class="np-role-count">${selectedCount} selected</span>
+        <span class="np-role-count"><span class="np-role-count-value">${selectedCount}</span><span>selected</span></span>
       </div>
       <div class="np-roster-grid">${cards}</div>
     </section>`;
@@ -8605,6 +8691,7 @@ function buildRosterPlanSnapshot(sourceSnapshot, specNames) {
   return {
     defaultOffV2: true,
     defaultOffV3: true,
+    defaultOffV4: true,
     rosterSpecs: selectedSpecs,
     placedCDs: filteredPlaced,
     activeSetIds: [...activeIds],
@@ -8985,6 +9072,7 @@ function showCustomRosterPlanEditor(planId, plan) {
       updated.bossReady = rosterSnapshot.bossReady;
       updated.defaultOffV2 = true;
       updated.defaultOffV3 = true;
+      updated.defaultOffV4 = true;
       updated.savedAt = Date.now();
       savePlans(allPlans);
       if (currentIsThisPlan) {
@@ -9237,6 +9325,7 @@ function showEditPlanPicker(planId) {
       allPlans[planId].bossDisabledIds = JSON.parse(JSON.stringify(savedSnapshot.bossDisabledIds || plan.bossDisabledIds || {}));
       allPlans[planId].defaultOffV2 = true;
       allPlans[planId].defaultOffV3 = true;
+      allPlans[planId].defaultOffV4 = true;
       allPlans[planId].savedAt = Date.now();
       savePlans(allPlans);
       // If this is the active plan, apply changes
