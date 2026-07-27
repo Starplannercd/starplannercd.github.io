@@ -1299,7 +1299,6 @@
   .np-role-symbol svg { width:15px;height:15px;display:block; }
   .np-role-copy { min-width:0;display:flex;align-items:baseline;gap:7px; }
   .np-role-title { color:#d9d0c4;font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase; }
-  .np-role-sub { color:#5f554b;font-size:9px;font-weight:650; }
   .np-role-count { margin-left:auto;color:var(--role-color);font-size:9px;font-weight:750;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--role-color) 10%,transparent);border:1px solid color-mix(in srgb,var(--role-color) 24%,#2b251f); }
   .np-roster-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px; }
   .np-roster-card { position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:9px 10px;border-radius:9px;border:1px solid #302921;background:#191511;cursor:pointer;transition:transform .12s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease;overflow:hidden; }
@@ -1308,9 +1307,8 @@
   .np-roster-card.selected { border-color:color-mix(in srgb,var(--spec-color) 68%,#40362d);background:linear-gradient(110deg,color-mix(in srgb,var(--spec-color) 13%,#191511),#191511 72%);box-shadow:0 0 0 1px color-mix(in srgb,var(--spec-color) 11%,transparent),0 5px 18px rgba(0,0,0,.22); }
   .np-roster-card.selected::before { background:var(--spec-color);box-shadow:0 0 9px var(--spec-color); }
   .np-roster-icon { position:relative;width:38px;height:38px;flex:0 0 38px;border-radius:9px; }
-  .np-roster-class-icon { width:38px;height:38px;display:block;object-fit:cover;border-radius:9px;border:1px solid #493d32;filter:saturate(.82) brightness(.88);box-shadow:0 2px 8px rgba(0,0,0,.4);transition:.12s ease; }
-  .np-roster-card.selected .np-roster-class-icon { border-color:var(--spec-color);filter:saturate(1) brightness(1);box-shadow:0 0 11px color-mix(in srgb,var(--spec-color) 38%,transparent); }
-  .np-roster-spec-icon { position:absolute;right:-3px;bottom:-3px;width:17px;height:17px;object-fit:cover;border-radius:5px;border:2px solid #191511;box-shadow:0 1px 4px #000; }
+  .np-roster-main-icon { width:38px;height:38px;display:block;object-fit:cover;border-radius:9px;border:1px solid #493d32;filter:saturate(.82) brightness(.88);box-shadow:0 2px 8px rgba(0,0,0,.4);transition:.12s ease; }
+  .np-roster-card.selected .np-roster-main-icon { border-color:var(--spec-color);filter:saturate(1) brightness(1);box-shadow:0 0 11px color-mix(in srgb,var(--spec-color) 38%,transparent); }
   .np-roster-info { min-width:0;display:flex;flex-direction:column;gap:3px; }
   .np-roster-name { color:#d5cdc2;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
   .np-roster-card.selected .np-roster-name { color:#fff; }
@@ -8436,60 +8434,38 @@ const PLAN_ROSTER_UI_GROUP_ORDER = ['Tanks', 'Healers', 'Ranged', 'Melee'];
 const PLAN_ROLE_META = {
   Tanks: {
     label: 'Tanks',
-    sub: 'Front line',
     color: '#4e9cff',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 19 6v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6l7-3Z"/><path d="M12 7v9"/></svg>',
   },
   Healers: {
     label: 'Healers',
-    sub: 'Raid support',
     color: '#4ecb79',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>',
   },
   Ranged: {
     label: 'Ranged DPS',
-    sub: 'Back line',
     color: '#b47cff',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
   },
   Melee: {
     label: 'Melee DPS',
-    sub: 'Close range',
     color: '#f07167',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 11 11M14 16l5 5M3 5l2-2 2 4-2 2-2-4Z"/><path d="m19 3-8 8M13 15l-2-2M16 6l3-3 2 2-3 3M5 21l4-4"/></svg>',
   },
 };
 
-function planClassIconName(specName) {
-  if (/Paladin|Protection Pal|Retribution/.test(specName)) return 'classicon_paladin';
-  if (/Discipline|Priest/.test(specName)) return 'classicon_priest';
-  if (/Sham|Elemental|Enhancement/.test(specName)) return 'classicon_shaman';
-  if (/Dru|Guardian|Balance|Feral/.test(specName)) return 'classicon_druid';
-  if (/Mistweaver|Brewmaster|Windwalker/.test(specName)) return 'classicon_monk';
-  if (/Warrior|Protection War|Arms|Fury/.test(specName)) return 'classicon_warrior';
-  if (/\bDK\b/.test(specName)) return 'classicon_deathknight';
-  if (/Rogue|Assassination|Combat|Subtlety/.test(specName)) return 'classicon_rogue';
-  if (/Mage|Arcane/.test(specName)) return 'classicon_mage';
-  if (/Destruction|Affliction|Demonology/.test(specName)) return 'classicon_warlock';
-  if (/Hunt|Marksmanship|Beast Mastery|Survival/.test(specName)) return 'classicon_hunter';
-  return null;
-}
-
 function planRosterCardHtml(specName, selected) {
   const spec = SPEC_CD_MAP[specName];
   const color = SPEC_CLASS_COLORS[specName] || '#8a8a92';
   const cdNames = spec.cds.map(id => CD_POOL.find(cd => cd.id === id)?.short || id).join(', ');
-  const classIcon = planClassIconName(specName);
   const specIcon = SPEC_ICONS[specName];
-  const classIconUrl = classIcon ? SPEC_ICON_CDN + classIcon + '.jpg' : '';
   const specIconUrl = specIcon ? SPEC_ICON_CDN + specIcon + '.jpg' : '';
   const check = selected
     ? '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10 3 3 7-7"/></svg>'
     : '';
   return `<div class="np-roster-card ${selected ? 'selected' : ''}" data-spec="${specName}" role="checkbox" aria-checked="${selected}" tabindex="0" style="--spec-color:${color};">
     <span class="np-roster-icon">
-      <img class="np-roster-class-icon" src="${classIconUrl}" alt="" />
-      ${specIconUrl ? `<img class="np-roster-spec-icon" src="${specIconUrl}" alt="" />` : ''}
+      <img class="np-roster-main-icon" src="${specIconUrl}" alt="" />
     </span>
     <span class="np-roster-info">
       <span class="np-roster-name">${specName}</span>
@@ -8510,7 +8486,6 @@ function buildPlanRosterSections(selectedSpecs) {
         <span class="np-role-symbol">${meta.icon}</span>
         <span class="np-role-copy">
           <span class="np-role-title">${meta.label}</span>
-          <span class="np-role-sub">${meta.sub}</span>
         </span>
         <span class="np-role-count">${selectedCount} selected</span>
       </div>
