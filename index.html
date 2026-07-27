@@ -2441,10 +2441,12 @@ function showSubPlanPrompt(playerWho, specName) {
     // Start from Full Raid snapshot so new plan inherits current placements
     const fullRaidSnapshot = getFullRaidSnapshot();
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    Object.assign(placedCDs, canonicalTimelineSnapshot(fullRaidSnapshot).placedCDs);
     // Save as a named plan (timeline is now a copy of Full Raid)
     const id = saveCurrentAsPlan(name, playerWho, specName);
     setActivePlanId(id);
+    _loadedPlanId = id;
+    _planStateReady = true;
     renderTimeline();
     updatePlansBtn();
   });
@@ -2516,10 +2518,12 @@ function showMultiSubPlanPrompt(subs) {
     ov.remove();
     const fullRaidSnapshot = getFullRaidSnapshot();
     Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    Object.assign(placedCDs, canonicalTimelineSnapshot(fullRaidSnapshot).placedCDs);
     subs.forEach(s => applyFill(s.who, s.spec));
     const id = saveCurrentAsPlan(name, subs);
     setActivePlanId(id);
+    _loadedPlanId = id;
+    _planStateReady = true;
     renderTimeline();
     updatePlansBtn();
   });
@@ -4392,6 +4396,9 @@ function showManageModal() {
   const bossId = currentBossId;
   const boss = BOSSES.find(b => b.id === bossId);
   if (!bossDisabledIds[bossId]) bossDisabledIds[bossId] = new Set();
+  const activePlanId = getActivePlanId();
+  const activePlan = activePlanId !== FULL_RAID_ID ? getPlans()[activePlanId] : null;
+  const rosterSpecs = Array.isArray(activePlan?.rosterSpecs) ? activePlan.rosterSpecs : null;
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -4401,7 +4408,7 @@ function showManageModal() {
   const orderedCDs = [
     ...cdOrder.map(id => CD_POOL.find(c => c.id === id)).filter(Boolean),
     ...CD_POOL.filter(c => !cdOrder.includes(c.id))
-  ];
+  ].filter(cd => !rosterSpecs || cdAllowedForRoster(cd.id, rosterSpecs));
 
   function isBossActive(cd) {
     return activeSetIds.has(cd.id) && !bossDisabledIds[bossId].has(cd.id);
@@ -5919,6 +5926,8 @@ const PLAN_BACKUPS_KEY = 'tot_rcd_plan_backups';
 const ACTIVE_PLAN_KEY = 'tot_rcd_active_plan';
 const FULL_RAID_ID = '__full_raid__';
 const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
+const ACTUAL_RAID_SAFETY_KEY = 'tot_rcd_actual_raid_safety_v3';
+const ACTUAL_RAID_RECOVERY_MARKER_KEY = 'tot_rcd_actual_raid_recovery_v3';
 const BOSS_TIMING_KEY = 'tot_rcd_boss_timings';
 
 // Timeline rows should always follow fight time. Encounter Start is a header-like
@@ -6364,42 +6373,7 @@ function _initFirebaseCore() {
 function autoSave() {
   const activePlanId = getActivePlanId();
   if (activePlanId !== FULL_RAID_ID) {
-    // Custom plans are local snapshots with their own roster/CD state. Saving
-    // them into the shared Full Raid record causes roster-excluded CDs to leak
-    // back in on refresh and can overwrite the guild-wide Full Raid timeline.
-    const plans = getPlans();
-    if (plans[activePlanId]) {
-      const snapshot = captureCurrentTimeline();
-      const savedPlacementCount = countSnapshotPlacements(plans[activePlanId]);
-      const livePlacementCount = countSnapshotPlacements(snapshot);
-      // A plan can briefly render with an empty/incomplete timeline while
-      // asynchronous startup work finishes. Never let that transient state
-      // destroy a healthy saved plan. Restore the saved snapshot instead.
-      if (
-        savedPlacementCount >= 50 &&
-        livePlacementCount < savedPlacementCount * 0.6
-      ) {
-        console.error(
-          'Blocked destructive plan autosave:',
-          livePlacementCount,
-          'of',
-          savedPlacementCount,
-          'placements'
-        );
-        applyTimelineSnapshot(plans[activePlanId]);
-        return;
-      }
-      plans[activePlanId].placedCDs = snapshot.placedCDs;
-      plans[activePlanId].activeSetIds = snapshot.activeSetIds;
-      plans[activePlanId].paletteOrder = snapshot.paletteOrder;
-      plans[activePlanId].cdWho = snapshot.cdWho;
-      plans[activePlanId].bossDisabledIds = snapshot.bossDisabledIds;
-      plans[activePlanId].bossReady = snapshot.bossReady;
-      plans[activePlanId].defaultOffV2 = true;
-      plans[activePlanId].defaultOffV3 = true;
-      plans[activePlanId].savedAt = Date.now();
-      savePlans(plans);
-    }
+    persistActivePlanState();
     return;
   }
 
@@ -6433,8 +6407,10 @@ function autoLoad() {
 // Debounced auto-save — fires 1.5s after last change
 let autoSaveTimer = null;
 let _stateRestoring = true;
+let _planStateReady = false;
+let _loadedPlanId = null;
 function scheduleAutoSave() {
-  if (_fbListening || _stateRestoring) return; // don't save while applying stored/remote state
+  if (_fbListening || _stateRestoring || !_planStateReady) return;
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(autoSave, 1500);
 }
@@ -6520,6 +6496,7 @@ window.renderTimeline = function() {
 
 
 
+function initializePlannerState() {
 buildPalette();
 buildBossSelect();
 updatePlansBtn();
@@ -6534,11 +6511,11 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.setItem('tot_rcd_timing_ver', '2');
 }
 // Ensure manual Manage CDs entries exist (disabled per boss) after local restore
-try { ensureManageOptionalCdsInSet(); } catch(e) {}
+try { ensureManageOptionalCdsInSet(); } catch(e) { console.error('Manage CD initialization failed:', e); }
 // One-time normalization for every saved plan: seed the newly default-off CDs
 // as disabled on all bosses and permanently remove retired cooldown variants.
-try { recoverActualRaidPlacementsFromBackup(); } catch(e) {}
-try { migrateStoredPlanDefaults(); } catch(e) {}
+try { recoverActualRaidPlacementsFromBackup(); } catch(e) { console.error('Plan recovery failed:', e); }
+try { migrateStoredPlanDefaults(); } catch(e) { console.error('Plan migration failed:', e); }
 // The general autosave above represents Full Raid. A selected custom plan has
 // its own timeline, roster and per-boss Manage CDs snapshot and must win after
 // refresh.
@@ -6547,7 +6524,11 @@ try {
   const _activePlan = _activePlanId !== FULL_RAID_ID ? getPlans()[_activePlanId] : null;
   if (_activePlan) applyTimelineSnapshot(_activePlan);
   else if (_activePlanId !== FULL_RAID_ID) setActivePlanId(FULL_RAID_ID);
-} catch(e) {}
+} catch(e) {
+  console.error('Active plan restore failed:', e);
+  setActivePlanId(FULL_RAID_ID);
+  applyTimelineSnapshot(getFullRaidSnapshot());
+}
 
 // Migrate Dark Shaman placements to the Top/Bot Side layout (6 ashes per side).
 // Old single-list ashes 1-7: odd ashes land on Top Side, even on Bot Side, at
@@ -6585,8 +6566,11 @@ renderBottomPanel();
 updateNotesTabIcon();
 if (_didRestore) isDirty = false;
 updateFillIndicator();
+_loadedPlanId = getActivePlanId();
+_planStateReady = true;
 _stateRestoring = false;
 initFirebase();
+}
 
 
 
@@ -7791,6 +7775,7 @@ function getPlans() {
 
 function savePlans(plans) {
   const next = JSON.stringify(plans);
+  if (localStorage.getItem(PLANS_KEY) === next) return;
   try {
     const previous = localStorage.getItem(PLANS_KEY);
     if (previous && previous !== next) {
@@ -7802,6 +7787,111 @@ function savePlans(plans) {
     }
   } catch(e) {}
   localStorage.setItem(PLANS_KEY, next);
+}
+
+function clonePlanValue(value, fallback) {
+  try {
+    return JSON.parse(JSON.stringify(value == null ? fallback : value));
+  } catch(e) {
+    return JSON.parse(JSON.stringify(fallback));
+  }
+}
+
+// Older builds occasionally nested a full timeline snapshot inside
+// plan.placedCDs. Convert every read to one canonical, flat state shape.
+function canonicalTimelineSnapshot(source) {
+  source = source && typeof source === 'object' ? source : {};
+  const nested = source.placedCDs &&
+    typeof source.placedCDs === 'object' &&
+    source.placedCDs.placedCDs &&
+    typeof source.placedCDs.placedCDs === 'object'
+      ? source.placedCDs
+      : null;
+  const state = nested || source;
+  const placed = state.placedCDs && typeof state.placedCDs === 'object'
+    ? state.placedCDs
+    : {};
+  return {
+    defaultOffV2: true,
+    defaultOffV3: true,
+    rosterSpecs: Array.isArray(source.rosterSpecs)
+      ? normalizePlanRosterSpecs(source.rosterSpecs)
+      : (Array.isArray(state.rosterSpecs) ? normalizePlanRosterSpecs(state.rosterSpecs) : null),
+    placedCDs: clonePlanValue(placed, {}),
+    activeSetIds: Array.isArray(state.activeSetIds)
+      ? [...new Set(state.activeSetIds)]
+      : (Array.isArray(source.activeSetIds) ? [...new Set(source.activeSetIds)] : []),
+    paletteOrder: clonePlanValue(state.paletteOrder || source.paletteOrder, {}),
+    cdWho: clonePlanValue(state.cdWho || source.cdWho, {}),
+    bossDisabledIds: clonePlanValue(state.bossDisabledIds || source.bossDisabledIds, {}),
+    bossReady: clonePlanValue(state.bossReady || source.bossReady, {}),
+  };
+}
+
+function writeSnapshotToPlan(plan, snapshot) {
+  const state = canonicalTimelineSnapshot(snapshot);
+  plan.placedCDs = state.placedCDs;
+  plan.activeSetIds = state.activeSetIds;
+  plan.paletteOrder = state.paletteOrder;
+  plan.cdWho = state.cdWho;
+  plan.bossDisabledIds = state.bossDisabledIds;
+  plan.bossReady = state.bossReady;
+  plan.defaultOffV2 = true;
+  plan.defaultOffV3 = true;
+  if (Array.isArray(state.rosterSpecs)) plan.rosterSpecs = state.rosterSpecs;
+  plan.savedAt = Date.now();
+  return plan;
+}
+
+function persistActivePlanState(options) {
+  options = options || {};
+  const activeId = getActivePlanId();
+  if (
+    activeId === FULL_RAID_ID ||
+    !_planStateReady ||
+    _stateRestoring ||
+    _loadedPlanId !== activeId
+  ) {
+    return false;
+  }
+
+  const plans = getPlans();
+  const current = plans[activeId];
+  if (!current) return false;
+  const savedState = canonicalTimelineSnapshot(current);
+  const liveState = canonicalTimelineSnapshot({
+    ...captureCurrentTimeline(),
+    rosterSpecs: current.rosterSpecs,
+  });
+  keepPlacedCooldownsEnabled(liveState);
+
+  const savedCount = countSnapshotPlacements(savedState);
+  const liveCount = countSnapshotPlacements(liveState);
+  if (!options.force && savedCount >= 50 && liveCount < savedCount * 0.6) {
+    console.error(
+      'Blocked incomplete plan save:',
+      liveCount,
+      'of',
+      savedCount,
+      'placements for',
+      current.name
+    );
+    applyTimelineSnapshot(savedState);
+    return false;
+  }
+
+  writeSnapshotToPlan(current, liveState);
+  plans[activeId] = current;
+  savePlans(plans);
+
+  if (current.name === 'Actual Raid') {
+    let safety = null;
+    try { safety = JSON.parse(localStorage.getItem(ACTUAL_RAID_SAFETY_KEY) || 'null'); } catch(e) {}
+    if (countSnapshotPlacements(current) >= countSnapshotPlacements(safety)) {
+      localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(current));
+    }
+  }
+  return true;
 }
 
 function normalizeStoredPlanDefaults(snapshot) {
@@ -7888,7 +7978,11 @@ function migrateStoredPlanDefaults() {
   const plans = getPlans();
   const before = JSON.stringify(plans);
   Object.values(plans).forEach(plan => {
-    if (!plan.defaultOffV3 || JSON.stringify(plan).includes('lhammer2')) {
+    const previousSavedAt = plan.savedAt;
+    const needsDefaultMigration = !plan.defaultOffV3 || JSON.stringify(plan).includes('lhammer2');
+    writeSnapshotToPlan(plan, canonicalTimelineSnapshot(plan));
+    plan.savedAt = previousSavedAt;
+    if (needsDefaultMigration) {
       normalizeStoredPlanDefaults(plan);
     }
     keepPlacedCooldownsEnabled(plan);
@@ -7917,23 +8011,31 @@ function countSnapshotPlacements(snapshot) {
   }, 0);
 }
 
-// Targeted recovery for the July 27 Full Raid overwrite. The rolling backup
-// contains the complete 251-placement plan; restore it once while preserving
-// the current plan identity, roster, and ready-state metadata.
+// Restore a locally preserved Actual Raid copy when the browser plan is empty
+// or severely truncated. The safety copy is kept outside the rolling backups,
+// so repeated bad reloads cannot rotate it away.
 function recoverActualRaidPlacementsFromBackup() {
-  const markerKey = 'tot_rcd_recovered_actual_raid_20260727_v2';
-  if (localStorage.getItem(markerKey)) return false;
-  const activeId = getActivePlanId();
-  if (activeId === FULL_RAID_ID) return false;
   const plans = getPlans();
-  const current = plans[activeId];
-  if (!current || current.name !== 'Actual Raid') return false;
+  const targetId = Object.keys(plans).find(id => plans[id]?.name === 'Actual Raid') || null;
+  if (!targetId) return false;
+  const current = plans[targetId];
 
   const currentCount = countSnapshotPlacements(current);
+  let best = null;
+  let bestCount = 0;
+
+  try {
+    const safety = JSON.parse(localStorage.getItem(ACTUAL_RAID_SAFETY_KEY) || 'null');
+    const safetyCount = countSnapshotPlacements(safety);
+    if (safetyCount > bestCount) {
+      best = safety;
+      bestCount = safetyCount;
+    }
+  } catch(e) {}
+
   const backups = JSON.parse(localStorage.getItem(PLAN_BACKUPS_KEY) || '[]');
-  let best = null, bestCount = currentCount;
   backups.forEach(backup => {
-    const candidate = backup && backup.plans && backup.plans[activeId];
+    const candidate = backup && backup.plans && backup.plans[targetId];
     if (!candidate || candidate.name !== current.name) return;
     const candidateCount = countSnapshotPlacements(candidate);
     if (candidateCount > bestCount) {
@@ -7941,17 +8043,30 @@ function recoverActualRaidPlacementsFromBackup() {
       bestCount = candidateCount;
     }
   });
-  if (!best || bestCount < currentCount + 50) return false;
+  if (!best || !bestCount) return false;
 
-  const recovered = JSON.parse(JSON.stringify(best));
+  const wasRecovered = !!localStorage.getItem(ACTUAL_RAID_RECOVERY_MARKER_KEY);
+  const severelyTruncated = currentCount < bestCount * 0.6;
+  const firstRecoveryNeeded = !wasRecovered && currentCount < bestCount;
+  if (!severelyTruncated && !firstRecoveryNeeded) {
+    if (currentCount >= bestCount) {
+      localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(current));
+    }
+    return false;
+  }
+
+  const recovered = {
+    ...JSON.parse(JSON.stringify(current)),
+    ...JSON.parse(JSON.stringify(best)),
+  };
   recovered.id = current.id;
   recovered.name = current.name;
-  recovered.rosterSpecs = current.rosterSpecs || recovered.rosterSpecs;
-  recovered.bossReady = current.bossReady || recovered.bossReady;
+  recovered.bossReady = clonePlanValue(current.bossReady || recovered.bossReady, {});
   recovered.savedAt = Date.now();
-  plans[activeId] = recovered;
+  plans[targetId] = recovered;
   savePlans(plans);
-  localStorage.setItem(markerKey, JSON.stringify({
+  localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(recovered));
+  localStorage.setItem(ACTUAL_RAID_RECOVERY_MARKER_KEY, JSON.stringify({
     restoredAt: Date.now(),
     fromCount: currentCount,
     toCount: bestCount,
@@ -8006,36 +8121,31 @@ function captureCurrentTimeline() {
 
 function applyTimelineSnapshot(snapshot) {
   if (!snapshot) return;
-  keepPlacedCooldownsEnabled(snapshot);
+  const state = canonicalTimelineSnapshot(snapshot);
+  keepPlacedCooldownsEnabled(state);
   // Restore placedCDs
-  const pCDs = snapshot.placedCDs || snapshot; // backwards compat
   Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-  Object.assign(placedCDs, JSON.parse(JSON.stringify(pCDs)));
+  Object.assign(placedCDs, clonePlanValue(state.placedCDs, {}));
   // Restore activeSetIds. Raid-wide utilities (Personals, Healthstone, Custom)
   // aren't tied to any player, so they stay available even when the plan was
   // saved before they existed. (Player CDs are NOT merged back — a sub plan
   // legitimately removes the subbed-out player's CDs.)
-  if (snapshot.activeSetIds) {
-    const utilIds = CD_POOL.filter(c => c.who === 'ALL').map(c => c.id);
-    activeSetIds = new Set([...snapshot.activeSetIds, ...utilIds]);
-  }
-  if (snapshot.bossDisabledIds) {
-    bossDisabledIds = {};
-    Object.entries(snapshot.bossDisabledIds).forEach(([bossId, ids]) => {
-      bossDisabledIds[bossId] = new Set(ids || []);
-    });
-  }
-  if (snapshot.bossReady) {
-    Object.keys(bossReady).forEach(bossId => delete bossReady[bossId]);
-    Object.assign(bossReady, JSON.parse(JSON.stringify(snapshot.bossReady)));
-  }
+  const utilIds = CD_POOL
+    .filter(c => (BASE_CD_WHO[c.id] || c.who) === 'ALL')
+    .map(c => c.id);
+  activeSetIds = new Set([...state.activeSetIds, ...utilIds]);
+  bossDisabledIds = {};
+  Object.entries(state.bossDisabledIds).forEach(([bossId, ids]) => {
+    bossDisabledIds[bossId] = new Set(ids || []);
+  });
+  Object.keys(bossReady).forEach(bossId => delete bossReady[bossId]);
+  Object.assign(bossReady, clonePlanValue(state.bossReady, {}));
   removeRetiredCooldownsFromLiveState();
-  if (!snapshot.defaultOffV3) seedDefaultOffCooldowns();
-  ensureManageOptionalCdsInSet(snapshot.rosterSpecs);
+  ensureManageOptionalCdsInSet(state.rosterSpecs);
   // Restore cdWho
-  if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
+  CD_POOL.forEach(c => { c.who = state.cdWho[c.id] || BASE_CD_WHO[c.id] || c.who; });
   // Restore paletteOrder
-  paletteOrder = snapshot.paletteOrder && !Array.isArray(snapshot.paletteOrder) ? snapshot.paletteOrder : {};
+  paletteOrder = state.paletteOrder && !Array.isArray(state.paletteOrder) ? state.paletteOrder : {};
   const wasRestoring = _stateRestoring;
   _stateRestoring = true;
   try {
@@ -8080,19 +8190,7 @@ function updatePlanSnapshot(id) {
     autoSave();
     return;
   }
-  const plans = getPlans();
-  if (!plans[id]) return;
-  const snapshot = captureCurrentTimeline();
-  plans[id].placedCDs = snapshot.placedCDs;
-  plans[id].activeSetIds = snapshot.activeSetIds;
-  plans[id].paletteOrder = snapshot.paletteOrder;
-  plans[id].cdWho = snapshot.cdWho;
-  plans[id].bossDisabledIds = snapshot.bossDisabledIds;
-  plans[id].bossReady = snapshot.bossReady;
-  plans[id].defaultOffV2 = true;
-  plans[id].defaultOffV3 = true;
-  plans[id].savedAt = Date.now();
-  savePlans(plans);
+  if (id === getActivePlanId()) persistActivePlanState();
 }
 
 function deletePlan(id) {
@@ -8104,43 +8202,43 @@ function deletePlan(id) {
 
 function switchToPlan(id) {
   const currentId = getActivePlanId();
+  if (id === currentId && _loadedPlanId === id) return;
+  clearTimeout(autoSaveTimer);
 
-  // Immediately save current state before switching — no debounce
+  // Save only when the live timeline is known to belong to this plan.
   if (currentId === FULL_RAID_ID) {
-    saveFullRaidSnapshot();
-    autoSave();
-  } else {
-    const plans = getPlans();
-    if (plans[currentId]) {
-      const snapshot = captureCurrentTimeline();
-      plans[currentId].placedCDs = snapshot.placedCDs;
-      plans[currentId].activeSetIds = snapshot.activeSetIds;
-      plans[currentId].paletteOrder = snapshot.paletteOrder;
-      plans[currentId].cdWho = snapshot.cdWho;
-      plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
-      plans[currentId].bossReady = snapshot.bossReady;
-      plans[currentId].defaultOffV2 = true;
-      plans[currentId].defaultOffV3 = true;
-      plans[currentId].savedAt = Date.now();
-      savePlans(plans);
+    if (_loadedPlanId === FULL_RAID_ID && _planStateReady) {
+      saveFullRaidSnapshot();
+      autoSave();
     }
+  } else if (_loadedPlanId === currentId) {
+    persistActivePlanState();
   }
 
+  const wasRestoring = _stateRestoring;
+  _stateRestoring = true;
+  _planStateReady = false;
   setActivePlanId(id);
-
-  if (id === FULL_RAID_ID) {
-    // Restore Full Raid from its dedicated snapshot
-    const snapshot = getFullRaidSnapshot();
-    applyTimelineSnapshot(snapshot);
-  } else {
-    const plans = getPlans();
-    const plan = plans[id];
-    if (plan && plan.placedCDs) {
-      applyTimelineSnapshot(plan);
-      retargetCustomAssignsToSubs();
-      renderTimeline();
+  try {
+    if (id === FULL_RAID_ID) {
+      applyTimelineSnapshot(getFullRaidSnapshot());
+    } else {
+      const plan = getPlans()[id];
+      if (!plan) {
+        id = FULL_RAID_ID;
+        setActivePlanId(id);
+        applyTimelineSnapshot(getFullRaidSnapshot());
+      } else {
+        applyTimelineSnapshot(plan);
+        retargetCustomAssignsToSubs();
+      }
     }
+    _loadedPlanId = id;
+    _planStateReady = true;
+  } finally {
+    _stateRestoring = wasRestoring;
   }
+  renderTimeline();
   renderBottomPanel();
   updatePlansBtn();
   playPlanSwitchAnim();
@@ -8684,6 +8782,8 @@ function showNewPlanPicker() {
 
     const id = saveCurrentAsPlan(name, [], [], rosterSnapshot.rosterSpecs);
     setActivePlanId(id);
+    _loadedPlanId = id;
+    _planStateReady = true;
     buildPalette();
     renderTimeline();
     renderBottomPanel();
@@ -8746,6 +8846,8 @@ function showNewPlanPicker() {
     const subsArr = Object.entries(subInMap).filter(([, s]) => s).map(([who, spec]) => ({ who, spec }));
     const id = saveCurrentAsPlan(name, subsArr, subbedWhos);
     setActivePlanId(id);
+    _loadedPlanId = id;
+    _planStateReady = true;
     buildPalette();
     renderTimeline();
     updatePlansBtn();
@@ -9160,27 +9262,28 @@ function showImportFojiAsPlan() {
     if (!name) { status.textContent = 'Please enter a plan name.'; return; }
     if (!raw) { status.textContent = 'Please paste a Foji string.'; return; }
 
-    // Start from Full Raid snapshot, then apply import on top
-    const savedPlaced = captureCurrentTimeline();
-    const fullRaidSnapshot = getFullRaidSnapshot();
-    Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-    Object.assign(placedCDs, JSON.parse(JSON.stringify(fullRaidSnapshot)));
+    // Start from a canonical Full Raid snapshot, then apply import on top.
+    const previousPlanId = getActivePlanId();
+    const savedState = captureCurrentTimeline();
+    const wasRestoring = _stateRestoring;
+    _stateRestoring = true;
+    applyTimelineSnapshot(getFullRaidSnapshot());
 
     try {
       const count = parseFojiImport(raw);
       const id = saveCurrentAsPlan(name);
-      setActivePlanId(id);
-      // Restore original state for Full Raid
-      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-      Object.assign(placedCDs, savedPlaced);
-      // Now switch to the new plan (which has the import)
+      // Restore the plan that was open, then switch through the normal loader.
+      applyTimelineSnapshot(savedState);
+      _loadedPlanId = previousPlanId;
+      _stateRestoring = wasRestoring;
       switchToPlan(id);
       status.style.color = '#48a868';
       status.textContent = `Imported ${count} assignments into "${name}".`;
       setTimeout(() => overlay.remove(), 900);
     } catch(e) {
-      Object.keys(placedCDs).forEach(k => delete placedCDs[k]);
-      Object.assign(placedCDs, savedPlaced);
+      applyTimelineSnapshot(savedState);
+      _loadedPlanId = previousPlanId;
+      _stateRestoring = wasRestoring;
       renderTimeline();
       status.style.color = '#c84848';
       status.textContent = 'Import failed: ' + e.message;
@@ -9285,18 +9388,7 @@ async function createShareLink(btn) {
   if (currentId === FULL_RAID_ID) {
     saveFullRaidSnapshot();
   } else {
-    const plans = getPlans();
-    if (plans[currentId]) {
-      const snapshot = captureCurrentTimeline();
-      plans[currentId].placedCDs = snapshot.placedCDs;
-      plans[currentId].activeSetIds = snapshot.activeSetIds;
-      plans[currentId].bossDisabledIds = snapshot.bossDisabledIds;
-      plans[currentId].bossReady = snapshot.bossReady;
-      plans[currentId].defaultOffV2 = true;
-      plans[currentId].defaultOffV3 = true;
-      plans[currentId].savedAt = Date.now();
-      savePlans(plans);
-    }
+    persistActivePlanState();
   }
   try {
     const id = generateShareId();
@@ -9498,6 +9590,8 @@ async function recoverPlanFromShare(shareId, requestedName) {
     if (existing) {
       setActivePlanId(existing.id);
       applyTimelineSnapshot(existing);
+      _loadedPlanId = existing.id;
+      _planStateReady = true;
       renderBottomPanel();
       updatePlansBtn();
       history.replaceState(null, '', window.location.pathname);
@@ -9532,6 +9626,8 @@ async function recoverPlanFromShare(shareId, requestedName) {
     savePlans(plans);
     setActivePlanId(id);
     applyTimelineSnapshot(plans[id]);
+    _loadedPlanId = id;
+    _planStateReady = true;
     renderBottomPanel();
     updatePlansBtn();
     history.replaceState(null, '', window.location.pathname);
@@ -9540,6 +9636,10 @@ async function recoverPlanFromShare(shareId, requestedName) {
     alert('Plan recovery failed: ' + e.message);
   }
 }
+
+// All plan/roster constants and helpers are initialized at this point. Loading
+// state any earlier can leave a custom plan half-applied on a hard refresh.
+initializePlannerState();
 
 // Check for view mode on load
 const _urlParams = new URLSearchParams(window.location.search);
