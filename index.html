@@ -1973,8 +1973,16 @@ const BOSSES = [
     desc:'Heroic · Pinnacle of Storms',
     duration: 480,
     sections: [{ label: null, abilities: [
-      { name:'Overcharge Electro 1', time:145, color:'#c848c8' },
-      { name:'Overcharge Electro 2', time:218, color:'#c848c8' },
+      { name:'Overload 1', time:42, color:'#38a8b8' },
+      { name:'Overload 2', time:63, color:'#38a8b8' },
+      { name:'Overload 3', time:74, color:'#38a8b8' },
+      { name:'Overload 4', time:102, color:'#38a8b8' },
+      { name:'Overload 5', time:122, color:'#38a8b8' },
+      { name:'Magnetic Crush 1', time:129, color:'#6a8fd8' },
+      { name:'Overload 6', time:162, color:'#38a8b8' },
+      { name:'Magnetic Crush 2', time:209, color:'#6a8fd8' },
+      { name:'Overload 7', time:223, color:'#38a8b8' },
+      { name:'Overload 8', time:233, color:'#38a8b8' },
     ]}]
   },
   {
@@ -4263,7 +4271,7 @@ const FOJI_ABILITY_NAME_MAP = {
   'malkorok': { 'Imploding Energy': 'MALKOROK_IMPLODING_ENERGY', 'Blood Rage': 'MALKOROK_BLOOD_RAGE' },
   'spoils': {},
   'thok': { 'Deafening Screech': 'THOK_DEAFENING_SCREECH', 'DS Set 1': 'THOK_DEAFENING_SCREECH_1', 'DS Set 2': 'THOK_DEAFENING_SCREECH_2', 'DS Set 3': 'THOK_DEAFENING_SCREECH_3' },
-  'siegecrafter': { 'Overcharge': 'BLACKFUSE_OVERCHARGE_ELECTRO' },
+  'siegecrafter': { 'Magnetic Crush': 'BLACKFUSE_MAGNETIC_CRUSH' },
   'paragons': { 'Insane Calculation': 'PARAGONS_INSANE_CALCULATION', 'Catalyst': 'PARAGONS_CATALYST', 'Mutate': 'PARAGONS_MUTATE', 'Encase': 'PARAGONS_ENCASE_IN_AMBER' },
   'garrosh': { 'Power Iron Star': 'GARROSH_IRON_STAR', 'Iron Star': 'GARROSH_IRON_STAR', 'Desecrate': 'GARROSH_DESECRATE_P1', 'Warsong': 'GARROSH_HELLSCREAM_WARSONG', 'Whirling Corruption P3': 'GARROSH_WHIRLING_P3', 'Whirling': 'GARROSH_WHIRLING_P2', 'Engineer': 'GARROSH_ENGINEERS' },
 };
@@ -4275,6 +4283,11 @@ function getBossAbilityKey(boss, rowKey, abName) {
     return healthEntry ? healthEntry[1] : boss.id.toUpperCase() + '_HEALTH';
   }
   if (abName && abName.startsWith('Encounter Start')) return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
+
+  // Prefer exact sheet dropdown entries. This matters for abilities such as
+  // Blackfuse Overload 1–8, where every numbered row has its own Foji key.
+  const exactSheetEntry = (FOJI_BOSS_ABILITIES[boss.id] || []).find(item => item[0] === abName);
+  if (exactSheetEntry) return exactSheetEntry[1];
 
   // Check ability name map for this boss
   const abilityMap = FOJI_ABILITY_NAME_MAP[boss.id];
@@ -6092,12 +6105,24 @@ function applyBossTimingOverrides() {
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
 
-      // Preserve the two planned Overcharged Electromagnet windows when an
-      // older saved timing override predates these Blackfuse timeline rows.
+      // Keep older saved Blackfuse timing overrides aligned with the current
+      // assignment rows. Obsolete Overcharge Electro rows are replaced while
+      // any already-synced Magnetic Crush / Overload timings are preserved.
       if (boss.id === 'siegecrafter' && boss.sections[0]) {
+        boss.sections[0].abilities = boss.sections[0].abilities.filter(function(a) {
+          return !/^Overcharge Electro(?:\s+\d+)?$/i.test(a.name);
+        });
         [
-          { name:'Overcharge Electro 1', time:145, color:'#c848c8' },
-          { name:'Overcharge Electro 2', time:218, color:'#c848c8' },
+          { name:'Overload 1', time:42, color:'#38a8b8' },
+          { name:'Overload 2', time:63, color:'#38a8b8' },
+          { name:'Overload 3', time:74, color:'#38a8b8' },
+          { name:'Overload 4', time:102, color:'#38a8b8' },
+          { name:'Overload 5', time:122, color:'#38a8b8' },
+          { name:'Magnetic Crush 1', time:129, color:'#6a8fd8' },
+          { name:'Overload 6', time:162, color:'#38a8b8' },
+          { name:'Magnetic Crush 2', time:209, color:'#6a8fd8' },
+          { name:'Overload 7', time:223, color:'#38a8b8' },
+          { name:'Overload 8', time:233, color:'#38a8b8' },
         ].forEach(function(defaultRow) {
           if (!boss.sections[0].abilities.some(function(a){ return a.name === defaultRow.name; })) {
             boss.sections[0].abilities.push(Object.assign({}, defaultRow));
@@ -6165,6 +6190,22 @@ function fbGetData() {
   };
 }
 
+function migrateBlackfuseAssignmentRows(cds) {
+  const bossData = cds && cds.siegecrafter;
+  if (!bossData || typeof bossData !== 'object') return cds;
+  [1, 2].forEach(function(count) {
+    const oldKey = `0-${encodeURIComponent(`Overcharge Electro ${count}`)}`;
+    const newKey = `0-${encodeURIComponent(`Magnetic Crush ${count}`)}`;
+    if (!Array.isArray(bossData[oldKey])) return;
+    bossData[newKey] = [
+      ...(Array.isArray(bossData[newKey]) ? bossData[newKey] : []),
+      ...bossData[oldKey],
+    ];
+    delete bossData[oldKey];
+  });
+  return cds;
+}
+
 // Migrate old index-based rowKeys (e.g. "0-1") to ability-name-based (e.g. "0-Swelling%20Corruption%201")
 function migrateRowKeys(cds) {
   const migrated = {};
@@ -6189,7 +6230,7 @@ function migrateRowKeys(cds) {
       }
     });
   });
-  return migrated;
+  return migrateBlackfuseAssignmentRows(migrated);
 }
 
 // Keep manual/optional abilities selectable in Manage CDs even when restored
@@ -7911,7 +7952,7 @@ function canonicalTimelineSnapshot(source) {
     rosterSpecs: Array.isArray(source.rosterSpecs)
       ? normalizePlanRosterSpecs(source.rosterSpecs)
       : (Array.isArray(state.rosterSpecs) ? normalizePlanRosterSpecs(state.rosterSpecs) : null),
-    placedCDs: clonePlanValue(placed, {}),
+    placedCDs: migrateBlackfuseAssignmentRows(clonePlanValue(placed, {})),
     activeSetIds: Array.isArray(state.activeSetIds)
       ? [...new Set(state.activeSetIds)]
       : (Array.isArray(source.activeSetIds) ? [...new Set(source.activeSetIds)] : []),
