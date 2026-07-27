@@ -1,9 +1,9 @@
 {
-  "fetchedAt": "2026-07-24T02:11:37.494Z",
+  "fetchedAt": "2026-07-27T15:17:56.791Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:29.167Z",
+      "fetchedAt": "2026-07-27T15:17:50.093Z",
       "items": [
         {
           "slot": "HEAD",
@@ -142,9 +142,9 @@
         },
         {
           "slot": "OFF_HAND",
-          "id": 96512,
-          "name": "Greatshield of the Gloaming",
-          "ilvl": 549,
+          "id": 104560,
+          "name": "Bulwark of the Fallen General",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "SHIELD"
@@ -453,7 +453,7 @@
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:30.554Z",
+      "fetchedAt": "2026-07-27T15:17:51.561Z",
       "items": [
         {
           "slot": "HEAD",
@@ -468,8 +468,8 @@
           "slot": "NECK",
           "id": 104597,
           "name": "Lost Necklace of the Mogu Empress",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "NECK"
         },
@@ -594,8 +594,8 @@
           "slot": "OFF_HAND",
           "id": 104448,
           "name": "Purehearted Cricket Cage",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HOLDABLE"
         },
@@ -612,7 +612,7 @@
     },
     "Ixiom": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:31.031Z",
+      "fetchedAt": "2026-07-27T15:17:52.061Z",
       "items": [
         {
           "slot": "HEAD",
@@ -697,9 +697,9 @@
         },
         {
           "slot": "HANDS",
-          "id": 99121,
+          "id": 99359,
           "name": "Gloves of the Ternion Glory",
-          "ilvl": 561,
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "HAND"
@@ -771,7 +771,7 @@
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:16.691Z",
+      "fetchedAt": "2026-07-27T15:17:52.499Z",
       "items": [
         {
           "slot": "HEAD",
@@ -820,9 +820,9 @@
         },
         {
           "slot": "WAIST",
-          "id": 103888,
+          "id": 104588,
           "name": "Arrowflight Girdle",
-          "ilvl": 567,
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "WAIST"
@@ -840,16 +840,16 @@
           "slot": "FEET",
           "id": 104557,
           "name": "Ravager's Pathwalkers",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FEET"
         },
         {
           "slot": "WRIST",
-          "id": 105119,
-          "name": "Bracers of Infinite Pipes",
-          "ilvl": 542,
+          "id": 104491,
+          "name": "Dagryn's Fuselight Bracers",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "WRIST"
@@ -876,8 +876,8 @@
           "slot": "FINGER_2",
           "id": 104487,
           "name": "Swift Serpent Signet",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
         },
@@ -930,7 +930,7 @@
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:31.964Z",
+      "fetchedAt": "2026-07-27T15:17:52.981Z",
       "items": [
         {
           "slot": "HEAD",
@@ -961,10 +961,10 @@
         },
         {
           "slot": "CHEST",
-          "id": 103803,
-          "name": "Mantid Vizier's Robes",
-          "ilvl": 567,
-          "upgrade": 14,
+          "id": 99416,
+          "name": "Robes of the Horned Nightmare",
+          "ilvl": 570,
+          "upgrade": 4,
           "quality": "EPIC",
           "invType": "ROBE"
         },
@@ -988,10 +988,10 @@
         },
         {
           "slot": "FEET",
-          "id": 103804,
+          "id": 104443,
           "name": "Sha-Seared Sandals",
-          "ilvl": 567,
-          "upgrade": 14,
+          "ilvl": 573,
+          "upgrade": 7,
           "quality": "EPIC",
           "invType": "FEET"
         },
@@ -1033,17 +1033,17 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 96516,
-          "name": "Cha-Ye's Essence of Brilliance",
-          "ilvl": 549,
+          "id": 104426,
+          "name": "Purified Bindings of Immerseus",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
-          "id": 96558,
-          "name": "Unerring Vision of Lei Shen",
+          "id": 96516,
+          "name": "Cha-Ye's Essence of Brilliance",
           "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
@@ -1380,14 +1380,14 @@
     },
     "Skullhammer": {
       "ok": true,
-      "fetchedAt": "2026-07-19T12:03:18.212Z",
+      "fetchedAt": "2026-07-27T15:17:54.460Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 104492,
-          "name": "Thranok's Shattering Helm",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99418,
+          "name": "Helmet of the Prehistoric Marauder",
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "HEAD"
         },
