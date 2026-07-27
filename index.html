@@ -6292,22 +6292,20 @@ function startFirebaseSync() {
     const data = snapshot.val();
     if (!data) return;
     _fbListening = true;
-    fbApplyData(data);
     try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
-    // Firebase stores the shared Full Raid state. If a local plan is active,
-    // retain the incoming Full Raid snapshot for later but immediately restore
-    // the local plan so its roster and Manage CDs state are not overwritten.
+    // Firebase stores Full Raid only. When a local plan is active, keep the
+    // remote snapshot for later without ever applying it to the live timeline.
     const activePlanId = getActivePlanId();
     const activePlan = activePlanId !== FULL_RAID_ID ? getPlans()[activePlanId] : null;
     if (activePlan) {
-      try { localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(captureCurrentTimeline())); } catch(e) {}
-      applyTimelineSnapshot(activePlan);
+      try { localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(data)); } catch(e) {}
     } else {
+      fbApplyData(data);
       renderTimeline();
+      renderBottomPanel();
+      refreshBossSelectLabels();
+      updateNotesTabIcon();
     }
-    renderBottomPanel();
-    refreshBossSelectLabels();
-    updateNotesTabIcon();
     _fbListening = false;
     updateSyncIndicator('connected');
   });
@@ -6415,8 +6413,9 @@ function autoLoad() {
 
 // Debounced auto-save — fires 1.5s after last change
 let autoSaveTimer = null;
+let _stateRestoring = true;
 function scheduleAutoSave() {
-  if (_fbListening) return; // don't save when applying remote changes
+  if (_fbListening || _stateRestoring) return; // don't save while applying stored/remote state
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(autoSave, 1500);
 }
@@ -6424,6 +6423,7 @@ function scheduleAutoSave() {
 const __rt = renderTimeline;
 window.renderTimeline = function() {
   __rt();
+  if (_stateRestoring) return;
   scheduleAutoSave();
   // Keep Full Raid snapshot up to date when on Full Raid plan
   if (getActivePlanId() === FULL_RAID_ID) {
@@ -6504,7 +6504,11 @@ window.renderTimeline = function() {
 buildPalette();
 buildBossSelect();
 updatePlansBtn();
-const _didRestore = autoLoad();
+// A local plan is authoritative while active. Do not briefly load Full Raid
+// into the live state first; that transient state must never be autosaved over it.
+const _startupActivePlanId = getActivePlanId();
+const _startupActivePlan = _startupActivePlanId !== FULL_RAID_ID ? getPlans()[_startupActivePlanId] : null;
+const _didRestore = _startupActivePlan ? false : autoLoad();
 // v2: clear timing overrides that were written by the old auto-scale-on-fetch (now removed)
 if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.removeItem(BOSS_TIMING_KEY);
@@ -6514,6 +6518,7 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
 try { ensureManageOptionalCdsInSet(); } catch(e) {}
 // One-time normalization for every saved plan: seed the newly default-off CDs
 // as disabled on all bosses and permanently remove retired cooldown variants.
+try { recoverActualRaidPlacementsFromBackup(); } catch(e) {}
 try { migrateStoredPlanDefaults(); } catch(e) {}
 // The general autosave above represents Full Raid. A selected custom plan has
 // its own timeline, roster and per-boss Manage CDs snapshot and must win after
@@ -6561,6 +6566,7 @@ renderBottomPanel();
 updateNotesTabIcon();
 if (_didRestore) isDirty = false;
 updateFillIndicator();
+_stateRestoring = false;
 initFirebase();
 
 
@@ -7883,6 +7889,57 @@ function migrateStoredPlanDefaults() {
   } catch(e) {}
 }
 
+function countSnapshotPlacements(snapshot) {
+  const placementMap = snapshot?.placedCDs?.placedCDs || snapshot?.placedCDs || {};
+  return Object.values(placementMap).reduce((total, rows) => {
+    return total + Object.values(rows || {}).reduce((rowTotal, placements) => {
+      return rowTotal + (Array.isArray(placements) ? placements.length : 0);
+    }, 0);
+  }, 0);
+}
+
+// Targeted recovery for the July 27 Full Raid overwrite. The rolling backup
+// contains the complete 251-placement plan; restore it once while preserving
+// the current plan identity, roster, and ready-state metadata.
+function recoverActualRaidPlacementsFromBackup() {
+  const markerKey = 'tot_rcd_recovered_actual_raid_20260727';
+  if (localStorage.getItem(markerKey)) return false;
+  const activeId = getActivePlanId();
+  if (activeId === FULL_RAID_ID) return false;
+  const plans = getPlans();
+  const current = plans[activeId];
+  if (!current || current.name !== 'Actual Raid') return false;
+
+  const currentCount = countSnapshotPlacements(current);
+  const backups = JSON.parse(localStorage.getItem(PLAN_BACKUPS_KEY) || '[]');
+  let best = null, bestCount = currentCount;
+  backups.forEach(backup => {
+    const candidate = backup && backup.plans && backup.plans[activeId];
+    if (!candidate || candidate.name !== current.name) return;
+    const candidateCount = countSnapshotPlacements(candidate);
+    if (candidateCount > bestCount) {
+      best = candidate;
+      bestCount = candidateCount;
+    }
+  });
+  if (!best || bestCount < currentCount + 50) return false;
+
+  const recovered = JSON.parse(JSON.stringify(best));
+  recovered.id = current.id;
+  recovered.name = current.name;
+  recovered.rosterSpecs = current.rosterSpecs || recovered.rosterSpecs;
+  recovered.bossReady = current.bossReady || recovered.bossReady;
+  recovered.savedAt = Date.now();
+  plans[activeId] = recovered;
+  savePlans(plans);
+  localStorage.setItem(markerKey, JSON.stringify({
+    restoredAt: Date.now(),
+    fromCount: currentCount,
+    toCount: bestCount,
+  }));
+  return true;
+}
+
 function getActivePlanId() {
   return localStorage.getItem(ACTIVE_PLAN_KEY) || FULL_RAID_ID;
 }
@@ -7960,8 +8017,14 @@ function applyTimelineSnapshot(snapshot) {
   if (snapshot.cdWho) CD_POOL.forEach(c => { if (snapshot.cdWho[c.id]) c.who = snapshot.cdWho[c.id]; });
   // Restore paletteOrder
   paletteOrder = snapshot.paletteOrder && !Array.isArray(snapshot.paletteOrder) ? snapshot.paletteOrder : {};
-  buildPalette();
-  renderTimeline();
+  const wasRestoring = _stateRestoring;
+  _stateRestoring = true;
+  try {
+    buildPalette();
+    renderTimeline();
+  } finally {
+    _stateRestoring = wasRestoring;
+  }
 }
 
 function saveCurrentAsPlan(name, subs, subbedOut, rosterSpecs) {
