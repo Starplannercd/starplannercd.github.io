@@ -325,7 +325,7 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v4_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v5_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
@@ -374,12 +374,14 @@ async function inspectFightSymbiosis(fight) {
   var code = fight.report?.code, fightID = fight.report?.fightID;
   if (!code || fightID == null || fight.startTime == null || fight.report?.startTime == null) return {pairs:[]};
   var pull = Math.max(0, fight.startTime - fight.report.startTime);
-  var prePull = Math.max(0, pull - 300000), openingEnd = pull + 8000;
+  // Symbiosis lasts one hour and persists through death. Search from the start
+  // of the report because raid groups often cast it long before the boss pull.
+  var prePull = 0, openingEnd = pull + 8000;
   var d = await wclQuery(
     `query($c:String!,$fid:Int!,$pre:Float!,$pull:Float!,$post:Float!){reportData{report(code:$c){
       playerDetails(fightIDs:[$fid])
       combatants:events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$pull,endTime:$post){data}
-      symbiosisCasts:events(dataType:Casts,abilityID:110309,startTime:$pre,endTime:$post,limit:100){data}
+      symbiosisCasts:events(dataType:Casts,abilityID:110309,startTime:$pre,endTime:$post,limit:1000){data}
       openingBuffs:events(fightIDs:[$fid],dataType:Buffs,startTime:$pull,endTime:$post){data}
     }}}`, {c:code, fid:fightID, pre:prePull, pull, post:openingEnd}
   );
