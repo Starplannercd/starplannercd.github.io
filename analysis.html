@@ -325,7 +325,7 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v6_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v7_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
@@ -337,6 +337,18 @@ const SYMBIOSIS_TARGET_CLASS_BY_AURA = new Map([
   [110484,'Paladin'], [110485,'Priest'], [110486,'Rogue'], [110488,'Shaman'],
   [110490,'Warlock'], [110491,'Warrior']
 ]);
+const SYMBIOSIS_BORROWED_BY_SPEC = {
+  Balance:new Map([
+    [110570,'DeathKnight'], [110588,'Hunter'], [110621,'Mage'], [126458,'Monk'],
+    [110698,'Paladin'], [110707,'Priest'], [31224,'Rogue'], [110802,'Shaman'],
+    [122291,'Warlock'], [122292,'Warrior']
+  ]),
+  Restoration:new Map([
+    [110575,'DeathKnight'], [110617,'Hunter'], [110696,'Mage'], [126456,'Monk'],
+    [122288,'Paladin'], [110718,'Priest'], [110791,'Rogue'], [110806,'Shaman'],
+    [112970,'Warlock'], [113004,'Warrior']
+  ])
+};
 
 function parseWclPayload(value) {
   if (typeof value !== 'string') return value;
@@ -382,6 +394,7 @@ async function inspectFightSymbiosis(fight) {
       playerDetails(fightIDs:[$fid])
       combatants:events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$pull,endTime:$post){data}
       symbiosisCasts:events(dataType:Casts,abilityID:110309,startTime:$pre,endTime:$post,limit:1000){data}
+      fightCasts:events(fightIDs:[$fid],dataType:Casts,sourceClass:"Druid",limit:2000){data}
       openingBuffs:events(fightIDs:[$fid],dataType:Buffs,startTime:$pull,endTime:$post){data}
     }}}`, {c:code, fid:fightID, pre:prePull, pull, post:openingEnd}
   );
@@ -400,6 +413,20 @@ async function inspectFightSymbiosis(fight) {
       if (druid?.type === 'Druid' && target && target.type !== 'Druid')
         pairByDruid.set(Number(druid.id), makeSymbiosisPair(druid,target,fight,'pre-pull cast'));
     });
+
+  // When the original one-hour buff predates the combat log, the borrowed
+  // ability is the only definitive in-log proof of the linked target class.
+  var fightCasts = parseWclPayload(report?.fightCasts?.data) || [];
+  for (var ev of fightCasts) {
+    var druid = actors.get(eventActorId(ev,'source'));
+    if (druid?.type !== 'Druid' || pairByDruid.has(Number(druid.id))) continue;
+    var borrowed = SYMBIOSIS_BORROWED_BY_SPEC[actorSpec(druid)];
+    var targetClass = borrowed?.get(eventAbilityId(ev));
+    if (!targetClass) continue;
+    var candidates = players.filter(player => player.type === targetClass);
+    var partner = candidates.length === 1 ? candidates[0] : {name:'Unknown',type:targetClass,specs:[]};
+    pairByDruid.set(Number(druid.id), makeSymbiosisPair(druid,partner,fight,'borrowed ability cast'));
+  }
 
   var buffs = parseWclPayload(report?.openingBuffs?.data) || [];
   for (var ev of buffs) {
@@ -434,29 +461,7 @@ async function inspectFightSymbiosis(fight) {
     if (auraDruid?.type === 'Druid' && !pairByDruid.has(Number(auraDruid.id)))
       pairByDruid.set(Number(auraDruid.id), makeSymbiosisPair(auraDruid,target,fight,'combatant aura'));
   }
-  var debug = {
-    reportCode:code,
-    fightID,
-    pull,
-    druids:druids.map(druid=>({id:druid.id,spec:actorSpec(druid)})),
-    castCount:casts.length,
-    castSample:casts.slice(-5).map(ev=>({keys:Object.keys(ev),ability:eventAbilityId(ev),source:eventActorId(ev,'source'),target:eventActorId(ev,'target'),timestamp:ev.timestamp})),
-    combatantCount:combatants.length,
-    combatantKeys:Object.keys(combatants[0]||{}),
-    druidCombatants:combatants.map(ev=>({ev,player:actors.get(eventActorId(ev,'source'))}))
-      .filter(item=>item.player?.type==='Druid')
-      .map(item=>({
-        druidID:item.player.id,
-        spec:actorSpec(item.player),
-        eventKeys:Object.keys(item.ev),
-        auras:(item.ev.auras||item.ev.buffs||[]).slice(0,60).map(aura=>({
-          keys:Object.keys(aura), id:eventAbilityId(aura), name:aura.name||aura.ability?.name||null,
-          source:eventActorId(aura,'source')
-        }))
-      })),
-    detected:Array.from(pairByDruid.values()).map(pair=>({druidSpec:pair.druidSpec,targetClass:pair.targetClass,targetSpec:pair.targetSpec,method:pair.method}))
-  };
-  return {pairs:Array.from(pairByDruid.values()), hadDruid:true, debug};
+  return {pairs:Array.from(pairByDruid.values()), hadDruid:true};
 }
 
 function symbiosisCacheKey(bossID) { return SYMBIOSIS_CACHE_PREFIX+bossID; }
@@ -479,7 +484,7 @@ async function analyzeBossSymbiosis(boss, progress) {
   var cached = getSymbiosisCached(boss.id);
   if (cached) return cached.result;
   var fights = await getFightRankings(boss.id, SYMBIOSIS_RANKING_LIMIT);
-  var pairs=[], inspected=0, druidFights=0, debugSamples=[];
+  var pairs=[], inspected=0, druidFights=0;
   function specCount(spec) { return pairs.filter(pair=>pair.druidSpec===spec).length; }
   function needsSamples() {
     return specCount('Restoration')<SYMBIOSIS_SAMPLE_TARGET || specCount('Balance')<SYMBIOSIS_SAMPLE_TARGET;
@@ -491,32 +496,19 @@ async function analyzeBossSymbiosis(boss, progress) {
     inspected += batch.length;
     for (var result of found) {
       if (result?.hadDruid) druidFights++;
-      if (result?.debug && debugSamples.length<3) debugSamples.push(result.debug);
       for (var pair of (result?.pairs||[])) {
         if ((pair.druidSpec==='Restoration'||pair.druidSpec==='Balance') && specCount(pair.druidSpec)<SYMBIOSIS_SAMPLE_TARGET)
           pairs.push(pair);
       }
     }
   }
-  var result={bossID:boss.id,bossName:boss.name,pairs,inspected,druidFights,availableRankings:fights.length,debugSamples};
+  var result={bossID:boss.id,bossName:boss.name,pairs,inspected,druidFights,availableRankings:fights.length};
   setSymbiosisCached(boss.id,result);
   return result;
 }
 
 function escapeHtml(value) {
   return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-async function copySymbiosisDebug() {
-  var text=JSON.stringify(window.symbiosisDebugData||[],null,2);
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch(e) {
-    var area=document.createElement('textarea');
-    area.value=text; document.body.appendChild(area); area.select();
-    document.execCommand('copy'); area.remove();
-  }
-  document.getElementById('symbiosis-debug-status').textContent='Copied — paste it into Codex';
 }
 
 function renderSymbiosisResults(results) {
@@ -542,9 +534,7 @@ function renderSymbiosisResults(results) {
     coverage+='<br><span class="dim">'+result.druidFights+' Druid kills &middot; '+result.inspected+' ranked kills checked</span>';
     html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+renderSpec(result,'Restoration')+'</td><td>'+renderSpec(result,'Balance')+'</td></tr>';
   }
-  window.symbiosisDebugData=results.map(result=>({boss:result.bossName,samples:result.debugSamples||[]}));
-  html+='</table><div class="meta">Pre-pull casts are preferred. Opening buffs and pull-time auras are used only when the pre-pull cast is absent.</div>';
-  html+='<button onclick="copySymbiosisDebug()" style="border-color:#444;color:#888;">Copy Debug Data</button> <span id="symbiosis-debug-status" class="dim"></span>';
+  html+='</table><div class="meta">Confirmed from the original Symbiosis cast, a recorded link aura, or a Druid casting the borrowed ability. Links applied before logging where the borrowed ability was never used cannot be identified.</div>';
   document.getElementById('symbiosis-results').innerHTML=html;
 }
 
