@@ -325,7 +325,7 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v2_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v3_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
@@ -345,7 +345,14 @@ function playerListFromDetails(details) {
 }
 
 function eventAbilityId(event) {
-  return Number(event?.abilityGameID || event?.ability?.gameID || event?.ability?.guid || event?.abilityID || event?.spellID || event?.id || 0);
+  var rawAbility = typeof event?.ability === 'number' ? event.ability : 0;
+  return Number(event?.abilityGameID || event?.abilityGameId || event?.ability?.gameID || event?.ability?.gameId || event?.ability?.guid || rawAbility || event?.abilityID || event?.spellID || event?.id || 0);
+}
+
+function eventActorId(event, side) {
+  var direct = event?.[side+'ID'];
+  var actor = event?.[side];
+  return Number(direct || (typeof actor === 'number' ? actor : actor?.id) || 0);
 }
 
 function actorSpec(player) { return player?.specs?.[0]?.spec || 'Unknown'; }
@@ -398,17 +405,17 @@ async function inspectFightSymbiosis(fight) {
       pairByDruid.set(Number(druid.id), makeSymbiosisPair(druid,target,fight,'opening buff'));
   }
 
-  if (druids.length === 1 && !pairByDruid.has(Number(druids[0].id))) {
-    var combatants = parseWclPayload(report?.combatants?.data) || [];
-    for (var ev of combatants) {
-      var target = actors.get(Number(ev.sourceID));
-      if (!target || target.type === 'Druid') continue;
-      var auras = ev.auras || ev.buffs || [];
-      if (auras.some(aura => SYMBIOSIS_SPELL_IDS.has(eventAbilityId(aura)))) {
-        pairByDruid.set(Number(druids[0].id), makeSymbiosisPair(druids[0],target,fight,'combatant aura'));
-        break;
-      }
-    }
+  var combatants = parseWclPayload(report?.combatants?.data) || [];
+  for (var ev of combatants) {
+    var target = actors.get(eventActorId(ev,'source'));
+    if (!target || target.type === 'Druid') continue;
+    var auras = ev.auras || ev.buffs || [];
+    var symbiosisAura = auras.find(aura => SYMBIOSIS_SPELL_IDS.has(eventAbilityId(aura)));
+    if (!symbiosisAura) continue;
+    var auraDruid = actors.get(eventActorId(symbiosisAura,'source'));
+    if (auraDruid?.type !== 'Druid' && druids.length === 1) auraDruid = druids[0];
+    if (auraDruid?.type === 'Druid' && !pairByDruid.has(Number(auraDruid.id)))
+      pairByDruid.set(Number(auraDruid.id), makeSymbiosisPair(auraDruid,target,fight,'combatant aura'));
   }
   return {pairs:Array.from(pairByDruid.values()), hadDruid:true};
 }
@@ -480,7 +487,7 @@ function renderSymbiosisResults(results) {
     var restoCount=result.pairs.filter(pair=>pair.druidSpec==='Restoration').length;
     var balanceCount=result.pairs.filter(pair=>pair.druidSpec==='Balance').length;
     var coverage='Resto '+restoCount+'/'+SYMBIOSIS_SAMPLE_TARGET+' Â· Balance '+balanceCount+'/'+SYMBIOSIS_SAMPLE_TARGET;
-    coverage+='<br><span class="dim">'+result.inspected+' ranked kills checked</span>';
+    coverage+='<br><span class="dim">'+result.druidFights+' Druid kills · '+result.inspected+' ranked kills checked</span>';
     html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+renderSpec(result,'Restoration')+'</td><td>'+renderSpec(result,'Balance')+'</td></tr>';
   }
   html+='</table><div class="meta">Pre-pull casts are preferred. Opening buffs and pull-time auras are used only when the pre-pull cast is absent.</div>';
