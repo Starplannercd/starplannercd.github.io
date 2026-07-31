@@ -106,7 +106,7 @@
 
 <div id="symbiosis-section">
   <h2 style="margin:0 0 6px">Symbiosis Analysis</h2>
-  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player Â· separate Balance and Restoration results Â· up to 10 recorded pairings per spec from the top 100 ranked kills</p>
+  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player &middot; separate Balance and Restoration results &middot; up to 10 recorded pairings per spec from the top 100 ranked kills</p>
   <button id="symbiosis-selected-btn" onclick="scanSelectedSymbiosis()">Analyze Selected Boss</button>
   <button id="symbiosis-all-btn" onclick="scanAllSymbiosis()" style="border-color:#555;">Analyze All Bosses</button>
   <button onclick="clearSymbiosisCache()" style="border-color:#444;color:#666;">Clear Symbiosis Cache</button>
@@ -325,7 +325,7 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v5_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v6_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
@@ -434,7 +434,29 @@ async function inspectFightSymbiosis(fight) {
     if (auraDruid?.type === 'Druid' && !pairByDruid.has(Number(auraDruid.id)))
       pairByDruid.set(Number(auraDruid.id), makeSymbiosisPair(auraDruid,target,fight,'combatant aura'));
   }
-  return {pairs:Array.from(pairByDruid.values()), hadDruid:true};
+  var debug = {
+    reportCode:code,
+    fightID,
+    pull,
+    druids:druids.map(druid=>({id:druid.id,spec:actorSpec(druid)})),
+    castCount:casts.length,
+    castSample:casts.slice(-5).map(ev=>({keys:Object.keys(ev),ability:eventAbilityId(ev),source:eventActorId(ev,'source'),target:eventActorId(ev,'target'),timestamp:ev.timestamp})),
+    combatantCount:combatants.length,
+    combatantKeys:Object.keys(combatants[0]||{}),
+    druidCombatants:combatants.map(ev=>({ev,player:actors.get(eventActorId(ev,'source'))}))
+      .filter(item=>item.player?.type==='Druid')
+      .map(item=>({
+        druidID:item.player.id,
+        spec:actorSpec(item.player),
+        eventKeys:Object.keys(item.ev),
+        auras:(item.ev.auras||item.ev.buffs||[]).slice(0,60).map(aura=>({
+          keys:Object.keys(aura), id:eventAbilityId(aura), name:aura.name||aura.ability?.name||null,
+          source:eventActorId(aura,'source')
+        }))
+      })),
+    detected:Array.from(pairByDruid.values()).map(pair=>({druidSpec:pair.druidSpec,targetClass:pair.targetClass,targetSpec:pair.targetSpec,method:pair.method}))
+  };
+  return {pairs:Array.from(pairByDruid.values()), hadDruid:true, debug};
 }
 
 function symbiosisCacheKey(bossID) { return SYMBIOSIS_CACHE_PREFIX+bossID; }
@@ -457,7 +479,7 @@ async function analyzeBossSymbiosis(boss, progress) {
   var cached = getSymbiosisCached(boss.id);
   if (cached) return cached.result;
   var fights = await getFightRankings(boss.id, SYMBIOSIS_RANKING_LIMIT);
-  var pairs=[], inspected=0, druidFights=0;
+  var pairs=[], inspected=0, druidFights=0, debugSamples=[];
   function specCount(spec) { return pairs.filter(pair=>pair.druidSpec===spec).length; }
   function needsSamples() {
     return specCount('Restoration')<SYMBIOSIS_SAMPLE_TARGET || specCount('Balance')<SYMBIOSIS_SAMPLE_TARGET;
@@ -469,19 +491,32 @@ async function analyzeBossSymbiosis(boss, progress) {
     inspected += batch.length;
     for (var result of found) {
       if (result?.hadDruid) druidFights++;
+      if (result?.debug && debugSamples.length<3) debugSamples.push(result.debug);
       for (var pair of (result?.pairs||[])) {
         if ((pair.druidSpec==='Restoration'||pair.druidSpec==='Balance') && specCount(pair.druidSpec)<SYMBIOSIS_SAMPLE_TARGET)
           pairs.push(pair);
       }
     }
   }
-  var result={bossID:boss.id,bossName:boss.name,pairs,inspected,druidFights,availableRankings:fights.length};
+  var result={bossID:boss.id,bossName:boss.name,pairs,inspected,druidFights,availableRankings:fights.length,debugSamples};
   setSymbiosisCached(boss.id,result);
   return result;
 }
 
 function escapeHtml(value) {
   return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function copySymbiosisDebug() {
+  var text=JSON.stringify(window.symbiosisDebugData||[],null,2);
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e) {
+    var area=document.createElement('textarea');
+    area.value=text; document.body.appendChild(area); area.select();
+    document.execCommand('copy'); area.remove();
+  }
+  document.getElementById('symbiosis-debug-status').textContent='Copied — paste it into Codex';
 }
 
 function renderSymbiosisResults(results) {
@@ -503,11 +538,13 @@ function renderSymbiosisResults(results) {
     if (!result) continue;
     var restoCount=result.pairs.filter(pair=>pair.druidSpec==='Restoration').length;
     var balanceCount=result.pairs.filter(pair=>pair.druidSpec==='Balance').length;
-    var coverage='Resto '+restoCount+'/'+SYMBIOSIS_SAMPLE_TARGET+' Â· Balance '+balanceCount+'/'+SYMBIOSIS_SAMPLE_TARGET;
-    coverage+='<br><span class="dim">'+result.druidFights+' Druid kills · '+result.inspected+' ranked kills checked</span>';
+    var coverage='Resto '+restoCount+'/'+SYMBIOSIS_SAMPLE_TARGET+' &middot; Balance '+balanceCount+'/'+SYMBIOSIS_SAMPLE_TARGET;
+    coverage+='<br><span class="dim">'+result.druidFights+' Druid kills &middot; '+result.inspected+' ranked kills checked</span>';
     html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+renderSpec(result,'Restoration')+'</td><td>'+renderSpec(result,'Balance')+'</td></tr>';
   }
+  window.symbiosisDebugData=results.map(result=>({boss:result.bossName,samples:result.debugSamples||[]}));
   html+='</table><div class="meta">Pre-pull casts are preferred. Opening buffs and pull-time auras are used only when the pre-pull cast is absent.</div>';
+  html+='<button onclick="copySymbiosisDebug()" style="border-color:#444;color:#888;">Copy Debug Data</button> <span id="symbiosis-debug-status" class="dim"></span>';
   document.getElementById('symbiosis-results').innerHTML=html;
 }
 
