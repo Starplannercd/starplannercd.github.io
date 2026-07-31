@@ -106,7 +106,7 @@
 
 <div id="symbiosis-section">
   <h2 style="margin:0 0 6px">Symbiosis Analysis</h2>
-  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player &middot; separate Balance and Restoration results &middot; up to 20 recorded pairings per spec from the top 100 ranked kills</p>
+  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player &middot; separate Balance and Restoration results &middot; up to 20 recorded pairings per spec from the top 150 ranked kills</p>
   <button id="symbiosis-selected-btn" onclick="scanSelectedSymbiosis()">Analyze Selected Boss</button>
   <button id="symbiosis-all-btn" onclick="scanAllSymbiosis()" style="border-color:#555;">Analyze All Bosses</button>
   <button onclick="clearSymbiosisCache()" style="border-color:#444;color:#666;">Clear Symbiosis Cache</button>
@@ -323,9 +323,9 @@ async function runPool(items, fn, concurrency) {
 // Symbiosis is normally cast before the pull, so this analysis checks the
 // pre-pull report window first and uses pull-time buffs only as a fallback.
 const SYMBIOSIS_SAMPLE_TARGET = 20;
-const SYMBIOSIS_RANKING_LIMIT = 100;
+const SYMBIOSIS_RANKING_LIMIT = 150;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v8_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v9_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
