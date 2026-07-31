@@ -11,7 +11,7 @@
   button:hover   { border-color:#c89830; color:#c89830; }
   button:disabled{ opacity:0.4; cursor:default; }
   @media print {
-    #auth-section, #controls, #progress, #results, #export-section, .no-print { display:none !important; }
+    #auth-section, #controls, #progress, #results, #symbiosis-section, #export-section, .no-print { display:none !important; }
     #all-bosses-results { display:block !important; }
     body { background:#fff; color:#000; padding:0; }
     #all-bosses-card { border:none !important; padding:0 !important; }
@@ -26,6 +26,10 @@
   .pct   { color:#c89830; }
   .dim   { color:#555; }
   #results { margin-top:10px; }
+  #symbiosis-section { display:none; margin-top:30px; border-top:1px solid #333; padding-top:18px; }
+  #symbiosis-results { margin-top:12px; }
+  .sym-pair { margin-bottom:5px; }
+  .sym-pair:last-child { margin-bottom:0; }
   .section { margin-bottom:24px; }
   .meta  { color:#666; font-size:12px; margin-bottom:12px; }
   a      { color:#888; font-size:12px; }
@@ -99,6 +103,16 @@
 <div id="progress"></div>
 <div id="results"></div>
 <div id="all-bosses-results" style="display:none;"></div>
+
+<div id="symbiosis-section">
+  <h2 style="margin:0 0 6px">Symbiosis Analysis</h2>
+  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player Â· checks the top 100 ranked kills until 10 recorded Druid pairings are found per boss</p>
+  <button id="symbiosis-selected-btn" onclick="scanSelectedSymbiosis()">Analyze Selected Boss</button>
+  <button id="symbiosis-all-btn" onclick="scanAllSymbiosis()" style="border-color:#555;">Analyze All Bosses</button>
+  <button onclick="clearSymbiosisCache()" style="border-color:#444;color:#666;">Clear Symbiosis Cache</button>
+  <div id="symbiosis-progress" style="color:#888;font-size:12px;margin:10px 0;min-height:16px;"></div>
+  <div id="symbiosis-results"></div>
+</div>
 
 <div id="export-section" style="display:none;margin-top:36px;border-top:1px solid #333;padding-top:20px;">
   <h2 style="color:#c89830;font-size:14px;margin:0 0 6px">BossReminder Profile Generator — Mage (Flubba)</h2>
@@ -306,6 +320,199 @@ async function runPool(items, fn, concurrency) {
 }
 
 // ── render spec split ─────────────────────────────────────────────────────────
+// Symbiosis is normally cast before the pull, so this analysis checks the
+// pre-pull report window first and uses pull-time buffs only as a fallback.
+const SYMBIOSIS_SAMPLE_TARGET = 10;
+const SYMBIOSIS_RANKING_LIMIT = 100;
+const SYMBIOSIS_CONCURRENCY = 3;
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v1_';
+const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const SYMBIOSIS_SPELL_IDS = new Set([
+  110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
+  110488, 110490, 110491, 110497, 110498, 110499, 110500, 110501,
+  110502, 110503, 110504, 110505, 110506, 136519
+]);
+
+function parseWclPayload(value) {
+  if (typeof value !== 'string') return value;
+  try { return JSON.parse(value); } catch(e) { return null; }
+}
+
+function playerListFromDetails(details) {
+  var parsed = parseWclPayload(details);
+  var groups = parsed?.data?.playerDetails || parsed?.playerDetails || {};
+  return [...(groups.healers||[]), ...(groups.dps||[]), ...(groups.tanks||[])];
+}
+
+function eventAbilityId(event) {
+  return Number(event?.abilityGameID || event?.ability?.gameID || event?.ability?.guid || event?.abilityID || event?.spellID || event?.id || 0);
+}
+
+function actorSpec(player) { return player?.specs?.[0]?.spec || 'Unknown'; }
+
+function makeSymbiosisPair(druid, target, fight, method) {
+  return {
+    druidName:druid.name, druidSpec:actorSpec(druid),
+    targetName:target.name, targetClass:target.type||'Unknown', targetSpec:actorSpec(target),
+    reportCode:fight.report?.code, fightID:fight.report?.fightID, method
+  };
+}
+
+async function inspectFightSymbiosis(fight) {
+  var code = fight.report?.code, fightID = fight.report?.fightID;
+  if (!code || fightID == null || fight.startTime == null || fight.report?.startTime == null) return {pairs:[]};
+  var pull = Math.max(0, fight.startTime - fight.report.startTime);
+  var prePull = Math.max(0, pull - 300000), openingEnd = pull + 8000;
+  var d = await wclQuery(
+    `query($c:String!,$fid:Int!,$pre:Float!,$pull:Float!,$post:Float!){reportData{report(code:$c){
+      playerDetails(fightIDs:[$fid])
+      combatants:events(fightIDs:[$fid],dataType:CombatantInfo,startTime:$pull,endTime:$post){data}
+      symbiosisCasts:events(dataType:Casts,abilityID:110309,startTime:$pre,endTime:$post,limit:100){data}
+      openingBuffs:events(fightIDs:[$fid],dataType:Buffs,startTime:$pull,endTime:$post){data}
+    }}}`, {c:code, fid:fightID, pre:prePull, pull, post:openingEnd}
+  );
+  var report = d?.reportData?.report;
+  var players = playerListFromDetails(report?.playerDetails);
+  var actors = new Map(players.map(p => [Number(p.id), p]));
+  var druids = players.filter(p => p.type === 'Druid');
+  if (!druids.length) return {pairs:[], hadDruid:false};
+
+  var pairByDruid = new Map();
+  var casts = parseWclPayload(report?.symbiosisCasts?.data) || [];
+  casts.filter(ev => eventAbilityId(ev) === 110309)
+    .sort((a,b) => Number(a.timestamp||0)-Number(b.timestamp||0))
+    .forEach(ev => {
+      var druid = actors.get(Number(ev.sourceID)), target = actors.get(Number(ev.targetID));
+      if (druid?.type === 'Druid' && target && target.type !== 'Druid')
+        pairByDruid.set(Number(druid.id), makeSymbiosisPair(druid,target,fight,'pre-pull cast'));
+    });
+
+  var buffs = parseWclPayload(report?.openingBuffs?.data) || [];
+  for (var ev of buffs) {
+    if (!SYMBIOSIS_SPELL_IDS.has(eventAbilityId(ev))) continue;
+    var target = actors.get(Number(ev.targetID));
+    if (!target || target.type === 'Druid') continue;
+    var druid = actors.get(Number(ev.sourceID));
+    if (druid?.type !== 'Druid' && druids.length === 1) druid = druids[0];
+    if (druid?.type === 'Druid' && !pairByDruid.has(Number(druid.id)))
+      pairByDruid.set(Number(druid.id), makeSymbiosisPair(druid,target,fight,'opening buff'));
+  }
+
+  if (druids.length === 1 && !pairByDruid.has(Number(druids[0].id))) {
+    var combatants = parseWclPayload(report?.combatants?.data) || [];
+    for (var ev of combatants) {
+      var target = actors.get(Number(ev.sourceID));
+      if (!target || target.type === 'Druid') continue;
+      var auras = ev.auras || ev.buffs || [];
+      if (auras.some(aura => SYMBIOSIS_SPELL_IDS.has(eventAbilityId(aura)))) {
+        pairByDruid.set(Number(druids[0].id), makeSymbiosisPair(druids[0],target,fight,'combatant aura'));
+        break;
+      }
+    }
+  }
+  return {pairs:Array.from(pairByDruid.values()), hadDruid:true};
+}
+
+function symbiosisCacheKey(bossID) { return SYMBIOSIS_CACHE_PREFIX+bossID; }
+function getSymbiosisCached(bossID) {
+  try {
+    var cached = JSON.parse(localStorage.getItem(symbiosisCacheKey(bossID)) || 'null');
+    return cached?.ts && Date.now()-cached.ts <= SYMBIOSIS_CACHE_MAX_AGE ? cached : null;
+  } catch(e) { return null; }
+}
+function setSymbiosisCached(bossID, result) {
+  try { localStorage.setItem(symbiosisCacheKey(bossID), JSON.stringify({ts:Date.now(),result})); } catch(e) {}
+}
+function clearSymbiosisCache() {
+  var keys = Object.keys(localStorage).filter(k => k.startsWith(SYMBIOSIS_CACHE_PREFIX));
+  keys.forEach(k => localStorage.removeItem(k));
+  document.getElementById('symbiosis-progress').textContent = 'Symbiosis cache cleared ('+keys.length+' entries removed)';
+}
+
+async function analyzeBossSymbiosis(boss, progress) {
+  var cached = getSymbiosisCached(boss.id);
+  if (cached) return cached.result;
+  var fights = await getFightRankings(boss.id, SYMBIOSIS_RANKING_LIMIT);
+  var pairs=[], inspected=0, druidFights=0;
+  for (var offset=0; offset<fights.length && pairs.length<SYMBIOSIS_SAMPLE_TARGET; offset+=SYMBIOSIS_CONCURRENCY) {
+    var batch = fights.slice(offset,offset+SYMBIOSIS_CONCURRENCY);
+    progress?.(boss.name+' — checking ranked kills '+(offset+1)+'-'+Math.min(offset+batch.length,fights.length)+' of '+fights.length);
+    var found = await runPool(batch,inspectFightSymbiosis,SYMBIOSIS_CONCURRENCY);
+    inspected += batch.length;
+    for (var result of found) {
+      if (result?.hadDruid) druidFights++;
+      for (var pair of (result?.pairs||[])) {
+        if (pairs.length >= SYMBIOSIS_SAMPLE_TARGET) break;
+        pairs.push(pair);
+      }
+    }
+  }
+  var result={bossID:boss.id,bossName:boss.name,pairs,inspected,druidFights,availableRankings:fights.length};
+  setSymbiosisCached(boss.id,result);
+  return result;
+}
+
+function escapeHtml(value) {
+  return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderSymbiosisResults(results) {
+  var html='<table><tr><th>Boss</th><th>Coverage</th><th>Most common pairings</th></tr>';
+  for (var result of results) {
+    if (!result) continue;
+    var counts={};
+    for (var pair of result.pairs) {
+      var target=pair.targetClass+(pair.targetSpec&&pair.targetSpec!=='Unknown'?' ('+pair.targetSpec+')':'');
+      var label=pair.druidSpec+' Druid → '+target;
+      counts[label]=(counts[label]||0)+1;
+    }
+    var sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+    var pairHtml=sorted.length?sorted.map(([label,count])=>{
+      var pct=result.pairs.length?(count/result.pairs.length*100).toFixed(0):0;
+      return '<div class="sym-pair"><span class="pct">'+escapeHtml(label)+'</span> <span class="dim">'+count+'/'+result.pairs.length+' ('+pct+'%)</span></div>';
+    }).join(''):'<span class="dim">No recorded Symbiosis pairing found</span>';
+    var coverage=result.pairs.length+' pairings from '+result.druidFights+' Druid kills<br><span class="dim">'+result.inspected+' ranked kills checked</span>';
+    html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+pairHtml+'</td></tr>';
+  }
+  html+='</table><div class="meta">Pre-pull casts are preferred. Opening buffs and pull-time auras are used only when the pre-pull cast is absent.</div>';
+  document.getElementById('symbiosis-results').innerHTML=html;
+}
+
+function selectedBoss() {
+  var select=document.getElementById('bossSelect'), option=select.options[select.selectedIndex];
+  return option?.value?{id:parseInt(option.value),name:option.text}:null;
+}
+
+async function scanSelectedSymbiosis() {
+  if (!isAuthed()) { alert('Please log in first'); return; }
+  var boss=selectedBoss(); if (!boss) return;
+  var button=document.getElementById('symbiosis-selected-btn'), progress=document.getElementById('symbiosis-progress');
+  button.disabled=true;
+  try {
+    var result=await analyzeBossSymbiosis(boss,text=>progress.textContent=text);
+    renderSymbiosisResults([result]);
+    progress.textContent=boss.name+' complete — '+result.pairs.length+' pairings found';
+  } catch(e) { progress.textContent='Error: '+e.message; console.error(e); }
+  button.disabled=false;
+}
+
+async function scanAllSymbiosis() {
+  if (!isAuthed()) { alert('Please log in first'); return; }
+  var select=document.getElementById('bossSelect');
+  var bosses=Array.from(select.options).filter(o=>o.value).map(o=>({id:parseInt(o.value),name:o.text}));
+  var button=document.getElementById('symbiosis-all-btn'), progress=document.getElementById('symbiosis-progress'), results=[];
+  button.disabled=true;
+  try {
+    for (let i=0;i<bosses.length;i++) {
+      var boss=bosses[i];
+      results.push(await analyzeBossSymbiosis(boss,text=>progress.textContent='Boss '+(i+1)+'/'+bosses.length+': '+text));
+      renderSymbiosisResults(results);
+    }
+    progress.textContent='Symbiosis analysis complete for '+results.length+' bosses';
+  } catch(e) { progress.textContent='Error: '+e.message; console.error(e); }
+  button.disabled=false;
+}
+
 function renderSpecSplit(encName, specClass, players, totalFights, elapsedSec) {
   if (!players.length) {
     document.getElementById('results').innerHTML = '<p style="color:#888">No '+specClass+' found in these logs.</p>';
@@ -480,6 +687,7 @@ async function init() {
   document.getElementById('auth-btn').disabled = true;
   document.getElementById('auth-status').textContent = '';
   document.getElementById('controls').style.display = 'flex';
+  document.getElementById('symbiosis-section').style.display = 'block';
   document.getElementById('export-section').style.display = 'block';
 
   // Load boss list
