@@ -106,7 +106,7 @@
 
 <div id="symbiosis-section">
   <h2 style="margin:0 0 6px">Symbiosis Analysis</h2>
-  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player Â· checks the top 100 ranked kills until 10 recorded Druid pairings are found per boss</p>
+  <p style="color:#666;font-size:12px;margin:0 0 12px">Heroic 10-player Â· separate Balance and Restoration results Â· up to 10 recorded pairings per spec from the top 100 ranked kills</p>
   <button id="symbiosis-selected-btn" onclick="scanSelectedSymbiosis()">Analyze Selected Boss</button>
   <button id="symbiosis-all-btn" onclick="scanAllSymbiosis()" style="border-color:#555;">Analyze All Bosses</button>
   <button onclick="clearSymbiosisCache()" style="border-color:#444;color:#666;">Clear Symbiosis Cache</button>
@@ -325,7 +325,7 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v1_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v2_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
@@ -434,7 +434,11 @@ async function analyzeBossSymbiosis(boss, progress) {
   if (cached) return cached.result;
   var fights = await getFightRankings(boss.id, SYMBIOSIS_RANKING_LIMIT);
   var pairs=[], inspected=0, druidFights=0;
-  for (var offset=0; offset<fights.length && pairs.length<SYMBIOSIS_SAMPLE_TARGET; offset+=SYMBIOSIS_CONCURRENCY) {
+  function specCount(spec) { return pairs.filter(pair=>pair.druidSpec===spec).length; }
+  function needsSamples() {
+    return specCount('Restoration')<SYMBIOSIS_SAMPLE_TARGET || specCount('Balance')<SYMBIOSIS_SAMPLE_TARGET;
+  }
+  for (var offset=0; offset<fights.length && needsSamples(); offset+=SYMBIOSIS_CONCURRENCY) {
     var batch = fights.slice(offset,offset+SYMBIOSIS_CONCURRENCY);
     progress?.(boss.name+' — checking ranked kills '+(offset+1)+'-'+Math.min(offset+batch.length,fights.length)+' of '+fights.length);
     var found = await runPool(batch,inspectFightSymbiosis,SYMBIOSIS_CONCURRENCY);
@@ -442,8 +446,8 @@ async function analyzeBossSymbiosis(boss, progress) {
     for (var result of found) {
       if (result?.hadDruid) druidFights++;
       for (var pair of (result?.pairs||[])) {
-        if (pairs.length >= SYMBIOSIS_SAMPLE_TARGET) break;
-        pairs.push(pair);
+        if ((pair.druidSpec==='Restoration'||pair.druidSpec==='Balance') && specCount(pair.druidSpec)<SYMBIOSIS_SAMPLE_TARGET)
+          pairs.push(pair);
       }
     }
   }
@@ -457,22 +461,27 @@ function escapeHtml(value) {
 }
 
 function renderSymbiosisResults(results) {
-  var html='<table><tr><th>Boss</th><th>Coverage</th><th>Most common pairings</th></tr>';
-  for (var result of results) {
-    if (!result) continue;
-    var counts={};
-    for (var pair of result.pairs) {
-      var target=pair.targetClass+(pair.targetSpec&&pair.targetSpec!=='Unknown'?' ('+pair.targetSpec+')':'');
-      var label=pair.druidSpec+' Druid → '+target;
+  function renderSpec(result,spec) {
+    var specPairs=result.pairs.filter(pair=>pair.druidSpec===spec), counts={};
+    for (var pair of specPairs) {
+      var label=pair.targetClass+(pair.targetSpec&&pair.targetSpec!=='Unknown'?' ('+pair.targetSpec+')':'');
       counts[label]=(counts[label]||0)+1;
     }
     var sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
-    var pairHtml=sorted.length?sorted.map(([label,count])=>{
-      var pct=result.pairs.length?(count/result.pairs.length*100).toFixed(0):0;
-      return '<div class="sym-pair"><span class="pct">'+escapeHtml(label)+'</span> <span class="dim">'+count+'/'+result.pairs.length+' ('+pct+'%)</span></div>';
-    }).join(''):'<span class="dim">No recorded Symbiosis pairing found</span>';
-    var coverage=result.pairs.length+' pairings from '+result.druidFights+' Druid kills<br><span class="dim">'+result.inspected+' ranked kills checked</span>';
-    html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+pairHtml+'</td></tr>';
+    if (!sorted.length) return '<span class="dim">No recorded '+spec+' pairing found</span>';
+    return sorted.map(([label,count])=>{
+      var pct=(count/specPairs.length*100).toFixed(0);
+      return '<div class="sym-pair"><span class="pct">'+escapeHtml(label)+'</span> <span class="dim">'+count+'/'+specPairs.length+' ('+pct+'%)</span></div>';
+    }).join('');
+  }
+  var html='<table><tr><th>Boss</th><th>Coverage</th><th>Restoration Druid</th><th>Balance Druid</th></tr>';
+  for (var result of results) {
+    if (!result) continue;
+    var restoCount=result.pairs.filter(pair=>pair.druidSpec==='Restoration').length;
+    var balanceCount=result.pairs.filter(pair=>pair.druidSpec==='Balance').length;
+    var coverage='Resto '+restoCount+'/'+SYMBIOSIS_SAMPLE_TARGET+' Â· Balance '+balanceCount+'/'+SYMBIOSIS_SAMPLE_TARGET;
+    coverage+='<br><span class="dim">'+result.inspected+' ranked kills checked</span>';
+    html+='<tr><td>'+escapeHtml(result.bossName)+'</td><td>'+coverage+'</td><td>'+renderSpec(result,'Restoration')+'</td><td>'+renderSpec(result,'Balance')+'</td></tr>';
   }
   html+='</table><div class="meta">Pre-pull casts are preferred. Opening buffs and pull-time auras are used only when the pre-pull cast is absent.</div>';
   document.getElementById('symbiosis-results').innerHTML=html;
@@ -491,7 +500,9 @@ async function scanSelectedSymbiosis() {
   try {
     var result=await analyzeBossSymbiosis(boss,text=>progress.textContent=text);
     renderSymbiosisResults([result]);
-    progress.textContent=boss.name+' complete — '+result.pairs.length+' pairings found';
+    var resto=result.pairs.filter(pair=>pair.druidSpec==='Restoration').length;
+    var balance=result.pairs.filter(pair=>pair.druidSpec==='Balance').length;
+    progress.textContent=boss.name+' complete — '+resto+' Restoration and '+balance+' Balance pairings found';
   } catch(e) { progress.textContent='Error: '+e.message; console.error(e); }
   button.disabled=false;
 }
