@@ -325,12 +325,17 @@ async function runPool(items, fn, concurrency) {
 const SYMBIOSIS_SAMPLE_TARGET = 10;
 const SYMBIOSIS_RANKING_LIMIT = 100;
 const SYMBIOSIS_CONCURRENCY = 3;
-const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v3_';
+const SYMBIOSIS_CACHE_PREFIX = 'wcl_symbiosis_v4_';
 const SYMBIOSIS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const SYMBIOSIS_SPELL_IDS = new Set([
   110309, 110478, 110479, 110482, 110483, 110484, 110485, 110486,
   110488, 110490, 110491, 110497, 110498, 110499, 110500, 110501,
   110502, 110503, 110504, 110505, 110506, 136519
+]);
+const SYMBIOSIS_TARGET_CLASS_BY_AURA = new Map([
+  [110478,'DeathKnight'], [110479,'Hunter'], [110482,'Mage'], [110483,'Monk'],
+  [110484,'Paladin'], [110485,'Priest'], [110486,'Rogue'], [110488,'Shaman'],
+  [110490,'Warlock'], [110491,'Warrior']
 ]);
 
 function parseWclPayload(value) {
@@ -408,8 +413,18 @@ async function inspectFightSymbiosis(fight) {
   var combatants = parseWclPayload(report?.combatants?.data) || [];
   for (var ev of combatants) {
     var target = actors.get(eventActorId(ev,'source'));
-    if (!target || target.type === 'Druid') continue;
+    if (!target) continue;
     var auras = ev.auras || ev.buffs || [];
+    if (target.type === 'Druid') {
+      var classAura = auras.find(aura => SYMBIOSIS_TARGET_CLASS_BY_AURA.has(eventAbilityId(aura)));
+      if (classAura && !pairByDruid.has(Number(target.id))) {
+        var targetClass = SYMBIOSIS_TARGET_CLASS_BY_AURA.get(eventAbilityId(classAura));
+        var candidates = players.filter(player => player.type === targetClass);
+        var partner = candidates.length === 1 ? candidates[0] : {name:'Unknown',type:targetClass,specs:[]};
+        pairByDruid.set(Number(target.id), makeSymbiosisPair(target,partner,fight,'Druid class aura'));
+      }
+      continue;
+    }
     var symbiosisAura = auras.find(aura => SYMBIOSIS_SPELL_IDS.has(eventAbilityId(aura)));
     if (!symbiosisAura) continue;
     var auraDruid = actors.get(eventActorId(symbiosisAura,'source'));
