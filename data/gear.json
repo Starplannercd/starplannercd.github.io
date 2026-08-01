@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-07-27T15:17:56.791Z",
+  "fetchedAt": "2026-08-01T14:00:02.053Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
@@ -453,7 +453,7 @@
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:51.561Z",
+      "fetchedAt": "2026-08-01T13:59:59.124Z",
       "items": [
         {
           "slot": "HEAD",
@@ -556,8 +556,8 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 105109,
-          "name": "Thok's Acid-Grooved Tooth",
+          "id": 104924,
+          "name": "Purified Bindings of Immerseus",
           "ilvl": 542,
           "upgrade": 14,
           "quality": "EPIC",
@@ -574,8 +574,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102247,
-          "name": "Jina-Kang, Kindness of Chi-Ji",
+          "id": 102246,
+          "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
