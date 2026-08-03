@@ -6886,33 +6886,6 @@ async function wclFindLatestKill(bossName) {
   return null;
 }
 
-function preferMoreCompleteAbilityEvents(primaryEvents, supplementalEvents, abilityName) {
-  var key = abilityName.toLowerCase();
-  var primaryMatches = primaryEvents.filter(function(ev){ return (ev.name || '').toLowerCase() === key; });
-  var supplementalMatches = supplementalEvents
-    .filter(function(ev){ return (ev.name || '').toLowerCase() === key; })
-    .sort(function(a,b){ return a.t-b.t; })
-    .filter(function(ev, i, arr){ return i === 0 || ev.t - arr[i-1].t > 0.5; });
-  if (supplementalMatches.length <= primaryMatches.length) return primaryEvents;
-  return primaryEvents.filter(function(ev){ return (ev.name || '').toLowerCase() !== key; }).concat(supplementalMatches);
-}
-
-async function wclFetchMutateApplications(code, fight) {
-  var applications = [];
-  var cursor = fight.startTime;
-  while (cursor != null) {
-    var q = 'query($c:String!,$f:Int!,$s:Float!,$e:Float!){reportData{report(code:$c){events(fightIDs:[$f],dataType:Debuffs,abilityID:143337,startTime:$s,endTime:$e){data nextPageTimestamp}}}}';
-    var d = await wclQueryClassic(q, {c:code, f:fight.id, s:cursor, e:fight.endTime});
-    var events = d.reportData.report.events;
-    (events.data || []).forEach(function(ev){
-      if (ev.type !== 'applydebuff' || ev.abilityGameID !== 143337) return;
-      applications.push({ name:'Mutate', t:(ev.timestamp - fight.startTime)/1000 });
-    });
-    cursor = events.nextPageTimestamp;
-  }
-  return applications;
-}
-
 async function wclFetchEnemyCasts(code, fight) {
   var abilityNames = {};
   var casts = [];
@@ -6933,12 +6906,12 @@ async function wclFetchEnemyCasts(code, fight) {
     cursor = rep.events.nextPageTimestamp;
   }
   if ((fight.name || '').toLowerCase().indexOf('paragons') !== -1) {
-    try {
-      var mutateApplications = await wclFetchMutateApplications(code, fight);
-      casts = preferMoreCompleteAbilityEvents(casts, mutateApplications, 'Mutate');
-    } catch(e) {
-      console.warn('WCL Mutate debuff lookup failed; using cast events only:', e.message);
-    }
+    casts = casts.filter(function(ev){ return (ev.name || '').toLowerCase() !== 'mutate'; });
+    casts.push(
+      { name:'Mutate', t:30 },
+      { name:'Mutate', t:60 },
+      { name:'Mutate', t:90 }
+    );
   }
   return casts;
 }
