@@ -1,9 +1,9 @@
 {
-  "fetchedAt": "2026-08-01T14:00:02.053Z",
+  "fetchedAt": "2026-08-03T15:21:16.899Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:50.093Z",
+      "fetchedAt": "2026-08-03T15:21:09.475Z",
       "items": [
         {
           "slot": "HEAD",
@@ -43,8 +43,8 @@
         },
         {
           "slot": "WAIST",
-          "id": 104437,
-          "name": "Poisonbinder Girth",
+          "id": 104513,
+          "name": "Demolisher's Reinforced Belt",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -97,9 +97,9 @@
         },
         {
           "slot": "FINGER_2",
-          "id": 103896,
+          "id": 104615,
           "name": "Devilfang Band",
-          "ilvl": 567,
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -153,7 +153,7 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-07-24T02:11:33.225Z",
+      "fetchedAt": "2026-08-03T15:21:09.908Z",
       "items": [
         {
           "slot": "HEAD",
@@ -211,9 +211,9 @@
         },
         {
           "slot": "FEET",
-          "id": 96531,
-          "name": "Spurs of the Storm Cavalry",
-          "ilvl": 549,
+          "id": 104488,
+          "name": "Unrepentant Heels",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FEET"
@@ -265,10 +265,10 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 105278,
+          "id": 104531,
           "name": "Haromm's Talisman",
-          "ilvl": 567,
-          "upgrade": 8,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
@@ -771,7 +771,7 @@
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:52.499Z",
+      "fetchedAt": "2026-08-03T15:21:11.837Z",
       "items": [
         {
           "slot": "HEAD",
@@ -883,18 +883,18 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 104974,
-          "name": "Assurance of Consequence",
-          "ilvl": 542,
+          "id": 102311,
+          "name": "Ticking Ebon Detonator",
+          "ilvl": 567,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
-          "id": 102311,
-          "name": "Ticking Ebon Detonator",
-          "ilvl": 567,
+          "id": 104476,
+          "name": "Assurance of Consequence",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
@@ -930,7 +930,7 @@
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:52.981Z",
+      "fetchedAt": "2026-08-03T15:21:12.315Z",
       "items": [
         {
           "slot": "HEAD",
@@ -963,8 +963,8 @@
           "slot": "CHEST",
           "id": 99416,
           "name": "Robes of the Horned Nightmare",
-          "ilvl": 570,
-          "upgrade": 4,
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "ROBE"
         },
@@ -990,8 +990,8 @@
           "slot": "FEET",
           "id": 104443,
           "name": "Sha-Seared Sandals",
-          "ilvl": 573,
-          "upgrade": 7,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FEET"
         },
@@ -1042,8 +1042,8 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 96516,
-          "name": "Cha-Ye's Essence of Brilliance",
+          "id": 96558,
+          "name": "Unerring Vision of Lei Shen",
           "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
@@ -1080,7 +1080,7 @@
     },
     "Nothot": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:32.396Z",
+      "fetchedAt": "2026-08-03T15:21:12.785Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1102,10 +1102,10 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99153,
+          "id": 99401,
           "name": "Chronomancer Mantle",
-          "ilvl": 561,
-          "upgrade": 8,
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
@@ -1138,10 +1138,10 @@
         },
         {
           "slot": "FEET",
-          "id": 95004,
-          "name": "Starwalker Sandals",
-          "ilvl": 549,
-          "upgrade": 8,
+          "id": 104497,
+          "name": "Bone-Inlaid Sandals",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FEET"
         },
@@ -1192,9 +1192,9 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 102300,
+          "id": 104544,
           "name": "Kardris' Toxic Totem",
-          "ilvl": 567,
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
@@ -1380,7 +1380,7 @@
     },
     "Skullhammer": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:54.460Z",
+      "fetchedAt": "2026-08-03T15:21:13.830Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1447,9 +1447,9 @@
         },
         {
           "slot": "WRIST",
-          "id": 96476,
-          "name": "Caustic Spike Bracers",
-          "ilvl": 549,
+          "id": 104460,
+          "name": "Bracers of Blind Hatred",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "WRIST"
@@ -1492,10 +1492,10 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 96470,
-          "name": "Fabled Feather of Ji-Kun",
-          "ilvl": 549,
-          "upgrade": 14,
+          "id": 105609,
+          "name": "Thok's Tail Tip",
+          "ilvl": 580,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
