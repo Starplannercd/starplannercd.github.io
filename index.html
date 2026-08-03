@@ -6906,11 +6906,18 @@ async function wclFetchEnemyCasts(code, fight) {
     cursor = rep.events.nextPageTimestamp;
   }
   if ((fight.name || '').toLowerCase().indexOf('paragons') !== -1) {
-    casts = casts.filter(function(ev){ return (ev.name || '').toLowerCase() !== 'mutate'; });
+    casts = casts.filter(function(ev){
+      var name = (ev.name || '').toLowerCase();
+      return name !== 'mutate' && name !== 'insane calculation: fiery edge';
+    });
     casts.push(
       { name:'Mutate', t:30 },
       { name:'Mutate', t:60 },
-      { name:'Mutate', t:90 }
+      { name:'Mutate', t:90 },
+      { name:'Insane Calculation: Fiery Edge', t:240 },
+      { name:'Insane Calculation: Fiery Edge', t:270 },
+      { name:'Insane Calculation: Fiery Edge', t:300 },
+      { name:'Insane Calculation: Fiery Edge', t:330 }
     );
   }
   return casts;
