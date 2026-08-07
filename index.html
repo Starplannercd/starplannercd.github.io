@@ -6735,41 +6735,6 @@ try {
     if (k.indexOf('4-') === 0 && !_g['3-' + k.slice(2)]) { _g['3-' + k.slice(2)] = _g[k]; delete _g[k]; }
   });
 } catch(e) {}
-
-// Migrate Garrosh P1: nuke stale rows from every possible storage location
-try {
-  function _delGarP1(g) { if (!g) return; delete g['0-0']; delete g['0-2']; delete g['0-3']; }
-  // 1. in-memory
-  _delGarP1(placedCDs.garrosh);
-  // 2. every localStorage key — scan all of them
-  for (var _lsIdx = 0; _lsIdx < localStorage.length; _lsIdx++) {
-    var _lsKey = localStorage.key(_lsIdx);
-    try {
-      var _lsVal = JSON.parse(localStorage.getItem(_lsKey));
-      var _lsDirty = false;
-      // direct placedCDs.garrosh
-      if (_lsVal && _lsVal.placedCDs && _lsVal.placedCDs.garrosh) { _delGarP1(_lsVal.placedCDs.garrosh); _lsDirty = true; }
-      // nested under plans object
-      if (_lsVal && typeof _lsVal === 'object') {
-        Object.values(_lsVal).forEach(function(plan) {
-          if (!plan || typeof plan !== 'object') return;
-          if (plan.placedCDs && plan.placedCDs.garrosh) { _delGarP1(plan.placedCDs.garrosh); _lsDirty = true; }
-          if (plan.fills) Object.values(plan.fills).forEach(function(fill) {
-            if (!fill) return;
-            if (fill.placedCDs && fill.placedCDs.garrosh) { _delGarP1(fill.placedCDs.garrosh); _lsDirty = true; }
-            if (fill.placedSnapshot && fill.placedSnapshot.garrosh) { _delGarP1(fill.placedSnapshot.garrosh); _lsDirty = true; }
-          });
-          // plans can also have snapshots array
-          if (plan.snapshots) Object.values(plan.snapshots).forEach(function(snap) {
-            if (snap && snap.placedCDs && snap.placedCDs.garrosh) { _delGarP1(snap.placedCDs.garrosh); _lsDirty = true; }
-          });
-        });
-      }
-      if (_lsDirty) localStorage.setItem(_lsKey, JSON.stringify(_lsVal));
-    } catch(e2) {}
-  }
-  console.log('[MIGRATE] Garrosh P1 cleanup done. garrosh keys now:', Object.keys(placedCDs.garrosh || {}));
-} catch(e) { console.warn('[MIGRATE] Garrosh P1 error:', e); }
 applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
