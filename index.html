@@ -6688,8 +6688,15 @@ if (localStorage.getItem('tot_rcd_timing_ver') !== '2') {
   localStorage.removeItem(BOSS_TIMING_KEY);
   localStorage.setItem('tot_rcd_timing_ver', '2');
 }
-// Ensure manual Manage CDs entries exist (disabled per boss) after local restore
-try { ensureManageOptionalCdsInSet(); } catch(e) { console.error('Manage CD initialization failed:', e); }
+// Ensure manual Manage CDs entries exist (disabled per boss) after local restore.
+// On Full Raid, respect its saved roster so deselected specs' optional CDs are
+// removed (not re-added) — otherwise the Full Raid roster edit reverts on refresh.
+try {
+  const _fullRaidRosterSpecs = getActivePlanId() === FULL_RAID_ID
+    ? (getFullRaidSnapshot().rosterSpecs || null)
+    : null;
+  ensureManageOptionalCdsInSet(_fullRaidRosterSpecs);
+} catch(e) { console.error('Manage CD initialization failed:', e); }
 // One-time normalization for every saved plan: seed the newly default-off CDs
 // as disabled on all bosses and permanently remove retired cooldown variants.
 try { recoverActualRaidPlacementsFromBackup(); } catch(e) { console.error('Plan recovery failed:', e); }
@@ -8323,6 +8330,13 @@ function setActivePlanId(id) {
 function saveFullRaidSnapshot() {
   try {
     const snapshot = captureCurrentTimeline();
+    // rosterSpecs is the Full Raid roster selection — it isn't part of the live
+    // timeline capture, so carry it forward from the existing snapshot. Without
+    // this, every renderTimeline on Full Raid wipes the roster edit.
+    try {
+      const prev = JSON.parse(localStorage.getItem(FULL_RAID_SNAPSHOT_KEY) || 'null');
+      if (prev && Array.isArray(prev.rosterSpecs)) snapshot.rosterSpecs = prev.rosterSpecs;
+    } catch(e) {}
     localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(snapshot));
   } catch(e) {}
 }
@@ -9283,6 +9297,11 @@ function showFullRaidRosterEditor() {
       });
       localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(updated));
       applyTimelineSnapshot(rosterSnapshot);
+      // applyTimelineSnapshot renders with _stateRestoring=true, so it never
+      // autosaves. Render again now (not restoring) to push the roster edit to
+      // the autosave/Firebase and refresh the Full Raid snapshot (which keeps
+      // rosterSpecs via saveFullRaidSnapshot's carry-forward).
+      renderTimeline();
       renderBottomPanel();
       updatePlansBtn();
       ov.remove();
