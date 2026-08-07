@@ -9244,7 +9244,7 @@ function showEditPlanPicker(planId) {
   const plans = getPlans();
   // Full Raid is stored separately — synthesise a plan object so the editor works
   const plan = (planId === FULL_RAID_ID)
-    ? { name: 'Full Raid', cdWho: (getFullRaidSnapshot().cdWho || {}), subbedOut: [], subs: [] }
+    ? Object.assign({ name: 'Full Raid', subbedOut: [], subs: [] }, getFullRaidSnapshot())
     : plans[planId];
   if (!plan) return;
   if (Array.isArray(plan.rosterSpecs)) {
