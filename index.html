@@ -6739,12 +6739,40 @@ try {
 // Migrate Garrosh P1: remove stale placements from removed rows
 // Old P1 had: 0-0 Encounter Start, 0-1 Siege Engineer, 0-2 Iron Star 1, 0-3 Iron Star 2
 // New P1 has: 0-0 Siege Engineer only — delete 0-0, 0-2, 0-3
+function _cleanGarroshP1(g) {
+  if (!g) return;
+  delete g['0-0']; // was Encounter Start
+  delete g['0-2']; // was Iron Star 1
+  delete g['0-3']; // was Iron Star 2
+}
 try {
-  var _g2 = placedCDs.garrosh;
-  if (_g2) {
-    delete _g2['0-0']; // was Encounter Start
-    delete _g2['0-2']; // was Iron Star 1
-    delete _g2['0-3']; // was Iron Star 2
+  // Clean current in-memory state
+  _cleanGarroshP1(placedCDs.garrosh);
+  // Also clean all saved plans in localStorage
+  var _rawPlans = localStorage.getItem('tot_rcd_plans');
+  if (_rawPlans) {
+    var _plans = JSON.parse(_rawPlans);
+    var _changed = false;
+    Object.values(_plans).forEach(function(plan) {
+      if (plan && plan.placedCDs && plan.placedCDs.garrosh) {
+        _cleanGarroshP1(plan.placedCDs.garrosh);
+        _changed = true;
+      }
+      // Also check snapshots inside fills
+      if (plan && plan.fills) {
+        Object.values(plan.fills).forEach(function(fill) {
+          if (fill && fill.placedCDs && fill.placedCDs.garrosh) {
+            _cleanGarroshP1(fill.placedCDs.garrosh);
+            _changed = true;
+          }
+          if (fill && fill.placedSnapshot && fill.placedSnapshot.garrosh) {
+            _cleanGarroshP1(fill.placedSnapshot.garrosh);
+            _changed = true;
+          }
+        });
+      }
+    });
+    if (_changed) localStorage.setItem('tot_rcd_plans', JSON.stringify(_plans));
   }
 } catch(e) {}
 applyBossTimingOverrides();
