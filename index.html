@@ -9242,7 +9242,10 @@ function showCustomRosterPlanEditor(planId, plan) {
 
 function showEditPlanPicker(planId) {
   const plans = getPlans();
-  const plan = plans[planId];
+  // Full Raid is stored separately — synthesise a plan object so the editor works
+  const plan = (planId === FULL_RAID_ID)
+    ? { name: 'Full Raid', cdWho: (getFullRaidSnapshot().cdWho || {}), subbedOut: [], subs: [] }
+    : plans[planId];
   if (!plan) return;
   if (Array.isArray(plan.rosterSpecs)) {
     showCustomRosterPlanEditor(planId, plan);
