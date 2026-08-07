@@ -6345,12 +6345,14 @@ function seedBalanceTranqDefaultOff() {
   if (balanceTranq) balanceTranq.who = 'BOOMIE1';
 }
 
-function keepLivePlacedCooldownsEnabled() {
+function keepLivePlacedCooldownsEnabled(rosterSpecs) {
   Object.entries(placedCDs).forEach(([bossId, rows]) => {
     if (!bossDisabledIds[bossId]) bossDisabledIds[bossId] = new Set();
     Object.values(rows || {}).forEach(placements => {
       (placements || []).forEach(placement => {
         if (!placement?.cdId) return;
+        // Don't re-enable a placed CD whose spec isn't in the (Full Raid) roster.
+        if (Array.isArray(rosterSpecs) && !cdAllowedForRoster(placement.cdId, rosterSpecs)) return;
         activeSetIds.add(placement.cdId);
         bossDisabledIds[bossId].delete(placement.cdId);
       });
@@ -6378,12 +6380,20 @@ function ensureManageOptionalCdsInSet(rosterSpecs) {
 
 function fbApplyData(data) {
   if (!data) return false;
+  // On Full Raid, respect the saved roster throughout so a synced/loaded state
+  // doesn't re-introduce cooldowns (including core ones) from specs not in the roster.
+  const _fbRosterSpecs = getActivePlanId() === FULL_RAID_ID
+    ? (getFullRaidSnapshot().rosterSpecs || null)
+    : null;
   keepPlacedCooldownsEnabled(data);
   if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
   if (data.activeSetIds) {
-    const coreIds = CD_POOL.filter(c => c.core).map(c => c.id);
+    // Core CDs are force-included — but only if their spec is in the roster,
+    // otherwise a core CD like Healing Tide / Ancestral Guidance / Holy Devotion
+    // reappears after a Full Raid roster edit that removed that spec.
+    const coreIds = CD_POOL.filter(c => c.core && cdAllowedForRoster(c.id, _fbRosterSpecs)).map(c => c.id);
     activeSetIds = new Set([...data.activeSetIds, ...coreIds]);
   }
   if (data.cdWho) CD_POOL.forEach(c => { if (data.cdWho[c.id]) c.who = data.cdWho[c.id]; });
@@ -6397,13 +6407,8 @@ function fbApplyData(data) {
   removeRetiredCooldownsFromLiveState();
   if (!data.defaultOffV4) seedDefaultOffCooldowns();
   if (!data.defaultOffV5) seedBalanceTranqDefaultOff();
-  // On Full Raid, respect the saved roster so a Firebase sync doesn't re-add the
-  // optional CDs a roster edit removed (otherwise they flash back in after load).
-  const _fbRosterSpecs = getActivePlanId() === FULL_RAID_ID
-    ? (getFullRaidSnapshot().rosterSpecs || null)
-    : null;
   ensureManageOptionalCdsInSet(_fbRosterSpecs);
-  keepLivePlacedCooldownsEnabled();
+  keepLivePlacedCooldownsEnabled(_fbRosterSpecs);
   return true;
 }
 
