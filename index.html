@@ -6736,45 +6736,40 @@ try {
   });
 } catch(e) {}
 
-// Migrate Garrosh P1: remove stale placements from removed rows
-// Old P1 had: 0-0 Encounter Start, 0-1 Siege Engineer, 0-2 Iron Star 1, 0-3 Iron Star 2
-// New P1 has: 0-0 Siege Engineer only — delete 0-0, 0-2, 0-3
-function _cleanGarroshP1(g) {
-  if (!g) return;
-  delete g['0-0']; // was Encounter Start
-  delete g['0-2']; // was Iron Star 1
-  delete g['0-3']; // was Iron Star 2
-}
+// Migrate Garrosh P1: nuke stale rows from every possible storage location
 try {
-  // Clean current in-memory state
-  _cleanGarroshP1(placedCDs.garrosh);
-  // Also clean all saved plans in localStorage
-  var _rawPlans = localStorage.getItem('tot_rcd_plans');
-  if (_rawPlans) {
-    var _plans = JSON.parse(_rawPlans);
-    var _changed = false;
-    Object.values(_plans).forEach(function(plan) {
-      if (plan && plan.placedCDs && plan.placedCDs.garrosh) {
-        _cleanGarroshP1(plan.placedCDs.garrosh);
-        _changed = true;
-      }
-      // Also check snapshots inside fills
-      if (plan && plan.fills) {
-        Object.values(plan.fills).forEach(function(fill) {
-          if (fill && fill.placedCDs && fill.placedCDs.garrosh) {
-            _cleanGarroshP1(fill.placedCDs.garrosh);
-            _changed = true;
-          }
-          if (fill && fill.placedSnapshot && fill.placedSnapshot.garrosh) {
-            _cleanGarroshP1(fill.placedSnapshot.garrosh);
-            _changed = true;
-          }
+  function _delGarP1(g) { if (!g) return; delete g['0-0']; delete g['0-2']; delete g['0-3']; }
+  // 1. in-memory
+  _delGarP1(placedCDs.garrosh);
+  // 2. every localStorage key — scan all of them
+  for (var _lsIdx = 0; _lsIdx < localStorage.length; _lsIdx++) {
+    var _lsKey = localStorage.key(_lsIdx);
+    try {
+      var _lsVal = JSON.parse(localStorage.getItem(_lsKey));
+      var _lsDirty = false;
+      // direct placedCDs.garrosh
+      if (_lsVal && _lsVal.placedCDs && _lsVal.placedCDs.garrosh) { _delGarP1(_lsVal.placedCDs.garrosh); _lsDirty = true; }
+      // nested under plans object
+      if (_lsVal && typeof _lsVal === 'object') {
+        Object.values(_lsVal).forEach(function(plan) {
+          if (!plan || typeof plan !== 'object') return;
+          if (plan.placedCDs && plan.placedCDs.garrosh) { _delGarP1(plan.placedCDs.garrosh); _lsDirty = true; }
+          if (plan.fills) Object.values(plan.fills).forEach(function(fill) {
+            if (!fill) return;
+            if (fill.placedCDs && fill.placedCDs.garrosh) { _delGarP1(fill.placedCDs.garrosh); _lsDirty = true; }
+            if (fill.placedSnapshot && fill.placedSnapshot.garrosh) { _delGarP1(fill.placedSnapshot.garrosh); _lsDirty = true; }
+          });
+          // plans can also have snapshots array
+          if (plan.snapshots) Object.values(plan.snapshots).forEach(function(snap) {
+            if (snap && snap.placedCDs && snap.placedCDs.garrosh) { _delGarP1(snap.placedCDs.garrosh); _lsDirty = true; }
+          });
         });
       }
-    });
-    if (_changed) localStorage.setItem('tot_rcd_plans', JSON.stringify(_plans));
+      if (_lsDirty) localStorage.setItem(_lsKey, JSON.stringify(_lsVal));
+    } catch(e2) {}
   }
-} catch(e) {}
+  console.log('[MIGRATE] Garrosh P1 cleanup done. garrosh keys now:', Object.keys(placedCDs.garrosh || {}));
+} catch(e) { console.warn('[MIGRATE] Garrosh P1 error:', e); }
 applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
