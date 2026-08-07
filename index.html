@@ -9240,12 +9240,70 @@ function showCustomRosterPlanEditor(planId, plan) {
   ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
 }
 
+function showFullRaidRosterEditor() {
+  const snap = getFullRaidSnapshot();
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.style.alignItems = 'center';
+  const box = document.createElement('div');
+  box.className = 'np-box';
+  const selectedSpecs = new Set(normalizePlanRosterSpecs(snap.rosterSpecs || []));
+
+  function render() {
+    const rosterHtml = buildPlanRosterSections(selectedSpecs);
+    box.innerHTML = `
+      <div class="np-head">
+        <div class="np-title">Edit Full Raid Roster</div>
+        <button id="npClose" class="np-close">×</button>
+      </div>
+      <div class="np-body">
+        <div class="np-hint">Adjust the <b>Full Raid</b> default roster.</div>
+        ${rosterHtml}
+      </div>
+      <div class="np-foot">
+        <div class="np-summary"><b>${normalizePlanRosterSpecs([...selectedSpecs]).length}</b> roster specs selected.</div>
+        <div class="np-actions">
+          <button id="npSaveRoster" class="np-btn-primary">Save Changes</button>
+          <button id="npCancel" class="np-btn-ghost">Cancel</button>
+        </div>
+      </div>`;
+
+    wirePlanRosterCards(box, selectedSpecs, render);
+    box.querySelector('#npClose')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npCancel')?.addEventListener('click', () => ov.remove());
+    box.querySelector('#npSaveRoster')?.addEventListener('click', () => {
+      const sourceSnapshot = captureCurrentTimeline();
+      const rosterSnapshot = buildRosterPlanSnapshot(sourceSnapshot, [...selectedSpecs]);
+      // Save back into the Full Raid snapshot
+      const updated = Object.assign({}, snap, {
+        rosterSpecs: rosterSnapshot.rosterSpecs,
+        activeSetIds: rosterSnapshot.activeSetIds,
+        cdWho: rosterSnapshot.cdWho,
+        paletteOrder: rosterSnapshot.paletteOrder,
+        bossDisabledIds: rosterSnapshot.bossDisabledIds,
+        bossReady: rosterSnapshot.bossReady,
+      });
+      localStorage.setItem(FULL_RAID_SNAPSHOT_KEY, JSON.stringify(updated));
+      applyTimelineSnapshot(rosterSnapshot);
+      renderBottomPanel();
+      updatePlansBtn();
+      ov.remove();
+    });
+  }
+
+  render();
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+}
+
 function showEditPlanPicker(planId) {
+  if (planId === FULL_RAID_ID) {
+    showFullRaidRosterEditor();
+    return;
+  }
   const plans = getPlans();
-  // Full Raid is stored separately — synthesise a plan object so the editor works
-  const plan = (planId === FULL_RAID_ID)
-    ? Object.assign({ name: 'Full Raid', subbedOut: [], subs: [] }, getFullRaidSnapshot())
-    : plans[planId];
+  const plan = plans[planId];
   if (!plan) return;
   if (Array.isArray(plan.rosterSpecs)) {
     showCustomRosterPlanEditor(planId, plan);
