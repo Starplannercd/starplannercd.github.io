@@ -2530,6 +2530,7 @@ function showSubPlanPrompt(playerWho, specName) {
       ov.remove();
       switchToPlan(btn.dataset.id);
       applyFill(playerWho, specName);
+      renderTimeline(); // persist the fill applied on top of the loaded plan
       updatePlansBtn();
     });
   });
@@ -2824,6 +2825,7 @@ function showRosterModal() {
     overlay.querySelectorAll('.revert-fill-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         revertFill(btn.dataset.who);
+        renderTimeline(); // persist the revert (autosave + Full Raid snapshot)
         overlay.querySelector('#rosterList').innerHTML = buildRosterHtml();
         wireRosterButtons();
       });
