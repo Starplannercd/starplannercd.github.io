@@ -6397,7 +6397,12 @@ function fbApplyData(data) {
   removeRetiredCooldownsFromLiveState();
   if (!data.defaultOffV4) seedDefaultOffCooldowns();
   if (!data.defaultOffV5) seedBalanceTranqDefaultOff();
-  ensureManageOptionalCdsInSet();
+  // On Full Raid, respect the saved roster so a Firebase sync doesn't re-add the
+  // optional CDs a roster edit removed (otherwise they flash back in after load).
+  const _fbRosterSpecs = getActivePlanId() === FULL_RAID_ID
+    ? (getFullRaidSnapshot().rosterSpecs || null)
+    : null;
+  ensureManageOptionalCdsInSet(_fbRosterSpecs);
   keepLivePlacedCooldownsEnabled();
   return true;
 }
