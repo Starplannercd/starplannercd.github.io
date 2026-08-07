@@ -6735,6 +6735,18 @@ try {
     if (k.indexOf('4-') === 0 && !_g['3-' + k.slice(2)]) { _g['3-' + k.slice(2)] = _g[k]; delete _g[k]; }
   });
 } catch(e) {}
+
+// Migrate Garrosh P1: remove stale placements from removed rows
+// Old P1 had: 0-0 Encounter Start, 0-1 Siege Engineer, 0-2 Iron Star 1, 0-3 Iron Star 2
+// New P1 has: 0-0 Siege Engineer only — delete 0-0, 0-2, 0-3
+try {
+  var _g2 = placedCDs.garrosh;
+  if (_g2) {
+    delete _g2['0-0']; // was Encounter Start
+    delete _g2['0-2']; // was Iron Star 1
+    delete _g2['0-3']; // was Iron Star 2
+  }
+} catch(e) {}
 applyBossTimingOverrides();
 refreshBossSelectLabels();
 renderTimeline();
