@@ -2007,7 +2007,6 @@ const BOSSES = [
     duration: 600,
     sections: [{ label: null, abilities: [
       { name:'Mutate 1',                         time:30,  color:'#99bb33' },
-      { name:'Aim 1',                            time:44,  color:'#d8a828' },
       { name:'Mutate 2',                         time:60,  color:'#99bb33' },
       { name:'Aim 2',                            time:80,  color:'#d8a828' },
       { name:'Mutate 3',                         time:90,  color:'#99bb33' },
@@ -6164,11 +6163,10 @@ function applyBossTimingOverrides() {
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
 
-      // Ensure the Aim rows exist on Paragons even for saved overrides that predate
-      // them (log syncs / older timings replace the whole ability list).
+      // Ensure the Aim row exists on Paragons even for saved overrides that predate
+      // it (log syncs / older timings replace the whole ability list).
       if (boss.id === 'paragons' && boss.sections[0]) {
         [
-          { name:'Aim 1', time:44, color:'#d8a828' },
           { name:'Aim 2', time:80, color:'#d8a828' },
         ].forEach(function(defaultRow) {
           if (!boss.sections[0].abilities.some(function(a){ return a.name === defaultRow.name; })) {
