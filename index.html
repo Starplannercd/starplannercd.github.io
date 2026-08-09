@@ -4321,6 +4321,13 @@ function getBossAbilityKey(boss, rowKey, abName) {
   }
   if (abName && abName.startsWith('Encounter Start')) return (BOSS_ABILITY_KEYS[boss.id] || { key: boss.id.toUpperCase() + '_ENC_START' }).key;
 
+  // All numbered Annihilate rows in this timeline belong to Garrosh's first
+  // Realm of Y'Shaarj intermission. Keep one valid Foji ability key and use the
+  // row's trailing number as the cast count (1-10).
+  if (boss.id === 'garrosh' && /^Annihilate\s+\d+$/i.test(abName || '')) {
+    return 'GARROSH_ANNIHILATE_I1';
+  }
+
   // Prefer exact sheet dropdown entries. This matters for abilities such as
   // Blackfuse Overload 1–8, where every numbered row has its own Foji key.
   const exactSheetEntry = (FOJI_BOSS_ABILITIES[boss.id] || []).find(item => item[0] === abName);
