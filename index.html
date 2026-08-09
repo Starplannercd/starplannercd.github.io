@@ -2014,7 +2014,7 @@ const BOSSES = [
       { name:'Insane Calculation: Fiery Edge 2', time:247, color:'#c83a20' },
       { name:'Insane Calculation: Fiery Edge 3', time:273, color:'#c83a20' },
       { name:'Insane Calculation: Fiery Edge 4', time:298, color:'#c83a20' },
-      { name:'Insane Calculation: Fiery Edge 5', time:332, color:'#c83a20' },
+      { name:'Insane Calculation: Fiery Edge 5', time:328, color:'#c83a20' },
     ]}]
   },
   {
@@ -6175,8 +6175,8 @@ function applyBossTimingOverrides() {
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
 
-      // Ensure the Aim row exists on Paragons even for saved overrides that predate
-      // it (log syncs / older timings replace the whole ability list).
+      // Ensure manually maintained Paragons rows survive saved overrides that
+      // predate them (log syncs / older timings replace the whole ability list).
       if (boss.id === 'paragons' && boss.sections[0]) {
         [
           { name:'Aim 2', time:80, color:'#d8a828' },
@@ -6185,6 +6185,19 @@ function applyBossTimingOverrides() {
             boss.sections[0].abilities.push(Object.assign({}, defaultRow));
           }
         });
+        var fieryFour = boss.sections[0].abilities.find(function(a) {
+          return a.name === 'Insane Calculation: Fiery Edge 4';
+        });
+        if (fieryFour) {
+          var fieryFiveTime = fieryFour.time + 30;
+          var fieryFive = boss.sections[0].abilities.find(function(a) {
+            return a.name === 'Insane Calculation: Fiery Edge 5';
+          });
+          if (fieryFive) fieryFive.time = fieryFiveTime;
+          else boss.sections[0].abilities.push({
+            name:'Insane Calculation: Fiery Edge 5', time:fieryFiveTime, color:'#c83a20'
+          });
+        }
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
     });
