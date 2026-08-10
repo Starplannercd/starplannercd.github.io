@@ -2045,7 +2045,6 @@ const BOSSES = [
       ]},
       { label: 'P3', abilities: [
         { name:'Whirling Corruption P3 1', time:337, color:'#c848c8' },
-        { name:'Whirling Corruption P3 2', time:387, color:'#c848c8' },
       ]},
       { label: 'P4', abilities: [
         { name:'Manifest Rage', time:630, color:'#c848c8' },
@@ -6219,7 +6218,7 @@ function saveBossAbilityOverride(boss) {
 }
 
 function applyGarroshLoggedTimingMigration() {
-  const migrationKey = 'tot_rcd_garrosh_logged_timings_20260810';
+  const migrationKey = 'tot_rcd_garrosh_logged_timings_20260810_v2';
   try {
     if (localStorage.getItem(migrationKey) === '1') return;
     const boss = BOSSES.find(function(b){ return b.id === 'garrosh'; });
@@ -6231,9 +6230,12 @@ function applyGarroshLoggedTimingMigration() {
       'Annihilate 10':142,
       'Whirling Corruption P2 1':178, 'Whirling Corruption P2 2':228,
       'Whirling Corruption P2 3':288,
-      'Whirling Corruption P3 1':337, 'Whirling Corruption P3 2':387,
+      'Whirling Corruption P3 1':337,
     };
     boss.sections.forEach(function(section) {
+      section.abilities = section.abilities.filter(function(ability) {
+        return ability.name !== 'Whirling Corruption P3 2';
+      });
       section.abilities.forEach(function(ability) {
         if (timings[ability.name] != null) ability.time = timings[ability.name];
       });
