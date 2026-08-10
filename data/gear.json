@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-03T15:21:16.899Z",
+  "fetchedAt": "2026-08-10T13:48:58.471Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
@@ -153,7 +153,7 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:09.908Z",
+      "fetchedAt": "2026-08-10T13:48:53.490Z",
       "items": [
         {
           "slot": "HEAD",
@@ -274,8 +274,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102248,
-          "name": "Fen-Yu, Fury of Xuen",
+          "id": 102245,
+          "name": "Qian-Le, Courage of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -453,14 +453,14 @@
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-08-01T13:59:59.124Z",
+      "fetchedAt": "2026-08-10T13:48:54.310Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 105476,
-          "name": "Self-Reflecting Mask",
-          "ilvl": 580,
-          "upgrade": 8,
+          "id": 104546,
+          "name": "Darkfang Mask",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "HEAD"
         },
@@ -475,9 +475,9 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99151,
+          "id": 99381,
           "name": "Mantle of Seven Sacred Seals",
-          "ilvl": 561,
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
@@ -502,17 +502,17 @@
         },
         {
           "slot": "LEGS",
-          "id": 96405,
-          "name": "Roots of Rampaging Earth",
-          "ilvl": 549,
-          "upgrade": 14,
+          "id": 99390,
+          "name": "Legwraps of Seven Sacred Seals",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "LEGS"
         },
         {
           "slot": "FEET",
-          "id": 104428,
-          "name": "Salt Water Sandals",
+          "id": 104471,
+          "name": "Boots of Broken Reliance",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -529,10 +529,10 @@
         },
         {
           "slot": "HANDS",
-          "id": 104472,
-          "name": "Confident Grips",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99388,
+          "name": "Handwraps of Seven Sacred Seals",
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "HAND"
         },
@@ -556,8 +556,8 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 104924,
-          "name": "Purified Bindings of Immerseus",
+          "id": 105109,
+          "name": "Thok's Acid-Grooved Tooth",
           "ilvl": 542,
           "upgrade": 14,
           "quality": "EPIC",
@@ -574,8 +574,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102246,
-          "name": "Xing-Ho, Breath of Yu'lon",
+          "id": 102247,
+          "name": "Jina-Kang, Kindness of Chi-Ji",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -771,7 +771,7 @@
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:11.837Z",
+      "fetchedAt": "2026-08-10T13:48:55.071Z",
       "items": [
         {
           "slot": "HEAD",
@@ -829,10 +829,10 @@
         },
         {
           "slot": "LEGS",
-          "id": 99081,
+          "id": 99403,
           "name": "Legguards of the Unblinking Vigil",
-          "ilvl": 536,
-          "upgrade": 8,
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "LEGS"
         },
@@ -1080,7 +1080,7 @@
     },
     "Nothot": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:12.785Z",
+      "fetchedAt": "2026-08-10T13:48:55.912Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1104,8 +1104,8 @@
           "slot": "SHOULDER",
           "id": 99401,
           "name": "Chronomancer Mantle",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
