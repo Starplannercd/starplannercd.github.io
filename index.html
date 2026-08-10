@@ -2027,25 +2027,25 @@ const BOSSES = [
         { name:'Siege Engineer CD 1', time:20, color:'#c8881a' },
       ]},
       { label: 'Intermission', abilities: [
-        { name:'Annihilate 1',  time:118, color:'#c848c8' },
-        { name:'Annihilate 2',  time:121, color:'#c848c8' },
-        { name:'Annihilate 3',  time:124, color:'#c848c8' },
-        { name:'Annihilate 4',  time:127, color:'#c848c8' },
-        { name:'Annihilate 5',  time:131, color:'#c848c8' },
-        { name:'Annihilate 6',  time:134, color:'#c848c8' },
-        { name:'Annihilate 7',  time:137, color:'#c848c8' },
-        { name:'Annihilate 8',  time:140, color:'#c848c8' },
-        { name:'Annihilate 9',  time:144, color:'#c848c8' },
-        { name:'Annihilate 10', time:147, color:'#c848c8' },
+        { name:'Annihilate 1',  time:113, color:'#c848c8' },
+        { name:'Annihilate 2',  time:117, color:'#c848c8' },
+        { name:'Annihilate 3',  time:120, color:'#c848c8' },
+        { name:'Annihilate 4',  time:123, color:'#c848c8' },
+        { name:'Annihilate 5',  time:126, color:'#c848c8' },
+        { name:'Annihilate 6',  time:130, color:'#c848c8' },
+        { name:'Annihilate 7',  time:133, color:'#c848c8' },
+        { name:'Annihilate 8',  time:136, color:'#c848c8' },
+        { name:'Annihilate 9',  time:139, color:'#c848c8' },
+        { name:'Annihilate 10', time:142, color:'#c848c8' },
       ]},
       { label: 'P2', abilities: [
-        { name:'Whirling Corruption P2 1', time:197, color:'#d83828' },
-        { name:'Whirling Corruption P2 2', time:248, color:'#d83828' },
-        { name:'Whirling Corruption P2 3', time:298, color:'#d83828' },
+        { name:'Whirling Corruption P2 1', time:178, color:'#d83828' },
+        { name:'Whirling Corruption P2 2', time:228, color:'#d83828' },
+        { name:'Whirling Corruption P2 3', time:288, color:'#d83828' },
       ]},
       { label: 'P3', abilities: [
-        { name:'Whirling Corruption P3 1', time:419, color:'#c848c8' },
-        { name:'Whirling Corruption P3 2', time:555, color:'#c848c8' },
+        { name:'Whirling Corruption P3 1', time:337, color:'#c848c8' },
+        { name:'Whirling Corruption P3 2', time:387, color:'#c848c8' },
       ]},
       { label: 'P4', abilities: [
         { name:'Manifest Rage', time:630, color:'#c848c8' },
@@ -6218,6 +6218,32 @@ function saveBossAbilityOverride(boss) {
   } catch(e) {}
 }
 
+function applyGarroshLoggedTimingMigration() {
+  const migrationKey = 'tot_rcd_garrosh_logged_timings_20260810';
+  try {
+    if (localStorage.getItem(migrationKey) === '1') return;
+    const boss = BOSSES.find(function(b){ return b.id === 'garrosh'; });
+    if (!boss) return;
+    const timings = {
+      'Annihilate 1':113, 'Annihilate 2':117, 'Annihilate 3':120,
+      'Annihilate 4':123, 'Annihilate 5':126, 'Annihilate 6':130,
+      'Annihilate 7':133, 'Annihilate 8':136, 'Annihilate 9':139,
+      'Annihilate 10':142,
+      'Whirling Corruption P2 1':178, 'Whirling Corruption P2 2':228,
+      'Whirling Corruption P2 3':288,
+      'Whirling Corruption P3 1':337, 'Whirling Corruption P3 2':387,
+    };
+    boss.sections.forEach(function(section) {
+      section.abilities.forEach(function(ability) {
+        if (timings[ability.name] != null) ability.time = timings[ability.name];
+      });
+      section.abilities = sortBossAbilitiesByTime(boss, section.abilities);
+    });
+    saveBossAbilityOverride(boss);
+    localStorage.setItem(migrationKey, '1');
+  } catch(e) {}
+}
+
 function clearBossAbilityOverride(bossId) {
   try {
     var all = JSON.parse(localStorage.getItem(BOSS_TIMING_KEY) || '{}');
@@ -6794,6 +6820,7 @@ try {
   });
 } catch(e) {}
 applyBossTimingOverrides();
+applyGarroshLoggedTimingMigration();
 refreshBossSelectLabels();
 renderTimeline();
 renderBottomPanel();
