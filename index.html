@@ -751,78 +751,76 @@
     display: none;
   }
 
-  /* SECTION DIVIDER — full-width gradient phase bar */
+  /* SECTION DIVIDER — full-width cinematic gradient phase panel */
   .phase-divider {
     --phase-accent: #d69a52;
     --phase-accent-rgb: 214,154,82;
     width: 100%;
-    height: 36px;
-    margin: 18px 0 10px;
-    padding: 0 15px;
+    height: 58px;
+    margin: 16px 0 9px;
+    padding: 0 20px;
     position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
     box-sizing: border-box;
     overflow: hidden;
-    border: 1px solid rgba(var(--phase-accent-rgb),0.18);
-    border-radius: 8px;
+    border: 0;
+    border-radius: 5px;
     background:
-      linear-gradient(90deg,
-        rgba(var(--phase-accent-rgb),0.22) 0%,
-        rgba(var(--phase-accent-rgb),0.105) 30%,
-        rgba(var(--phase-accent-rgb),0.035) 68%,
-        rgba(var(--phase-accent-rgb),0.012) 100%);
-    box-shadow:
-      inset 3px 0 0 rgba(var(--phase-accent-rgb),0.88),
-      inset 0 1px 0 rgba(255,255,255,0.035),
-      0 4px 14px rgba(0,0,0,0.16);
+      radial-gradient(ellipse 58% 150% at 0% 50%, rgba(var(--phase-accent-rgb),0.18), transparent 72%),
+      linear-gradient(100deg, #11131a 0%, #0e1017 48%, #0a0c12 78%, rgba(var(--phase-accent-rgb),0.045) 100%);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
   }
   .phase-divider:first-child {
-    margin-top: 7px;
+    margin-top: 6px;
   }
   .phase-divider[data-kind="intermission"] {
     --phase-accent: #aa8ad4;
     --phase-accent-rgb: 170,138,212;
   }
-  .phase-divider::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    flex: 0 0 6px;
-    border-radius: 50%;
-    background: var(--phase-accent);
-    box-shadow:
-      0 0 0 3px rgba(var(--phase-accent-rgb),0.11),
-      0 0 10px rgba(var(--phase-accent-rgb),0.32);
-  }
   .phase-divider::after {
-    content: '';
+    content: attr(data-watermark);
     position: absolute;
-    inset: 0;
+    top: 50%;
+    right: 24px;
+    transform: translateY(-50%);
     pointer-events: none;
-    background: linear-gradient(112deg, transparent 28%, rgba(255,255,255,0.025) 44%, transparent 59%);
+    color: var(--phase-accent);
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0.045;
   }
   .phase-divider-label {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
     height: 100%;
-    padding: 0 2px;
-    color: var(--phase-accent);
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    text-shadow: 0 1px 6px rgba(var(--phase-accent-rgb),0.16);
-    white-space: nowrap;
+    min-width: 180px;
     z-index: 1;
   }
-  .phase-divider-line {
-    height: 1px;
-    flex: 1;
-    min-width: 40px;
-    z-index: 1;
-    background: linear-gradient(90deg, rgba(var(--phase-accent-rgb),0.30), rgba(var(--phase-accent-rgb),0.08) 38%, transparent 82%);
+  .phase-divider-kicker {
+    color: var(--phase-accent);
+    font-size: 8px;
+    font-weight: 850;
+    line-height: 1;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .phase-divider-title {
+    color: #e9e6e1;
+    font-size: 14px;
+    font-weight: 760;
+    line-height: 1.1;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.42);
   }
 
   /* SCROLLBAR */
@@ -3188,12 +3186,18 @@ function renderTimeline() {
       div.dataset.label = section.label;
       const phaseMatch = /^P(\d+)$/i.exec(section.label);
       div.dataset.kind = phaseMatch ? 'phase' : 'intermission';
+      const displayLabel = phaseMatch ? `Phase ${phaseMatch[1]}` : section.label;
+      div.dataset.watermark = displayLabel;
       const label = document.createElement('span');
       label.className = 'phase-divider-label';
-      label.textContent = phaseMatch ? `Phase ${phaseMatch[1]}` : section.label;
-      const line = document.createElement('span');
-      line.className = 'phase-divider-line';
-      div.append(label, line);
+      const kicker = document.createElement('span');
+      kicker.className = 'phase-divider-kicker';
+      kicker.textContent = phaseMatch ? 'Encounter phase' : 'Transition';
+      const title = document.createElement('span');
+      title.className = 'phase-divider-title';
+      title.textContent = displayLabel;
+      label.append(kicker, title);
+      div.append(label);
       grid.appendChild(div);
     }
 
