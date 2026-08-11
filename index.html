@@ -751,11 +751,11 @@
     display: none;
   }
 
-  /* SECTION DIVIDER — full-width cinematic gradient phase panel */
+  /* SECTION DIVIDER — full-width solid phase panel */
   .phase-divider {
     --phase-accent: #6ad4f0;
     --phase-accent-rgb: 106,212,240;
-    --phase-left-glow: 0.13;
+    --phase-panel-bg: #101820;
     width: 100%;
     height: 48px;
     margin: 3px 0;
@@ -767,19 +767,13 @@
     overflow: hidden;
     border: 0;
     border-radius: 0;
-    background:
-      linear-gradient(116deg, transparent 18%, rgba(255,255,255,0.028) 34%, transparent 49%),
-      radial-gradient(ellipse 58% 165% at 0% 50%, rgba(var(--phase-accent-rgb),var(--phase-left-glow)), transparent 70%),
-      radial-gradient(ellipse 34% 145% at 100% 42%, rgba(var(--phase-accent-rgb),0.055), transparent 76%),
-      linear-gradient(180deg, #131620 0%, #0d1018 52%, #080a10 100%);
-    box-shadow:
-      inset 0 -18px 26px rgba(0,0,0,0.12),
-      0 8px 24px rgba(0,0,0,0.14);
+    background: var(--phase-panel-bg);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
   }
   .phase-divider[data-kind="intermission"] {
     --phase-accent: #8f72bb;
     --phase-accent-rgb: 143,114,187;
-    --phase-left-glow: 0.12;
+    --phase-panel-bg: #17131f;
   }
   .phase-divider::after {
     content: attr(data-watermark);
@@ -819,8 +813,8 @@
       0 0 9px rgba(var(--phase-accent-rgb),0.26);
   }
   .phase-divider[data-kind="phase"] .phase-divider-title {
-    color: #e0e3e5;
-    opacity: 0.88;
+    color: #6ad4f0;
+    opacity: 0.82;
     text-shadow:
       0 1px 1px rgba(0,0,0,0.90),
       0 0 9px rgba(var(--phase-accent-rgb),0.20);
