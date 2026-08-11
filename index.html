@@ -757,7 +757,7 @@
     --phase-accent-rgb: 214,154,82;
     width: 100%;
     height: 58px;
-    margin: 16px 0 9px;
+    margin: -3px 0 0;
     padding: 0 20px;
     position: relative;
     display: flex;
@@ -765,14 +765,14 @@
     box-sizing: border-box;
     overflow: hidden;
     border: 0;
-    border-radius: 5px;
+    border-radius: 0;
     background:
       radial-gradient(ellipse 58% 150% at 0% 50%, rgba(var(--phase-accent-rgb),0.18), transparent 72%),
       linear-gradient(100deg, #11131a 0%, #0e1017 48%, #0a0c12 78%, rgba(var(--phase-accent-rgb),0.045) 100%);
     box-shadow: 0 8px 24px rgba(0,0,0,0.14);
   }
   .phase-divider:first-child {
-    margin-top: 6px;
+    margin-top: 0;
   }
   .phase-divider[data-kind="intermission"] {
     --phase-accent: #aa8ad4;
@@ -795,30 +795,29 @@
     opacity: 0.045;
   }
   .phase-divider-label {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 100%;
-    min-width: 180px;
+    height: 36px;
+    min-width: 128px;
+    padding: 0 14px;
+    box-sizing: border-box;
+    border: 1px solid rgba(var(--phase-accent-rgb),0.22);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(7,8,12,0.54), rgba(7,8,12,0.30));
+    box-shadow:
+      inset 3px 0 0 rgba(var(--phase-accent-rgb),0.78),
+      inset 0 1px 0 rgba(255,255,255,0.035),
+      0 6px 16px rgba(0,0,0,0.20);
+    backdrop-filter: blur(4px);
     z-index: 1;
-  }
-  .phase-divider-kicker {
-    color: var(--phase-accent);
-    font-size: 8px;
-    font-weight: 850;
-    line-height: 1;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    white-space: nowrap;
   }
   .phase-divider-title {
     color: #e9e6e1;
     font-size: 14px;
-    font-weight: 760;
+    font-weight: 780;
     line-height: 1.1;
-    letter-spacing: 0.025em;
+    letter-spacing: 0.045em;
     white-space: nowrap;
     text-shadow: 0 2px 8px rgba(0,0,0,0.42);
   }
@@ -3190,13 +3189,10 @@ function renderTimeline() {
       div.dataset.watermark = displayLabel;
       const label = document.createElement('span');
       label.className = 'phase-divider-label';
-      const kicker = document.createElement('span');
-      kicker.className = 'phase-divider-kicker';
-      kicker.textContent = phaseMatch ? 'Encounter phase' : 'Transition';
       const title = document.createElement('span');
       title.className = 'phase-divider-title';
       title.textContent = displayLabel;
-      label.append(kicker, title);
+      label.append(title);
       div.append(label);
       grid.appendChild(div);
     }
