@@ -796,8 +796,19 @@
   .phase-divider-label {
     display: inline-flex;
     align-items: center;
+    gap: 11px;
     height: 100%;
     z-index: 1;
+  }
+  .phase-divider-label::before {
+    content: '';
+    width: 3px;
+    height: 23px;
+    flex: 0 0 3px;
+    border-radius: 2px;
+    background: var(--phase-accent);
+    opacity: 0.72;
+    box-shadow: 0 0 10px rgba(var(--phase-accent-rgb),0.24);
   }
   .phase-divider-title {
     color: var(--phase-accent);
@@ -810,12 +821,16 @@
     text-transform: uppercase;
     white-space: nowrap;
     opacity: 0.80;
-    text-shadow: 0 2px 14px rgba(var(--phase-accent-rgb),0.14);
+    text-shadow:
+      0 1px 1px rgba(0,0,0,0.88),
+      0 0 9px rgba(var(--phase-accent-rgb),0.26);
   }
   .phase-divider[data-kind="phase"] .phase-divider-title {
     color: #e0e3e5;
     opacity: 0.88;
-    text-shadow: 0 2px 14px rgba(0,0,0,0.48);
+    text-shadow:
+      0 1px 1px rgba(0,0,0,0.90),
+      0 0 9px rgba(var(--phase-accent-rgb),0.20);
   }
 
   /* SCROLLBAR */
