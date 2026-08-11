@@ -2066,6 +2066,7 @@ const BOSSES = [
         { name:'Whirling Corruption P3 1', time:337, color:'#c848c8' },
       ]},
       { label: 'P4', abilities: [
+        { name:'Bombardment 1', time:466, color:'#d87828' },
         { name:'Manifest Rage', time:504, color:'#c848c8' },
         { name:'Bombardment 2', time:521, color:'#d87828' },
       ]},
@@ -6250,7 +6251,7 @@ function saveBossAbilityOverride(boss) {
 }
 
 function applyGarroshLoggedTimingMigration() {
-  const migrationKey = 'tot_rcd_garrosh_logged_timings_20260811_v3';
+  const migrationKey = 'tot_rcd_garrosh_logged_timings_20260811_v4';
   try {
     if (localStorage.getItem(migrationKey) === '1') return;
     const boss = BOSSES.find(function(b){ return b.id === 'garrosh'; });
@@ -6263,6 +6264,7 @@ function applyGarroshLoggedTimingMigration() {
       'Whirling Corruption P2 1':178, 'Whirling Corruption P2 2':228,
       'Whirling Corruption P2 3':288,
       'Whirling Corruption P3 1':337,
+      'Bombardment 1':466,
       'Manifest Rage':504,
       'Bombardment 2':521,
     };
@@ -6275,6 +6277,11 @@ function applyGarroshLoggedTimingMigration() {
       });
       section.abilities = sortBossAbilitiesByTime(boss, section.abilities);
     });
+    const p4 = boss.sections.find(function(section){ return section.label === 'P4'; });
+    if (p4 && !p4.abilities.some(function(ability){ return ability.name === 'Bombardment 1'; })) {
+      p4.abilities.push({ name:'Bombardment 1', time:466, color:'#d87828' });
+      p4.abilities = sortBossAbilitiesByTime(boss, p4.abilities);
+    }
     saveBossAbilityOverride(boss);
     localStorage.setItem(migrationKey, '1');
   } catch(e) {}
