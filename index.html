@@ -3175,7 +3175,7 @@ function renderTimeline() {
       div.dataset.label = section.label;
       const phaseMatch = /^P(\d+)$/i.exec(section.label);
       div.dataset.kind = phaseMatch ? 'phase' : 'intermission';
-      const displayLabel = phaseMatch ? `Phase ${phaseMatch[1]}` : section.label;
+      const displayLabel = section.label;
       div.dataset.watermark = displayLabel;
       const label = document.createElement('span');
       label.className = 'phase-divider-label';
