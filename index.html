@@ -755,6 +755,7 @@
   .phase-divider {
     --phase-accent: #6ad4f0;
     --phase-accent-rgb: 106,212,240;
+    --phase-left-glow: 0.13;
     width: 100%;
     height: 48px;
     margin: 3px 0;
@@ -767,13 +768,14 @@
     border: 0;
     border-radius: 0;
     background:
-      radial-gradient(ellipse 58% 150% at 0% 50%, rgba(var(--phase-accent-rgb),0.18), transparent 72%),
+      radial-gradient(ellipse 58% 150% at 0% 50%, rgba(var(--phase-accent-rgb),var(--phase-left-glow)), transparent 72%),
       linear-gradient(100deg, #11131a 0%, #0e1017 48%, #0a0c12 78%, rgba(var(--phase-accent-rgb),0.045) 100%);
     box-shadow: 0 8px 24px rgba(0,0,0,0.14);
   }
   .phase-divider[data-kind="intermission"] {
     --phase-accent: #aa8ad4;
     --phase-accent-rgb: 170,138,212;
+    --phase-left-glow: 0.18;
   }
   .phase-divider::after {
     content: attr(data-watermark);
