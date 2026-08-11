@@ -3540,12 +3540,13 @@ function handleRightClick(e, boss, rowKey, bossData) {
 
 
 // ---- Offset popup ----
-const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Mass Dispel','Life Cocoon','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar','Thunderstorm'];
+const CUSTOM_ABILITY_LIST = ['','Bloodlust','Windwalk Totem','Mass Spell Reflection','Mass Dispel','Life Cocoon','Capacitor Totem','Vigilance','Hand of Sacrifice','Hand of Freedom','Blessing of Protection','Pain Suppression','Guardian Spirit','Grounding Totem','Tremor Totem','Fist of Justice','Ring of Peace','Kidney Shot','Leg Sweep','Shadowfury','Spellsteal','Stampeding Roar',"Nature's Vigil",'Thunderstorm'];
 
 // Abilities owned by one specific raider automatically target that player.
 const CUSTOM_ABILITY_DEFAULT_WHOS = {
   'Mass Dispel': 'SPRIEST1',
   'Life Cocoon': 'MISTWEAVE1',
+  "Nature's Vigil": 'FERALTANK1',
 };
 
 // Class colours per ability for custom assignments
@@ -3568,6 +3569,7 @@ const CUSTOM_ABILITY_COLORS = {
   'Shadowfury':           { color:'#9482c9', textColor:'#c8aaff' }, // Warlock purple
   'Spellsteal':           { color:'#69ccf0', textColor:'#a0dcff' }, // Mage blue
   'Stampeding Roar':      { color:'#ff7d0a', textColor:'#ffb566' }, // Druid orange
+  "Nature's Vigil":       { color:'#ff7d0a', textColor:'#ffb566' }, // Druid orange
   'Thunderstorm':         { color:'#0070de', textColor:'#88c8ff' }, // Shaman blue
   'Blessing of Protection':{ color:'#f58cba', textColor:'#ffccee' }, // Paladin pink
   'Pain Suppression':     { color:'#c8c8c8', textColor:'#ffffff' }, // Priest white
@@ -3594,6 +3596,7 @@ const CUSTOM_ABILITY_SHORTS = {
   'Shadowfury':            'SF',
   'Spellsteal':            'SS',
   'Stampeding Roar':       'SR',
+  "Nature's Vigil":       'NV',
   'Thunderstorm':          'TS',
   'Blessing of Protection':'BoP',
   'Pain Suppression':      'PS',
@@ -3623,6 +3626,7 @@ const CUSTOM_ABILITY_ICONS = {
   'Shadowfury':            'https://wow.zamimg.com/images/wow/icons/large/ability_warlock_shadowfurytga.jpg',
   'Spellsteal':            'https://wow.zamimg.com/images/wow/icons/large/spell_arcane_arcane02.jpg',
   'Stampeding Roar':       'https://wow.zamimg.com/images/wow/icons/large/spell_druid_stampedingroar_cat.jpg',
+  "Nature's Vigil":       'https://wow.zamimg.com/images/wow/icons/large/achievement_zone_feralas.jpg',
   'Thunderstorm':          'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_thunderstorm.jpg',
 };
 
@@ -3649,6 +3653,7 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Shadowfury':            '30283',
   'Spellsteal':            '30449',
   'Stampeding Roar':       '106898',
+  "Nature's Vigil":       '124974',
   'Thunderstorm':          '51490',
   'Dismantle':             '51722',
   'Smoke Bomb':             '76577',
