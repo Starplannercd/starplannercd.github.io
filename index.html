@@ -751,38 +751,57 @@
     display: none;
   }
 
-  /* SECTION DIVIDER — phase / intermission header strip */
+  /* SECTION DIVIDER — quiet phase marker + full-width timeline rule */
   .phase-divider {
+    --phase-accent: #d69a52;
+    --phase-accent-rgb: 214,154,82;
     width: 100%;
-    margin: 16px 0 8px;
-    padding: 6px 0 6px 18px;
+    height: 30px;
+    margin: 18px 0 9px;
+    padding: 0 8px;
     position: relative;
     display: flex;
     align-items: center;
+    gap: 12px;
     box-sizing: border-box;
-    background: linear-gradient(90deg, rgba(224,120,32,0.12) 0%, rgba(224,120,32,0.03) 38%, rgba(224,120,32,0) 70%);
-    border-top: 1px solid var(--border2);
-    border-bottom: 1px solid var(--border);
+  }
+  .phase-divider:first-child {
+    margin-top: 7px;
+  }
+  .phase-divider[data-kind="intermission"] {
+    --phase-accent: #aa8ad4;
+    --phase-accent-rgb: 170,138,212;
   }
   .phase-divider::before {
     content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--forge);
-    box-shadow: 0 0 8px rgba(224,120,32,0.55);
+    width: 5px;
+    height: 5px;
+    flex: 0 0 5px;
+    border-radius: 50%;
+    background: var(--phase-accent);
+    box-shadow: 0 0 0 3px rgba(var(--phase-accent-rgb),0.10);
   }
-  .phase-divider::after {
-    content: attr(data-label);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--forge);
-    letter-spacing: 0.16em;
+  .phase-divider-label {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border: 1px solid rgba(var(--phase-accent-rgb),0.25);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(var(--phase-accent-rgb),0.11), rgba(var(--phase-accent-rgb),0.045));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.025), 0 1px 2px rgba(0,0,0,0.22);
+    color: var(--phase-accent);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
     white-space: nowrap;
+  }
+  .phase-divider-line {
+    height: 1px;
+    flex: 1;
+    min-width: 40px;
+    background: linear-gradient(90deg, rgba(var(--phase-accent-rgb),0.28), rgba(var(--phase-accent-rgb),0.06) 42%, transparent 88%);
   }
 
   /* SCROLLBAR */
@@ -3145,6 +3164,14 @@ function renderTimeline() {
       const div = document.createElement('div');
       div.className = 'phase-divider';
       div.dataset.label = section.label;
+      const phaseMatch = /^P(\d+)$/i.exec(section.label);
+      div.dataset.kind = phaseMatch ? 'phase' : 'intermission';
+      const label = document.createElement('span');
+      label.className = 'phase-divider-label';
+      label.textContent = phaseMatch ? `Phase ${phaseMatch[1]}` : section.label;
+      const line = document.createElement('span');
+      line.className = 'phase-divider-line';
+      div.append(label, line);
       grid.appendChild(div);
     }
 
