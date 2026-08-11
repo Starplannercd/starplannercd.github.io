@@ -11,6 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Numen';
+    src: url('fonts/Numen.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     --bg: #0e0c0a;
     --bg2: #141210;
@@ -756,9 +764,10 @@
     --phase-accent: #6ad4f0;
     --phase-accent-rgb: 106,212,240;
     --phase-panel-bg: #101820;
-    width: 100%;
-    height: 48px;
+    width: calc(100% + 16px);
+    height: 50px;
     margin: 3px 0;
+    margin-right: -16px;
     padding: 0 20px;
     position: relative;
     display: flex;
@@ -775,22 +784,6 @@
     --phase-accent-rgb: 143,114,187;
     --phase-panel-bg: #17131f;
   }
-  .phase-divider::after {
-    content: attr(data-watermark);
-    position: absolute;
-    top: 50%;
-    right: 24px;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--phase-accent);
-    font-size: 40px;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    opacity: 0.045;
-  }
   .phase-divider-label {
     display: inline-flex;
     align-items: center;
@@ -799,12 +792,11 @@
   }
   .phase-divider-title {
     color: var(--phase-accent);
-    font-family: 'Bahnschrift Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
-    font-size: 27px;
-    font-weight: 800;
-    font-stretch: condensed;
-    line-height: 0.92;
-    letter-spacing: 0.025em;
+    font-family: 'Numen', 'Bahnschrift Condensed', 'Arial Narrow', sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.055em;
     text-transform: uppercase;
     white-space: nowrap;
     opacity: 0.80;
@@ -3184,7 +3176,6 @@ function renderTimeline() {
       const phaseMatch = /^P(\d+)$/i.exec(section.label);
       div.dataset.kind = phaseMatch ? 'phase' : 'intermission';
       const displayLabel = section.label;
-      div.dataset.watermark = displayLabel;
       const label = document.createElement('span');
       label.className = 'phase-divider-label';
       const title = document.createElement('span');
