@@ -3816,7 +3816,8 @@ const CUSTOM_ABILITY_DETAILS = {
 // Defensive assignments use a dedicated picker, but export through the same
 // Foji spell-assignment fields as custom abilities.
 const DEFENSIVE_ABILITY_LIST = [
-  '', 'Fade', 'Dispersion', 'Deterrence', 'Diffuse Magic', 'Fortifying Brew',
+  '', 'Fade', 'Dispersion', 'Deterrence', 'Greater Invisibility', 'Temporal Shield',
+  'Diffuse Magic', 'Fortifying Brew',
   'Zen Meditation', 'Divine Protection', 'Unending Resolve',
   'Die by the Sword', 'Shield Wall',
 ];
@@ -3838,6 +3839,18 @@ const DEFENSIVE_ABILITIES = {
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_whirlwind.jpg',
     cooldown:'3 min recharge', duration:'5 sec',
     description:'Deflects attacks and spells and reduces damage taken by 30%. You cannot attack while Deterrence is active.',
+  },
+  'Greater Invisibility': {
+    spellId:'110959', who:'MAGE1', short:'GI', color:'#69ccf0', textColor:'#a0dcff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_mage_greaterinvisibility.jpg',
+    cooldown:'1.5 min', duration:'3 sec protection',
+    description:'Immediately turns you invisible, removes two damage-over-time effects, and reduces damage taken by 90% while invisible and for 3 seconds afterward.',
+  },
+  'Temporal Shield': {
+    spellId:'115610', who:'MAGE1', short:'TS', color:'#69ccf0', textColor:'#a0dcff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_mage_temporalshield.jpg',
+    cooldown:'25 sec', duration:'4 sec',
+    description:'Envelops you in a temporal shield. Damage taken during the shield is healed back over 6 seconds after the effect ends.',
   },
   'Diffuse Magic': {
     spellId:'122783', who:'MISTWEAVE1', short:'DM', color:'#00c87a', textColor:'#80ffd0',
@@ -4236,6 +4249,20 @@ function showAbilityHoverTooltip(option, details) {
   tooltip.style.top = top + 'px';
 }
 
+function positionAbilityPickerMenu(picker, trigger) {
+  const menu = picker.querySelector('.defensive-picker-menu');
+  if (!menu) return;
+  const rect = trigger.getBoundingClientRect();
+  const margin = 8;
+  const gap = 4;
+  const availableBelow = Math.max(0, window.innerHeight - rect.bottom - gap - margin);
+  const availableAbove = Math.max(0, rect.top - gap - margin);
+  const openUpward = availableBelow < 180 && availableAbove > availableBelow;
+  menu.style.top = openUpward ? 'auto' : 'calc(100% + 4px)';
+  menu.style.bottom = openUpward ? 'calc(100% + 4px)' : 'auto';
+  menu.style.maxHeight = Math.max(72, Math.min(290, openUpward ? availableAbove : availableBelow)) + 'px';
+}
+
 function buildCustomAbilityPickerHtml(selectedAbility) {
   const selectedStyle = CUSTOM_ABILITY_COLORS[selectedAbility] || null;
   const selectedIcon = CUSTOM_ABILITY_ICONS[selectedAbility] || '';
@@ -4273,7 +4300,9 @@ function wireCustomAbilityPicker(popup) {
   const closeMenu = () => picker.classList.remove('open');
   trigger.addEventListener('click', event => {
     event.stopPropagation();
-    picker.classList.toggle('open');
+    const willOpen = !picker.classList.contains('open');
+    picker.classList.toggle('open', willOpen);
+    if (willOpen) positionAbilityPickerMenu(picker, trigger);
   });
 
   picker.querySelectorAll('.defensive-option').forEach(option => {
@@ -4340,7 +4369,9 @@ function wireDefensivePicker(popup) {
   const closeMenu = () => picker.classList.remove('open');
   trigger.addEventListener('click', event => {
     event.stopPropagation();
-    picker.classList.toggle('open');
+    const willOpen = !picker.classList.contains('open');
+    picker.classList.toggle('open', willOpen);
+    if (willOpen) positionAbilityPickerMenu(picker, trigger);
   });
 
   const hideTooltip = hideAbilityHoverTooltip;
@@ -4536,9 +4567,11 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     applyAbilityOwner(popup);
   }
   var popH = popup.offsetHeight || 200;
-  var topPos = e.clientY + 8;
-  if (topPos + popH > window.innerHeight - 8) topPos = e.clientY - popH - 8;
-  if (topPos < 8) topPos = 8;
+  var viewportBottom = window.innerHeight - 8;
+  var anchorY = Math.max(8, Math.min(e.clientY, viewportBottom));
+  var topPos = anchorY + 8;
+  if (topPos + popH > viewportBottom) topPos = anchorY - popH - 8;
+  topPos = Math.max(8, Math.min(topPos, Math.max(8, viewportBottom - popH)));
   popup.style.top = topPos + 'px';
   popup.style.visibility = '';
   activePopup = popup;
