@@ -1734,6 +1734,7 @@ const CD_POOL = [
   { id:'personals', name:'Personals',  short:'PRS', cd:0,   dur:15, color:'#c87020', textColor:'#ffaa55', who:'ALL',    core:true  },
   { id:'hstone',    name:'Healthstone', short:'HS', cd:0,   dur:15, color:'#40c060', textColor:'#88e8a0', who:'ALL',    core:true  },
   { id:'custom',    name:'Custom Assign', short:'CUS', cd:0,  dur:15, color:'#556688', textColor:'#aabbcc', who:'ALL',    core:false, customType:true },
+  { id:'defensives',name:'Defensives', short:'DEF', cd:0, dur:15, color:'#527fa3', textColor:'#9edcff', who:'ALL', core:true, defensiveType:true },
   { id:'tranq',     name:'Resto Druid Tranquility', short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'RDRUID1', core:false },
   { id:'btranq',    name:'Balance Druid Tranquility', short:'Tranq', palShort:'Tranq (Balance)', cd:480, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'BOOMIE1', core:false },
   { id:'ftranq',    name:'Tranquility',   short:'Tranq', cd:180, dur:8, color:'#ff7d0a', textColor:'#ffb566', who:'FERALTANK1', core:false },
@@ -2983,6 +2984,7 @@ const CD_ICON_URLS = {
   'symbtranq':  'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'ftranq':     'https://wow.zamimg.com/images/wow/icons/large/spell_nature_tranquility.jpg',
   'custom':     'https://wow.zamimg.com/images/wow/icons/large/inv_misc_note_01.jpg',
+  'defensives': 'https://wow.zamimg.com/images/wow/icons/large/inv_shield_06.jpg',
   'hstone':     'https://wow.zamimg.com/images/wow/icons/large/warlock_-healthstone.jpg',
 };
 
@@ -3291,6 +3293,15 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
         if (CUSTOM_ABILITY_SHORTS[p.customAbility]) _label = CUSTOM_ABILITY_SHORTS[p.customAbility];
         if (CUSTOM_ABILITY_ICONS[p.customAbility]) _iconUrl = CUSTOM_ABILITY_ICONS[p.customAbility];
       }
+    } else if (cd.defensiveType) {
+      _label = 'DEF';
+      const defensive = DEFENSIVE_ABILITIES[p.customAbility];
+      if (defensive) {
+        ec = defensive.color;
+        et = defensive.textColor;
+        _label = defensive.short;
+        _iconUrl = defensive.icon;
+      }
     }
     // Full-bleed spell icon as the pill itself, with a tinted border + soft glow.
     // Falls back to the sidebar-chip gradient fill when there's no icon at all.
@@ -3307,8 +3318,9 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
       el.style.cssText = `left:${left}px; background:${cdBg}; border-color:${ec}66; color:${et};`;
     }
     const offsetStr = p.offset != null ? ` +${p.offset}s` : '';
-    const displayWho = (cd.customType) ? (p.customWho || cd.who || 'ALL') : cd.who;
-    const displayName = (cd.customType && p.customAbility) ? p.customAbility : cd.name;
+    const isAbilityChoice = cd.customType || cd.defensiveType;
+    const displayWho = isAbilityChoice ? (p.customWho || cd.who || 'ALL') : cd.who;
+    const displayName = (isAbilityChoice && p.customAbility) ? p.customAbility : cd.name;
     el.title = `${displayName} (${displayWho})${offsetStr} · Right-click to edit · Middle-click to remove`;
 
     const _specBadgeUrl = CD_SPEC_BADGES[cd.id];
@@ -3320,7 +3332,7 @@ function renderPlacedOnTrack(boss, rowKey, track, totalW, pps, bossData) {
     }
     const iconText = document.createElement('span');
     iconText.className = 'cd-icon-text';
-    if (cd.customType) {
+    if (isAbilityChoice) {
       // Assignee's class colour on the label (as before)
       const _whoForColor = p.customWho && p.customWho !== 'ALL' ? p.customWho : null;
       const _whoPlayer = _whoForColor && typeof DEFAULT_ROSTER !== 'undefined' && DEFAULT_ROSTER.find(r => r.who === _whoForColor);
@@ -3698,6 +3710,56 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Disarm':                '676',
 };
 
+// Defensive assignments use a dedicated picker, but export through the same
+// Foji spell-assignment fields as custom abilities.
+const DEFENSIVE_ABILITY_LIST = [
+  '', 'Fade', 'Dispersion', 'Deterrence', 'Diffuse Magic', 'Fortifying Brew',
+  'Zen Meditation', 'Divine Protection', 'Unending Resolve',
+  'Die by the Sword', 'Shield Wall',
+];
+const DEFENSIVE_ABILITIES = {
+  'Fade': {
+    spellId:'586', who:'SPRIEST1', short:'Fade', color:'#6840b8', textColor:'#d0a8ff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_magic_lesserinvisibilty.jpg',
+  },
+  'Dispersion': {
+    spellId:'47585', who:'SPRIEST1', short:'Disp', color:'#6840b8', textColor:'#d0a8ff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_dispersion.jpg',
+  },
+  'Deterrence': {
+    spellId:'19263', who:'BM1', short:'Det', color:'#abd473', textColor:'#d9f5ad',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_whirlwind.jpg',
+  },
+  'Diffuse Magic': {
+    spellId:'122783', who:'MISTWEAVE1', short:'DM', color:'#00c87a', textColor:'#80ffd0',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_monk_diffusemagic.jpg',
+  },
+  'Fortifying Brew': {
+    spellId:'115203', who:'MISTWEAVE1', short:'Fort', color:'#00c87a', textColor:'#80ffd0',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_monk_fortifyingale_new.jpg',
+  },
+  'Zen Meditation': {
+    spellId:'115176', who:'MISTWEAVE1', short:'Zen', color:'#00c87a', textColor:'#80ffd0',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_monk_zenmeditation.jpg',
+  },
+  'Divine Protection': {
+    spellId:'498', who:'RETPALA1', short:'DP', color:'#f58cba', textColor:'#ffccee',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divineprotection.jpg',
+  },
+  'Unending Resolve': {
+    spellId:'104773', who:'LOCK1', short:'UR', color:'#9482c9', textColor:'#c8aaff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_demonictactics.jpg',
+  },
+  'Die by the Sword': {
+    spellId:'118038', who:'DPSWARR1', short:'DBTS', color:'#c79c6e', textColor:'#e8c87a',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_challange.jpg',
+  },
+  'Shield Wall': {
+    spellId:'871', who:'DPSWARR1', short:'SW', color:'#c79c6e', textColor:'#e8c87a',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shieldwall.jpg',
+  },
+};
+
 let activePopup = null;
 
 const FOJI_BOSS_ABILITIES = {
@@ -3990,12 +4052,48 @@ function applyCustomAbilityDefaultWho(popup) {
   });
 }
 
+function getDefensiveAbilityDefaultWho(ability) {
+  const preferredWho = DEFENSIVE_ABILITIES[ability]?.who;
+  if (!preferredWho) return null;
+  const roster = getActivePlanTargetRoster();
+  if (roster.some(player => player.who === preferredWho)) return preferredWho;
+  const defaultPlayer = DEFAULT_ROSTER.find(player => player.who === preferredWho);
+  if (defaultPlayer) {
+    const sameSpec = roster.find(player => player.spec === defaultPlayer.spec);
+    if (sameSpec) return sameSpec.who;
+  }
+  return preferredWho;
+}
+
+function applyDefensiveAbilityDefaultWho(popup) {
+  const ability = popup.querySelector('#customAbility')?.value || '';
+  const who = getDefensiveAbilityDefaultWho(ability);
+  const hint = popup.querySelector('#defensiveWhoHint');
+  if (!hint) return;
+  const player = getActivePlanTargetRoster().find(item => item.who === who);
+  hint.textContent = who ? `Assigned to ${player?.name || who}` : 'Choose a defensive';
+}
+
+function saveDefensivePlacement(bossId, rowKey, placedId, ability, offset) {
+  const placement = (placedCDs[bossId]?.[rowKey] || []).find(item => item.id === placedId);
+  if (!placement) return;
+  const defensive = DEFENSIVE_ABILITIES[ability];
+  placement.customAbility = ability || null;
+  placement.customWho = defensive ? getDefensiveAbilityDefaultWho(ability) : 'ALL';
+  placement.customSpellId = defensive?.spellId || 'nil';
+  placement.customTts = ability || '';
+  placement.customName = ability || '';
+  placement.offset = offset;
+  isDirty = true;
+}
+
 function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   const isHpAssign = !!(ab && ab.hpAssign);
   closeOffsetPopup();
   const popup = document.createElement('div');
   popup.className = 'offset-popup';
   const isCustom = !!(cd.customType);
+  const isDefensive = !!(cd.defensiveType);
   const isPersonals = cd.id === 'personals';
   const isHealthstone = cd.id === 'hstone';
   const isTargetedUtility = isPersonals || isHealthstone;
@@ -4008,6 +4106,16 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     `<option value="" ${!_savedBossAbName ? 'selected' : ''}>— Use timeline row —</option>`,
     ..._bossAbOptions.map(item => `<option value="${item[0]}" ${_savedBossAbName === item[0] ? 'selected' : ''}>${item[0]}</option>`),
   ].join('');
+  const _defensiveAbilityOpts = DEFENSIVE_ABILITY_LIST.map(ability =>
+    `<option value="${ability}" ${(p.customAbility || '') === ability ? 'selected' : ''}>${ability || '— Choose defensive —'}</option>`
+  ).join('');
+  const _defensiveEditor = `
+    <label style="font-size:12px;color:#9edcff;">Defensives — choose ability</label>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <label>Defensive</label>
+      <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">${_defensiveAbilityOpts}</select>
+      <span id="defensiveWhoHint" style="font-size:10px;color:#777780;"></span>
+    </div>`;
 
     if (isHpAssign) {
       const hpMax = (ab && ab.hpMax) ? ab.hpMax : 40;
@@ -4040,6 +4148,13 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
           <label>Custom Name (display on sheet)</label>
           <input type="text" id="customName" value="${p.customName || ''}" placeholder="e.g. Windwalk" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
         </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label>Offset (seconds)</label>
+          <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
+        </div>
+        <div class="popup-btns"><button class="confirm" id="offsetConfirm">Save</button><button id="offsetCancel">Cancel</button></div>`;
+      } else if (isDefensive) {
+        popup.innerHTML = _countBlock + _defensiveEditor + `
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Offset (seconds)</label>
           <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;" />
@@ -4086,6 +4201,13 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     <div class="popup-btns">
       <button class="confirm" id="offsetConfirm">Save</button>
       <button id="offsetCancel">Cancel</button>
+    </div>` : isDefensive ? `${_defensiveEditor}
+    <label>Offset (seconds) — type or scroll</label>
+    <input type="number" id="offsetInput" value="${p.offset != null ? p.offset : 0}" min="-60" max="300" step="0.1"
+      style="width:100%;background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:6px 10px;border-radius:4px;font-size:14px;font-weight:700;text-align:center;box-sizing:border-box;" />
+    <div class="popup-btns">
+      <button class="confirm" id="offsetConfirm">Save</button>
+      <button id="offsetCancel">Cancel</button>
     </div>` : isTargetedUtility ? `
     <label style="font-size:12px;color:#6ad4f0;">${cd.name} — assign &amp; offset</label>
     <div id="utilityTargetWrap">${buildTargetPickerHtml(p.targetWhos)}</div>
@@ -4115,8 +4237,9 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   wireTargetPicker(popup);
   const customAbilitySelect = popup.querySelector('#customAbility');
   if (customAbilitySelect) {
-    customAbilitySelect.addEventListener('change', () => applyCustomAbilityDefaultWho(popup));
-    applyCustomAbilityDefaultWho(popup);
+    const applyAbilityOwner = isDefensive ? applyDefensiveAbilityDefaultWho : applyCustomAbilityDefaultWho;
+    customAbilitySelect.addEventListener('change', () => applyAbilityOwner(popup));
+    applyAbilityOwner(popup);
   }
   var popH = popup.offsetHeight || 200;
   var topPos = e.clientY + 8;
@@ -4151,6 +4274,11 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
           placedItem.customBossAbility = bossAbility || null;
           placedItem.targetWhos = targetWhos;
         }
+      } else if (isDefensive) {
+        const offsetInput = popup.querySelector('#offsetInput');
+        const offVal = parseFloat(offsetInput ? offsetInput.value : 0);
+        const ability = popup.querySelector('#customAbility')?.value || '';
+        saveDefensivePlacement(bossId, rowKey, p.id, ability, isNaN(offVal) ? 0 : offVal);
       }
       renderTimeline();
       closeOffsetPopup();
@@ -4180,6 +4308,10 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         placedItem.targetWhos = targetWhos;
       }
       renderTimeline();
+    } else if (isDefensive) {
+      const ability = popup.querySelector('#customAbility')?.value || '';
+      saveDefensivePlacement(bossId, rowKey, p.id, ability, isNaN(offVal) ? 0 : offVal);
+      renderTimeline();
     } else if (isTargetedUtility) {
       const targetWhos = readTargetWhos(popup);
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
@@ -4195,7 +4327,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     }
     closeOffsetPopup();
   });
-  if (!isHpAssign && !isCustom) {
+  if (!isHpAssign && !isCustom && !isDefensive) {
     popup.querySelector('#offsetClear')?.addEventListener('click', () => {
       const placedRow = (placedCDs[bossId] || {})[rowKey] || [];
       const placedItem = placedRow.find(x => x.id === p.id);
@@ -4448,10 +4580,12 @@ function buildFojiExport() {
           if (!cd) return;
           const _exportCd = cd;
           const isCustomPlacement = !!cd.customType;
+          const isDefensivePlacement = !!cd.defensiveType;
+          const isAbilityChoicePlacement = isCustomPlacement || isDefensivePlacement;
           // Export only CDs still active in Manage CDs (and not disabled for this boss). Custom
           // placements always export. This keeps the export in sync with the timeline after a CD is
           // de-selected or a player is subbed out — orphaned placements no longer leak into the export.
-          if (!isCustomPlacement) {
+          if (!isAbilityChoicePlacement) {
             if (!activeSetIds.has(p.cdId)) return;
             const _bossDisabled = bossDisabledIds[boss.id];
             if (_bossDisabled && _bossDisabled.has(p.cdId)) return;
@@ -4475,14 +4609,18 @@ function buildFojiExport() {
           const isXuen = p.cdId === 'xuen';
           const offset = p.offset != null ? p.offset : 0;
           const _exportOffset = ab.hpAssign ? (ab.hpOffset != null ? ab.hpOffset : 1) : offset;
-          const spellId = isCustomPlacement
+          const spellId = isDefensivePlacement
+            ? (DEFENSIVE_ABILITIES[p.customAbility]?.spellId || p.customSpellId || 'nil')
+            : isCustomPlacement
             ? (p.customAbility && CUSTOM_ABILITY_SPELL_IDS[p.customAbility] ? CUSTOM_ABILITY_SPELL_IDS[p.customAbility] : (p.customSpellId || 'nil'))
             : (isXuen || isHstone) ? 'nil' : (CD_SPELL_IDS[p.cdId] || 'nil');
           const customIconId = isCustomPlacement ? (p.customSpellId || 'nil') : 'nil';
-          const _whoRaw = isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
+          const _whoRaw = isDefensivePlacement
+            ? (p.customWho || DEFENSIVE_ABILITIES[p.customAbility]?.who || 'ALL')
+            : isCustomPlacement ? (p.customWho || _exportCd.who || 'ALL') : (cd.who || 'UNKNOWN');
           const baseWho = getFojiPlayerKey(_whoRaw);
-          const ttsText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isCustomPlacement && p.customTts ? p.customTts : 'nil');
-          const displayText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isCustomPlacement && p.customName ? p.customName : ttsText);
+          const ttsText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xewen' : (isAbilityChoicePlacement && p.customTts ? p.customTts : 'nil');
+          const displayText = isPersonals ? 'Use Personals' : isHstone ? 'Healthstone' : isDem ? 'Green banner' : isXuen ? 'Xuen' : (isAbilityChoicePlacement && p.customName ? p.customName : ttsText);
           const iconId = (isPersonals || isHstone) ? '134951' : customIconId;
           // Expand multi-target assignments into one line per player
           let _targetWhos = (isPersonals || isHstone || isCustomPlacement) && Array.isArray(p.targetWhos) && p.targetWhos.length > 0
@@ -4827,7 +4965,7 @@ function buildSummaryForBoss(boss) {
       const sorted = [...placements]
         .filter(p => {
           if (p.cdId === 'divfavor') return false;
-          if (p.cdId === 'custom') return true;
+          if (p.cdId === 'custom' || p.cdId === 'defensives') return true;
           return activeSetIds.has(p.cdId) && !(_bossDisabled && _bossDisabled.has(p.cdId));
         })
         .sort((a, b) => (a.cell ?? getCellIndex(a.time)) - (b.cell ?? getCellIndex(b.time)));
@@ -5411,6 +5549,19 @@ function viewCdParts(p, ab) {
       color = abilityStyle.color;
       textColor = abilityStyle.textColor;
     }
+  } else if (cd.defensiveType && p.customAbility) {
+    const defensive = DEFENSIVE_ABILITIES[p.customAbility];
+    const assignedWho = p.customWho || defensive?.who;
+    const assignedPlayer = assignedWho && VIEW_ROSTER.find(pl => pl.who === assignedWho);
+    const assignedSpecIcon = assignedPlayer && SPEC_ICONS[assignedPlayer.spec];
+    if (defensive) {
+      viewCd = { ...cd, name:p.customAbility, short:defensive.short };
+      url = defensive.icon || url;
+      color = defensive.color;
+      textColor = defensive.textColor;
+    }
+    specIcon = assignedSpecIcon ? SPEC_ICON_CDN + assignedSpecIcon + '.jpg' : null;
+    who = assignedPlayer?.name || assignedWho || viewCd.short;
   }
 
   return {
@@ -5848,13 +5999,14 @@ function renderSheetPreview(el) {
       sorted.forEach(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return;
-        const who = p.cdId === 'custom' ? (p.customWho || 'ALL') : cd.who;
+        const isAbilityChoice = p.cdId === 'custom' || p.cdId === 'defensives';
+        const who = isAbilityChoice ? (p.customWho || 'ALL') : cd.who;
         const playerName = getPlayerName(who);
         const playerColor = getPlayerColor(who);
         const offset = ab.hpAssign ? (ab.hpOffset != null ? ab.hpOffset : 1) : (p.offset != null ? p.offset : 0);
-        const cdName = p.cdId === 'custom' ? 'Custom Spell Assignment' : cd.name;
-        const tts = p.cdId === 'custom' && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
-        const displayName = p.cdId === 'custom' && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
+        const cdName = p.cdId === 'custom' ? 'Custom Spell Assignment' : (p.cdId === 'defensives' ? (p.customAbility || 'Defensive') : cd.name);
+        const tts = isAbilityChoice && p.customTts ? p.customTts : (p.cdId === 'personals' ? 'Personals' : '');
+        const displayName = isAbilityChoice && p.customName ? p.customName : (p.cdId === 'personals' ? 'Personals' : '');
         const customIcon = p.cdId === 'personals' ? '134951' : '';
         const _rowHpDef = ab.hpAscend ? 1 : (ab.hpMax || 40);
         const _rowCastNum = ab.hpAssign ? (p.hpPct != null ? p.hpPct : _rowHpDef) : castNum;
@@ -6011,6 +6163,9 @@ function parseFojiImport(raw) {
   Object.entries(CUSTOM_ABILITY_SPELL_IDS).forEach(([name, spellId]) => {
     if (spellId) spellToCd['custom:' + spellId] = name;
   });
+  Object.entries(DEFENSIVE_ABILITIES).forEach(([name, defensive]) => {
+    if (defensive.spellId) spellToCd['defensive:' + defensive.spellId] = name;
+  });
 
   // Phase 1: parse every line into a resolved placement (don't touch state yet)
   const parsed = [];   // { bossId, rowKey, cdId, placement }
@@ -6033,6 +6188,8 @@ function parseFojiImport(raw) {
 
     // Find cdId from spellId
     let cdId = spellId && spellId !== 'nil' ? spellToCd[spellId] : null;
+    const defensiveEntry = Object.entries(DEFENSIVE_ABILITIES).find(([, defensive]) => defensive.spellId === spellId);
+    if (defensiveEntry) cdId = 'defensives';
 
     // Special cases
     if (spellId === 'nil' && tts === 'Personals') cdId = 'personals';
@@ -6064,6 +6221,12 @@ function parseFojiImport(raw) {
       // Try to find matching custom ability by spell ID
       const customAbEntry = Object.entries(CUSTOM_ABILITY_SPELL_IDS).find(([, sid]) => sid === spellId);
       if (customAbEntry) placement.customAbility = customAbEntry[0];
+    } else if (cdId === 'defensives' && defensiveEntry) {
+      placement.customAbility = defensiveEntry[0];
+      placement.customWho = who || defensiveEntry[1].who;
+      placement.customSpellId = defensiveEntry[1].spellId;
+      placement.customTts = tts !== 'nil' ? tts : defensiveEntry[0];
+      placement.customName = displayText !== 'nil' ? displayText : defensiveEntry[0];
     }
 
     parsed.push({ bossId: boss.id, rowKey, cdId, placement });
@@ -9809,7 +9972,7 @@ function buildShareData() {
       const kept = placements.filter(p => {
         const cd = CD_POOL.find(c => c.id === p.cdId);
         if (!cd) return false;
-        if (cd.customType) return true;
+        if (cd.customType || cd.defensiveType) return true;
         if (!activeSetIds.has(p.cdId)) return false;
         if (bossDisabled && bossDisabled.has(p.cdId)) return false;
         return true;
