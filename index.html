@@ -4081,8 +4081,8 @@ function saveDefensivePlacement(bossId, rowKey, placedId, ability, offset) {
   placement.customAbility = ability || null;
   placement.customWho = defensive ? getDefensiveAbilityDefaultWho(ability) : 'ALL';
   placement.customSpellId = defensive?.spellId || 'nil';
-  placement.customTts = ability || '';
-  placement.customName = ability || '';
+  placement.customTts = '';
+  placement.customName = '';
   placement.offset = offset;
   isDirty = true;
 }
@@ -6225,8 +6225,8 @@ function parseFojiImport(raw) {
       placement.customAbility = defensiveEntry[0];
       placement.customWho = who || defensiveEntry[1].who;
       placement.customSpellId = defensiveEntry[1].spellId;
-      placement.customTts = tts !== 'nil' ? tts : defensiveEntry[0];
-      placement.customName = displayText !== 'nil' ? displayText : defensiveEntry[0];
+      placement.customTts = '';
+      placement.customName = '';
     }
 
     parsed.push({ bossId: boss.id, rowKey, cdId, placement });
@@ -6268,6 +6268,7 @@ const FULL_RAID_ID = '__full_raid__';
 const FULL_RAID_SNAPSHOT_KEY = 'tot_rcd_full_raid_snapshot';
 const ACTUAL_RAID_SAFETY_KEY = 'tot_rcd_actual_raid_safety_v3';
 const ACTUAL_RAID_RECOVERY_MARKER_KEY = 'tot_rcd_actual_raid_recovery_v3';
+const ACTUAL_RAID_RECOVERY_ROLLBACK_KEY = 'tot_rcd_actual_raid_recovery_rollback_v1';
 const BOSS_TIMING_KEY = 'tot_rcd_boss_timings';
 
 // Timeline rows should always follow fight time. Encounter Start is a header-like
@@ -6666,16 +6667,22 @@ function fbApplyData(data) {
   const _fbRosterSpecs = getActivePlanId() === FULL_RAID_ID
     ? (getFullRaidSnapshot().rosterSpecs || null)
     : null;
-  keepPlacedCooldownsEnabled(data);
+  // Apply the local Full Raid roster to the synced snapshot before it can
+  // re-enable cooldowns belonging to specs that are no longer in this plan.
+  const _rosterAwareData = Array.isArray(_fbRosterSpecs)
+    ? { ...data, rosterSpecs: _fbRosterSpecs }
+    : data;
+  keepPlacedCooldownsEnabled(_rosterAwareData);
   if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
   if (data.bossReady) Object.assign(bossReady, data.bossReady);
   if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
-  if (data.activeSetIds) {
+  if (Array.isArray(data.activeSetIds)) {
     // Core CDs are force-included — but only if their spec is in the roster,
     // otherwise a core CD like Healing Tide / Ancestral Guidance / Holy Devotion
     // reappears after a Full Raid roster edit that removed that spec.
     const coreIds = CD_POOL.filter(c => c.core && cdAllowedForRoster(c.id, _fbRosterSpecs)).map(c => c.id);
-    activeSetIds = new Set([...data.activeSetIds, ...coreIds]);
+    const savedIds = data.activeSetIds.filter(cdId => cdAllowedForRoster(cdId, _fbRosterSpecs));
+    activeSetIds = new Set([...savedIds, ...coreIds]);
   }
   if (data.cdWho) CD_POOL.forEach(c => { if (data.cdWho[c.id]) c.who = data.cdWho[c.id]; });
   if (data.paletteOrder && !Array.isArray(data.paletteOrder)) Object.assign(paletteOrder, data.paletteOrder);
@@ -6990,7 +6997,7 @@ try {
 } catch(e) { console.error('Manage CD initialization failed:', e); }
 // One-time normalization for every saved plan: seed the newly default-off CDs
 // as disabled on all bosses and permanently remove retired cooldown variants.
-try { recoverActualRaidPlacementsFromBackup(); } catch(e) { console.error('Plan recovery failed:', e); }
+try { rollbackUnsafeActualRaidRecovery(); } catch(e) { console.error('Plan recovery rollback failed:', e); }
 try { migrateStoredPlanDefaults(); } catch(e) { console.error('Plan migration failed:', e); }
 // The general autosave above represents Full Raid. A selected custom plan has
 // its own timeline, roster and per-boss Manage CDs snapshot and must win after
@@ -8547,65 +8554,56 @@ function countSnapshotPlacements(snapshot) {
   }, 0);
 }
 
-// Restore a locally preserved Actual Raid copy when the browser plan is empty
-// or severely truncated. The safety copy is kept outside the rolling backups,
-// so repeated bad reloads cannot rotate it away.
-function recoverActualRaidPlacementsFromBackup() {
+// A previous recovery routine treated "more placements" as "newer" and could
+// replace the current Actual Raid plan with an older, larger backup. Its save
+// operation created a rolling backup immediately before the replacement. When
+// that exact event is detected, restore that pre-recovery snapshot once.
+function rollbackUnsafeActualRaidRecovery() {
+  if (localStorage.getItem(ACTUAL_RAID_RECOVERY_ROLLBACK_KEY)) return false;
+
+  let marker = null;
+  let backups = [];
+  try {
+    marker = JSON.parse(localStorage.getItem(ACTUAL_RAID_RECOVERY_MARKER_KEY) || 'null');
+    backups = JSON.parse(localStorage.getItem(PLAN_BACKUPS_KEY) || '[]');
+  } catch(e) { return false; }
+  if (!marker?.restoredAt || !Number.isFinite(marker.fromCount) || !Number.isFinite(marker.toCount)) return false;
+  if (Date.now() - marker.restoredAt > 72 * 60 * 60 * 1000) return false;
+
   const plans = getPlans();
   const targetId = Object.keys(plans).find(id => plans[id]?.name === 'Actual Raid') || null;
   if (!targetId) return false;
   const current = plans[targetId];
-
   const currentCount = countSnapshotPlacements(current);
-  let best = null;
-  let bestCount = 0;
+  if (Number(current.savedAt || 0) > marker.restoredAt + 6 * 60 * 60 * 1000) return false;
 
-  try {
-    const safety = JSON.parse(localStorage.getItem(ACTUAL_RAID_SAFETY_KEY) || 'null');
-    const safetyCount = countSnapshotPlacements(safety);
-    if (safetyCount > bestCount) {
-      best = safety;
-      bestCount = safetyCount;
-    }
-  } catch(e) {}
+  // savePlans() recorded the pre-recovery state only milliseconds before the
+  // recovery marker. Matching both its timestamp and placement count prevents
+  // an unrelated older backup from being selected.
+  const matchingBackup = backups
+    .filter(backup => {
+      const candidate = backup?.plans?.[targetId];
+      const age = marker.restoredAt - Number(backup?.savedAt || 0);
+      return candidate?.name === 'Actual Raid' &&
+        age >= 0 && age <= 15000 &&
+        countSnapshotPlacements(candidate) === marker.fromCount;
+    })
+    .sort((a, b) => b.savedAt - a.savedAt)[0];
 
-  const backups = JSON.parse(localStorage.getItem(PLAN_BACKUPS_KEY) || '[]');
-  backups.forEach(backup => {
-    const candidate = backup && backup.plans && backup.plans[targetId];
-    if (!candidate || candidate.name !== current.name) return;
-    const candidateCount = countSnapshotPlacements(candidate);
-    if (candidateCount > bestCount) {
-      best = candidate;
-      bestCount = candidateCount;
-    }
-  });
-  if (!best || !bestCount) return false;
+  const currentStillLooksRecovered = currentCount >= Math.max(marker.fromCount + 1, marker.toCount * 0.9);
+  if (!matchingBackup || !currentStillLooksRecovered) return false;
 
-  const wasRecovered = !!localStorage.getItem(ACTUAL_RAID_RECOVERY_MARKER_KEY);
-  const severelyTruncated = currentCount < bestCount * 0.6;
-  const firstRecoveryNeeded = !wasRecovered && currentCount < bestCount;
-  if (!severelyTruncated && !firstRecoveryNeeded) {
-    if (currentCount >= bestCount) {
-      localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(current));
-    }
-    return false;
-  }
-
-  const recovered = {
-    ...JSON.parse(JSON.stringify(current)),
-    ...JSON.parse(JSON.stringify(best)),
-  };
-  recovered.id = current.id;
-  recovered.name = current.name;
-  recovered.bossReady = clonePlanValue(current.bossReady || recovered.bossReady, {});
-  recovered.savedAt = Date.now();
-  plans[targetId] = recovered;
+  const restored = clonePlanValue(matchingBackup.plans[targetId], {});
+  restored.id = current.id;
+  restored.name = current.name;
+  plans[targetId] = restored;
   savePlans(plans);
-  localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(recovered));
-  localStorage.setItem(ACTUAL_RAID_RECOVERY_MARKER_KEY, JSON.stringify({
-    restoredAt: Date.now(),
+  localStorage.setItem(ACTUAL_RAID_SAFETY_KEY, JSON.stringify(restored));
+  localStorage.setItem(ACTUAL_RAID_RECOVERY_ROLLBACK_KEY, JSON.stringify({
+    rolledBackAt: Date.now(),
+    recoveryAt: marker.restoredAt,
     fromCount: currentCount,
-    toCount: bestCount,
+    toCount: countSnapshotPlacements(restored),
   }));
   return true;
 }
