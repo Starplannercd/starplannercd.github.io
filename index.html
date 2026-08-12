@@ -886,6 +886,83 @@
     color: #88c8ff;
   }
   .offset-popup button:hover { opacity: 0.8; }
+  .defensive-picker { position: relative; }
+  .offset-popup .defensive-picker-trigger {
+    width: 100%;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    text-align: left;
+    opacity: 1;
+  }
+  .defensive-picker-trigger img,
+  .defensive-option img {
+    width: 23px;
+    height: 23px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+  .defensive-picker-trigger .defensive-trigger-name { flex: 1; }
+  .defensive-picker-trigger .defensive-trigger-arrow { color: #777780; font-size: 10px; }
+  .defensive-picker-menu {
+    display: none;
+    position: absolute;
+    z-index: 100002;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 290px;
+    overflow-y: auto;
+    padding: 4px;
+    background: #0d0d0f;
+    border: 1px solid #3a3a40;
+    border-radius: 5px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.72);
+  }
+  .defensive-picker.open .defensive-picker-menu { display: flex; flex-direction: column; gap: 2px; }
+  .offset-popup .defensive-option {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    text-align: left;
+    opacity: 1;
+  }
+  .offset-popup .defensive-option:hover,
+  .offset-popup .defensive-option.selected {
+    opacity: 1;
+    background: color-mix(in srgb, var(--def-color, #6ad4f0) 14%, #151518);
+    border-color: color-mix(in srgb, var(--def-color, #6ad4f0) 48%, #25252a);
+  }
+  .defensive-option-copy { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .defensive-option-name { font-size: 11px; font-weight: 700; color: #e8e8ea; white-space: nowrap; }
+  .defensive-option-owner { font-size: 9px; color: #777780; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .defensive-hover-tooltip {
+    position: fixed;
+    z-index: 100005;
+    width: 285px;
+    pointer-events: none;
+    padding: 10px 12px;
+    color: #d8d8dc;
+    background: linear-gradient(145deg, #111114 0%, #09090b 100%);
+    border: 1px solid #48484f;
+    border-radius: 6px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.82);
+  }
+  .defensive-tooltip-head { display: flex; gap: 9px; align-items: center; margin-bottom: 7px; }
+  .defensive-tooltip-head img { width: 34px; height: 34px; border-radius: 5px; border: 1px solid var(--def-color, #777); }
+  .defensive-tooltip-name { font-size: 13px; font-weight: 800; color: var(--def-text, #fff); }
+  .defensive-tooltip-owner { margin-top: 2px; font-size: 10px; color: #8f8f98; }
+  .defensive-tooltip-meta { display: flex; gap: 10px; margin-bottom: 7px; font-size: 10px; color: #bdbdc4; }
+  .defensive-tooltip-description { font-size: 11px; line-height: 1.45; color: #d1d1d6; }
 
   .btn-manage { --btn-accent: #58a890; }
   .btn-save { --btn-accent: #48a868; }
@@ -3721,42 +3798,62 @@ const DEFENSIVE_ABILITIES = {
   'Fade': {
     spellId:'586', who:'SPRIEST1', short:'Fade', color:'#6840b8', textColor:'#d0a8ff',
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_magic_lesserinvisibilty.jpg',
+    cooldown:'30 sec', duration:'10 sec',
+    description:'Temporarily removes your threat. With Glyph of Fade, also reduces all damage taken by 10%.',
   },
   'Dispersion': {
     spellId:'47585', who:'SPRIEST1', short:'Disp', color:'#6840b8', textColor:'#d0a8ff',
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_dispersion.jpg',
+    cooldown:'2 min', duration:'6 sec',
+    description:'Reduces all damage taken by 90%, removes movement-impairing effects, and restores mana while dispersed. You cannot attack or cast spells.',
   },
   'Deterrence': {
     spellId:'19263', who:'BM1', short:'Det', color:'#abd473', textColor:'#d9f5ad',
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_whirlwind.jpg',
+    cooldown:'3 min recharge', duration:'5 sec',
+    description:'Deflects attacks and spells and reduces damage taken by 30%. You cannot attack while Deterrence is active.',
   },
   'Diffuse Magic': {
     spellId:'122783', who:'MISTWEAVE1', short:'DM', color:'#00c87a', textColor:'#80ffd0',
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_monk_diffusemagic.jpg',
+    cooldown:'1.5 min', duration:'6 sec',
+    description:'Reduces spell damage taken by 90% and clears harmful magical effects, reflecting them to their original caster when possible.',
   },
   'Fortifying Brew': {
     spellId:'115203', who:'MISTWEAVE1', short:'Fort', color:'#00c87a', textColor:'#80ffd0',
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_monk_fortifyingale_new.jpg',
+    cooldown:'3 min', duration:'20 sec',
+    description:'Increases maximum health by 20% and reduces all damage taken by 20%.',
   },
   'Zen Meditation': {
     spellId:'115176', who:'MISTWEAVE1', short:'Zen', color:'#00c87a', textColor:'#80ffd0',
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_monk_zenmeditation.jpg',
+    cooldown:'3 min', duration:'8 sec channel',
+    description:'Reduces damage taken by 90% and redirects up to 5 harmful spells cast at nearby party or raid members. A melee attack ends the channel.',
   },
   'Divine Protection': {
     spellId:'498', who:'RETPALA1', short:'DP', color:'#f58cba', textColor:'#ffccee',
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divineprotection.jpg',
+    cooldown:'1 min', duration:'10 sec',
+    description:'Reduces magical damage taken by 40%. Glyph of Divine Protection changes this to 20% magical and 20% physical damage reduction.',
   },
   'Unending Resolve': {
     spellId:'104773', who:'LOCK1', short:'UR', color:'#9482c9', textColor:'#c8aaff',
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_demonictactics.jpg',
+    cooldown:'3 min', duration:'8 sec',
+    description:'Reduces all damage taken by 40% and prevents your spells from being interrupted or silenced.',
   },
   'Die by the Sword': {
     spellId:'118038', who:'DPSWARR1', short:'DBTS', color:'#c79c6e', textColor:'#e8c87a',
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_challange.jpg',
+    cooldown:'2 min', duration:'8 sec',
+    description:'Increases parry chance by 100% and reduces all damage taken by 20%.',
   },
   'Shield Wall': {
     spellId:'871', who:'DPSWARR1', short:'SW', color:'#c79c6e', textColor:'#e8c87a',
     icon:'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shieldwall.jpg',
+    cooldown:'3 min', duration:'12 sec',
+    description:'Reduces all damage taken by 40%.',
   },
 };
 
@@ -4074,6 +4171,91 @@ function applyDefensiveAbilityDefaultWho(popup) {
   hint.textContent = who ? `Assigned to ${player?.name || who}` : 'Choose a defensive';
 }
 
+function getDefensiveOwnerLabel(ability) {
+  const who = getDefensiveAbilityDefaultWho(ability);
+  const player = getActivePlanTargetRoster().find(item => item.who === who);
+  return player?.name || who || '';
+}
+
+function buildDefensivePickerHtml(selectedAbility) {
+  const selected = DEFENSIVE_ABILITIES[selectedAbility] || null;
+  const selectOptions = DEFENSIVE_ABILITY_LIST.map(ability =>
+    `<option value="${ability}" ${selectedAbility === ability ? 'selected' : ''}>${ability || '— Choose defensive —'}</option>`
+  ).join('');
+  const menuOptions = DEFENSIVE_ABILITY_LIST.filter(Boolean).map(ability => {
+    const defensive = DEFENSIVE_ABILITIES[ability];
+    return `<button type="button" class="defensive-option${selectedAbility === ability ? ' selected' : ''}" data-defensive="${ability}" style="--def-color:${defensive.color};">
+      <img src="${defensive.icon}" alt="" draggable="false">
+      <span class="defensive-option-copy">
+        <span class="defensive-option-name">${ability}</span>
+        <span class="defensive-option-owner">${getDefensiveOwnerLabel(ability)}</span>
+      </span>
+    </button>`;
+  }).join('');
+  return `<select id="customAbility" hidden>${selectOptions}</select>
+    <div class="defensive-picker" id="defensivePicker">
+      <button type="button" class="defensive-picker-trigger" id="defensivePickerTrigger" style="--def-color:${selected?.color || '#527fa3'};">
+        ${selected ? `<img src="${selected.icon}" alt="" draggable="false">` : ''}
+        <span class="defensive-trigger-name">${selectedAbility || 'Choose defensive'}</span>
+        <span class="defensive-trigger-arrow">▼</span>
+      </button>
+      <div class="defensive-picker-menu">${menuOptions}</div>
+    </div>`;
+}
+
+function wireDefensivePicker(popup) {
+  const picker = popup.querySelector('#defensivePicker');
+  const trigger = popup.querySelector('#defensivePickerTrigger');
+  const select = popup.querySelector('#customAbility');
+  if (!picker || !trigger || !select) return;
+
+  const closeMenu = () => picker.classList.remove('open');
+  trigger.addEventListener('click', event => {
+    event.stopPropagation();
+    picker.classList.toggle('open');
+  });
+
+  const hideTooltip = () => document.querySelector('.defensive-hover-tooltip')?.remove();
+  popup.querySelectorAll('.defensive-option').forEach(option => {
+    const ability = option.dataset.defensive;
+    const defensive = DEFENSIVE_ABILITIES[ability];
+    option.addEventListener('click', event => {
+      event.stopPropagation();
+      select.value = ability;
+      popup.querySelectorAll('.defensive-option').forEach(item => item.classList.toggle('selected', item === option));
+      trigger.style.setProperty('--def-color', defensive.color);
+      trigger.innerHTML = `<img src="${defensive.icon}" alt="" draggable="false"><span class="defensive-trigger-name">${ability}</span><span class="defensive-trigger-arrow">▼</span>`;
+      closeMenu();
+      hideTooltip();
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+    });
+    option.addEventListener('mouseenter', () => {
+      hideTooltip();
+      const owner = getDefensiveOwnerLabel(ability);
+      const tooltip = document.createElement('div');
+      tooltip.className = 'defensive-hover-tooltip';
+      tooltip.style.setProperty('--def-color', defensive.color);
+      tooltip.style.setProperty('--def-text', defensive.textColor);
+      tooltip.innerHTML = `<div class="defensive-tooltip-head">
+        <img src="${defensive.icon}" alt="">
+        <div><div class="defensive-tooltip-name">${ability}</div><div class="defensive-tooltip-owner">${owner}</div></div>
+      </div>
+      <div class="defensive-tooltip-meta"><span>Cooldown: ${defensive.cooldown}</span><span>Duration: ${defensive.duration}</span></div>
+      <div class="defensive-tooltip-description">${defensive.description}</div>`;
+      document.body.appendChild(tooltip);
+      const rect = option.getBoundingClientRect();
+      const tipRect = tooltip.getBoundingClientRect();
+      const left = rect.right + 10 + tipRect.width <= window.innerWidth - 8
+        ? rect.right + 10
+        : Math.max(8, rect.left - tipRect.width - 10);
+      const top = Math.max(8, Math.min(rect.top, window.innerHeight - tipRect.height - 8));
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    });
+    option.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
 function saveDefensivePlacement(bossId, rowKey, placedId, ability, offset) {
   const placement = (placedCDs[bossId]?.[rowKey] || []).find(item => item.id === placedId);
   if (!placement) return;
@@ -4106,14 +4288,11 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     `<option value="" ${!_savedBossAbName ? 'selected' : ''}>— Use timeline row —</option>`,
     ..._bossAbOptions.map(item => `<option value="${item[0]}" ${_savedBossAbName === item[0] ? 'selected' : ''}>${item[0]}</option>`),
   ].join('');
-  const _defensiveAbilityOpts = DEFENSIVE_ABILITY_LIST.map(ability =>
-    `<option value="${ability}" ${(p.customAbility || '') === ability ? 'selected' : ''}>${ability || '— Choose defensive —'}</option>`
-  ).join('');
   const _defensiveEditor = `
     <label style="font-size:12px;color:#9edcff;">Defensives — choose ability</label>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Defensive</label>
-      <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">${_defensiveAbilityOpts}</select>
+      ${buildDefensivePickerHtml(p.customAbility || '')}
       <span id="defensiveWhoHint" style="font-size:10px;color:#777780;"></span>
     </div>`;
 
@@ -4235,6 +4414,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   popup.style.visibility = 'hidden';
   document.body.appendChild(popup);
   wireTargetPicker(popup);
+  if (isDefensive) wireDefensivePicker(popup);
   const customAbilitySelect = popup.querySelector('#customAbility');
   if (customAbilitySelect) {
     const applyAbilityOwner = isDefensive ? applyDefensiveAbilityDefaultWho : applyCustomAbilityDefaultWho;
@@ -4390,6 +4570,7 @@ function outsidePopupClose(e) {
 }
 
 function closeOffsetPopup() {
+  document.querySelector('.defensive-hover-tooltip')?.remove();
   if (activePopup) { activePopup.remove(); activePopup = null; }
   document.removeEventListener('mousedown', outsidePopupClose);
 }
