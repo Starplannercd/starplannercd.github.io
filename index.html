@@ -3787,6 +3787,32 @@ const CUSTOM_ABILITY_SPELL_IDS = {
   'Disarm':                '676',
 };
 
+const CUSTOM_ABILITY_DETAILS = {
+  'Bloodlust':              { owner:'Shaman', cooldown:'5 min', duration:'40 sec', description:'Increases melee, ranged, and spell haste by 30% for all party and raid members. Affected allies become Sated for 10 minutes.' },
+  'Windwalk Totem':         { owner:'Shaman', cooldown:'1 min', duration:'6 sec', description:'Summons an Air Totem that grants nearby party and raid members immunity to movement-impairing effects.' },
+  'Mass Spell Reflection':  { owner:'Warrior', cooldown:'1 min', duration:'5 sec', description:'Reflects the next spell cast on party and raid members within 20 yards back at its caster.' },
+  'Mass Dispel':            { owner:'Shadow Priest', cooldown:'15 sec', duration:'Instant', description:'Dispels magic in a 15-yard area, removing harmful effects from allies and beneficial effects from enemies. Can remove effects normally too powerful to dispel.' },
+  'Life Cocoon':            { owner:'Mistweaver', cooldown:'2 min', duration:'12 sec', description:'Encases the target in Chi energy, absorbing damage and increasing healing received from periodic effects by 50%.' },
+  'Capacitor Totem':        { owner:'Shaman', cooldown:'45 sec', duration:'5 sec stun', description:'Summons an Air Totem that charges for 5 seconds, then stuns nearby enemies.' },
+  'Vigilance':              { owner:'Warrior', cooldown:'2 min', duration:'12 sec', description:'Protects an ally and transfers 30% of the damage they take to the Warrior.' },
+  'Hand of Sacrifice':      { owner:'Paladin', cooldown:'2 min', duration:'12 sec', description:'Transfers 30% of the damage taken by the target to the Paladin, up to 100% of the Paladin maximum health.' },
+  'Hand of Freedom':        { owner:'Paladin', cooldown:'25 sec', duration:'6 sec', description:'Grants immunity to movement-impairing effects.' },
+  'Blessing of Protection': { owner:'Paladin', cooldown:'5 min', duration:'10 sec', description:'Protects an ally from physical attacks. The protected target cannot use physical attacks or abilities.' },
+  'Pain Suppression':       { owner:'Priest', cooldown:'3 min', duration:'8 sec', description:'Reduces all damage taken by the target by 40% and increases resistance to dispel effects.' },
+  'Guardian Spirit':        { owner:'Holy Priest', cooldown:'3 min', duration:'10 sec', description:'Increases healing received by 60% and prevents one killing blow, restoring 50% health when triggered.' },
+  'Grounding Totem':        { owner:'Shaman', cooldown:'25 sec', duration:'45 sec max', description:'Redirects the next harmful spell cast at a nearby party or raid member to the totem, destroying it.' },
+  'Tremor Totem':           { owner:'Shaman', cooldown:'1 min', duration:'6 sec', description:'Removes Fear, Charm, and Sleep effects from nearby party and raid members.' },
+  'Fist of Justice':        { owner:'Paladin', cooldown:'30 sec', duration:'6 sec stun', description:'Stuns the target.' },
+  'Ring of Peace':          { owner:'Monk', cooldown:'45 sec', duration:'8 sec', description:'Forms a sanctuary that disarms enemies and silences them when they use harmful abilities inside the ring.' },
+  'Kidney Shot':            { owner:'Rogue', cooldown:'20 sec', duration:'Up to 6 sec', description:'Finishing move that stuns the target. Duration increases with combo points.' },
+  'Leg Sweep':              { owner:'Monk', cooldown:'45 sec', duration:'5 sec stun', description:'Knocks down and stuns all nearby enemies.' },
+  'Shadowfury':             { owner:'Warlock', cooldown:'30 sec', duration:'3 sec stun', description:'Stuns all enemies within 8 yards of the target location.' },
+  'Spellsteal':             { owner:'Mage', cooldown:'None', duration:'Instant', description:'Steals a beneficial magic effect from the target and transfers it to the Mage.' },
+  'Stampeding Roar':        { owner:'Druid', cooldown:'2 min', duration:'8 sec', description:'Increases the movement speed of nearby friendly players by 60% and removes roots and snares.' },
+  "Nature's Vigil":        { owner:'Druid', cooldown:'1.5 min', duration:'30 sec', description:'Causes single-target damage to heal a nearby ally and single-target healing to damage a nearby enemy.' },
+  'Thunderstorm':           { owner:'Shaman', cooldown:'45 sec', duration:'Instant', description:'Blasts nearby enemies away and restores 15% of the Shaman mana.' },
+};
+
 // Defensive assignments use a dedicated picker, but export through the same
 // Foji spell-assignment fields as custom abilities.
 const DEFENSIVE_ABILITY_LIST = [
@@ -4177,6 +4203,108 @@ function getDefensiveOwnerLabel(ability) {
   return player?.name || who || '';
 }
 
+function getCustomAbilityOwnerLabel(ability) {
+  const who = getCustomAbilityDefaultWho(ability);
+  const player = getActivePlanTargetRoster().find(item => item.who === who);
+  return player?.name || CUSTOM_ABILITY_DETAILS[ability]?.owner || 'Custom';
+}
+
+function hideAbilityHoverTooltip() {
+  document.querySelector('.defensive-hover-tooltip')?.remove();
+}
+
+function showAbilityHoverTooltip(option, details) {
+  hideAbilityHoverTooltip();
+  const tooltip = document.createElement('div');
+  tooltip.className = 'defensive-hover-tooltip';
+  tooltip.style.setProperty('--def-color', details.color);
+  tooltip.style.setProperty('--def-text', details.textColor);
+  tooltip.innerHTML = `<div class="defensive-tooltip-head">
+    <img src="${details.icon}" alt="">
+    <div><div class="defensive-tooltip-name">${details.name}</div><div class="defensive-tooltip-owner">${details.owner}</div></div>
+  </div>
+  <div class="defensive-tooltip-meta"><span>Cooldown: ${details.cooldown}</span><span>Duration: ${details.duration}</span></div>
+  <div class="defensive-tooltip-description">${details.description}</div>`;
+  document.body.appendChild(tooltip);
+  const rect = option.getBoundingClientRect();
+  const tipRect = tooltip.getBoundingClientRect();
+  const left = rect.right + 10 + tipRect.width <= window.innerWidth - 8
+    ? rect.right + 10
+    : Math.max(8, rect.left - tipRect.width - 10);
+  const top = Math.max(8, Math.min(rect.top, window.innerHeight - tipRect.height - 8));
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+
+function buildCustomAbilityPickerHtml(selectedAbility) {
+  const selectedStyle = CUSTOM_ABILITY_COLORS[selectedAbility] || null;
+  const selectedIcon = CUSTOM_ABILITY_ICONS[selectedAbility] || '';
+  const selectOptions = CUSTOM_ABILITY_LIST.map(ability =>
+    `<option value="${ability}" ${selectedAbility === ability ? 'selected' : ''}>${ability || '— None —'}</option>`
+  ).join('');
+  const menuOptions = CUSTOM_ABILITY_LIST.filter(Boolean).map(ability => {
+    const style = CUSTOM_ABILITY_COLORS[ability] || { color:'#527fa3', textColor:'#9edcff' };
+    const icon = CUSTOM_ABILITY_ICONS[ability] || CD_ICON_URLS.custom;
+    return `<button type="button" class="defensive-option${selectedAbility === ability ? ' selected' : ''}" data-custom-picker-ability="${ability}" style="--def-color:${style.color};">
+      <img src="${icon}" alt="" draggable="false">
+      <span class="defensive-option-copy">
+        <span class="defensive-option-name">${ability}</span>
+        <span class="defensive-option-owner">${getCustomAbilityOwnerLabel(ability)}</span>
+      </span>
+    </button>`;
+  }).join('');
+  return `<select id="customAbility" hidden>${selectOptions}</select>
+    <div class="defensive-picker" id="customAbilityPicker">
+      <button type="button" class="defensive-picker-trigger" id="customAbilityPickerTrigger" style="--def-color:${selectedStyle?.color || '#527fa3'};">
+        ${selectedIcon ? `<img src="${selectedIcon}" alt="" draggable="false">` : ''}
+        <span class="defensive-trigger-name">${selectedAbility || 'Choose ability'}</span>
+        <span class="defensive-trigger-arrow">▼</span>
+      </button>
+      <div class="defensive-picker-menu">${menuOptions}</div>
+    </div>`;
+}
+
+function wireCustomAbilityPicker(popup) {
+  const picker = popup.querySelector('#customAbilityPicker');
+  const trigger = popup.querySelector('#customAbilityPickerTrigger');
+  const select = popup.querySelector('#customAbility');
+  if (!picker || !trigger || !select) return;
+
+  const closeMenu = () => picker.classList.remove('open');
+  trigger.addEventListener('click', event => {
+    event.stopPropagation();
+    picker.classList.toggle('open');
+  });
+
+  picker.querySelectorAll('.defensive-option').forEach(option => {
+    const ability = option.dataset.customPickerAbility;
+    const style = CUSTOM_ABILITY_COLORS[ability] || { color:'#527fa3', textColor:'#9edcff' };
+    const icon = CUSTOM_ABILITY_ICONS[ability] || CD_ICON_URLS.custom;
+    const details = CUSTOM_ABILITY_DETAILS[ability] || {};
+    option.addEventListener('click', event => {
+      event.stopPropagation();
+      select.value = ability;
+      picker.querySelectorAll('.defensive-option').forEach(item => item.classList.toggle('selected', item === option));
+      trigger.style.setProperty('--def-color', style.color);
+      trigger.innerHTML = `<img src="${icon}" alt="" draggable="false"><span class="defensive-trigger-name">${ability}</span><span class="defensive-trigger-arrow">▼</span>`;
+      closeMenu();
+      hideAbilityHoverTooltip();
+      select.dispatchEvent(new Event('change', { bubbles:true }));
+    });
+    option.addEventListener('mouseenter', () => showAbilityHoverTooltip(option, {
+      name: ability,
+      owner: getCustomAbilityOwnerLabel(ability),
+      icon,
+      color: style.color,
+      textColor: style.textColor,
+      cooldown: details.cooldown || 'Varies',
+      duration: details.duration || 'Varies',
+      description: details.description || 'Custom raid assignment ability.',
+    }));
+    option.addEventListener('mouseleave', hideAbilityHoverTooltip);
+  });
+}
+
 function buildDefensivePickerHtml(selectedAbility) {
   const selected = DEFENSIVE_ABILITIES[selectedAbility] || null;
   const selectOptions = DEFENSIVE_ABILITY_LIST.map(ability =>
@@ -4215,8 +4343,8 @@ function wireDefensivePicker(popup) {
     picker.classList.toggle('open');
   });
 
-  const hideTooltip = () => document.querySelector('.defensive-hover-tooltip')?.remove();
-  popup.querySelectorAll('.defensive-option').forEach(option => {
+  const hideTooltip = hideAbilityHoverTooltip;
+  picker.querySelectorAll('.defensive-option').forEach(option => {
     const ability = option.dataset.defensive;
     const defensive = DEFENSIVE_ABILITIES[ability];
     option.addEventListener('click', event => {
@@ -4230,27 +4358,16 @@ function wireDefensivePicker(popup) {
       select.dispatchEvent(new Event('change', { bubbles:true }));
     });
     option.addEventListener('mouseenter', () => {
-      hideTooltip();
-      const owner = getDefensiveOwnerLabel(ability);
-      const tooltip = document.createElement('div');
-      tooltip.className = 'defensive-hover-tooltip';
-      tooltip.style.setProperty('--def-color', defensive.color);
-      tooltip.style.setProperty('--def-text', defensive.textColor);
-      tooltip.innerHTML = `<div class="defensive-tooltip-head">
-        <img src="${defensive.icon}" alt="">
-        <div><div class="defensive-tooltip-name">${ability}</div><div class="defensive-tooltip-owner">${owner}</div></div>
-      </div>
-      <div class="defensive-tooltip-meta"><span>Cooldown: ${defensive.cooldown}</span><span>Duration: ${defensive.duration}</span></div>
-      <div class="defensive-tooltip-description">${defensive.description}</div>`;
-      document.body.appendChild(tooltip);
-      const rect = option.getBoundingClientRect();
-      const tipRect = tooltip.getBoundingClientRect();
-      const left = rect.right + 10 + tipRect.width <= window.innerWidth - 8
-        ? rect.right + 10
-        : Math.max(8, rect.left - tipRect.width - 10);
-      const top = Math.max(8, Math.min(rect.top, window.innerHeight - tipRect.height - 8));
-      tooltip.style.left = left + 'px';
-      tooltip.style.top = top + 'px';
+      showAbilityHoverTooltip(option, {
+        name: ability,
+        owner: getDefensiveOwnerLabel(ability),
+        icon: defensive.icon,
+        color: defensive.color,
+        textColor: defensive.textColor,
+        cooldown: defensive.cooldown,
+        duration: defensive.duration,
+        description: defensive.description,
+      });
     });
     option.addEventListener('mouseleave', hideTooltip);
   });
@@ -4314,9 +4431,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label>Ability</label>
-          <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-            ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
-          </select>
+          ${buildCustomAbilityPickerHtml(p.customAbility || '')}
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;" id="customWhoWrap">${buildTargetPickerHtml(p.targetWhos)}</div>
         <div style="display:flex;flex-direction:column;gap:4px;">
@@ -4354,9 +4469,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;">
       <label>Ability</label>
-      <select id="customAbility" style="background:#101012;border:1px solid #3a3a40;color:#e8e8ea;padding:4px 8px;border-radius:4px;font-size:12px;width:100%;cursor:pointer;">
-        ${CUSTOM_ABILITY_LIST.map(a => `<option value="${a}" ${(p.customAbility||'')=== a ? 'selected':''}>${a||'— None —'}</option>`).join('')}
-      </select>
+      ${buildCustomAbilityPickerHtml(p.customAbility || '')}
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;" id="customWhoWrap">
       ${buildTargetPickerHtml(p.targetWhos)}
@@ -4414,6 +4527,7 @@ function showOffsetPopup(e, bossId, rowKey, p, cd, ab) {
   popup.style.visibility = 'hidden';
   document.body.appendChild(popup);
   wireTargetPicker(popup);
+  if (isCustom) wireCustomAbilityPicker(popup);
   if (isDefensive) wireDefensivePicker(popup);
   const customAbilitySelect = popup.querySelector('#customAbility');
   if (customAbilitySelect) {
