@@ -812,114 +812,16 @@
       0 0 9px rgba(var(--phase-accent-rgb),0.20);
   }
 
-  /* Switchable phase/intermission title treatments. The same markup is used
-     for every option, so changing styles never changes timeline structure. */
-  :is(html,.phase-style-preview)[data-phase-style^="center-"] .phase-divider {
+  /* Centered double-rail treatment for all phase and intermission dividers. */
+  .phase-divider {
+    height:48px;margin:7px 0;padding:0 18px;background:rgba(var(--phase-accent-rgb),.035);box-shadow:none;
     justify-content:center;
   }
-
-  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider {
-    height: 46px; margin: 7px 0; padding: 0 18px; justify-content:center;
-    background: linear-gradient(90deg, transparent, rgba(var(--phase-accent-rgb),.10) 28%, rgba(var(--phase-accent-rgb),.14) 50%, rgba(var(--phase-accent-rgb),.10) 72%, transparent);
-    box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::after {
-    content:""; height:1px; flex:1; max-width:280px; margin:0 18px;
-    background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.55));
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::after { transform:scaleX(-1); }
-  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider-title { font-size:22px; opacity:.88; }
-
-  :is(html,.phase-style-preview)[data-phase-style="center-soft"] .phase-divider {
-    height:46px;margin:7px 0;padding:0 18px;
-    background:radial-gradient(ellipse at center,rgba(var(--phase-accent-rgb),.16),rgba(var(--phase-accent-rgb),.045) 42%,transparent 76%);box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-soft"] .phase-divider-title {font-size:22px;opacity:.88;text-shadow:0 0 18px rgba(var(--phase-accent-rgb),.38);}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-double"] .phase-divider {
-    height:48px;margin:7px 0;padding:0 18px;background:rgba(var(--phase-accent-rgb),.035);box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-double"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-double"] .phase-divider::after {
+  .phase-divider::before,
+  .phase-divider::after {
     content:"";height:4px;flex:1;max-width:250px;margin:0 18px;border-top:1px solid rgba(var(--phase-accent-rgb),.52);border-bottom:1px solid rgba(var(--phase-accent-rgb),.18);
   }
-  :is(html,.phase-style-preview)[data-phase-style="center-double"] .phase-divider-title {font-size:22px;opacity:.90;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-pill"] .phase-divider {
-    height:48px;margin:7px 0;padding:0 18px;background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.055),transparent);box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-pill"] .phase-divider-label {
-    height:30px;padding:0 24px;border:1px solid rgba(var(--phase-accent-rgb),.38);border-radius:999px;background:rgba(var(--phase-accent-rgb),.11);box-shadow:inset 0 1px rgba(255,255,255,.035),0 0 18px rgba(var(--phase-accent-rgb),.08);
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-pill"] .phase-divider-title {font-size:19px;opacity:.92;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider {
-    height:46px;margin:7px 0;padding:0 18px;background:transparent;box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-label {height:30px;padding:0 22px;border-left:2px solid rgba(var(--phase-accent-rgb),.7);border-right:2px solid rgba(var(--phase-accent-rgb),.7);position:relative;}
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-label::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-label::after {content:"";position:absolute;top:0;bottom:0;width:7px;border-top:1px solid rgba(var(--phase-accent-rgb),.5);border-bottom:1px solid rgba(var(--phase-accent-rgb),.5);}
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-label::before {left:0;}
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-label::after {right:0;}
-  :is(html,.phase-style-preview)[data-phase-style="center-brackets"] .phase-divider-title {font-size:21px;opacity:.9;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-diamond"] .phase-divider {
-    height:48px;margin:7px 0;padding:0 18px;background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.07),transparent);box-shadow:none;
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-diamond"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-diamond"] .phase-divider::after {content:"";width:7px;height:7px;margin:0 18px;background:var(--phase-accent);transform:rotate(45deg);opacity:.62;box-shadow:0 0 10px rgba(var(--phase-accent-rgb),.35);}
-  :is(html,.phase-style-preview)[data-phase-style="center-diamond"] .phase-divider-title {font-size:22px;opacity:.9;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-cutout"] .phase-divider {
-    height:50px;margin:6px 0;padding:0 18px;background:#0b1014;box-shadow:inset 0 0 30px rgba(var(--phase-accent-rgb),.035);
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-cutout"] .phase-divider-label {height:34px;min-width:130px;justify-content:center;padding:0 28px;background:rgba(var(--phase-accent-rgb),.13);clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%);}
-  :is(html,.phase-style-preview)[data-phase-style="center-cutout"] .phase-divider-title {font-size:21px;opacity:.92;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-chapter"] .phase-divider {
-    height:58px;margin:5px 0;padding:0 18px;background:linear-gradient(90deg,#080b0e,rgba(var(--phase-accent-rgb),.12) 50%,#080b0e);border-top:1px solid rgba(var(--phase-accent-rgb),.13);border-bottom:1px solid rgba(var(--phase-accent-rgb),.13);box-shadow:inset 0 13px 24px rgba(0,0,0,.32),inset 0 -13px 24px rgba(0,0,0,.32);
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-chapter"] .phase-divider-title {font-size:26px;letter-spacing:.16em;opacity:.86;text-shadow:0 2px 2px #000,0 0 20px rgba(var(--phase-accent-rgb),.32);}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-spotlight"] .phase-divider {
-    height:50px;margin:6px 0;padding:0 18px;background:radial-gradient(ellipse 34% 120% at center,rgba(var(--phase-accent-rgb),.19),rgba(var(--phase-accent-rgb),.055) 55%,transparent);box-shadow:inset 0 -1px rgba(var(--phase-accent-rgb),.08);
-  }
-  :is(html,.phase-style-preview)[data-phase-style="center-spotlight"] .phase-divider-title {font-size:23px;opacity:.94;text-shadow:0 0 8px rgba(var(--phase-accent-rgb),.42),0 0 24px rgba(var(--phase-accent-rgb),.22);}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-dashes"] .phase-divider {height:46px;margin:7px 0;padding:0 18px;background:rgba(var(--phase-accent-rgb),.025);box-shadow:none;}
-  :is(html,.phase-style-preview)[data-phase-style="center-dashes"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-dashes"] .phase-divider::after {content:"";height:3px;flex:1;max-width:240px;margin:0 18px;background:repeating-linear-gradient(90deg,rgba(var(--phase-accent-rgb),.55) 0 8px,transparent 8px 14px);opacity:.68;}
-  :is(html,.phase-style-preview)[data-phase-style="center-dashes"] .phase-divider-title {font-size:21px;opacity:.88;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider {height:52px;margin:6px 0;padding:0 18px;background:transparent;box-shadow:none;}
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider-label {height:34px;padding:0 26px;border:1px solid rgba(var(--phase-accent-rgb),.34);border-radius:50%;box-shadow:0 0 0 5px rgba(var(--phase-accent-rgb),.035),0 0 20px rgba(var(--phase-accent-rgb),.08);}
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider::after {content:"";height:1px;width:70px;margin:0 12px;background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.42));}
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider::after {transform:scaleX(-1);}
-  :is(html,.phase-style-preview)[data-phase-style="center-orbit"] .phase-divider-title {font-size:19px;opacity:.9;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-underline"] .phase-divider {height:42px;margin:8px 0;padding:0 18px;background:transparent;box-shadow:none;}
-  :is(html,.phase-style-preview)[data-phase-style="center-underline"] .phase-divider-label {height:100%;padding:0 12px;border-bottom:2px solid rgba(var(--phase-accent-rgb),.55);}
-  :is(html,.phase-style-preview)[data-phase-style="center-underline"] .phase-divider-title {font-size:21px;opacity:.85;text-shadow:none;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-minimal"] .phase-divider {height:36px;margin:8px 0;padding:0 18px;background:transparent;box-shadow:none;}
-  :is(html,.phase-style-preview)[data-phase-style="center-minimal"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-minimal"] .phase-divider::after {content:"";width:4px;height:4px;margin:0 14px;border-radius:50%;background:var(--phase-accent);opacity:.48;}
-  :is(html,.phase-style-preview)[data-phase-style="center-minimal"] .phase-divider-title {font-size:19px;letter-spacing:.16em;opacity:.76;text-shadow:none;}
-
-  :is(html,.phase-style-preview)[data-phase-style="center-split"] .phase-divider {height:48px;margin:7px 0;padding:0 18px;background:linear-gradient(90deg,transparent 0,rgba(var(--phase-accent-rgb),.055) 38%,rgba(var(--phase-accent-rgb),.12) 50%,rgba(var(--phase-accent-rgb),.055) 62%,transparent 100%);box-shadow:none;}
-  :is(html,.phase-style-preview)[data-phase-style="center-split"] .phase-divider::before,
-  :is(html,.phase-style-preview)[data-phase-style="center-split"] .phase-divider::after {content:"";height:1px;flex:1;max-width:260px;margin:0 18px;background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.48) 72%,transparent 72%);}
-  :is(html,.phase-style-preview)[data-phase-style="center-split"] .phase-divider::after {transform:scaleX(-1);}
-  :is(html,.phase-style-preview)[data-phase-style="center-split"] .phase-divider-title {font-size:22px;opacity:.91;}
-
-  .phase-style-picker-card { border:1px solid #292d33;background:#0d0f12;border-radius:8px;padding:8px;cursor:pointer;text-align:left;color:#dfe8ee;transition:border-color .14s,background .14s,transform .14s; }
-  .phase-style-picker-card:hover { border-color:#4d6e7d;background:#11161a;transform:translateY(-1px); }
-  .phase-style-picker-card.selected { border-color:#6ad4f0;background:#101b20;box-shadow:0 0 0 1px rgba(106,212,240,.12); }
-  .phase-style-preview { overflow:hidden;margin-bottom:8px; }
-  .phase-style-preview .phase-divider { width:100%;min-width:0;margin-left:0;margin-right:0;height:34px;padding-left:12px;padding-right:12px; }
-  .phase-style-preview .phase-divider-title { font-size:14px; }
+  .phase-divider[data-kind] .phase-divider-title {font-size:22px;opacity:.90;}
 
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1853,7 +1755,7 @@
     .share-boss-title { font-size:27px; }
   }
 </style>
-<script>document.documentElement.setAttribute('data-theme','frost');document.documentElement.setAttribute('data-topbar','minimal');document.documentElement.setAttribute('data-phase-style',localStorage.getItem('tot_rcd_phase_style')||'center-rail');</script>
+<script>document.documentElement.setAttribute('data-theme','frost');document.documentElement.setAttribute('data-topbar','minimal');</script>
 </head>
 <body>
 <div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -1879,7 +1781,6 @@
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
     <button class="btn btn-manage" id="manageBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Manage CDs</button>
-    <button class="btn" id="phaseStyleBtn" title="Choose phase and intermission title style"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h11M4 18h16"/><path d="M18 10v4M16 12h4"/></svg>Phase Style</button>
     <button class="btn btn-roster" id="rosterBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Sub</button>
     <button class="btn btn-export" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
@@ -3309,72 +3210,6 @@ function buildPalette() {
 
 // ---- Render timeline ----
 function getBoss() { return BOSSES.find(b => b.id === currentBossId) || BOSSES[0]; }
-
-const PHASE_STYLE_KEY = 'tot_rcd_phase_style';
-const PHASE_TITLE_STYLES = [
-  { id:'center-rail', name:'Center Rail',    desc:'Centered title between fine rails' },
-  { id:'center-soft', name:'Soft Center',    desc:'Quiet radial wash behind the title' },
-  { id:'center-double', name:'Double Rail',  desc:'Paired precision rails on both sides' },
-  { id:'center-pill', name:'Center Capsule', desc:'Contained rounded title capsule' },
-  { id:'center-brackets', name:'Brackets',   desc:'Technical brackets frame the title' },
-  { id:'center-diamond', name:'Diamond Marks', desc:'Luminous diamond separators' },
-  { id:'center-cutout', name:'Tactical Cutout', desc:'Angular centered title plate' },
-  { id:'center-chapter', name:'Chapter Card', desc:'Taller cinematic centered chapter' },
-  { id:'center-spotlight', name:'Spotlight',  desc:'Focused glow radiating from center' },
-  { id:'center-dashes', name:'Dashed Rails', desc:'Segmented signal rails' },
-  { id:'center-orbit', name:'Orbit',         desc:'Elliptical title frame with rails' },
-  { id:'center-underline', name:'Underline', desc:'Centered title with a crisp underline' },
-  { id:'center-minimal', name:'Minimal Dots', desc:'Airy centered title and two points' },
-  { id:'center-split', name:'Split Beam',     desc:'Broken light rails fading outward' },
-];
-
-function setPhaseTitleStyle(styleId) {
-  const valid = PHASE_TITLE_STYLES.some(style => style.id === styleId) ? styleId : 'center-rail';
-  document.documentElement.dataset.phaseStyle = valid;
-  localStorage.setItem(PHASE_STYLE_KEY, valid);
-}
-
-setPhaseTitleStyle(document.documentElement.dataset.phaseStyle);
-
-function showPhaseStylePicker() {
-  document.getElementById('phaseStylePicker')?.remove();
-  let selected = PHASE_TITLE_STYLES.some(style => style.id === document.documentElement.dataset.phaseStyle)
-    ? document.documentElement.dataset.phaseStyle
-    : 'center-rail';
-  // Suspend the live selector while this modal is open so every miniature is
-  // driven only by its own preview style, not layered with the current choice.
-  document.documentElement.removeAttribute('data-phase-style');
-  const overlay = document.createElement('div');
-  overlay.id = 'phaseStylePicker';
-  overlay.className = 'modal-overlay';
-  overlay.style.cssText += 'align-items:center;padding:20px;z-index:120000;';
-  const cards = PHASE_TITLE_STYLES.map((style, index) => `<button type="button" class="phase-style-picker-card${style.id === selected ? ' selected' : ''}" data-phase-choice="${style.id}">
-    <div class="phase-style-preview" data-phase-style="${style.id}">
-      <div class="phase-divider" data-kind="${index % 4 === 3 ? 'intermission' : 'phase'}"><span class="phase-divider-label"><span class="phase-divider-title">${index % 4 === 3 ? 'Intermission' : 'P2'}</span></span></div>
-    </div>
-    <div style="font-size:11px;font-weight:750;color:#e7edf0;margin-bottom:3px;">${style.name}</div>
-    <div style="font-size:9px;line-height:1.35;color:#747d84;">${style.desc}</div>
-  </button>`).join('');
-  overlay.innerHTML = `<div style="width:min(820px,96vw);max-height:90vh;overflow:auto;background:#090b0d;border:1px solid #2b3136;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.72);">
-    <div style="position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:rgba(9,11,13,.96);border-bottom:1px solid #24292e;backdrop-filter:blur(10px);">
-      <div><div style="font-size:13px;font-weight:800;color:#dcebf0;letter-spacing:.04em;">Phase &amp; Intermission Style</div><div style="font-size:10px;color:#68747b;margin-top:3px;">Choose any design. Phases stay icy blue; intermissions stay purple.</div></div>
-      <button type="button" id="phaseStyleClose" style="border:1px solid #30363b;background:#101316;color:#929ba1;border-radius:6px;padding:5px 9px;cursor:pointer;">Close</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:14px;">${cards}</div>
-  </div>`;
-  document.body.appendChild(overlay);
-  const finish = () => {
-    setPhaseTitleStyle(selected);
-    overlay.remove();
-  };
-  overlay.querySelectorAll('[data-phase-choice]').forEach(card => card.addEventListener('click', () => {
-    selected = card.dataset.phaseChoice;
-    localStorage.setItem(PHASE_STYLE_KEY, selected);
-    overlay.querySelectorAll('.phase-style-picker-card').forEach(item => item.classList.toggle('selected', item === card));
-  }));
-  overlay.querySelector('#phaseStyleClose').addEventListener('click', finish);
-  overlay.addEventListener('mousedown', event => { if (event.target === overlay) finish(); });
-}
 
 function renderTimeline() {
   if (!BOSSES.some(b => b.id === currentBossId)) currentBossId = BOSSES[0].id;
@@ -5995,6 +5830,17 @@ const SPEC_ICONS = {
   'Feral Dru':        'ability_druid_catform',
   'Retribution':      'spell_holy_auraoflight',
 };
+
+// Defensive assignments need a stable bottom-left badge in shared plans even
+// when the shared roster cannot resolve the assigned player or specialization.
+const DEFENSIVE_BADGE_ICONS = {
+  'Unending Resolve':     'classicon_warlock',
+  'Temporal Shield':      'classicon_mage',
+  'Greater Invisibility': 'classicon_mage',
+  'Deterrence':           'classicon_hunter',
+  'Diffuse Magic':        'spell_monk_mistweaver_spec',
+  'Fortifying Brew':      'spell_monk_mistweaver_spec',
+};
 let VIEW_ROSTER = DEFAULT_ROSTER; // set by initViewMode so renderers can resolve specs
 
 // Per-CD spec-icon overrides (override the owning player's spec icon for specific abilities)
@@ -6061,13 +5907,14 @@ function viewCdParts(p, ab) {
     const assignedWho = p.customWho || defensive?.who;
     const assignedPlayer = assignedWho && VIEW_ROSTER.find(pl => pl.who === assignedWho);
     const assignedSpecIcon = assignedPlayer && SPEC_ICONS[assignedPlayer.spec];
+    const defensiveBadgeIcon = DEFENSIVE_BADGE_ICONS[p.customAbility] || assignedSpecIcon;
     if (defensive) {
       viewCd = { ...cd, name:p.customAbility, short:defensive.short };
       url = defensive.icon || url;
       color = defensive.color;
       textColor = defensive.textColor;
     }
-    specIcon = assignedSpecIcon ? SPEC_ICON_CDN + assignedSpecIcon + '.jpg' : null;
+    specIcon = defensiveBadgeIcon ? SPEC_ICON_CDN + defensiveBadgeIcon + '.jpg' : null;
     who = assignedPlayer?.name || assignedWho || viewCd.short;
   }
 
@@ -6766,9 +6613,6 @@ function parseFojiImport(raw) {
   return count;
 }
 document.getElementById('screenshotBtn').addEventListener('click', () => createShareLink(document.getElementById('screenshotBtn')));
-document.getElementById('phaseStyleBtn').addEventListener('click', showPhaseStylePicker);
-
-
 // ---- localStorage auto-save ----
 const LS_KEY = 'tot_rcd_autosave';
 const PLANS_KEY = 'tot_rcd_plans';
