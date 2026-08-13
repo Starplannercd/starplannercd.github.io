@@ -4090,8 +4090,11 @@ function getActivePlanTargetRoster() {
   const plan = planId !== FULL_RAID_ID ? getPlans()[planId] : null;
   const subbedOut = new Set(plan?.subbedOut || []);
   const subMap = activeSubMap();
-  const baseRoster = Array.isArray(plan?.rosterSpecs)
-    ? planRosterEntries(plan.rosterSpecs)
+  const rosterSpecs = planId === FULL_RAID_ID
+    ? getFullRaidSnapshot().rosterSpecs
+    : plan?.rosterSpecs;
+  const baseRoster = Array.isArray(rosterSpecs)
+    ? planRosterEntries(rosterSpecs)
     : DEFAULT_ROSTER;
   const seenWhos = new Set();
 
