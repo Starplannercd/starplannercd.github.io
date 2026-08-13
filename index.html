@@ -812,6 +812,114 @@
       0 0 9px rgba(var(--phase-accent-rgb),0.20);
   }
 
+  /* Switchable phase/intermission title treatments. The same markup is used
+     for every option, so changing styles never changes timeline structure. */
+  :is(html,.phase-style-preview)[data-phase-style="minimal"] .phase-divider {
+    height: 38px; margin: 7px 0; background: transparent; box-shadow: none;
+    border-bottom: 1px solid rgba(var(--phase-accent-rgb),.26); padding: 0 10px;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="minimal"] .phase-divider-title {
+    font-size: 20px; letter-spacing: .12em; opacity: .72; text-shadow: none;
+  }
+
+  :is(html,.phase-style-preview)[data-phase-style="glass"] .phase-divider {
+    height: 50px; margin: 6px 0; padding: 0 18px;
+    background: linear-gradient(100deg, rgba(var(--phase-accent-rgb),.14), rgba(var(--phase-accent-rgb),.035) 52%, transparent 90%);
+    border-top: 1px solid rgba(var(--phase-accent-rgb),.20);
+    border-bottom: 1px solid rgba(var(--phase-accent-rgb),.10);
+    box-shadow: inset 0 1px rgba(255,255,255,.025), 0 12px 28px rgba(0,0,0,.16);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="glass"] .phase-divider-title { opacity:.90; text-shadow:0 0 16px rgba(var(--phase-accent-rgb),.30); }
+
+  :is(html,.phase-style-preview)[data-phase-style="edge-glow"] .phase-divider {
+    height: 48px; margin: 6px 0; padding: 0 20px;
+    background: linear-gradient(90deg, rgba(var(--phase-accent-rgb),.16), rgba(var(--phase-accent-rgb),.025) 32%, #0e1115 76%);
+    border-left: 4px solid var(--phase-accent);
+    box-shadow: inset 12px 0 28px rgba(var(--phase-accent-rgb),.07), -3px 0 16px rgba(var(--phase-accent-rgb),.22);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="edge-glow"] .phase-divider-title { opacity:.94; }
+
+  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider {
+    height: 46px; margin: 7px 0; padding: 0 18px; justify-content:center;
+    background: linear-gradient(90deg, transparent, rgba(var(--phase-accent-rgb),.10) 28%, rgba(var(--phase-accent-rgb),.14) 50%, rgba(var(--phase-accent-rgb),.10) 72%, transparent);
+    box-shadow:none;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::before,
+  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::after {
+    content:""; height:1px; flex:1; max-width:280px; margin:0 18px;
+    background:linear-gradient(90deg,transparent,rgba(var(--phase-accent-rgb),.55));
+  }
+  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider::after { transform:scaleX(-1); }
+  :is(html,.phase-style-preview)[data-phase-style="center-rail"] .phase-divider-title { font-size:22px; opacity:.88; }
+
+  :is(html,.phase-style-preview)[data-phase-style="split-block"] .phase-divider {
+    height: 48px; margin: 5px 0; padding:0;
+    background:#0d1115; box-shadow:inset 0 -1px rgba(255,255,255,.03);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="split-block"] .phase-divider-label {
+    min-width:150px; padding:0 22px; box-sizing:border-box;
+    background:rgba(var(--phase-accent-rgb),.14); border-right:1px solid rgba(var(--phase-accent-rgb),.28);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="split-block"] .phase-divider-title { font-size:22px; opacity:.92; }
+
+  :is(html,.phase-style-preview)[data-phase-style="outline"] .phase-divider {
+    height: 46px; margin: 7px 0; padding:0 18px; background:rgba(8,11,14,.62);
+    border:1px solid rgba(var(--phase-accent-rgb),.28); box-shadow:inset 0 0 22px rgba(var(--phase-accent-rgb),.035);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="outline"] .phase-divider-title { font-size:22px; opacity:.86; }
+
+  :is(html,.phase-style-preview)[data-phase-style="signal"] .phase-divider {
+    height: 44px; margin: 7px 0; padding:0 18px; background:#0c1115; box-shadow:none;
+    border-top:2px solid rgba(var(--phase-accent-rgb),.62); border-bottom:1px solid rgba(var(--phase-accent-rgb),.15);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="signal"] .phase-divider::after {
+    content:""; position:absolute; right:18px; width:56px; height:5px;
+    background:repeating-linear-gradient(90deg,var(--phase-accent) 0 7px,transparent 7px 12px); opacity:.42;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="signal"] .phase-divider-title { font-size:21px; opacity:.88; }
+
+  :is(html,.phase-style-preview)[data-phase-style="blueprint"] .phase-divider {
+    height:50px; margin:6px 0; padding:0 20px;
+    background-color:#0c141b;
+    background-image:linear-gradient(rgba(var(--phase-accent-rgb),.045) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--phase-accent-rgb),.045) 1px,transparent 1px);
+    background-size:12px 12px; border-left:2px solid rgba(var(--phase-accent-rgb),.64); box-shadow:none;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="blueprint"] .phase-divider-title { font-size:22px; opacity:.86; text-shadow:0 0 12px rgba(var(--phase-accent-rgb),.28); }
+
+  :is(html,.phase-style-preview)[data-phase-style="cinematic"] .phase-divider {
+    height:58px; margin:5px 0; padding:0 24px;
+    background:linear-gradient(90deg,#080b0e,rgba(var(--phase-accent-rgb),.11) 45%,#080b0e);
+    box-shadow:inset 0 14px 26px rgba(0,0,0,.34),inset 0 -14px 26px rgba(0,0,0,.34);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="cinematic"] .phase-divider-title { font-size:27px; letter-spacing:.15em; opacity:.86; text-shadow:0 2px 2px #000,0 0 20px rgba(var(--phase-accent-rgb),.30); }
+
+  :is(html,.phase-style-preview)[data-phase-style="notched"] .phase-divider {
+    height:48px; margin:6px 0; padding:0 24px;
+    background:rgba(var(--phase-accent-rgb),.105); clip-path:polygon(0 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,0 100%,10px 50%);
+    border-left:3px solid var(--phase-accent); box-shadow:none;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="notched"] .phase-divider-title { font-size:22px; opacity:.90; }
+
+  :is(html,.phase-style-preview)[data-phase-style="scanline"] .phase-divider {
+    height:48px; margin:6px 0; padding:0 20px;
+    background:repeating-linear-gradient(0deg,rgba(var(--phase-accent-rgb),.075) 0 1px,transparent 1px 4px),#0c1115;
+    border-left:2px solid rgba(var(--phase-accent-rgb),.7); box-shadow:inset 18px 0 32px rgba(var(--phase-accent-rgb),.06);
+  }
+  :is(html,.phase-style-preview)[data-phase-style="scanline"] .phase-divider-title { font-size:22px; opacity:.88; }
+
+  :is(html,.phase-style-preview)[data-phase-style="compact"] .phase-divider {
+    height:32px; margin:6px 0; padding:0 12px; background:rgba(var(--phase-accent-rgb),.075);
+    border-left:2px solid var(--phase-accent); box-shadow:none;
+  }
+  :is(html,.phase-style-preview)[data-phase-style="compact"] .phase-divider-title { font-size:17px; letter-spacing:.13em; opacity:.80; text-shadow:none; }
+
+  .phase-style-picker-card { border:1px solid #292d33;background:#0d0f12;border-radius:8px;padding:8px;cursor:pointer;text-align:left;color:#dfe8ee;transition:border-color .14s,background .14s,transform .14s; }
+  .phase-style-picker-card:hover { border-color:#4d6e7d;background:#11161a;transform:translateY(-1px); }
+  .phase-style-picker-card.selected { border-color:#6ad4f0;background:#101b20;box-shadow:0 0 0 1px rgba(106,212,240,.12); }
+  .phase-style-preview { overflow:hidden;margin-bottom:8px; }
+  .phase-style-preview .phase-divider { width:100%;min-width:0;margin-left:0;margin-right:0;height:34px;padding-left:12px;padding-right:12px; }
+  .phase-style-preview .phase-divider-title { font-size:14px; }
+
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg2); }
@@ -1744,7 +1852,7 @@
     .share-boss-title { font-size:27px; }
   }
 </style>
-<script>document.documentElement.setAttribute('data-theme','frost');document.documentElement.setAttribute('data-topbar','minimal');</script>
+<script>document.documentElement.setAttribute('data-theme','frost');document.documentElement.setAttribute('data-topbar','minimal');document.documentElement.setAttribute('data-phase-style',localStorage.getItem('tot_rcd_phase_style')||'solid');</script>
 </head>
 <body>
 <div id="authScreen" style="position:fixed;inset:0;background:#0a0804;z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -1770,6 +1878,7 @@
     <div id="fillTopbarBadge" style="display:none;"></div>
     <select class="boss-select" id="bossSelect"></select>
     <button class="btn btn-manage" id="manageBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Manage CDs</button>
+    <button class="btn" id="phaseStyleBtn" title="Choose phase and intermission title style"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h11M4 18h16"/><path d="M18 10v4M16 12h4"/></svg>Phase Style</button>
     <button class="btn btn-roster" id="rosterBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Sub</button>
     <button class="btn btn-export" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export Foji</button>
     <button class="btn" id="wclBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>WCL</button>
@@ -3199,6 +3308,59 @@ function buildPalette() {
 
 // ---- Render timeline ----
 function getBoss() { return BOSSES.find(b => b.id === currentBossId) || BOSSES[0]; }
+
+const PHASE_STYLE_KEY = 'tot_rcd_phase_style';
+const PHASE_TITLE_STYLES = [
+  { id:'solid',       name:'Solid Panel',    desc:'Current clean, dark title bar' },
+  { id:'minimal',     name:'Minimal Line',   desc:'Open space with a quiet underline' },
+  { id:'glass',       name:'Frosted Glass',  desc:'Layered translucent wash' },
+  { id:'edge-glow',   name:'Edge Glow',      desc:'Strong luminous leading edge' },
+  { id:'center-rail', name:'Center Rail',    desc:'Centered title between fine rails' },
+  { id:'split-block', name:'Split Block',    desc:'Dedicated title block and dark field' },
+  { id:'outline',     name:'Fine Outline',   desc:'Restrained technical frame' },
+  { id:'signal',      name:'Signal Bar',     desc:'Top signal line and meter marks' },
+  { id:'blueprint',   name:'Blueprint',      desc:'Subtle technical grid texture' },
+  { id:'cinematic',   name:'Cinematic',      desc:'Taller, dramatic chapter card' },
+  { id:'notched',     name:'Notched',        desc:'Angular tactical silhouette' },
+  { id:'scanline',    name:'Scanline',       desc:'Fine display scan texture' },
+  { id:'compact',     name:'Compact',        desc:'Low-height, information-dense bar' },
+];
+
+function setPhaseTitleStyle(styleId) {
+  const valid = PHASE_TITLE_STYLES.some(style => style.id === styleId) ? styleId : 'solid';
+  document.documentElement.dataset.phaseStyle = valid;
+  localStorage.setItem(PHASE_STYLE_KEY, valid);
+}
+
+function showPhaseStylePicker() {
+  document.getElementById('phaseStylePicker')?.remove();
+  const selected = document.documentElement.dataset.phaseStyle || 'solid';
+  const overlay = document.createElement('div');
+  overlay.id = 'phaseStylePicker';
+  overlay.className = 'modal-overlay';
+  overlay.style.cssText += 'align-items:center;padding:20px;z-index:120000;';
+  const cards = PHASE_TITLE_STYLES.map(style => `<button type="button" class="phase-style-picker-card${style.id === selected ? ' selected' : ''}" data-phase-choice="${style.id}">
+    <div class="phase-style-preview" data-phase-style="${style.id}">
+      <div class="phase-divider" data-kind="${style.id === 'cinematic' ? 'intermission' : 'phase'}"><span class="phase-divider-label"><span class="phase-divider-title">${style.id === 'cinematic' ? 'Intermission' : 'P2'}</span></span></div>
+    </div>
+    <div style="font-size:11px;font-weight:750;color:#e7edf0;margin-bottom:3px;">${style.name}</div>
+    <div style="font-size:9px;line-height:1.35;color:#747d84;">${style.desc}</div>
+  </button>`).join('');
+  overlay.innerHTML = `<div style="width:min(820px,96vw);max-height:90vh;overflow:auto;background:#090b0d;border:1px solid #2b3136;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.72);">
+    <div style="position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:rgba(9,11,13,.96);border-bottom:1px solid #24292e;backdrop-filter:blur(10px);">
+      <div><div style="font-size:13px;font-weight:800;color:#dcebf0;letter-spacing:.04em;">Phase &amp; Intermission Style</div><div style="font-size:10px;color:#68747b;margin-top:3px;">Choose any design. Phases stay icy blue; intermissions stay purple.</div></div>
+      <button type="button" id="phaseStyleClose" style="border:1px solid #30363b;background:#101316;color:#929ba1;border-radius:6px;padding:5px 9px;cursor:pointer;">Close</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:14px;">${cards}</div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelectorAll('[data-phase-choice]').forEach(card => card.addEventListener('click', () => {
+    setPhaseTitleStyle(card.dataset.phaseChoice);
+    overlay.querySelectorAll('.phase-style-picker-card').forEach(item => item.classList.toggle('selected', item === card));
+  }));
+  overlay.querySelector('#phaseStyleClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('mousedown', event => { if (event.target === overlay) overlay.remove(); });
+}
 
 function renderTimeline() {
   if (!BOSSES.some(b => b.id === currentBossId)) currentBossId = BOSSES[0].id;
@@ -5907,9 +6069,10 @@ function viewCdParts(p, ab) {
 }
 function viewIconImg(parts, size) {
   const sz = size || 44;
-  const fb = `<div style="width:${sz}px;height:${sz}px;border-radius:6px;background:${parts.color}22;border:1px solid ${parts.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${parts.textColor};">${parts.cd.short}</div>`;
+  const frame = `border:2px solid ${parts.color};box-shadow:0 0 10px -3px ${parts.color},0 2px 6px rgba(0,0,0,.45);box-sizing:border-box;`;
+  const fb = `<div style="width:${sz}px;height:${sz}px;border-radius:8px;background:${parts.color}22;${frame}display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${parts.textColor};">${parts.cd.short}</div>`;
   return parts.url
-    ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fb)}" src="${parts.url}" style="width:${sz}px;height:${sz}px;border-radius:6px;display:block;" title="${parts.cd.name}" />`
+    ? `<img class="ss-real-icon" data-fallback="${encodeURIComponent(fb)}" src="${parts.url}" style="width:${sz}px;height:${sz}px;border-radius:8px;display:block;${frame}" title="${parts.cd.name}" />`
     : fb;
 }
 // Spec-icon badge overlaid on the CD icon's bottom-left corner (nothing if unresolved)
@@ -5949,9 +6112,10 @@ function viewBlockSpotlight(boss, rows, v, color) {
       const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid #fff9;border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
       return `<div style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
     }).join('');
-    // Per-ability accent: blend boss theme with this ability/phase colour (stays on-theme, varies per row)
-    const accent = blendHex(color, ab.color || color, 0.5);
-    const nameColor = blendHex('#e8e2d8', accent, 0.5);
+    // Match the live timeline exactly: mechanic names, markers and times use
+    // the mechanic's authored colour rather than a boss-theme blend.
+    const accent = ab.color || color;
+    const nameColor = accent;
     const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${accent};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
     return `<div style="display:flex;align-items:stretch;min-height:60px;">
       <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:10px 16px;">
@@ -6588,6 +6752,7 @@ function parseFojiImport(raw) {
   return count;
 }
 document.getElementById('screenshotBtn').addEventListener('click', () => createShareLink(document.getElementById('screenshotBtn')));
+document.getElementById('phaseStyleBtn').addEventListener('click', showPhaseStylePicker);
 
 
 // ---- localStorage auto-save ----
@@ -10271,14 +10436,9 @@ function generateShareId() {
 }
 
 function buildShareData() {
-  const currentId = getActivePlanId();
-  const plans = getPlans();
-  const plan = currentId !== FULL_RAID_ID ? plans[currentId] : null;
-  const subbedOut = new Set(plan?.subbedOut || []);
-
-  const baseShareRoster = Array.isArray(plan?.rosterSpecs)
-    ? planRosterEntries(plan.rosterSpecs)
-    : DEFAULT_ROSTER.filter(p => !subbedOut.has(p.who));
+  // Use the exact roster currently driving the planner. This preserves the
+  // selected Full Raid roster, substitutions and their class colours in shares.
+  const baseShareRoster = getActivePlanTargetRoster();
   const effectiveRoster = baseShareRoster
     .map(p => {
       const fill = activeRosterFills[p.who];
