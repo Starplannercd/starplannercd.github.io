@@ -1745,7 +1745,7 @@
   }
   .share-boss-copy { position:absolute;left:16px;bottom:22px;z-index:2; }
   .share-boss-brand {
-    position:absolute;left:16px;top:18px;z-index:2;
+    position:absolute;left:10px;top:10px;z-index:2;
     display:none;align-items:center;gap:9px;
   }
   .share-boss-briefcase {
@@ -1775,7 +1775,7 @@
     .view-class-btn { padding:8px 10px; }
     .share-boss-hero { height:154px; }
     .share-boss-copy { left:14px; }
-    .share-boss-brand { left:14px; }
+    .share-boss-brand { left:10px; }
     .share-boss-actions { left:14px; }
     .share-boss-title { font-size:27px; }
   }
@@ -5741,7 +5741,7 @@ const BOSS_VIS = {
   thok:             { color:'#cc3300', file:'thok.png',            bg:'linear-gradient(100deg,#180606 0%,#220808 55%,#2a0a08 100%)', border:'#4a1008', glow:['#cc3300bb','#881a0066'], offset:'-36px', right:'-8px',  tight:false },
   siegecrafter:     { color:'#cc6622', file:'blackfuse.png',       bg:'linear-gradient(100deg,#0e1218 0%,#141a22 55%,#182028 100%)', border:'#2a3848', glow:['#cc6622bb','#884a1466'], offset:'-36px', right:'-8px',  tight:false },
   paragons:         { color:'#99bb33', file:'paragons.png',        bg:'linear-gradient(100deg,#0e1406 0%,#141e08 55%,#18260a 100%)', border:'#304018', glow:['#99bb33bb','#5a7a1866'], offset:'-36px', right:'-8px',  tight:false },
-  garrosh:          { color:'#bb1111', file:'thrall.png',          bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', glow:['#bb1111bb','#880a0a66'], offset:'-55px', right:'-8px',  tight:false },
+  garrosh:          { color:'#bb1111', file:'thrall.png',          bg:'linear-gradient(100deg,#140606 0%,#1e0808 55%,#260a0a 100%)', border:'#440808', glow:['#bb1111bb','#880a0a66'], offset:'-65px', right:'-8px',  tight:false },
 };
 
 // Radial-gradient glow behind boss image. The image also carries a CSS drop-shadow that
@@ -6076,7 +6076,7 @@ function viewBlockSpotlight(boss, rows, v, color) {
         <div class="share-boss-brand-name">Professional</div>
       </div>
       <div class="share-boss-copy">
-        <div class="share-boss-kicker">Siege of Orgrimmar · Cooldown plan</div>
+        <div class="share-boss-kicker">Cooldown plan</div>
         <div class="share-boss-title">${boss.name}</div>
       </div>
       <div class="share-boss-actions">${VIEW_IMG_BTN}</div>
