@@ -1658,6 +1658,8 @@
     font-family: var(--app-font, Inter, system-ui, sans-serif);
   }
   .view-nav {
+    position: relative;
+    z-index: 40;
     border-bottom: 1px solid rgba(255,255,255,.07);
     background: rgba(12,12,14,.86);
     box-shadow: 0 8px 32px rgba(0,0,0,.22);
@@ -1690,6 +1692,28 @@
     font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
   }
   .view-readonly-dot { width:6px;height:6px;border-radius:50%;background:#6ad4f0;box-shadow:0 0 10px rgba(106,212,240,.75); }
+  .view-owner-tools { position:relative;display:flex;align-items:center; }
+  .view-class-btn {
+    display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;
+    border:1px solid rgba(106,212,240,.22);background:rgba(106,212,240,.07);
+    color:#aeeafa;font:750 10px var(--app-font,Inter,system-ui,sans-serif);
+    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.16s ease;
+  }
+  .view-class-btn:hover,.view-class-btn[aria-expanded="true"] { color:#fff;border-color:rgba(106,212,240,.48);background:rgba(106,212,240,.13); }
+  .view-class-menu {
+    position:absolute;right:0;top:calc(100% + 9px);z-index:30;width:210px;padding:7px;
+    border:1px solid rgba(255,255,255,.11);border-radius:10px;background:#0d0e11;
+    box-shadow:0 18px 50px rgba(0,0,0,.62);
+  }
+  .view-class-option {
+    width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 9px;
+    border:0;border-radius:7px;background:transparent;color:#9b9ba5;
+    font:700 11px var(--app-font,Inter,system-ui,sans-serif);text-align:left;cursor:pointer;
+  }
+  .view-class-option:hover { color:#f3f3f5;background:rgba(255,255,255,.055); }
+  .view-class-option.active { color:#79d9f0;background:rgba(106,212,240,.09); }
+  .view-class-option-dot { width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor; }
+  .view-class-empty { display:none;padding:30px 18px;border:1px dashed rgba(255,255,255,.1);border-radius:12px;color:#686872;font-size:12px;text-align:center; }
   .view-plan-shell { width:min(1040px,calc(100% - 40px));margin:0 auto;padding:38px 0 72px; }
   .view-plan-head { display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px 26px; }
   .view-plan-eyebrow {
@@ -1748,6 +1772,7 @@
     .view-plan-note { text-align:left; }
     .view-plan-title { font-size:26px; }
     .view-readonly { display:none; }
+    .view-class-btn { padding:8px 10px; }
     .share-boss-hero { height:154px; }
     .share-boss-copy { left:14px; }
     .share-boss-brand { left:14px; }
@@ -5841,7 +5866,46 @@ const DEFENSIVE_BADGE_ICONS = {
   'Diffuse Magic':        'spell_monk_mistweaver_spec',
   'Fortifying Brew':      'spell_monk_mistweaver_spec',
 };
+const DEFENSIVE_CLASS_NAMES = {
+  'Fade': 'Priest', 'Dispersion': 'Priest',
+  'Unending Resolve': 'Warlock',
+  'Temporal Shield': 'Mage', 'Greater Invisibility': 'Mage',
+  'Deterrence': 'Hunter',
+  'Diffuse Magic': 'Monk', 'Fortifying Brew': 'Monk', 'Zen Meditation': 'Monk',
+  'Divine Protection': 'Paladin',
+  'Die by the Sword': 'Warrior', 'Shield Wall': 'Warrior',
+};
 let VIEW_ROSTER = DEFAULT_ROSTER; // set by initViewMode so renderers can resolve specs
+
+function getClassNameForSpec(specName) {
+  const spec = String(specName || '').toLowerCase();
+  if (!spec) return null;
+  if (spec.includes('paladin') || spec.includes('protection pal') || spec === 'retribution') return 'Paladin';
+  if (spec.includes('priest') || spec === 'discipline') return 'Priest';
+  if (spec.includes('sham') || spec === 'elemental' || spec === 'enhancement') return 'Shaman';
+  if (spec.includes('dru') || spec === 'balance' || spec === 'feral' || spec === 'feral tank') return 'Druid';
+  if (spec === 'mistweaver' || spec === 'brewmaster' || spec === 'windwalker') return 'Monk';
+  if (spec.includes('warrior') || spec.includes('protection war') || spec === 'arms' || spec === 'fury') return 'Warrior';
+  if (spec.includes('death knight') || spec.endsWith(' dk')) return 'Death Knight';
+  if (spec.includes('rogue') || ['assassination','combat','subtlety'].includes(spec)) return 'Rogue';
+  if (spec.includes('mage')) return 'Mage';
+  if (spec.includes('warlock') || ['destruction','affliction','demonology'].includes(spec)) return 'Warlock';
+  if (spec.includes('hunt') || ['survival','marksmanship','beast mastery'].includes(spec)) return 'Hunter';
+  return null;
+}
+
+function getPlacementClassName(cd, placement) {
+  if (!cd) return null;
+  let who = cd.who;
+  if (cd.defensiveType) who = placement.customWho || DEFENSIVE_ABILITIES[placement.customAbility]?.who || who;
+  else if (cd.customType) who = (placement.customWho && placement.customWho !== 'ALL')
+    ? placement.customWho
+    : (Array.isArray(placement.targetWhos) ? placement.targetWhos[0] : who);
+  if (!who || who === 'ALL') return 'All';
+  const player = VIEW_ROSTER.find(item => item.who === who);
+  const mappedSpec = player?.spec || Object.entries(SPEC_CD_MAP).find(([, entry]) => entry.who === who)?.[0];
+  return getClassNameForSpec(mappedSpec) || (cd.defensiveType ? DEFENSIVE_CLASS_NAMES[placement.customAbility] : null);
+}
 
 // Per-CD spec-icon overrides (override the owning player's spec icon for specific abilities)
 const CD_SPEC_ICON = {
@@ -5879,6 +5943,7 @@ function viewCdParts(p, ab) {
   let who = VIEW_CD_NAMES[cd.id] || cd.short;
   let color = cd.color;
   let textColor = cd.textColor;
+  const className = getPlacementClassName(cd, p);
 
   // Custom assignments should look the same in shared links as they do on the
   // planner timeline: use the selected ability's real icon, label and colour.
@@ -5926,6 +5991,7 @@ function viewCdParts(p, ab) {
     info:     getSsInfoLabel(cd, p, ab),
     color,
     textColor,
+    className,
   };
 }
 function viewIconImg(parts, size) {
@@ -5971,14 +6037,14 @@ function viewBlockSpotlight(boss, rows, v, color) {
     const cells = sorted.map(p => {
       const parts = viewCdParts(p, ab); if (!parts) return '';
       const off = parts.info ? `<span style="position:absolute;top:-6px;right:-6px;font-size:9px;font-weight:800;color:#fff;background:#000d;border:1px solid #fff9;border-radius:6px;padding:1px 4px;white-space:nowrap;z-index:2;">${parts.info}</span>` : '';
-      return `<div style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
+      return `<div class="share-cd-cell" data-class="${parts.className || ''}" style="position:relative;display:inline-block;">${viewIconImg(parts, 52)}${off}${viewSpecBadge(parts)}</div>`;
     }).join('');
     // Match the live timeline exactly: mechanic names, markers and times use
     // the mechanic's authored colour rather than a boss-theme blend.
     const accent = ab.color || color;
     const nameColor = accent;
     const timeHtml = ab.hpAssign ? '' : `<span style="font-size:11px;font-weight:700;color:${accent};font-variant-numeric:tabular-nums;">${formatTime(ab.time)}</span>`;
-    return `<div style="display:flex;align-items:stretch;min-height:60px;">
+    return `<div class="share-mechanic-row" style="display:flex;align-items:stretch;min-height:60px;">
       <div style="width:172px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:10px 16px;">
         <span style="width:3px;align-self:stretch;background:${accent};border-radius:2px;flex-shrink:0;"></span>
         <div style="display:flex;flex-direction:column;gap:3px;min-width:0;">
@@ -6008,6 +6074,90 @@ function viewBlockSpotlight(boss, rows, v, color) {
     ${hero}
     <div class="vrows">${body}</div>
   </div>`;
+}
+
+function setupOwnerClassFilter(viewEl, viewContent, shareData) {
+  const host = viewEl.querySelector('#viewOwnerClassTools');
+  if (!host || typeof firebase === 'undefined' || !firebase.auth) return;
+  let initialized = false;
+
+  const isOwner = user => {
+    if (!user) return false;
+    if (shareData.ownerUid) return user.uid === shareData.ownerUid;
+    // Legacy shares predate owner IDs. Only the primary planner account gets
+    // the private class control on those links.
+    return (user.email || '').toLowerCase() === APPROVED_EMAILS[0];
+  };
+
+  const initialize = user => {
+    if (initialized || !isOwner(user)) return;
+    const classOrder = ['Death Knight','Druid','Hunter','Mage','Monk','Paladin','Priest','Rogue','Shaman','Warlock','Warrior'];
+    const classes = [...new Set([...viewContent.querySelectorAll('.share-cd-cell')]
+      .map(cell => cell.dataset.class)
+      .filter(className => className && className !== 'All'))]
+      .sort((a, b) => classOrder.indexOf(a) - classOrder.indexOf(b));
+    if (!classes.length) return;
+    initialized = true;
+
+    host.innerHTML = `<button type="button" class="view-class-btn" id="viewClassBtn" aria-expanded="false">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/></svg>
+      <span id="viewClassLabel">Class Plans</span>
+    </button>
+    <div class="view-class-menu" id="viewClassMenu" hidden>
+      ${['All Classes', ...classes].map((className, index) => `<button type="button" class="view-class-option${index === 0 ? ' active' : ''}" data-class-filter="${index === 0 ? 'All' : className}"><span>${className}</span><span class="view-class-option-dot"></span></button>`).join('')}
+    </div>`;
+
+    const button = host.querySelector('#viewClassBtn');
+    const menu = host.querySelector('#viewClassMenu');
+    const label = host.querySelector('#viewClassLabel');
+    const empty = document.createElement('div');
+    empty.className = 'view-class-empty';
+    viewContent.appendChild(empty);
+
+    const applyFilter = className => {
+      viewContent.querySelectorAll('.share-cd-cell').forEach(cell => {
+        const show = className === 'All' || cell.dataset.class === 'All' || cell.dataset.class === className;
+        cell.style.display = show ? 'inline-block' : 'none';
+      });
+      viewContent.querySelectorAll('.share-mechanic-row').forEach(row => {
+        const hasVisibleCell = [...row.querySelectorAll('.share-cd-cell')].some(cell => cell.style.display !== 'none');
+        row.style.display = hasVisibleCell ? 'flex' : 'none';
+      });
+      let visibleBosses = 0;
+      viewContent.querySelectorAll('.share-boss-card').forEach(card => {
+        const hasVisibleRow = [...card.querySelectorAll('.share-mechanic-row')].some(row => row.style.display !== 'none');
+        card.style.display = hasVisibleRow ? 'block' : 'none';
+        if (hasVisibleRow) visibleBosses++;
+      });
+      empty.textContent = `No ${className} cooldown assignments are present in this plan.`;
+      empty.style.display = visibleBosses ? 'none' : 'block';
+      label.textContent = className === 'All' ? 'Class Plans' : className;
+      host.querySelectorAll('.view-class-option').forEach(option => option.classList.toggle('active', option.dataset.classFilter === className));
+    };
+
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      menu.hidden = !menu.hidden;
+      button.setAttribute('aria-expanded', String(!menu.hidden));
+    });
+    host.querySelectorAll('.view-class-option').forEach(option => option.addEventListener('click', () => {
+      applyFilter(option.dataset.classFilter);
+      menu.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+    }));
+    document.addEventListener('click', event => {
+      if (!host.contains(event.target)) {
+        menu.hidden = true;
+        button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  };
+
+  initialize(firebase.auth().currentUser);
+  firebase.auth().onAuthStateChanged(user => {
+    _currentUser = user || null;
+    initialize(user);
+  });
 }
 
 function showScreenshotModal() {
@@ -7176,9 +7326,9 @@ function _initFirebaseCore() {
     // Auth state
     firebase.auth().onAuthStateChanged(user => {
       // If this is a shared view link, skip auth entirely
+      _currentUser = user || null;
       if (_viewId) return;
       if (!user) { showAuthScreen(true); return; }
-      _currentUser = user;
       const email = (user.email || '').toLowerCase();
 
       if (APPROVED_EMAILS.includes(email)) {
@@ -10362,6 +10512,7 @@ function buildShareData() {
     bossReady,
     roster: finalRoster,
     activeSetIds: [...activeSetIds],
+    ownerUid: _currentUser?.uid || firebase.auth().currentUser?.uid || null,
     createdAt: Date.now(),
   }));
 }
@@ -10417,6 +10568,7 @@ async function initViewMode(viewId) {
             <div class="view-brand-sub">Raid Tools</div>
           </div>
         </div>
+        <div class="view-owner-tools" id="viewOwnerClassTools"></div>
       </div>
     </nav>
     <main class="view-plan-shell">
@@ -10483,6 +10635,7 @@ async function initViewMode(viewId) {
       viewPlanMeta.textContent = `${encounterText} · ${sharedText}`;
     }
     attachSsIconErrors(viewContent);
+    setupOwnerClassFilter(viewEl, viewContent, data);
 
     // Image buttons — capture the parent boss block via html2canvas (normal mode), then
     // composite the boss-image glow directly onto the canvas with the 2D context's shadowBlur.
