@@ -5894,6 +5894,17 @@ function getClassNameForSpec(specName) {
   return null;
 }
 
+function getPlanFilterNameForSpec(specName) {
+  const spec = String(specName || '').toLowerCase();
+  if (spec.includes('protection pal')) return 'Prot Paladin';
+  if (spec === 'retribution') return 'Ret Paladin';
+  if (spec.includes('holy paladin')) return 'Holy Paladin';
+  if (spec === 'discipline') return 'Disc Priest';
+  if (spec.includes('shadow priest')) return 'Shadow Priest';
+  if (spec.includes('holy priest')) return 'Holy Priest';
+  return getClassNameForSpec(specName);
+}
+
 function getPlacementClassName(cd, placement) {
   if (!cd) return null;
   let who = cd.who;
@@ -5904,7 +5915,7 @@ function getPlacementClassName(cd, placement) {
   if (!who || who === 'ALL') return 'All';
   const player = VIEW_ROSTER.find(item => item.who === who);
   const mappedSpec = player?.spec || Object.entries(SPEC_CD_MAP).find(([, entry]) => entry.who === who)?.[0];
-  return getClassNameForSpec(mappedSpec) || (cd.defensiveType ? DEFENSIVE_CLASS_NAMES[placement.customAbility] : null);
+  return getPlanFilterNameForSpec(mappedSpec) || (cd.defensiveType ? DEFENSIVE_CLASS_NAMES[placement.customAbility] : null);
 }
 
 // Per-CD spec-icon overrides (override the owning player's spec icon for specific abilities)
@@ -6091,7 +6102,7 @@ function setupOwnerClassFilter(viewEl, viewContent, shareData) {
 
   const initialize = user => {
     if (initialized || !isOwner(user)) return;
-    const classOrder = ['Death Knight','Druid','Hunter','Mage','Monk','Paladin','Priest','Rogue','Shaman','Warlock','Warrior'];
+    const classOrder = ['Death Knight','Druid','Hunter','Mage','Monk','Ret Paladin','Prot Paladin','Holy Paladin','Shadow Priest','Disc Priest','Holy Priest','Rogue','Shaman','Warlock','Warrior'];
     const classes = [...new Set([...viewContent.querySelectorAll('.share-cd-cell')]
       .map(cell => cell.dataset.class)
       .filter(className => className && className !== 'All'))]
