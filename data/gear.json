@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-10T13:48:58.471Z",
+  "fetchedAt": "2026-08-15T13:02:08.020Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
@@ -453,14 +453,14 @@
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-08-10T13:48:54.310Z",
+      "fetchedAt": "2026-08-15T13:02:04.973Z",
       "items": [
         {
           "slot": "HEAD",
           "id": 104546,
           "name": "Darkfang Mask",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HEAD"
         },
@@ -504,8 +504,8 @@
           "slot": "LEGS",
           "id": 99390,
           "name": "Legwraps of Seven Sacred Seals",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
         },
