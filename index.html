@@ -5253,7 +5253,7 @@ function loadFromFile(file) {
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
-      if (data.placedCDs) Object.assign(placedCDs, data.placedCDs);
+      if (data.placedCDs) Object.assign(placedCDs, migrateRowKeys(data.placedCDs));
       if (data.bossReady) Object.assign(bossReady, data.bossReady);
       if (data.bossNotes) Object.assign(bossNotes, data.bossNotes);
       if (data.activeSetIds) {
@@ -6928,6 +6928,16 @@ function applyBossTimingOverrides() {
         }
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
+
+      // Older Garrosh timing snapshots stored the numbered label and replace
+      // the built-in ability list on startup. Normalize it after every restore.
+      if (boss.id === 'garrosh') {
+        boss.sections.forEach(function(section) {
+          section.abilities.forEach(function(ability) {
+            if (ability.name === 'Siege Engineer CD 1') ability.name = 'Siege Engineer CD';
+          });
+        });
+      }
     });
   } catch(e) {}
 }
@@ -7062,7 +7072,13 @@ function migrateRowKeys(cds) {
         migrated[bossId][newRowKey] = placements;
       } else {
         // Already new format
-        migrated[bossId][rowKey] = placements;
+        const oldEngineerKey = `0-${encodeURIComponent('Siege Engineer CD 1')}`;
+        const newEngineerKey = `0-${encodeURIComponent('Siege Engineer CD')}`;
+        const migratedRowKey = bossId === 'garrosh' && rowKey === oldEngineerKey ? newEngineerKey : rowKey;
+        migrated[bossId][migratedRowKey] = [
+          ...(migrated[bossId][migratedRowKey] || []),
+          ...(placements || []),
+        ];
       }
     });
   });
@@ -8840,7 +8856,7 @@ function canonicalTimelineSnapshot(source) {
     rosterSpecs: Array.isArray(source.rosterSpecs)
       ? normalizePlanRosterSpecs(source.rosterSpecs)
       : (Array.isArray(state.rosterSpecs) ? normalizePlanRosterSpecs(state.rosterSpecs) : null),
-    placedCDs: migrateBlackfuseAssignmentRows(clonePlanValue(placed, {})),
+    placedCDs: migrateRowKeys(clonePlanValue(placed, {})),
     activeSetIds: Array.isArray(state.activeSetIds)
       ? [...new Set(state.activeSetIds)]
       : (Array.isArray(source.activeSetIds) ? [...new Set(source.activeSetIds)] : []),
