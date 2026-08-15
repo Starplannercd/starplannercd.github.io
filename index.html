@@ -6929,13 +6929,18 @@ function applyBossTimingOverrides() {
         boss.sections[0].abilities = sortBossAbilitiesByTime(boss, boss.sections[0].abilities);
       }
 
-      // Older Garrosh timing snapshots stored the numbered label and replace
-      // the built-in ability list on startup. Normalize it after every restore.
+      // Older Garrosh timing snapshots replace the built-in ability list on
+      // startup. Normalize renamed and removed P1 rows after every restore.
       if (boss.id === 'garrosh') {
-        boss.sections.forEach(function(section) {
+        boss.sections.forEach(function(section, sectionIndex) {
           section.abilities.forEach(function(ability) {
             if (ability.name === 'Siege Engineer CD 1') ability.name = 'Siege Engineer CD';
           });
+          if (sectionIndex === 0) {
+            section.abilities = section.abilities.filter(function(ability) {
+              return !/^Desecrate [234]$/i.test(ability.name || '');
+            });
+          }
         });
       }
     });
@@ -7063,6 +7068,11 @@ function migrateRowKeys(cds) {
       const parts = rowKey.split('-');
       const si = Number(parts[0]);
       const aiOrName = parts.slice(1).join('-');
+      let decodedAbilityName = aiOrName;
+      try { decodedAbilityName = decodeURIComponent(aiOrName); } catch(e) {}
+      // Desecrate 2-4 were removed from Garrosh P1. Drop their saved
+      // placements too so legacy plans and shared links cannot restore them.
+      if (bossId === 'garrosh' && si === 0 && /^Desecrate [234]$/i.test(decodedAbilityName)) return;
       // Check if it's the old format (numeric ability index)
       const ai = Number(aiOrName);
       if (!isNaN(ai) && boss.sections[si]?.abilities[ai]) {
@@ -7692,9 +7702,18 @@ async function wclLoadEncounters() {
 // Our guild on WCL (classic host): Professional — Pagle (US)
 var WCL_HOME_GUILD_ID = 798050;
 
+function wclIsVerifiedKillFight(fight) {
+  return !!fight
+    && fight.kill === true
+    && fight.inProgress !== true
+    && typeof fight.startTime === 'number'
+    && typeof fight.endTime === 'number'
+    && fight.endTime > fight.startTime;
+}
+
 async function wclFindLatestKill(bossName) {
   var attempts = [
-    { q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: WCL_HOME_GUILD_ID} }
+    { q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime kill inProgress}}}}}', v: {i: WCL_HOME_GUILD_ID} }
   ];
   // Also try guilds linked to the logged-in WCL account, then their personal logs
   try {
@@ -7703,9 +7722,9 @@ async function wclFindLatestKill(bossName) {
     if (cu) {
       (cu.guilds || []).forEach(function(g){
         if (g.id === WCL_HOME_GUILD_ID) return;
-        attempts.push({ q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: g.id} });
+        attempts.push({ q: 'query($i:Int!){reportData{reports(guildID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime kill inProgress}}}}}', v: {i: g.id} });
       });
-      attempts.push({ q: 'query($i:Int!){reportData{reports(userID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime}}}}}', v: {i: cu.id} });
+      attempts.push({ q: 'query($i:Int!){reportData{reports(userID:$i,limit:15){data{code fights(killType:Kills){id name startTime endTime kill inProgress}}}}}', v: {i: cu.id} });
     }
   } catch(e) { console.warn('WCL profile lookup failed:', e); }
 
@@ -7719,6 +7738,7 @@ async function wclFindLatestKill(bossName) {
     // differences can't hide them. Take the most recent matching kill.
     for (var ri = 0; ri < reps.length; ri++) {
       var fights = (reps[ri].fights || []).filter(function(f){
+        if (!wclIsVerifiedKillFight(f)) return false;
         var fn = (f.name || '').toLowerCase();
         return fn === bn || fn.indexOf(bn) !== -1 || bn.indexOf(fn) !== -1;
       });
@@ -7850,6 +7870,9 @@ async function syncBossFromLogs() {
     btn.textContent = 'Finding kill…';
     var kill = await wclFindLatestKill(boss.name);
     if (!kill) throw new Error('No kill of '+boss.name+' found in your guild\'s recent logs.');
+    if (!wclIsVerifiedKillFight(kill.fight)) {
+      throw new Error('Warcraft Logs did not return a verified kill. No timeline changes were made.');
+    }
     btn.textContent = 'Reading casts…';
     var casts = await wclFetchEnemyCasts(kill.code, kill.fight);
     var killDur = (kill.fight.endTime - kill.fight.startTime)/1000;
