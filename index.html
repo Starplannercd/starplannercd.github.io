@@ -3854,7 +3854,7 @@ const CUSTOM_ABILITY_DETAILS = {
 const DEFENSIVE_ABILITY_LIST = [
   '', 'Fade', 'Dispersion', 'Deterrence', 'Greater Invisibility', 'Temporal Shield',
   'Diffuse Magic', 'Fortifying Brew',
-  'Zen Meditation', 'Divine Protection', 'Unending Resolve',
+  'Zen Meditation', 'Divine Protection', 'Divine Shield', 'Unending Resolve',
   'Die by the Sword', 'Shield Wall',
 ];
 const DEFENSIVE_ABILITIES = {
@@ -3911,6 +3911,12 @@ const DEFENSIVE_ABILITIES = {
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divineprotection.jpg',
     cooldown:'1 min', duration:'10 sec',
     description:'Reduces magical damage taken by 40%. Glyph of Divine Protection changes this to 20% magical and 20% physical damage reduction.',
+  },
+  'Divine Shield': {
+    spellId:'642', who:'RETPALA1', short:'Bubble', color:'#f58cba', textColor:'#ffccee',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_holy_divineintervention.jpg',
+    cooldown:'5 min', duration:'8 sec',
+    description:'Protects you from all damage and spells for 8 seconds, but reduces damage dealt by 50%. Causes Forbearance for 1 minute.',
   },
   'Unending Resolve': {
     spellId:'104773', who:'LOCK1', short:'UR', color:'#9482c9', textColor:'#c8aaff',
@@ -5865,6 +5871,7 @@ const DEFENSIVE_BADGE_ICONS = {
   'Deterrence':           'classicon_hunter',
   'Diffuse Magic':        'spell_monk_mistweaver_spec',
   'Fortifying Brew':      'spell_monk_mistweaver_spec',
+  'Divine Shield':        'spell_holy_auraoflight',
 };
 const DEFENSIVE_CLASS_NAMES = {
   'Fade': 'Priest', 'Dispersion': 'Priest',
@@ -5872,7 +5879,7 @@ const DEFENSIVE_CLASS_NAMES = {
   'Temporal Shield': 'Mage', 'Greater Invisibility': 'Mage',
   'Deterrence': 'Hunter',
   'Diffuse Magic': 'Monk', 'Fortifying Brew': 'Monk', 'Zen Meditation': 'Monk',
-  'Divine Protection': 'Paladin',
+  'Divine Protection': 'Paladin', 'Divine Shield': 'Paladin',
   'Die by the Sword': 'Warrior', 'Shield Wall': 'Warrior',
 };
 let VIEW_ROSTER = DEFAULT_ROSTER; // set by initViewMode so renderers can resolve specs
