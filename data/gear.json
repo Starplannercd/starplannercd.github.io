@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-15T13:02:08.020Z",
+  "fetchedAt": "2026-08-17T13:10:19.368Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
@@ -153,7 +153,7 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-08-10T13:48:53.490Z",
+      "fetchedAt": "2026-08-17T13:10:15.578Z",
       "items": [
         {
           "slot": "HEAD",
@@ -256,8 +256,8 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 104518,
-          "name": "Juggernaut's Focusing Crystal",
+          "id": 104649,
+          "name": "Curse of Hubris",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -771,7 +771,7 @@
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-08-10T13:48:55.071Z",
+      "fetchedAt": "2026-08-17T13:10:17.066Z",
       "items": [
         {
           "slot": "HEAD",
@@ -831,8 +831,8 @@
           "slot": "LEGS",
           "id": 99403,
           "name": "Legguards of the Unblinking Vigil",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
         },
@@ -930,7 +930,7 @@
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:12.315Z",
+      "fetchedAt": "2026-08-17T13:10:17.468Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1006,9 +1006,9 @@
         },
         {
           "slot": "HANDS",
-          "id": 96725,
-          "name": "Gloves of the Thousandfold Hells",
-          "ilvl": 543,
+          "id": 99053,
+          "name": "Gloves of the Horned Nightmare",
+          "ilvl": 536,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "HAND"
