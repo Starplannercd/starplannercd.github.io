@@ -116,6 +116,7 @@ try {
   process.exit(1);
 }
 
+const runAt = new Date().toISOString();
 const out = { fetchedAt: previous.fetchedAt || null, characters: {} };
 let okCount = 0;
 let changed = false;
@@ -125,13 +126,22 @@ for (const ch of roster.characters) {
   const prev = (previous.characters && previous.characters[ch.name]) || null;
   try {
     const items = await fetchCharacter(token, roster.region, realm, ch.name);
-    out.characters[ch.name] = { ok: true, fetchedAt: new Date().toISOString(), items };
+    out.characters[ch.name] = {
+      ok: true,
+      checkedAt: runAt,
+      changedAt: prev ? prev.changedAt || prev.fetchedAt || runAt : runAt,
+      // Kept as a compatibility alias for older page builds.
+      fetchedAt: runAt,
+      items,
+    };
     okCount++;
     console.log(`  OK   ${ch.name} (${items.length} items)`);
   } catch (e) {
     out.characters[ch.name] = {
       ok: false,
       error: e.message,
+      checkedAt: prev ? prev.checkedAt || prev.fetchedAt : null,
+      changedAt: prev ? prev.changedAt || prev.fetchedAt : null,
       fetchedAt: prev ? prev.fetchedAt : null,
       items: prev ? prev.items || [] : [],
     };
@@ -147,8 +157,9 @@ for (const ch of roster.characters) {
   const entry = out.characters[ch.name];
   const prev = (previous.characters && previous.characters[ch.name]) || null;
   if (entry.ok) {
-    if (!prev || !prev.ok || JSON.stringify(prev.items) !== JSON.stringify(entry.items)) changed = true;
-    else entry.fetchedAt = prev.fetchedAt; // identical -> keep old timestamp, keep diff quiet
+    const itemsChanged = !prev || JSON.stringify(prev.items || []) !== JSON.stringify(entry.items);
+    if (itemsChanged) entry.changedAt = runAt;
+    if (!prev || !prev.ok || itemsChanged) changed = true;
   } else if (!prev || prev.ok || prev.error !== entry.error) {
     changed = true;
   }
@@ -159,7 +170,8 @@ if (okCount === 0) {
   process.exit(1);
 }
 
-if (changed) out.fetchedAt = new Date().toISOString();
+// This is the age of the latest successful refresh, not the latest gear change.
+out.fetchedAt = runAt;
 
 fs.writeFileSync(GEAR, JSON.stringify(out, null, 2) + '\n');
 console.log(`Wrote data/gear.json (${okCount}/${roster.characters.length} characters OK, changed=${changed})`);

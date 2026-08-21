@@ -610,8 +610,9 @@ function renderRaiders() {
     html += '<div class="raider-card">';
     html += '<div class="raider-head">';
     html += '<span class="raider-name" style="color:' + col + '">' + esc(ch.name) + '</span>';
+    const checkedAt = entry && (entry.checkedAt || entry.fetchedAt);
     if (entry && entry.ok === false) html += '<span class="badge err" title="' + esc(entry.error || '') + '">FETCH FAILED' + (entry.items && entry.items.length ? ' — OLD DATA' : '') + '</span>';
-    else if (entry && entry.fetchedAt && Date.now() - new Date(entry.fetchedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(entry.fetchedAt).toUpperCase() + '</span>';
+    else if (checkedAt && Date.now() - new Date(checkedAt).getTime() > 9 * 864e5) html += '<span class="badge stale">DATA ' + relTime(checkedAt).toUpperCase() + '</span>';
     if (rows) {
       const counted = rows.filter((r) => r.status !== 'needsId' && r.bis.source !== GOAL_BOSS);
       const got = counted.filter((r) => r.status === 'obtained' || r.status === 'good').length;
