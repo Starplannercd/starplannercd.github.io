@@ -1,9 +1,11 @@
 {
-  "fetchedAt": "2026-08-17T13:10:19.368Z",
+  "fetchedAt": "2026-08-21T00:26:19.673Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:09.475Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-03T15:21:09.475Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -153,7 +155,9 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "fetchedAt": "2026-08-17T13:10:15.578Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-21T00:26:19.673Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -274,8 +278,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102245,
-          "name": "Qian-Le, Courage of Niuzao",
+          "id": 102248,
+          "name": "Fen-Yu, Fury of Xuen",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -303,7 +307,9 @@
     },
     "Starship": {
       "ok": true,
-      "fetchedAt": "2026-07-20T13:55:30.117Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-21T00:26:19.673Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -325,9 +331,9 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99018,
+          "id": 99120,
           "name": "Mantle of the Ternion Glory",
-          "ilvl": 536,
+          "ilvl": 561,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
@@ -442,18 +448,29 @@
         },
         {
           "slot": "MAIN_HAND",
-          "id": 104503,
-          "name": "Drakebinder Greatstaff",
+          "id": 104598,
+          "name": "Immaculately Preserved Wand",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
-          "invType": "TWOHWEAPON"
+          "invType": "RANGEDRIGHT"
+        },
+        {
+          "slot": "OFF_HAND",
+          "id": 104448,
+          "name": "Purehearted Cricket Cage",
+          "ilvl": 580,
+          "upgrade": 14,
+          "quality": "EPIC",
+          "invType": "HOLDABLE"
         }
       ]
     },
     "Brewcocky": {
       "ok": true,
-      "fetchedAt": "2026-08-15T13:02:04.973Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-15T13:02:04.973Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -612,7 +629,9 @@
     },
     "Ixiom": {
       "ok": true,
-      "fetchedAt": "2026-07-27T15:17:52.061Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-07-27T15:17:52.061Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -771,7 +790,9 @@
     },
     "Vynunaara": {
       "ok": true,
-      "fetchedAt": "2026-08-17T13:10:17.066Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-17T13:10:17.066Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -930,7 +951,9 @@
     },
     "Zakar": {
       "ok": true,
-      "fetchedAt": "2026-08-17T13:10:17.468Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-17T13:10:17.468Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1080,7 +1103,9 @@
     },
     "Nothot": {
       "ok": true,
-      "fetchedAt": "2026-08-10T13:48:55.912Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-10T13:48:55.912Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1230,7 +1255,9 @@
     },
     "Beantotem": {
       "ok": true,
-      "fetchedAt": "2026-07-24T02:11:36.274Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-07-24T02:11:36.274Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1380,7 +1407,9 @@
     },
     "Skullhammer": {
       "ok": true,
-      "fetchedAt": "2026-08-03T15:21:13.830Z",
+      "checkedAt": "2026-08-21T00:26:19.673Z",
+      "changedAt": "2026-08-03T15:21:13.830Z",
+      "fetchedAt": "2026-08-21T00:26:19.673Z",
       "items": [
         {
           "slot": "HEAD",
