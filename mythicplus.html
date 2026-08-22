@@ -258,6 +258,30 @@
   }
   .route-row.boss { border-color: rgba(166,121,232,.34); background: linear-gradient(90deg, rgba(166,121,232,.11), transparent 54%), var(--panel); }
   .route-row.drop-over { border-color: var(--ice); box-shadow: inset 0 0 0 1px rgba(121,216,242,.25), 0 0 18px rgba(121,216,242,.09); }
+  .boss-abilities {
+    margin: -1px 8px 7px 28px;
+    padding: 4px 0 1px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-left: 2px solid rgba(166,121,232,.32);
+  }
+  .boss-ability-row {
+    display: grid;
+    grid-template-columns: 74px 252px minmax(270px, 1fr);
+    gap: 10px;
+    align-items: stretch;
+    min-height: 58px;
+    padding: 6px 9px;
+    border: 1px solid rgba(166,121,232,.16);
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(166,121,232,.055), transparent 48%), #0e161b;
+  }
+  .boss-ability-row.drop-over { border-color: var(--ice); box-shadow: inset 0 0 0 1px rgba(121,216,242,.25), 0 0 18px rgba(121,216,242,.09); }
+  .boss-ability-row .arrival { color: #c9aef0; font-size: 15px; }
+  .boss-ability-row .pack-name { color: #d7c6ed; }
+  .ability-count { color: var(--muted2); font-weight: 700; }
+  .estimate-tag { color: #917daf; }
   .time-cell { display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--line); }
   .arrival { color: var(--ice); font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
   .pull-number { margin-top: 3px; color: var(--muted2); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
@@ -317,7 +341,8 @@
     .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
     .palette { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .route-head { display: none; }
-    .route-row { grid-template-columns: 64px minmax(180px, .8fr) minmax(230px, 1fr); }
+    .route-row, .boss-ability-row { grid-template-columns: 64px minmax(180px, .8fr) minmax(230px, 1fr); }
+    .boss-abilities { margin-left: 12px; }
   }
 </style>
 </head>
@@ -366,7 +391,7 @@
 
       <div class="notice">
         <span>Early-season estimate:</span>
-        <span>the route order follows the current Skandar +10–15 route. Boss checkpoints are normalized from a verified live run; trash checkpoints are estimates and scale with your selected finish time.</span>
+        <span>the route order follows the current Skandar +10–15 route. Boss checkpoints are normalized from a verified live run; trash checkpoints and boss ability casts are planning estimates that scale with your selected finish time.</span>
         <a href="https://keystone.guru/route/altar-of-fangs/xwt8Pza/skandar-tank-altar-of-fangs-10-to-15-keys" target="_blank" rel="noreferrer">Open route</a>
       </div>
 
@@ -406,15 +431,39 @@ const ROUTE = [
   { id:4,  at:205,  name:'Lower ritual pack', detail:'6 Ravenous Descendants · 2 Primal Serpents · Ritual Chieftain' },
   { id:5,  at:270,  name:'Harrower approach', detail:'Ritual Chieftain · 2 Primal Serpents · 2 Ravenous Descendants' },
   { id:6,  at:335,  name:'Twin Harrowers', detail:'2 Twinfang Harrowers', tag:'Dangerous' },
-  { id:7,  at:360,  name:"Rav'i", detail:'Ravenous Stomp · Triple Shot · Regurgitate', boss:true, tag:'Boss 1' },
+  { id:7,  at:360,  name:"Rav'i", detail:'Ravenous Stomp · Triple Shot · Ssscavenging', boss:true, tag:'Boss 1', abilities:[
+    { id:'stomp-1', offset:20,  name:'Ravenous Stomp', count:1, detail:'Heavy group-wide damage' },
+    { id:'triple-1', offset:43, name:'Triple Shot', count:1, detail:'Three targeted player hits' },
+    { id:'scavenge-1', offset:65, name:'Ssscavenging', count:1, detail:'Shield phase · repeated group damage' },
+    { id:'stomp-2', offset:92,  name:'Ravenous Stomp', count:2, detail:'Heavy group-wide damage' },
+    { id:'triple-2', offset:116, name:'Triple Shot', count:2, detail:'Three targeted player hits' },
+    { id:'scavenge-2', offset:139, name:'Ssscavenging', count:2, detail:'Shield phase · repeated group damage' },
+    { id:'stomp-3', offset:166, name:'Ravenous Stomp', count:3, detail:'Heavy group-wide damage' },
+    { id:'triple-3', offset:190, name:'Triple Shot', count:3, detail:'Three targeted player hits' },
+  ] },
   { id:8,  at:575,  name:'Mutation entry', detail:'Rattling Writhe · 3 High Evolutionists · 4 Bloodletters', tag:'Lust candidate' },
   { id:9,  at:650,  name:'Evolutionist hall', detail:'Rattling Writhe · High Evolutionist · 6 Bloodletters' },
-  { id:10, at:785,  name:'The Writhing Coil', detail:'Coil chamber pack · Toxic Atrophy · Synchronized Venom', boss:true, tag:'Boss 2' },
+  { id:10, at:785,  name:'The Writhing Coil', detail:'Synchronized Venom · Death Rattle · Uncoil', boss:true, tag:'Boss 2', abilities:[
+    { id:'venom-1', offset:18, name:'Synchronized Venom', count:1, detail:'Group-wide venom damage' },
+    { id:'rattle-1', offset:45, name:'Death Rattle', count:1, detail:'Heavy ticking group damage' },
+    { id:'uncoil-1', offset:71, name:'Uncoil', count:1, detail:'Five-coil intermission' },
+    { id:'venom-2', offset:100, name:'Synchronized Venom', count:2, detail:'Group-wide venom damage' },
+    { id:'rattle-2', offset:127, name:'Death Rattle', count:2, detail:'Heavy ticking group damage' },
+    { id:'uncoil-2', offset:151, name:'Uncoil', count:2, detail:'Five-coil intermission' },
+  ] },
   { id:11, at:960,  name:'Inner altar', detail:'Ascendant Serpent · 4 High Evolutionists · 3 Blades', tag:'Miniboss' },
   { id:12, at:1045, name:'Stair blades', detail:'2 Blades of the Altar' },
   { id:13, at:1115, name:"Ula'tek's Chosen", detail:"Ula'tek's Chosen · 6 Living Venom · 4 Blades", tag:'Healing check' },
   { id:14, at:1210, name:'Final trash', detail:'Twinfang Harrower · 2 Primal Serpents · 4 Blades', tag:'Dangerous' },
-  { id:15, at:1295, name:"Zul'jan", detail:"Final guards · Ritual of the Fang · Chop Down", boss:true, tag:'Boss 3' },
+  { id:15, at:1295, name:"Zul'jan", detail:'Ritual of the Fang · Ritual Venom · Chop Down', boss:true, tag:'Boss 3', abilities:[
+    { id:'ritual-1', offset:22, name:'Ritual of the Fang', count:1, detail:'Beam soaks · major group damage' },
+    { id:'chop-1', offset:53, name:'Chop Down', count:1, detail:'Tank buster' },
+    { id:'ritual-2', offset:78, name:'Ritual of the Fang', count:2, detail:'Beam soaks · major group damage' },
+    { id:'chop-2', offset:109, name:'Chop Down', count:2, detail:'Tank buster' },
+    { id:'ritual-3', offset:134, name:'Ritual of the Fang', count:3, detail:'Beam soaks · major group damage' },
+    { id:'chop-3', offset:165, name:'Chop Down', count:3, detail:'Tank buster' },
+    { id:'ritual-4', offset:190, name:'Ritual of the Fang', count:4, detail:'Beam soaks · major group damage' },
+  ] },
 ];
 
 const STARTER_CDS = [
@@ -515,43 +564,66 @@ function renderRoute() {
     row.dataset.stepId = step.id;
     const tag = step.tag ? `<span class="tag">${escapeHtml(step.tag)}</span>` : '';
     row.innerHTML = `<div class="time-cell"><div class="arrival">${formatTime(scaledTime(step.at))}</div><div class="pull-number">${step.boss ? 'Boss pull' : `Pull ${step.id}`}</div></div><div class="pack-cell"><div class="pack-name">${escapeHtml(step.name)}${tag}</div><div class="pack-detail" title="${escapeHtml(step.detail)}">${escapeHtml(step.detail)}</div></div><div class="assign-cell"></div>`;
-    const target = row.querySelector('.assign-cell');
-    const assignments = state.assignments[step.id] || [];
-    if (!assignments.length) target.innerHTML = '<span class="assign-empty">Drop cooldowns here</span>';
-
-    assignments.forEach(assignment => {
-      const cd = cds.get(assignment.cdId);
-      if (!cd) return;
-      const el = document.createElement('div');
-      const conflict = conflictIds.has(assignment.uid);
-      el.className = `assignment${conflict ? ' conflict' : ''}`;
-      el.style.setProperty('--cd', cd.color);
-      const warning = conflict ? '<span class="conflict-dot"></span>' : '';
-      el.innerHTML = `${warning}<div class="assignment-name">${escapeHtml(cd.name)}</div><div class="assignment-owner">${escapeHtml(cd.owner)} · ready +${formatRecharge(cd.cooldown)}</div><button class="assignment-remove" title="Remove" aria-label="Remove">×</button>`;
-      if (conflict) el.title = 'This cooldown is assigned again before it has recharged.';
-      el.querySelector('button').addEventListener('click', () => removeAssignment(step.id, assignment.uid));
-      target.appendChild(el);
-    });
-
-    row.addEventListener('dragover', e => { e.preventDefault(); row.classList.add('drop-over'); });
-    row.addEventListener('dragleave', e => { if (!row.contains(e.relatedTarget)) row.classList.remove('drop-over'); });
-    row.addEventListener('drop', e => {
-      e.preventDefault();
-      row.classList.remove('drop-over');
-      const cdId = e.dataTransfer.getData('text/starplanner-cd') || e.dataTransfer.getData('text/plain');
-      if (cds.has(cdId)) addAssignment(step.id, cdId);
-    });
+    renderAssignmentTarget(row, row.querySelector('.assign-cell'), String(step.id), cds, conflictIds);
     list.appendChild(row);
+
+    if (step.abilities?.length) {
+      const abilityList = document.createElement('div');
+      abilityList.className = 'boss-abilities';
+      step.abilities.forEach(ability => {
+        const abilityKey = `boss:${step.id}:${ability.id}`;
+        const abilityRow = document.createElement('div');
+        abilityRow.className = 'boss-ability-row';
+        abilityRow.dataset.targetKey = abilityKey;
+        abilityRow.innerHTML = `<div class="time-cell"><div class="arrival">${formatTime(scaledTime(step.at + ability.offset))}</div><div class="pull-number estimate-tag">Est. cast</div></div><div class="pack-cell"><div class="pack-name">${escapeHtml(ability.name)} <span class="ability-count">#${ability.count}</span></div><div class="pack-detail" title="${escapeHtml(ability.detail)}">${escapeHtml(ability.detail)}</div></div><div class="assign-cell"></div>`;
+        renderAssignmentTarget(abilityRow, abilityRow.querySelector('.assign-cell'), abilityKey, cds, conflictIds);
+        abilityList.appendChild(abilityRow);
+      });
+      list.appendChild(abilityList);
+    }
+  });
+}
+
+function renderAssignmentTarget(dropRow, target, targetKey, cds, conflictIds) {
+  const assignments = state.assignments[targetKey] || [];
+  if (!assignments.length) target.innerHTML = '<span class="assign-empty">Drop cooldowns here</span>';
+
+  assignments.forEach(assignment => {
+    const cd = cds.get(assignment.cdId);
+    if (!cd) return;
+    const el = document.createElement('div');
+    const conflict = conflictIds.has(assignment.uid);
+    el.className = `assignment${conflict ? ' conflict' : ''}`;
+    el.style.setProperty('--cd', cd.color);
+    const warning = conflict ? '<span class="conflict-dot"></span>' : '';
+    el.innerHTML = `${warning}<div class="assignment-name">${escapeHtml(cd.name)}</div><div class="assignment-owner">${escapeHtml(cd.owner)} · ready +${formatRecharge(cd.cooldown)}</div><button class="assignment-remove" title="Remove" aria-label="Remove">×</button>`;
+    if (conflict) el.title = 'This cooldown is assigned again before it has recharged.';
+    el.querySelector('button').addEventListener('click', () => removeAssignment(targetKey, assignment.uid));
+    target.appendChild(el);
+  });
+
+  dropRow.addEventListener('dragover', e => { e.preventDefault(); dropRow.classList.add('drop-over'); });
+  dropRow.addEventListener('dragleave', e => { if (!dropRow.contains(e.relatedTarget)) dropRow.classList.remove('drop-over'); });
+  dropRow.addEventListener('drop', e => {
+    e.preventDefault();
+    dropRow.classList.remove('drop-over');
+    const cdId = e.dataTransfer.getData('text/starplanner-cd') || e.dataTransfer.getData('text/plain');
+    if (cds.has(cdId)) addAssignment(targetKey, cdId);
   });
 }
 
 function findConflicts(cds) {
   const byCd = new Map();
   ROUTE.forEach(step => {
-    (state.assignments[step.id] || []).forEach(a => {
-      if (!byCd.has(a.cdId)) byCd.set(a.cdId, []);
-      byCd.get(a.cdId).push({ ...a, at:scaledTime(step.at) });
-    });
+    collectAssignments(step.id, step.at);
+    (step.abilities || []).forEach(ability => collectAssignments(`boss:${step.id}:${ability.id}`, step.at + ability.offset));
+
+    function collectAssignments(targetKey, referenceAt) {
+      (state.assignments[targetKey] || []).forEach(a => {
+        if (!byCd.has(a.cdId)) byCd.set(a.cdId, []);
+        byCd.get(a.cdId).push({ ...a, at:scaledTime(referenceAt) });
+      });
+    }
   });
   const conflicts = new Set();
   byCd.forEach((items, cdId) => {
@@ -568,15 +640,15 @@ function findConflicts(cds) {
   return conflicts;
 }
 
-function addAssignment(stepId, cdId) {
-  if (!state.assignments[stepId]) state.assignments[stepId] = [];
-  state.assignments[stepId].push({ uid:`a${Date.now()}${Math.random().toString(16).slice(2)}`, cdId });
+function addAssignment(targetKey, cdId) {
+  if (!state.assignments[targetKey]) state.assignments[targetKey] = [];
+  state.assignments[targetKey].push({ uid:`a${Date.now()}${Math.random().toString(16).slice(2)}`, cdId });
   saveState();
   renderRoute();
 }
 
-function removeAssignment(stepId, uid) {
-  state.assignments[stepId] = (state.assignments[stepId] || []).filter(a => a.uid !== uid);
+function removeAssignment(targetKey, uid) {
+  state.assignments[targetKey] = (state.assignments[targetKey] || []).filter(a => a.uid !== uid);
   saveState();
   renderRoute();
 }
