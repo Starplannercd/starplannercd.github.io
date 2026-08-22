@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarPlanner — Mythic+ Cooldown Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Numen';
+    src: url('fonts/Numen.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --bg: #080d11;
+    --panel: #0d141a;
+    --panel2: #111b22;
+    --line: #1f303a;
+    --line2: #2b4350;
+    --text: #e7f0f4;
+    --muted: #71838d;
+    --muted2: #455761;
+    --ice: #79d8f2;
+    --teal: #25c9b0;
+    --purple: #a679e8;
+    --gold: #dfb05d;
+    --danger: #ee6c74;
+    --ok: #57d396;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); }
+  body { font-family: Inter, system-ui, sans-serif; font-size: 13px; }
+  button, input { font: inherit; }
+
+  .topbar {
+    min-height: 58px;
+    padding: 9px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 2px solid var(--ice);
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #10191f, #090f13);
+    box-shadow: 0 6px 24px rgba(0,0,0,.36);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 208px;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    color: var(--ice);
+    filter: drop-shadow(0 0 7px rgba(121,216,242,.35));
+  }
+  .brand-title {
+    font-family: Numen, Inter, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: .07em;
+    color: #f2fbff;
+  }
+  .brand-sub {
+    margin-top: 4px;
+    color: var(--ice);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .dungeon-select {
+    min-width: 210px;
+    padding: 8px 34px 8px 11px;
+    color: var(--text);
+    border: 1px solid var(--line2);
+    border-radius: 7px;
+    background: var(--panel2);
+    font-weight: 700;
+  }
+
+  .pace-bar {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .pace-copy { text-align: right; }
+  .pace-label { color: var(--muted); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+  .pace-time { color: var(--ice); font-size: 15px; font-weight: 800; }
+  #paceRange { width: 150px; accent-color: var(--ice); }
+  .preset-group { display: flex; gap: 4px; }
+
+  .small-btn, .link-btn {
+    border: 1px solid var(--line2);
+    color: var(--muted);
+    background: #10191f;
+    border-radius: 6px;
+    padding: 6px 9px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: .14s ease;
+  }
+  .small-btn:hover, .link-btn:hover { color: var(--ice); border-color: #477787; background: #13222a; }
+  .small-btn.active { color: #071116; border-color: var(--ice); background: var(--ice); font-weight: 800; }
+
+  .layout {
+    min-height: calc(100vh - 58px);
+    display: grid;
+    grid-template-columns: 250px minmax(660px, 1fr);
+  }
+
+  .sidebar {
+    border-right: 1px solid var(--line);
+    background: #0a1014;
+    padding: 15px 12px 24px;
+    position: sticky;
+    top: 58px;
+    height: calc(100vh - 58px);
+    overflow-y: auto;
+  }
+  .eyebrow { color: var(--ice); font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .sidebar h2 { font-size: 14px; margin: 5px 0 4px; }
+  .sidebar-copy { color: var(--muted); font-size: 11px; line-height: 1.45; margin-bottom: 14px; }
+  .palette { display: flex; flex-direction: column; gap: 6px; }
+
+  .cd-chip {
+    --cd: var(--ice);
+    min-height: 48px;
+    padding: 7px 9px 7px 8px;
+    display: grid;
+    grid-template-columns: 31px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid color-mix(in srgb, var(--cd) 30%, var(--line));
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--cd) 13%, transparent), transparent 64%),
+      #10171c;
+    cursor: grab;
+    user-select: none;
+    transition: transform .12s, border-color .12s, box-shadow .12s;
+  }
+  .cd-chip:hover { transform: translateY(-1px); border-color: var(--cd); box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+  .cd-chip:active { cursor: grabbing; }
+  .cd-icon {
+    width: 31px;
+    height: 31px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    color: #071014;
+    background: var(--cd);
+    font-size: 10px;
+    font-weight: 900;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--cd) 30%, transparent);
+  }
+  .cd-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 11px; font-weight: 700; }
+  .cd-owner { margin-top: 2px; color: var(--muted); font-size: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .cd-recharge { color: var(--cd); font-size: 9px; font-weight: 800; }
+  .add-cd { width: 100%; margin-top: 9px; }
+
+  .content { min-width: 0; padding: 18px 20px 50px; }
+  .hero {
+    min-height: 154px;
+    padding: 20px 22px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background:
+      linear-gradient(90deg, rgba(8,13,17,.96) 0%, rgba(8,13,17,.78) 48%, rgba(8,13,17,.25) 100%),
+      url('https://cdn.raiderio.net/images/dungeons/expansion11/base/altar-of-fangs.jpg') center 39% / cover;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 50%, rgba(8,13,17,.85));
+  }
+  .hero-copy { position: relative; z-index: 1; max-width: 650px; }
+  .hero h1 {
+    font-family: Numen, Inter, sans-serif;
+    margin: 7px 0 5px;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: .96;
+    letter-spacing: .025em;
+    color: var(--ice);
+    text-shadow: 0 2px 20px rgba(0,0,0,.8);
+  }
+  .hero-sub { color: #bfd0d7; line-height: 1.5; max-width: 650px; }
+  .hero-meta { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 13px; }
+  .meta-pill { padding: 4px 8px; border-radius: 5px; border: 1px solid rgba(121,216,242,.22); color: #b8d6df; background: rgba(8,13,17,.64); font-size: 10px; }
+  .meta-pill strong { color: var(--ice); }
+
+  .notice {
+    margin: 11px 0;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid var(--gold);
+    background: rgba(223,176,93,.075);
+    color: #b9a883;
+    font-size: 10.5px;
+    line-height: 1.45;
+  }
+  .notice a { color: #e6c77f; }
+
+  .route-rail {
+    height: 58px;
+    margin: 14px 0 9px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+  }
+  .rail-inner { position: relative; height: 26px; flex: 1; }
+  .rail-line { position: absolute; left: 0; right: 0; top: 12px; height: 2px; background: linear-gradient(90deg, var(--ice), var(--teal)); opacity: .52; }
+  .rail-mark { position: absolute; top: 4px; width: 17px; height: 17px; border: 2px solid var(--panel); border-radius: 50%; background: var(--purple); transform: translateX(-50%); box-shadow: 0 0 0 1px rgba(166,121,232,.45), 0 0 10px rgba(166,121,232,.35); }
+  .rail-mark.finish { background: var(--teal); box-shadow: 0 0 0 1px rgba(37,201,176,.45), 0 0 10px rgba(37,201,176,.35); }
+  .rail-label { position: absolute; top: -13px; transform: translateX(-50%); color: var(--muted); font-size: 9px; white-space: nowrap; }
+
+  .route-head {
+    display: grid;
+    grid-template-columns: 74px 252px minmax(270px, 1fr);
+    gap: 10px;
+    padding: 7px 11px;
+    color: var(--muted2);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .route-list { display: flex; flex-direction: column; gap: 5px; }
+  .route-row {
+    display: grid;
+    grid-template-columns: 74px 252px minmax(270px, 1fr);
+    gap: 10px;
+    align-items: stretch;
+    min-height: 66px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: linear-gradient(90deg, rgba(121,216,242,.025), transparent 46%), var(--panel);
+  }
+  .route-row.boss { border-color: rgba(166,121,232,.34); background: linear-gradient(90deg, rgba(166,121,232,.11), transparent 54%), var(--panel); }
+  .route-row.drop-over { border-color: var(--ice); box-shadow: inset 0 0 0 1px rgba(121,216,242,.25), 0 0 18px rgba(121,216,242,.09); }
+  .time-cell { display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--line); }
+  .arrival { color: var(--ice); font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+  .pull-number { margin-top: 3px; color: var(--muted2); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+  .pack-cell { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+  .pack-name { display: flex; align-items: center; gap: 7px; color: #dbe9ef; font-size: 12px; font-weight: 800; }
+  .boss .pack-name { color: #d6bdf7; font-family: Numen, Inter, sans-serif; font-size: 14px; letter-spacing: .03em; }
+  .tag { padding: 2px 5px; border: 1px solid rgba(223,176,93,.25); border-radius: 4px; color: var(--gold); background: rgba(223,176,93,.07); font-family: Inter, sans-serif; font-size: 8px; letter-spacing: .07em; text-transform: uppercase; }
+  .pack-detail { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .assign-cell {
+    min-width: 0;
+    padding: 5px 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    border: 1px dashed #263943;
+    border-radius: 7px;
+    background: rgba(0,0,0,.12);
+  }
+  .assign-empty { color: var(--muted2); font-size: 10px; pointer-events: none; }
+  .assignment {
+    --cd: var(--ice);
+    min-width: 96px;
+    max-width: 170px;
+    padding: 5px 25px 5px 7px;
+    border: 1px solid color-mix(in srgb, var(--cd) 45%, #22313a);
+    border-radius: 6px;
+    position: relative;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cd) 16%, transparent), transparent), #10181d;
+  }
+  .assignment-name { color: var(--cd); font-size: 9.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .assignment-owner { margin-top: 2px; color: #95a6af; font-size: 8.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .assignment-remove { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); border: 0; padding: 2px; color: var(--muted2); background: none; cursor: pointer; }
+  .assignment-remove:hover { color: var(--danger); }
+  .assignment.conflict { border-color: var(--danger); box-shadow: 0 0 0 1px rgba(238,108,116,.14); }
+  .conflict-dot { position: absolute; top: -4px; left: -4px; width: 9px; height: 9px; border: 2px solid var(--panel); border-radius: 50%; background: var(--danger); }
+
+  .footer-row { margin-top: 13px; display: flex; align-items: center; gap: 10px; color: var(--muted2); font-size: 10px; }
+  .footer-row .clear { margin-left: auto; color: #9f6870; }
+
+  .modal-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(2,5,7,.78); backdrop-filter: blur(5px); }
+  .modal { width: 390px; max-width: 100%; padding: 20px; border: 1px solid var(--line2); border-radius: 12px; background: #0f171c; box-shadow: 0 22px 70px rgba(0,0,0,.55); }
+  .modal h2 { margin: 0 0 4px; font-size: 16px; }
+  .modal p { margin: 0 0 15px; color: var(--muted); font-size: 11px; }
+  .field { margin-bottom: 11px; }
+  .field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+  .field input { width: 100%; padding: 9px 10px; border: 1px solid var(--line2); border-radius: 6px; outline: none; color: var(--text); background: #090f13; }
+  .field input:focus { border-color: var(--ice); }
+  .modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 7px; }
+  .primary { color: #061014; border-color: var(--ice); background: var(--ice); font-weight: 800; }
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .topbar { flex-wrap: wrap; }
+    .pace-bar { width: 100%; margin-left: 0; }
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    .palette { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .route-head { display: none; }
+    .route-row { grid-template-columns: 64px minmax(180px, .8fr) minmax(230px, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>
+      <div><div class="brand-title">STARPLANNER</div><div class="brand-sub">Mythic+ test</div></div>
+    </div>
+    <select class="dungeon-select" aria-label="Dungeon"><option>Altar of Fangs</option></select>
+    <a class="link-btn" href="index.html">Raid planner</a>
+    <div class="pace-bar">
+      <div class="pace-copy"><div class="pace-label">Expected finish</div><div id="paceTime" class="pace-time">26:00</div></div>
+      <input id="paceRange" type="range" min="22" max="30" step="0.5" value="26" aria-label="Expected completion time">
+      <div class="preset-group">
+        <button class="small-btn" data-pace="22">Fast</button>
+        <button class="small-btn active" data-pace="26">Baseline</button>
+        <button class="small-btn" data-pace="30">Timer</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="eyebrow">Cooldown palette</div>
+      <h2>Drag onto a route step</h2>
+      <div class="sidebar-copy">These starter chips are intentionally generic. Add your actual character cooldowns below and set their recharge time.</div>
+      <div id="palette" class="palette"></div>
+      <button id="addCdBtn" class="small-btn add-cd">+ Add a cooldown</button>
+    </aside>
+
+    <section class="content">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Midnight Season 2 · route prototype</div>
+          <h1>ALTAR OF FANGS</h1>
+          <div class="hero-sub">Plan major damage, healing, defensive and utility cooldowns against the expected arrival time of every pull and boss.</div>
+          <div class="hero-meta">
+            <span class="meta-pill"><strong>15</strong> route steps</span>
+            <span class="meta-pill"><strong>3</strong> bosses</span>
+            <span class="meta-pill"><strong>30:00</strong> live timer</span>
+            <span class="meta-pill">Current PUG baseline</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice">
+        <span>Early-season estimate:</span>
+        <span>the route order follows the current Skandar +10–15 route. Boss checkpoints are normalized from a verified live run; trash checkpoints are estimates and scale with your selected finish time.</span>
+        <a href="https://keystone.guru/route/altar-of-fangs/xwt8Pza/skandar-tank-altar-of-fangs-10-to-15-keys" target="_blank" rel="noreferrer">Open route</a>
+      </div>
+
+      <div class="route-rail"><div id="rail" class="rail-inner"></div></div>
+      <div class="route-head"><div>Arrival</div><div>Route step</div><div>Assigned cooldowns</div></div>
+      <div id="routeList" class="route-list"></div>
+
+      <div class="footer-row">
+        <span>Assignments save automatically in this browser.</span>
+        <span>A red marker means the cooldown is assigned again before it recharges.</span>
+        <button id="clearBtn" class="small-btn clear">Clear plan</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden">
+    <form id="cdForm" class="modal">
+      <h2>Add a cooldown</h2>
+      <p>Create the real cooldowns for the five characters in your group.</p>
+      <div class="field"><label for="cdName">Ability</label><input id="cdName" required placeholder="e.g. Avenging Wrath"></div>
+      <div class="field"><label for="cdOwner">Character / spec</label><input id="cdOwner" required placeholder="e.g. Ret paladin"></div>
+      <div class="field"><label for="cdSeconds">Recharge in seconds</label><input id="cdSeconds" required type="number" min="0" max="900" step="1" value="120"></div>
+      <div class="field"><label for="cdColor">Color</label><input id="cdColor" type="color" value="#79d8f2"></div>
+      <div class="modal-actions"><button id="cancelModal" type="button" class="small-btn">Cancel</button><button type="submit" class="small-btn primary">Add cooldown</button></div>
+    </form>
+  </div>
+
+<script>
+const REFERENCE_SECONDS = 26 * 60;
+const TIMER_SECONDS = 30 * 60;
+const STORAGE_KEY = 'starplanner_mplus_altar_v1';
+
+const ROUTE = [
+  { id:1,  at:10,   name:'Opening descendants', detail:'7 Ravenous Descendants · 2 Primal Serpents · Harrower · 3 Leeches', tag:'Lust candidate' },
+  { id:2,  at:70,   name:'Serpent approach', detail:'3 Primal Serpents · 2 Ravenous Descendants · Ritual Chieftain' },
+  { id:3,  at:135,  name:'Totem side', detail:'Ritual Chieftain · 3 Primal Serpents · 2 Descendants · Leeches', tag:'Tank check' },
+  { id:4,  at:205,  name:'Lower ritual pack', detail:'6 Ravenous Descendants · 2 Primal Serpents · Ritual Chieftain' },
+  { id:5,  at:270,  name:'Harrower approach', detail:'Ritual Chieftain · 2 Primal Serpents · 2 Ravenous Descendants' },
+  { id:6,  at:335,  name:'Twin Harrowers', detail:'2 Twinfang Harrowers', tag:'Dangerous' },
+  { id:7,  at:360,  name:"Rav'i", detail:'Ravenous Stomp · Triple Shot · Regurgitate', boss:true, tag:'Boss 1' },
+  { id:8,  at:575,  name:'Mutation entry', detail:'Rattling Writhe · 3 High Evolutionists · 4 Bloodletters', tag:'Lust candidate' },
+  { id:9,  at:650,  name:'Evolutionist hall', detail:'Rattling Writhe · High Evolutionist · 6 Bloodletters' },
+  { id:10, at:785,  name:'The Writhing Coil', detail:'Coil chamber pack · Toxic Atrophy · Synchronized Venom', boss:true, tag:'Boss 2' },
+  { id:11, at:960,  name:'Inner altar', detail:'Ascendant Serpent · 4 High Evolutionists · 3 Blades', tag:'Miniboss' },
+  { id:12, at:1045, name:'Stair blades', detail:'2 Blades of the Altar' },
+  { id:13, at:1115, name:"Ula'tek's Chosen", detail:"Ula'tek's Chosen · 6 Living Venom · 4 Blades", tag:'Healing check' },
+  { id:14, at:1210, name:'Final trash', detail:'Twinfang Harrower · 2 Primal Serpents · 4 Blades', tag:'Dangerous' },
+  { id:15, at:1295, name:"Zul'jan", detail:"Final guards · Ritual of the Fang · Chop Down", boss:true, tag:'Boss 3' },
+];
+
+const STARTER_CDS = [
+  { id:'lust', name:'Bloodlust / Heroism', owner:'Group', cooldown:600, color:'#d94f47', short:'BL' },
+  { id:'dps180', name:'Major DPS — 3 min', owner:'Choose player', cooldown:180, color:'#e6a34f', short:'3M' },
+  { id:'dps120', name:'Major DPS — 2 min', owner:'Choose player', cooldown:120, color:'#df7f55', short:'2M' },
+  { id:'dps90', name:'Major DPS — 90 sec', owner:'Choose player', cooldown:90, color:'#d46eb7', short:'90' },
+  { id:'tank', name:'Tank major', owner:'Tank', cooldown:120, color:'#77a8ed', short:'TNK' },
+  { id:'healer', name:'Healer major', owner:'Healer', cooldown:120, color:'#56cf91', short:'HLR' },
+  { id:'party', name:'Party defensive', owner:'Group', cooldown:120, color:'#9e7be9', short:'DR' },
+  { id:'personal', name:'Personal defensive', owner:'Choose player', cooldown:90, color:'#8f95a3', short:'DEF' },
+  { id:'stop', name:'AoE stop', owner:'Choose player', cooldown:60, color:'#35c7c0', short:'STOP' },
+  { id:'utility', name:'Dispel / utility', owner:'Choose player', cooldown:30, color:'#78cde7', short:'UTIL' },
+];
+
+let state = loadState();
+let paceSeconds = state.paceSeconds || REFERENCE_SECONDS;
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return {
+      paceSeconds: saved.paceSeconds,
+      customCds: Array.isArray(saved.customCds) ? saved.customCds : [],
+      assignments: saved.assignments && typeof saved.assignments === 'object' ? saved.assignments : {},
+    };
+  } catch (_) {
+    return { customCds:[], assignments:{} };
+  }
+}
+
+function saveState() {
+  state.paceSeconds = paceSeconds;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function allCds() { return [...STARTER_CDS, ...state.customCds]; }
+function scaledTime(referenceTime) { return Math.round(referenceTime * paceSeconds / REFERENCE_SECONDS); }
+
+function formatTime(seconds) {
+  seconds = Math.max(0, Math.round(seconds));
+  const m = Math.floor(seconds / 60);
+  return `${m}:${String(seconds % 60).padStart(2,'0')}`;
+}
+
+function formatRecharge(seconds) {
+  if (!seconds) return '—';
+  if (seconds % 60 === 0) return `${seconds / 60}m`;
+  if (seconds > 60) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+  return `${seconds}s`;
+}
+
+function renderPalette() {
+  const palette = document.getElementById('palette');
+  palette.innerHTML = '';
+  allCds().forEach(cd => {
+    const chip = document.createElement('div');
+    chip.className = 'cd-chip';
+    chip.draggable = true;
+    chip.style.setProperty('--cd', cd.color);
+    chip.innerHTML = `<div class="cd-icon">${escapeHtml(cd.short || initials(cd.name))}</div><div><div class="cd-name">${escapeHtml(cd.name)}</div><div class="cd-owner">${escapeHtml(cd.owner)}</div></div><div class="cd-recharge">${formatRecharge(cd.cooldown)}</div>`;
+    chip.addEventListener('dragstart', e => {
+      e.dataTransfer.effectAllowed = 'copy';
+      e.dataTransfer.setData('text/starplanner-cd', cd.id);
+      e.dataTransfer.setData('text/plain', cd.id);
+    });
+    palette.appendChild(chip);
+  });
+}
+
+function renderRail() {
+  const rail = document.getElementById('rail');
+  rail.innerHTML = '<div class="rail-line"></div>';
+  const markers = ROUTE.filter(r => r.boss).map(r => ({ label:r.name, at:scaledTime(r.at) }));
+  markers.push({ label:'Finish', at:paceSeconds, finish:true });
+  markers.forEach(mark => {
+    const pct = Math.min(100, mark.at / paceSeconds * 100);
+    const label = document.createElement('div');
+    label.className = 'rail-label';
+    label.style.left = `${pct}%`;
+    label.textContent = `${mark.label} · ${formatTime(mark.at)}`;
+    const dot = document.createElement('div');
+    dot.className = `rail-mark${mark.finish ? ' finish' : ''}`;
+    dot.style.left = `${pct}%`;
+    rail.append(label, dot);
+  });
+}
+
+function renderRoute() {
+  const list = document.getElementById('routeList');
+  const cds = new Map(allCds().map(cd => [cd.id, cd]));
+  const conflictIds = findConflicts(cds);
+  list.innerHTML = '';
+
+  ROUTE.forEach(step => {
+    const row = document.createElement('div');
+    row.className = `route-row${step.boss ? ' boss' : ''}`;
+    row.dataset.stepId = step.id;
+    const tag = step.tag ? `<span class="tag">${escapeHtml(step.tag)}</span>` : '';
+    row.innerHTML = `<div class="time-cell"><div class="arrival">${formatTime(scaledTime(step.at))}</div><div class="pull-number">${step.boss ? 'Boss pull' : `Pull ${step.id}`}</div></div><div class="pack-cell"><div class="pack-name">${escapeHtml(step.name)}${tag}</div><div class="pack-detail" title="${escapeHtml(step.detail)}">${escapeHtml(step.detail)}</div></div><div class="assign-cell"></div>`;
+    const target = row.querySelector('.assign-cell');
+    const assignments = state.assignments[step.id] || [];
+    if (!assignments.length) target.innerHTML = '<span class="assign-empty">Drop cooldowns here</span>';
+
+    assignments.forEach(assignment => {
+      const cd = cds.get(assignment.cdId);
+      if (!cd) return;
+      const el = document.createElement('div');
+      const conflict = conflictIds.has(assignment.uid);
+      el.className = `assignment${conflict ? ' conflict' : ''}`;
+      el.style.setProperty('--cd', cd.color);
+      const warning = conflict ? '<span class="conflict-dot"></span>' : '';
+      el.innerHTML = `${warning}<div class="assignment-name">${escapeHtml(cd.name)}</div><div class="assignment-owner">${escapeHtml(cd.owner)} · ready +${formatRecharge(cd.cooldown)}</div><button class="assignment-remove" title="Remove" aria-label="Remove">×</button>`;
+      if (conflict) el.title = 'This cooldown is assigned again before it has recharged.';
+      el.querySelector('button').addEventListener('click', () => removeAssignment(step.id, assignment.uid));
+      target.appendChild(el);
+    });
+
+    row.addEventListener('dragover', e => { e.preventDefault(); row.classList.add('drop-over'); });
+    row.addEventListener('dragleave', e => { if (!row.contains(e.relatedTarget)) row.classList.remove('drop-over'); });
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      row.classList.remove('drop-over');
+      const cdId = e.dataTransfer.getData('text/starplanner-cd') || e.dataTransfer.getData('text/plain');
+      if (cds.has(cdId)) addAssignment(step.id, cdId);
+    });
+    list.appendChild(row);
+  });
+}
+
+function findConflicts(cds) {
+  const byCd = new Map();
+  ROUTE.forEach(step => {
+    (state.assignments[step.id] || []).forEach(a => {
+      if (!byCd.has(a.cdId)) byCd.set(a.cdId, []);
+      byCd.get(a.cdId).push({ ...a, at:scaledTime(step.at) });
+    });
+  });
+  const conflicts = new Set();
+  byCd.forEach((items, cdId) => {
+    const cd = cds.get(cdId);
+    if (!cd || !cd.cooldown) return;
+    items.sort((a,b) => a.at - b.at);
+    for (let i=1; i<items.length; i++) {
+      if (items[i].at - items[i-1].at < cd.cooldown) {
+        conflicts.add(items[i].uid);
+        conflicts.add(items[i-1].uid);
+      }
+    }
+  });
+  return conflicts;
+}
+
+function addAssignment(stepId, cdId) {
+  if (!state.assignments[stepId]) state.assignments[stepId] = [];
+  state.assignments[stepId].push({ uid:`a${Date.now()}${Math.random().toString(16).slice(2)}`, cdId });
+  saveState();
+  renderRoute();
+}
+
+function removeAssignment(stepId, uid) {
+  state.assignments[stepId] = (state.assignments[stepId] || []).filter(a => a.uid !== uid);
+  saveState();
+  renderRoute();
+}
+
+function setPace(minutes) {
+  paceSeconds = Math.round(minutes * 60);
+  document.getElementById('paceRange').value = String(minutes);
+  document.getElementById('paceTime').textContent = formatTime(paceSeconds);
+  document.querySelectorAll('[data-pace]').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.pace) === Number(minutes)));
+  saveState();
+  renderRail();
+  renderRoute();
+}
+
+function initials(name) {
+  return name.split(/\s+/).slice(0,2).map(s => s[0] || '').join('').toUpperCase();
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+
+document.getElementById('paceRange').addEventListener('input', e => setPace(Number(e.target.value)));
+document.querySelectorAll('[data-pace]').forEach(btn => btn.addEventListener('click', () => setPace(Number(btn.dataset.pace))));
+
+const backdrop = document.getElementById('modalBackdrop');
+document.getElementById('addCdBtn').addEventListener('click', () => { backdrop.classList.remove('hidden'); document.getElementById('cdName').focus(); });
+document.getElementById('cancelModal').addEventListener('click', () => backdrop.classList.add('hidden'));
+backdrop.addEventListener('mousedown', e => { if (e.target === backdrop) backdrop.classList.add('hidden'); });
+document.getElementById('cdForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('cdName').value.trim();
+  const owner = document.getElementById('cdOwner').value.trim();
+  const cooldown = Number(document.getElementById('cdSeconds').value);
+  const color = document.getElementById('cdColor').value;
+  state.customCds.push({ id:`custom_${Date.now()}`, name, owner, cooldown, color, short:initials(name) || 'CD' });
+  saveState();
+  renderPalette();
+  backdrop.classList.add('hidden');
+  e.target.reset();
+  document.getElementById('cdSeconds').value = '120';
+  document.getElementById('cdColor').value = '#79d8f2';
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!Object.values(state.assignments).some(items => items && items.length)) return;
+  if (confirm('Clear every Altar of Fangs cooldown assignment?')) {
+    state.assignments = {};
+    saveState();
+    renderRoute();
+  }
+});
+
+setPace(paceSeconds / 60);
+renderPalette();
+</script>
+</body>
+</html>
