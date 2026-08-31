@@ -1,11 +1,11 @@
 {
-  "fetchedAt": "2026-08-29T16:46:52.055Z",
+  "fetchedAt": "2026-08-31T19:09:14.654Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-03T15:21:09.475Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -81,9 +81,9 @@
         },
         {
           "slot": "HANDS",
-          "id": 96533,
-          "name": "Rein-Binder's Fists",
-          "ilvl": 549,
+          "id": 103734,
+          "name": "Zoid's Molten Gauntlets",
+          "ilvl": 567,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
@@ -155,9 +155,9 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-29T16:46:52.055Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -251,9 +251,9 @@
         },
         {
           "slot": "FINGER_2",
-          "id": 96513,
-          "name": "Gore-Soaked Gear",
-          "ilvl": 549,
+          "id": 104562,
+          "name": "Ring of Restless Energy",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -278,8 +278,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102248,
-          "name": "Fen-Yu, Fury of Xuen",
+          "id": 102245,
+          "name": "Qian-Le, Courage of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -307,9 +307,9 @@
     },
     "Starship": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-29T16:46:52.055Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -331,10 +331,10 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99120,
-          "name": "Mantle of the Ternion Glory",
-          "ilvl": 561,
-          "upgrade": 8,
+          "id": 104423,
+          "name": "Ichor-Dripping Shoulderpads",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
@@ -349,10 +349,10 @@
         },
         {
           "slot": "CHEST",
-          "id": 99357,
-          "name": "Robes of the Ternion Glory",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104523,
+          "name": "Shock Pulse Robes",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "ROBE"
         },
@@ -394,10 +394,10 @@
         },
         {
           "slot": "HANDS",
-          "id": 99365,
-          "name": "Handwraps of the Ternion Glory",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104422,
+          "name": "Bolt-Burster Grips",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
         },
@@ -430,17 +430,17 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 104553,
-          "name": "Nazgrim's Burnished Insignia",
-          "ilvl": 580,
+          "id": 96516,
+          "name": "Cha-Ye's Essence of Brilliance",
+          "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
         {
           "slot": "BACK",
-          "id": 102247,
-          "name": "Jina-Kang, Kindness of Chi-Ji",
+          "id": 102246,
+          "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -468,9 +468,9 @@
     },
     "Brewcocky": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-15T13:02:04.973Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -528,8 +528,8 @@
         },
         {
           "slot": "FEET",
-          "id": 104471,
-          "name": "Boots of Broken Reliance",
+          "id": 104428,
+          "name": "Salt Water Sandals",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -546,10 +546,10 @@
         },
         {
           "slot": "HANDS",
-          "id": 99388,
-          "name": "Handwraps of Seven Sacred Seals",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104472,
+          "name": "Confident Grips",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
         },
@@ -573,8 +573,8 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 105109,
-          "name": "Thok's Acid-Grooved Tooth",
+          "id": 104924,
+          "name": "Purified Bindings of Immerseus",
           "ilvl": 542,
           "upgrade": 14,
           "quality": "EPIC",
@@ -591,8 +591,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102247,
-          "name": "Jina-Kang, Kindness of Chi-Ji",
+          "id": 102246,
+          "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -629,9 +629,9 @@
     },
     "Ixiom": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
       "changedAt": "2026-07-27T15:17:52.061Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -790,16 +790,16 @@
     },
     "Vynunaara": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-17T13:10:17.066Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 99402,
-          "name": "Headguard of the Unblinking Vigil",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104534,
+          "name": "Haromm's Horrifying Helm",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HEAD"
         },
@@ -814,10 +814,10 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 104459,
-          "name": "Quarantine Shoulderguards",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99404,
+          "name": "Spaulders of the Unblinking Vigil",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
@@ -951,9 +951,9 @@
     },
     "Zakar": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
-      "changedAt": "2026-08-17T13:10:17.468Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
+      "changedAt": "2026-08-31T19:09:14.654Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1029,10 +1029,10 @@
         },
         {
           "slot": "HANDS",
-          "id": 99053,
+          "id": 99424,
           "name": "Gloves of the Horned Nightmare",
-          "ilvl": 536,
-          "upgrade": 8,
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "HAND"
         },
@@ -1103,9 +1103,9 @@
     },
     "Nothot": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
       "changedAt": "2026-08-10T13:48:55.912Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1255,9 +1255,9 @@
     },
     "Beantotem": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
       "changedAt": "2026-07-24T02:11:36.274Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1407,9 +1407,9 @@
     },
     "Skullhammer": {
       "ok": true,
-      "checkedAt": "2026-08-29T16:46:52.055Z",
+      "checkedAt": "2026-08-31T19:09:14.654Z",
       "changedAt": "2026-08-03T15:21:13.830Z",
-      "fetchedAt": "2026-08-29T16:46:52.055Z",
+      "fetchedAt": "2026-08-31T19:09:14.654Z",
       "items": [
         {
           "slot": "HEAD",
