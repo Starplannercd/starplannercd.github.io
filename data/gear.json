@@ -1,18 +1,18 @@
 {
-  "fetchedAt": "2026-09-12T15:36:44.671Z",
+  "fetchedAt": "2026-09-14T18:05:50.531Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
-      "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "changedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 105488,
-          "name": "Thranok's Shattering Helm",
+          "id": 104590,
+          "name": "Helm of the Night Watchman",
           "ilvl": 580,
-          "upgrade": 8,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HEAD"
         },
@@ -27,9 +27,9 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 96427,
-          "name": "Shoulderguards of Centripetal Destruction",
-          "ilvl": 549,
+          "id": 104438,
+          "name": "Darkfallen Shoulderplates",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "SHOULDER"
@@ -81,9 +81,9 @@
         },
         {
           "slot": "HANDS",
-          "id": 103734,
+          "id": 105850,
           "name": "Zoid's Molten Gauntlets",
-          "ilvl": 567,
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
@@ -126,8 +126,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102250,
-          "name": "Qian-Ying, Fortitude of Niuzao",
+          "id": 102249,
+          "name": "Gong-Lu, Strength of Xuen",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -155,9 +155,9 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
-      "changedAt": "2026-09-12T15:36:44.671Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "changedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -269,8 +269,8 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 104531,
-          "name": "Haromm's Talisman",
+          "id": 104518,
+          "name": "Juggernaut's Focusing Crystal",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -278,8 +278,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102248,
-          "name": "Fen-Yu, Fury of Xuen",
+          "id": 102245,
+          "name": "Qian-Le, Courage of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -307,9 +307,9 @@
     },
     "Starship": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
-      "changedAt": "2026-09-05T15:19:35.541Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "changedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -403,9 +403,9 @@
         },
         {
           "slot": "FINGER_1",
-          "id": 96486,
-          "name": "Durumu's Captive Eyeball",
-          "ilvl": 549,
+          "id": 104427,
+          "name": "Seal of Eternal Sorrow",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -421,26 +421,26 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 105225,
+          "id": 104478,
           "name": "Prismatic Prison of Pride",
-          "ilvl": 567,
-          "upgrade": 8,
-          "quality": "EPIC",
-          "invType": "TRINKET"
-        },
-        {
-          "slot": "TRINKET_2",
-          "id": 104553,
-          "name": "Nazgrim's Burnished Insignia",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
         {
+          "slot": "TRINKET_2",
+          "id": 105117,
+          "name": "Dysmorphic Samophlange of Discontinuity",
+          "ilvl": 542,
+          "upgrade": 14,
+          "quality": "EPIC",
+          "invType": "TRINKET"
+        },
+        {
           "slot": "BACK",
-          "id": 102247,
-          "name": "Jina-Kang, Kindness of Chi-Ji",
+          "id": 102246,
+          "name": "Xing-Ho, Breath of Yu'lon",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -468,9 +468,9 @@
     },
     "Brewcocky": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -629,9 +629,9 @@
     },
     "Ixiom": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
-      "changedAt": "2026-09-12T15:36:44.671Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "changedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -734,10 +734,10 @@
         },
         {
           "slot": "FINGER_2",
-          "id": 95019,
-          "name": "Ra-den's Summoning Band",
-          "ilvl": 549,
-          "upgrade": 8,
+          "id": 104632,
+          "name": "Iyyokuk's Hereditary Seal",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
         },
@@ -799,9 +799,9 @@
     },
     "Vynunaara": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -960,9 +960,9 @@
     },
     "Zakar": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1112,9 +1112,9 @@
     },
     "Nothot": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
       "changedAt": "2026-08-10T13:48:55.912Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1264,9 +1264,9 @@
     },
     "Beantotem": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
       "changedAt": "2026-07-24T02:11:36.274Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1416,9 +1416,9 @@
     },
     "Skullhammer": {
       "ok": true,
-      "checkedAt": "2026-09-12T15:36:44.671Z",
-      "changedAt": "2026-08-03T15:21:13.830Z",
-      "fetchedAt": "2026-09-12T15:36:44.671Z",
+      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "changedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-14T18:05:50.531Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1431,10 +1431,10 @@
         },
         {
           "slot": "NECK",
-          "id": 103917,
+          "id": 104570,
           "name": "Malkorok's Tainted Dog Tags",
-          "ilvl": 567,
-          "upgrade": 14,
+          "ilvl": 573,
+          "upgrade": 7,
           "quality": "EPIC",
           "invType": "NECK"
         },
@@ -1494,10 +1494,10 @@
         },
         {
           "slot": "HANDS",
-          "id": 99412,
-          "name": "Gauntlets of the Prehistoric Marauder",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104515,
+          "name": "Tar-Coated Gauntlets",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HAND"
         },
@@ -1521,10 +1521,10 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 102298,
+          "id": 105491,
           "name": "Evil Eye of Galakras",
-          "ilvl": 567,
-          "upgrade": 14,
+          "ilvl": 572,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
