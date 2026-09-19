@@ -1,11 +1,11 @@
 {
-  "fetchedAt": "2026-09-14T18:05:50.531Z",
+  "fetchedAt": "2026-09-19T15:56:31.956Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -155,42 +155,42 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
-      "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
+      "changedAt": "2026-09-19T15:56:31.956Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 99421,
-          "name": "Headguard of the Shattered Vale",
-          "ilvl": 574,
-          "upgrade": 8,
+          "id": 104413,
+          "name": "Hood of Blackened Tears",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "HEAD"
         },
         {
           "slot": "NECK",
-          "id": 105602,
-          "name": "Gleaming Eye of the Devilsaur",
-          "ilvl": 580,
+          "id": 105762,
+          "name": "Smoldering Eye",
+          "ilvl": 567,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
-          "id": 104510,
-          "name": "Ricocheting Shoulderguards",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99184,
+          "name": "Spaulders of the Shattered Vale",
+          "ilvl": 561,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
-          "id": 99419,
-          "name": "Tunic of the Shattered Vale",
-          "ilvl": 574,
+          "id": 99180,
+          "name": "Raiment of the Shattered Vale",
+          "ilvl": 561,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "CHEST"
@@ -206,19 +206,19 @@
         },
         {
           "slot": "LEGS",
-          "id": 99422,
-          "name": "Breeches of the Shattered Vale",
-          "ilvl": 574,
+          "id": 99183,
+          "name": "Legguards of the Shattered Vale",
+          "ilvl": 561,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
         },
         {
           "slot": "FEET",
-          "id": 104488,
+          "id": 105484,
           "name": "Unrepentant Heels",
           "ilvl": 580,
-          "upgrade": 14,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "FEET"
         },
@@ -233,8 +233,8 @@
         },
         {
           "slot": "HANDS",
-          "id": 99420,
-          "name": "Handguards of the Shattered Vale",
+          "id": 99327,
+          "name": "Grips of the Shattered Vale",
           "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
@@ -260,17 +260,17 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 104649,
-          "name": "Curse of Hubris",
-          "ilvl": 580,
+          "id": 96546,
+          "name": "Rune of Re-Origination",
+          "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
         },
         {
           "slot": "TRINKET_2",
-          "id": 104518,
-          "name": "Juggernaut's Focusing Crystal",
+          "id": 104531,
+          "name": "Haromm's Talisman",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -278,8 +278,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102245,
-          "name": "Qian-Le, Courage of Niuzao",
+          "id": 102248,
+          "name": "Fen-Yu, Fury of Xuen",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -287,9 +287,9 @@
         },
         {
           "slot": "MAIN_HAND",
-          "id": 104412,
-          "name": "Trident of Corrupted Waters",
-          "ilvl": 580,
+          "id": 103952,
+          "name": "Halberd of Inner Shadows",
+          "ilvl": 567,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TWOHWEAPON"
@@ -307,9 +307,9 @@
     },
     "Starship": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -468,9 +468,9 @@
     },
     "Brewcocky": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -629,9 +629,9 @@
     },
     "Ixiom": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -799,9 +799,9 @@
     },
     "Vynunaara": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -960,9 +960,9 @@
     },
     "Zakar": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1112,9 +1112,9 @@
     },
     "Nothot": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-08-10T13:48:55.912Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1264,9 +1264,9 @@
     },
     "Beantotem": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-07-24T02:11:36.274Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1416,9 +1416,9 @@
     },
     "Skullhammer": {
       "ok": true,
-      "checkedAt": "2026-09-14T18:05:50.531Z",
+      "checkedAt": "2026-09-19T15:56:31.956Z",
       "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-14T18:05:50.531Z",
+      "fetchedAt": "2026-09-19T15:56:31.956Z",
       "items": [
         {
           "slot": "HEAD",
