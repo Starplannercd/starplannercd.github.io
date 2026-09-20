@@ -3854,7 +3854,7 @@ const CUSTOM_ABILITY_DETAILS = {
 // Foji spell-assignment fields as custom abilities.
 const DEFENSIVE_ABILITY_LIST = [
   '', 'Fade', 'Dispersion', 'Deterrence', 'Greater Invisibility', 'Temporal Shield',
-  'Diffuse Magic', 'Fortifying Brew',
+  'Astral Shift', 'Diffuse Magic', 'Fortifying Brew',
   'Zen Meditation', 'Divine Protection', 'Divine Shield', 'Unending Resolve',
   'Die by the Sword', 'Shield Wall',
 ];
@@ -3888,6 +3888,12 @@ const DEFENSIVE_ABILITIES = {
     icon:'https://wow.zamimg.com/images/wow/icons/large/spell_mage_temporalshield.jpg',
     cooldown:'25 sec', duration:'4 sec',
     description:'Envelops you in a temporal shield. Damage taken during the shield is healed back over 6 seconds after the effect ends.',
+  },
+  'Astral Shift': {
+    spellId:'108271', who:'ELE1', short:'AS', color:'#0070de', textColor:'#88c8ff',
+    icon:'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_astralshift.jpg',
+    cooldown:'1.5 min', duration:'6 sec',
+    description:'Reduces all damage taken by 40% for 6 seconds.',
   },
   'Diffuse Magic': {
     spellId:'122783', who:'MISTWEAVE1', short:'DM', color:'#00c87a', textColor:'#80ffd0',
@@ -5866,6 +5872,7 @@ const SPEC_ICONS = {
 // Defensive assignments need a stable bottom-left badge in shared plans even
 // when the shared roster cannot resolve the assigned player or specialization.
 const DEFENSIVE_BADGE_ICONS = {
+  'Astral Shift':         'classicon_shaman',
   'Unending Resolve':     'classicon_warlock',
   'Temporal Shield':      'classicon_mage',
   'Greater Invisibility': 'classicon_mage',
@@ -5875,6 +5882,7 @@ const DEFENSIVE_BADGE_ICONS = {
   'Divine Shield':        'spell_holy_auraoflight',
 };
 const DEFENSIVE_CLASS_NAMES = {
+  'Astral Shift': 'Shaman',
   'Fade': 'Priest', 'Dispersion': 'Priest',
   'Unending Resolve': 'Warlock',
   'Temporal Shield': 'Mage', 'Greater Invisibility': 'Mage',
