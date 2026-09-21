@@ -1,11 +1,11 @@
 {
-  "fetchedAt": "2026-09-19T15:56:31.956Z",
+  "fetchedAt": "2026-09-21T18:13:42.875Z",
   "characters": {
     "Johnholyman": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -126,8 +126,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102249,
-          "name": "Gong-Lu, Strength of Xuen",
+          "id": 102250,
+          "name": "Qian-Ying, Fortitude of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -155,42 +155,42 @@
     },
     "Merphshrooms": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-09-19T15:56:31.956Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
-          "id": 104413,
-          "name": "Hood of Blackened Tears",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99421,
+          "name": "Headguard of the Shattered Vale",
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "HEAD"
         },
         {
           "slot": "NECK",
-          "id": 105762,
-          "name": "Smoldering Eye",
-          "ilvl": 567,
+          "id": 105602,
+          "name": "Gleaming Eye of the Devilsaur",
+          "ilvl": 580,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "NECK"
         },
         {
           "slot": "SHOULDER",
-          "id": 99184,
-          "name": "Spaulders of the Shattered Vale",
-          "ilvl": 561,
-          "upgrade": 8,
+          "id": 104510,
+          "name": "Ricocheting Shoulderguards",
+          "ilvl": 580,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
         {
           "slot": "CHEST",
-          "id": 99180,
-          "name": "Raiment of the Shattered Vale",
-          "ilvl": 561,
+          "id": 99419,
+          "name": "Tunic of the Shattered Vale",
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "CHEST"
@@ -206,19 +206,19 @@
         },
         {
           "slot": "LEGS",
-          "id": 99183,
-          "name": "Legguards of the Shattered Vale",
-          "ilvl": 561,
+          "id": 99422,
+          "name": "Breeches of the Shattered Vale",
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
         },
         {
           "slot": "FEET",
-          "id": 105484,
+          "id": 104488,
           "name": "Unrepentant Heels",
           "ilvl": 580,
-          "upgrade": 8,
+          "upgrade": 14,
           "quality": "EPIC",
           "invType": "FEET"
         },
@@ -233,8 +233,8 @@
         },
         {
           "slot": "HANDS",
-          "id": 99327,
-          "name": "Grips of the Shattered Vale",
+          "id": 99420,
+          "name": "Handguards of the Shattered Vale",
           "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
@@ -260,9 +260,9 @@
         },
         {
           "slot": "TRINKET_1",
-          "id": 96546,
-          "name": "Rune of Re-Origination",
-          "ilvl": 549,
+          "id": 104649,
+          "name": "Curse of Hubris",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
@@ -278,8 +278,8 @@
         },
         {
           "slot": "BACK",
-          "id": 102248,
-          "name": "Fen-Yu, Fury of Xuen",
+          "id": 102245,
+          "name": "Qian-Le, Courage of Niuzao",
           "ilvl": 608,
           "upgrade": 8,
           "quality": "LEGENDARY",
@@ -287,9 +287,9 @@
         },
         {
           "slot": "MAIN_HAND",
-          "id": 103952,
-          "name": "Halberd of Inner Shadows",
-          "ilvl": 567,
+          "id": 104412,
+          "name": "Trident of Corrupted Waters",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TWOHWEAPON"
@@ -307,9 +307,9 @@
     },
     "Starship": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -349,10 +349,10 @@
         },
         {
           "slot": "CHEST",
-          "id": 104523,
-          "name": "Shock Pulse Robes",
-          "ilvl": 580,
-          "upgrade": 14,
+          "id": 99357,
+          "name": "Robes of the Ternion Glory",
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "ROBE"
         },
@@ -367,9 +367,9 @@
         },
         {
           "slot": "LEGS",
-          "id": 99118,
+          "id": 99367,
           "name": "Legwraps of the Ternion Glory",
-          "ilvl": 561,
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "LEGS"
@@ -394,8 +394,8 @@
         },
         {
           "slot": "HANDS",
-          "id": 104422,
-          "name": "Bolt-Burster Grips",
+          "id": 104617,
+          "name": "Fusespark Gloves",
           "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
@@ -430,9 +430,9 @@
         },
         {
           "slot": "TRINKET_2",
-          "id": 105117,
-          "name": "Dysmorphic Samophlange of Discontinuity",
-          "ilvl": 542,
+          "id": 96516,
+          "name": "Cha-Ye's Essence of Brilliance",
+          "ilvl": 549,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "TRINKET"
@@ -468,9 +468,9 @@
     },
     "Brewcocky": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
       "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -629,9 +629,9 @@
     },
     "Ixiom": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
       "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -799,9 +799,9 @@
     },
     "Vynunaara": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -825,8 +825,8 @@
           "slot": "SHOULDER",
           "id": 99404,
           "name": "Spaulders of the Unblinking Vigil",
-          "ilvl": 566,
-          "upgrade": 0,
+          "ilvl": 574,
+          "upgrade": 8,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
@@ -960,9 +960,9 @@
     },
     "Zakar": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-08-31T19:09:14.654Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1056,9 +1056,9 @@
         },
         {
           "slot": "FINGER_2",
-          "id": 96529,
-          "name": "Ro'shak's Remembrance",
-          "ilvl": 549,
+          "id": 104610,
+          "name": "Signet of the Dinomancers",
+          "ilvl": 580,
           "upgrade": 14,
           "quality": "EPIC",
           "invType": "FINGER"
@@ -1112,9 +1112,9 @@
     },
     "Nothot": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-08-10T13:48:55.912Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1145,9 +1145,9 @@
         },
         {
           "slot": "CHEST",
-          "id": 99152,
+          "id": 99400,
           "name": "Chronomancer Robes",
-          "ilvl": 561,
+          "ilvl": 574,
           "upgrade": 8,
           "quality": "EPIC",
           "invType": "ROBE"
@@ -1264,9 +1264,9 @@
     },
     "Beantotem": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
       "changedAt": "2026-07-24T02:11:36.274Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1416,9 +1416,9 @@
     },
     "Skullhammer": {
       "ok": true,
-      "checkedAt": "2026-09-19T15:56:31.956Z",
-      "changedAt": "2026-09-14T18:05:50.531Z",
-      "fetchedAt": "2026-09-19T15:56:31.956Z",
+      "checkedAt": "2026-09-21T18:13:42.875Z",
+      "changedAt": "2026-09-21T18:13:42.875Z",
+      "fetchedAt": "2026-09-21T18:13:42.875Z",
       "items": [
         {
           "slot": "HEAD",
@@ -1440,10 +1440,10 @@
         },
         {
           "slot": "SHOULDER",
-          "id": 99200,
-          "name": "Pauldrons of the Prehistoric Marauder",
-          "ilvl": 561,
-          "upgrade": 8,
+          "id": 104646,
+          "name": "Tusks of Mannoroth",
+          "ilvl": 566,
+          "upgrade": 0,
           "quality": "EPIC",
           "invType": "SHOULDER"
         },
